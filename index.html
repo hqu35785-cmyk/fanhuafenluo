@@ -282,6 +282,11 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   line-height:1.35;
   letter-spacing:.035em;
 }
+.first-hint .hint-copy{
+  color:var(--pink);
+  font-weight:600;
+  text-shadow:0 0 14px rgba(243,170,194,.16);
+}
 .first-hint::before{
   content:"";
   width:4px;
@@ -1410,7 +1415,7 @@ function cardHTML(work,index){
   const imageSensitive=Boolean(work.sensitive);
   const settingSensitive=Boolean(work.sensitiveSetting);
   const hint=index===0
-    ? `<p class="first-hint">点击卡片查看设定 · 长按直接保存 PNG 角色卡</p>`
+    ? `<p class="first-hint"><span class="hint-copy">点击卡片查看设定 · 长按直接保存 PNG 角色卡</span></p>`
     : "";
   const privacyLabel=imageSensitive && settingSensitive
     ? "双重隐私"
