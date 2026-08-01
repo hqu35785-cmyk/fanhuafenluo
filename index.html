@@ -192,17 +192,17 @@ html.gallery-fit .gallery{grid-auto-rows:var(--gallery-row-height)}
 html.gallery-fit .card,
 html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
 .card{
+  --privacy-unlock-top:min(calc(50% + 82px),calc(100% - 170px));
   position:relative;
   aspect-ratio:.72;
   perspective:1200px;
-  cursor:pointer;
+  cursor:default;
   -webkit-touch-callout:none;
   -webkit-user-select:none;
   user-select:none;
   touch-action:manipulation;
   transition:transform .42s cubic-bezier(.2,.75,.2,1),filter .42s ease;
 }
-.card:focus-visible{outline:2px solid rgba(243,170,194,.72);outline-offset:4px;border-radius:18px}
 .card-inner{
   position:absolute;
   inset:0;
@@ -214,6 +214,14 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
 .back{pointer-events:none}
 .card.flipped .front{pointer-events:none}
 .card.flipped .back{pointer-events:auto}
+.front{width:100%;padding:0;color:inherit;text-align:left;cursor:pointer;font:inherit;appearance:none}
+.front:focus-visible,
+.back-return:focus-visible,
+.back-expand:focus-visible,
+.privacy-unlock:focus-visible{
+  outline:2px solid rgba(243,170,194,.78);
+  outline-offset:3px;
+}
 .card-code,
 .card-open{
   position:absolute;
@@ -362,8 +370,80 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   object-fit:cover;
   object-position:center 24%;
   transform:scale(1.012);
-  transition:transform .7s cubic-bezier(.2,.75,.2,1),filter .7s ease;
+  transition:transform .7s cubic-bezier(.2,.75,.2,1),filter .7s ease,opacity .28s ease;
 }
+.front.is-locked img{opacity:0;visibility:hidden}
+.front.is-locked{
+  background:
+    radial-gradient(circle at 50% 38%,rgba(243,170,194,.11),transparent 29%),
+    radial-gradient(circle at 62% 54%,rgba(157,185,255,.08),transparent 34%),
+    linear-gradient(145deg,#15131f,#0c0d16 72%);
+}
+.front.is-locked::before{
+  opacity:.78;
+  background:
+    linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px),
+    radial-gradient(circle at 50% 42%,rgba(243,170,194,.09),transparent 35%);
+  background-size:34px 34px,34px 34px,auto;
+}
+.privacy-veil{
+  position:absolute;
+  z-index:2;
+  top:calc(var(--privacy-unlock-top) - 112px);
+  right:0;
+  left:0;
+  height:92px;
+  display:grid;
+  place-items:center;
+  pointer-events:none;
+  text-align:center;
+}
+.privacy-veil[hidden]{display:none!important}
+.privacy-veil::before{
+  content:"";
+  width:58px;
+  height:68px;
+  border:1px solid rgba(243,190,210,.22);
+  border-radius:28px 28px 18px 18px;
+  background:
+    radial-gradient(circle at 50% 60%,rgba(243,170,194,.25) 0 3px,transparent 4px),
+    linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.018));
+  box-shadow:0 18px 44px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.08),0 0 34px rgba(243,170,194,.07);
+}
+.privacy-veil::after{
+  content:"PRIVATE";
+  position:absolute;
+  bottom:-1px;
+  color:rgba(223,212,226,.42);
+  font-size:8px;
+  font-weight:650;
+  letter-spacing:.25em;
+}
+.privacy-unlock{
+  position:absolute;
+  z-index:8;
+  left:50%;
+  top:var(--privacy-unlock-top);
+  min-width:132px;
+  min-height:44px;
+  transform:translateX(-50%);
+  padding:0 16px;
+  border:1px solid rgba(243,190,210,.24);
+  border-radius:999px;
+  color:#fff;
+  background:linear-gradient(135deg,rgba(243,170,194,.17),rgba(157,185,255,.08)),rgba(11,10,18,.72);
+  box-shadow:0 14px 34px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.08);
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+  cursor:pointer;
+  font-size:10px;
+  font-weight:650;
+  letter-spacing:.08em;
+  transition:transform .2s ease,border-color .2s ease,opacity .2s ease;
+}
+.privacy-unlock[hidden]{display:none!important}
+.card.flipped .privacy-unlock{opacity:0;pointer-events:none}
 .front::before{
   content:"";
   position:absolute;
@@ -386,7 +466,7 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
 }
 .card-name{
   position:absolute;
-  z-index:2;
+  z-index:3;
   left:16px;
   right:16px;
   bottom:15px;
@@ -435,18 +515,20 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
 .back{
   padding:20px;
   transform:rotateY(180deg);
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  overflow-y:auto;
-  overscroll-behavior:contain;
-  scrollbar-width:thin;
-  scrollbar-color:rgba(242,168,189,.35) transparent;
+  display:grid;
+  grid-template-rows:minmax(0,1fr) auto;
+  overflow:hidden;
   background:
     radial-gradient(120% 76% at 4% 0%,rgba(243,170,194,.11),transparent 50%),
     radial-gradient(110% 82% at 100% 100%,rgba(157,185,255,.085),transparent 52%),
     linear-gradient(145deg,#191624,#11111d);
 }
+.back-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:none}
+.back-scroll::-webkit-scrollbar{display:none}
+.back-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:17px}
+.back-file{color:rgba(226,216,231,.52);font-size:8px;font-weight:650;letter-spacing:.18em}
+.back-privacy{display:flex;align-items:center;gap:6px;color:rgba(243,190,210,.76);font-size:8px;letter-spacing:.08em}
+.back-privacy::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--pink);box-shadow:0 0 10px rgba(243,170,194,.48)}
 .back h2{
   margin:0;
   font-family:"Songti SC","STSong","Noto Serif CJK SC",serif;
@@ -454,13 +536,23 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   letter-spacing:.02em;
   text-shadow:0 0 22px rgba(243,170,194,.14);
 }
-.back .alias{margin:5px 0 18px;color:var(--pink);font-size:9px;font-weight:600;letter-spacing:.2em}
+.back .alias{margin:5px 0 10px;color:var(--pink);font-size:9px;font-weight:600;letter-spacing:.2em}
+.back-role{margin:0 0 15px;color:rgba(222,214,228,.68);font-size:10px;line-height:1.5}
+.back-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px}
+.back-tag{padding:4px 7px;border:1px solid rgba(255,255,255,.075);border-radius:999px;color:rgba(210,201,217,.62);font-size:7px;letter-spacing:.06em}
 .setting{
   display:grid;
   gap:12px;
   color:#d9d2de;
   font-size:12px;
   line-height:1.65;
+}
+.back .setting p{
+  display:-webkit-box;
+  margin:0;
+  overflow:hidden;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
 }
 .setting div{
   padding-bottom:10px;
@@ -469,10 +561,25 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
 .setting b{display:block;margin-bottom:3px;color:#9890a2;font-size:9px;font-weight:600;letter-spacing:.18em}
 .back-actions{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:44px minmax(0,1fr);
   gap:8px;
   margin-top:18px;
 }
+.back-return,
+.back-expand{
+  min-height:44px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:13px;
+  color:rgba(250,247,252,.9);
+  background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.065),0 10px 24px rgba(0,0,0,.17);
+  cursor:pointer;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease;
+}
+.back-return{display:grid;place-items:center;padding:0;font-size:17px}
+.back-expand{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 14px;border-color:rgba(243,170,194,.22);background:linear-gradient(135deg,rgba(243,170,194,.14),rgba(157,185,255,.06));font-size:10px;font-weight:650;letter-spacing:.04em}
+.back-expand span:first-child{white-space:nowrap}
+.back-expand span:last-child{font-size:15px;transition:transform .25s ease}
 .action{
   min-height:38px;
   border:1px solid var(--line);
@@ -606,6 +713,60 @@ footer::before{
   border-radius:16px;
 }
 .archive-visual img{width:100%;height:100%;object-fit:cover;object-position:center 26%}
+.archive-visual img{transition:opacity .28s ease}
+.archive-visual.is-locked img{opacity:0;visibility:hidden}
+.archive-visual.is-locked{
+  background:
+    radial-gradient(circle at 50% 38%,rgba(243,170,194,.13),transparent 29%),
+    radial-gradient(circle at 62% 60%,rgba(157,185,255,.09),transparent 34%),
+    linear-gradient(145deg,#15131f,#090a12 74%);
+}
+.archive-privacy{
+  position:absolute;
+  z-index:5;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:34px;
+  text-align:center;
+  background:
+    linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px),
+    radial-gradient(circle at 50% 40%,rgba(243,170,194,.10),transparent 35%);
+  background-size:38px 38px,38px 38px,auto;
+}
+.archive-privacy[hidden]{display:none!important}
+.archive-privacy-mark{
+  width:70px;
+  height:82px;
+  margin-bottom:25px;
+  border:1px solid rgba(243,190,210,.24);
+  border-radius:34px 34px 21px 21px;
+  background:
+    radial-gradient(circle at 50% 60%,rgba(243,170,194,.28) 0 4px,transparent 5px),
+    linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
+  box-shadow:0 22px 52px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.09),0 0 42px rgba(243,170,194,.09);
+}
+.archive-privacy b{font-size:14px;font-weight:650;letter-spacing:.08em}
+.archive-privacy p{margin:8px 0 22px;color:rgba(220,211,226,.6);font-size:10px;line-height:1.6;letter-spacing:.04em}
+.archive-unlock{
+  min-width:150px;
+  min-height:44px;
+  padding:0 18px;
+  border:1px solid rgba(243,190,210,.26);
+  border-radius:999px;
+  color:#fff;
+  background:linear-gradient(135deg,rgba(243,170,194,.18),rgba(157,185,255,.08)),rgba(11,10,18,.74);
+  box-shadow:0 14px 34px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.08);
+  cursor:pointer;
+  font-size:10px;
+  font-weight:650;
+  letter-spacing:.08em;
+  transition:transform .2s ease,border-color .2s ease;
+}
+.archive-unlock:focus-visible{outline:2px solid rgba(243,170,194,.78);outline-offset:3px}
 .archive-file{
   position:absolute;
   z-index:3;
@@ -695,6 +856,7 @@ footer::before{
   color:#fff;
   background:linear-gradient(135deg,rgba(243,170,194,.16),rgba(157,185,255,.075));
 }
+.archive-action:disabled{cursor:not-allowed;opacity:.38;transform:none}
 .archive-action:focus-visible,.archive-close:focus-visible{outline:2px solid rgba(243,170,194,.75);outline-offset:3px}
 .archive-close{
   position:absolute;
@@ -719,6 +881,10 @@ footer::before{
 
 @media (hover:hover) and (pointer:fine){
   .card:hover .card-open{transform:rotate(45deg);border-color:rgba(243,170,194,.34);background:rgba(20,15,26,.62)}
+  .back-return:hover,.back-expand:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.35)}
+  .back-expand:hover span:last-child{transform:translate(2px,-2px)}
+  .privacy-unlock:hover{transform:translateX(-50%) translateY(-1px);border-color:rgba(243,170,194,.4)}
+  .archive-unlock:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.4)}
   .archive-action:hover{transform:translateY(-2px);border-color:rgba(243,170,194,.34);background:rgba(255,255,255,.08)}
   .placeholder-card:hover::after{animation:slotShine 1.35s ease}
 }
@@ -798,8 +964,17 @@ footer::before{
   .card-name b{font-size:19px}
   .back{padding:14px}
   .back h2{font-size:21px}
+  .back-toolbar{margin-bottom:10px}
+  .back-role{margin-bottom:9px}
+  .back-tags{display:none}
+  .back .setting p{-webkit-line-clamp:2}
   .setting{gap:8px;font-size:10px}
-  .back-actions{grid-template-columns:1fr}
+  .back-actions{grid-template-columns:44px minmax(0,1fr);gap:6px;margin-top:10px}
+  .back-return,.back-expand{min-height:44px}
+  .back-expand{gap:5px;padding-inline:7px;font-size:8px}
+  .card{--privacy-unlock-top:calc(100% - 144px)}
+  .privacy-veil::before{width:50px;height:58px}
+  .privacy-unlock{min-width:118px;min-height:44px}
   .archive-status em{display:none}
   .card-code{top:10px;left:10px;padding:6px 8px}
   .card-open{top:10px;right:10px;width:27px;height:27px}
@@ -814,6 +989,17 @@ footer::before{
   main{padding:9px 0 6px}
   .gallery{row-gap:8px}
   html.compact-landscape .card-meta{display:none}
+  .card{--privacy-unlock-top:calc(100% - 118px)}
+  .back{padding:11px}
+  .back-toolbar{margin-bottom:8px}
+  .back h2{font-size:19px}
+  .back .alias{margin:3px 0 7px}
+  .back-role{margin-bottom:7px;font-size:9px}
+  .back-tags{display:none}
+  .back .setting p{-webkit-line-clamp:2}
+  .setting{gap:6px;font-size:9px;line-height:1.45}
+  .setting div{padding-bottom:6px}
+  .back-actions{margin-top:8px}
   .side-title{font-size:9px}
   footer{margin-top:0;padding:5px 0 max(5px,env(safe-area-inset-bottom));font-size:8px}
   .archive-modal{
@@ -853,7 +1039,7 @@ footer::before{
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .card,.card-inner,.front img,.action,.toast,.archive-modal,.archive-action,.card-open{transition:none}
+  .card,.card-inner,.front img,.action,.toast,.archive-modal,.archive-action,.card-open,.back-return,.back-expand,.privacy-unlock,.archive-unlock{transition:none}
   .placeholder-card:hover::after{animation:none}
 }
 
@@ -887,8 +1073,14 @@ footer::before{
 <dialog class="archive-modal" id="archiveModal" aria-labelledby="archiveName">
   <button class="archive-close" id="archiveClose" type="button" aria-label="关闭角色档案">×</button>
   <div class="archive-shell">
-    <div class="archive-visual">
+    <div class="archive-visual" id="archiveVisual">
       <img id="archiveImage" alt="">
+      <div class="archive-privacy" id="archivePrivacy" hidden>
+        <span class="archive-privacy-mark" aria-hidden="true"></span>
+        <b>敏感图片已隐藏</b>
+        <p>确认周围环境合适后，再解锁查看本次内容。</p>
+        <button class="archive-unlock" id="archiveUnlock" type="button">解锁查看</button>
+      </div>
       <div class="archive-file">
         <span id="archiveFile">FILE 01</span>
         <span>LINLIN · ORIGINAL CHARACTER</span>
@@ -927,7 +1119,9 @@ const works=[
     personality:"乖巧认真，反应慢半拍但很有耐心；认知与表达速度较慢，需要清晰的指引和耐心的陪伴。",
     setting:"她负责把饮料按颜色和类别整齐归位。她不太擅长说完整的长句，却会把每一项工作都认真完成；夜里害怕黑暗和独处，听到熟悉的声音才会慢慢放松下来。",
     tags:["原创角色","便利店","日常系"],
-    creator:"霖霖"
+    creator:"霖霖",
+    sensitive:true,
+    sensitiveLabel:"敏感卡面"
   }
   /*
   继续添加：
@@ -939,7 +1133,8 @@ const works=[
     personality:"性格",
     setting:"背景设定",
     tags:["标签1","标签2"],
-    creator:"霖霖"
+    creator:"霖霖",
+    sensitive:false
   }
   */
 ];
@@ -968,21 +1163,45 @@ function safe(text){
 
 function cardHTML(work,index){
   const file=String(index+1).padStart(2,"0");
+  const locked=Boolean(work.sensitive);
+  const tags=(work.tags || []).slice(0,3).map(tag=>`<span class="back-tag">${safe(tag)}</span>`).join("");
   return `
   <div class="card-item">
-    <article class="card" data-index="${index}" tabindex="0" role="button" aria-haspopup="dialog" aria-controls="archiveModal" aria-label="查看${safe(work.name)}角色档案">
+    <article class="card${locked ? " is-sensitive" : ""}" data-index="${index}">
       <div class="card-inner">
-        <div class="face front">
-          <img src="${work.image}" alt="${safe(work.name)}">
+        <button class="face front card-flip${locked ? " is-locked" : ""}" type="button" aria-label="翻转查看${safe(work.name)}的简介" aria-expanded="false" aria-controls="card-back-${index}" aria-hidden="false">
+          <img ${locked ? "" : `src="${work.image}"`} alt="${locked ? "" : safe(work.name)}"${locked ? ' aria-hidden="true" hidden' : ""}>
+          ${locked ? '<span class="privacy-veil" aria-hidden="true"></span>' : ""}
           <span class="card-code">FILE ${file}</span>
-          <span class="card-open" aria-hidden="true">↗</span>
-          <div class="card-name">
+          <span class="card-open" aria-hidden="true">↻</span>
+          <span class="card-name">
             <b>${safe(work.name)}</b>
             <span>${safe(work.alias || "")}</span>
-            <div class="card-meta"><span>ORIGINAL CHARACTER</span><span>查看档案</span></div>
+            <span class="card-meta"><span>ORIGINAL CHARACTER</span><span>点按翻转</span></span>
+          </span>
+        </button>
+        <section class="face back" id="card-back-${index}" aria-label="${safe(work.name)}角色简介" aria-hidden="true" inert>
+          <div class="back-scroll">
+            <div class="back-toolbar">
+              <span class="back-file">FILE ${file}</span>
+              ${locked ? `<span class="back-privacy">${safe(work.sensitiveLabel || "敏感卡面")}</span>` : ""}
+            </div>
+            <h2>${safe(work.name)}</h2>
+            <p class="alias">${safe(work.alias || "ORIGINAL")}</p>
+            <p class="back-role">${safe(work.role || "原创角色")}</p>
+            <div class="back-tags">${tags}</div>
+            <div class="setting">
+              <div><b>性格</b><p>${safe(work.personality || "暂无性格介绍。")}</p></div>
+              <div><b>设定</b><p>${safe(work.setting || "暂无背景设定。")}</p></div>
+            </div>
           </div>
-        </div>
+          <div class="back-actions">
+            <button class="back-return" type="button" aria-label="返回${safe(work.name)}卡面">←</button>
+            <button class="back-expand" type="button" aria-haspopup="dialog" aria-controls="archiveModal"><span>展开完整档案</span><span aria-hidden="true">↗</span></button>
+          </div>
+        </section>
       </div>
+      ${locked ? `<button class="privacy-unlock" type="button" data-index="${index}" aria-label="显示${safe(work.name)}的敏感图片，仅本次页面有效">解锁卡面</button>` : ""}
     </article>
   </div>`;
 }
@@ -1159,7 +1378,10 @@ async function fullCardBlob(work){
 }
 
 const archiveClose=document.getElementById("archiveClose");
+const archiveVisual=document.getElementById("archiveVisual");
 const archiveImage=document.getElementById("archiveImage");
+const archivePrivacy=document.getElementById("archivePrivacy");
+const archiveUnlock=document.getElementById("archiveUnlock");
 const archiveFile=document.getElementById("archiveFile");
 const archiveAlias=document.getElementById("archiveAlias");
 const archiveName=document.getElementById("archiveName");
@@ -1170,7 +1392,9 @@ const archiveSetting=document.getElementById("archiveSetting");
 const downloadCard=document.getElementById("downloadCard");
 const downloadImage=document.getElementById("downloadImage");
 const downloadJson=document.getElementById("downloadJson");
+const unlockedWorks=new Set();
 let activeWork=null;
+let activeIndex=null;
 let modalOpener=null;
 
 function dataFor(work){
@@ -1181,17 +1405,94 @@ function dataFor(work){
     personality:work.personality,
     setting:work.setting,
     tags:work.tags,
-    creator:work.creator
+    creator:work.creator,
+    sensitive:Boolean(work.sensitive),
+    sensitiveLabel:work.sensitiveLabel || ""
   };
+}
+
+function isWorkLocked(index){
+  return Boolean(works[index]?.sensitive) && !unlockedWorks.has(index);
+}
+
+function syncCardPrivacy(index){
+  const work=works[index];
+  const card=gallery.querySelector(`.card[data-index="${index}"]`);
+  if(!work || !card) return;
+  const front=card.querySelector(".front");
+  const image=front.querySelector("img");
+  const veil=front.querySelector(".privacy-veil");
+  const unlock=card.querySelector(".privacy-unlock");
+  const locked=isWorkLocked(index);
+
+  front.classList.toggle("is-locked",locked);
+  card.classList.toggle("is-unlocked",Boolean(work.sensitive) && !locked);
+  if(locked){
+    image.removeAttribute("src");
+    image.alt="";
+    image.hidden=true;
+    image.setAttribute("aria-hidden","true");
+  }else{
+    image.src=work.image;
+    image.alt=work.name;
+    image.hidden=false;
+    image.removeAttribute("aria-hidden");
+  }
+  if(veil) veil.hidden=!locked;
+  if(unlock){
+    unlock.hidden=!locked;
+    const unlockInactive=!locked || card.classList.contains("flipped");
+    unlock.toggleAttribute("inert",unlockInactive);
+    unlock.setAttribute("aria-hidden",String(unlockInactive));
+  }
+}
+
+function syncArchivePrivacy(index){
+  const work=works[index];
+  if(!work) return;
+  const locked=isWorkLocked(index);
+
+  archiveImage.removeAttribute("src");
+  archiveImage.alt="";
+  archiveImage.hidden=true;
+  archiveVisual.classList.toggle("is-locked",locked);
+  archivePrivacy.hidden=!locked;
+  downloadCard.disabled=locked;
+  downloadImage.disabled=locked;
+  downloadCard.title=locked ? "请先解锁敏感图片" : "";
+  downloadImage.title=locked ? "请先解锁敏感图片" : "";
+
+  if(!locked){
+    archiveImage.src=work.image;
+    archiveImage.alt=`${work.name}角色立绘`;
+    archiveImage.hidden=false;
+  }
+}
+
+function unlockWork(index){
+  const work=works[index];
+  if(!work || !work.sensitive) return;
+  unlockedWorks.add(index);
+  syncCardPrivacy(index);
+  if(activeIndex===index) syncArchivePrivacy(index);
+  tip("敏感图片已解锁；刷新页面后会重新锁定");
+}
+
+function imageAccessAllowed(index){
+  if(index===null || index===undefined || !isWorkLocked(index)) return true;
+  tip("请先解锁敏感图片");
+  return false;
 }
 
 function openArchive(index,opener){
   const work=works[index];
   if(!work) return;
   activeWork=work;
+  activeIndex=index;
   modalOpener=opener;
-  archiveImage.src=work.image;
-  archiveImage.alt=`${work.name}角色立绘`;
+  archiveImage.removeAttribute("src");
+  archiveImage.alt="";
+  archiveImage.hidden=true;
   archiveFile.textContent=`FILE ${String(index+1).padStart(2,"0")}`;
   archiveAlias.textContent=work.alias || "ORIGINAL";
   archiveName.textContent=work.name;
@@ -1204,12 +1505,18 @@ function openArchive(index,opener){
     span.textContent=tag;
     return span;
   }));
+  syncArchivePrivacy(index);
   document.body.classList.add("modal-open");
   if(!archiveModal.open) archiveModal.showModal();
   requestAnimationFrame(()=>archiveClose.focus());
 }
 
 archiveClose.addEventListener("click",()=>archiveModal.close());
+archiveUnlock.addEventListener("click",()=>{
+  if(activeIndex===null) return;
+  unlockWork(activeIndex);
+  requestAnimationFrame(()=>archiveClose.focus({preventScroll:true}));
+});
 archiveModal.addEventListener("click",e=>{
   if(e.target===archiveModal) archiveModal.close();
 });
@@ -1223,13 +1530,22 @@ archiveModal.addEventListener("close",()=>{
   archiveToast.classList.remove("show");
   const opener=modalOpener;
   activeWork=null;
+  activeIndex=null;
   modalOpener=null;
+  archiveImage.removeAttribute("src");
+  archiveImage.alt="";
+  archiveImage.hidden=true;
+  archiveVisual.classList.remove("is-locked");
+  archivePrivacy.hidden=true;
+  downloadCard.disabled=false;
+  downloadImage.disabled=false;
   opener?.focus();
 });
 
 downloadCard.addEventListener("click",async()=>{
   const work=activeWork;
   if(!work) return;
+  if(!imageAccessAllowed(activeIndex)) return;
   try{
     tip("正在生成完整角色卡");
     const blob=await fullCardBlob(work);
@@ -1241,6 +1557,7 @@ downloadCard.addEventListener("click",async()=>{
 downloadImage.addEventListener("click",async()=>{
   const work=activeWork;
   if(!work) return;
+  if(!imageAccessAllowed(activeIndex)) return;
   try{
     const blob=await toPng(work.image);
     saveBlob(blob,`${work.name}-image.png`);
@@ -1261,22 +1578,58 @@ downloadJson.addEventListener("click",()=>{
 document.querySelectorAll(".card").forEach(card=>{
   const index=Number(card.dataset.index);
   const work=works[index];
-  let timer=null,held=false,startX=0,startY=0;
+  const flipButton=card.querySelector(".card-flip");
+  const back=card.querySelector(".back");
+  const returnButton=card.querySelector(".back-return");
+  const expandButton=card.querySelector(".back-expand");
+  const unlockButton=card.querySelector(".privacy-unlock");
+  let timer=null,startX=0,startY=0,suppressPointerClickUntil=0;
 
-  card.addEventListener("click",()=>{
-    if(held){held=false;return}
-    openArchive(index,card);
+  syncCardPrivacy(index);
+
+  function clearHold(){
+    clearTimeout(timer);
+    timer=null;
+  }
+
+  function setFlipped(flipped){
+    card.classList.toggle("flipped",flipped);
+    flipButton.toggleAttribute("inert",flipped);
+    flipButton.setAttribute("aria-hidden",String(flipped));
+    flipButton.setAttribute("aria-expanded",String(flipped));
+    back.toggleAttribute("inert",!flipped);
+    back.setAttribute("aria-hidden",String(!flipped));
+    if(unlockButton){
+      const unlockInactive=flipped || !isWorkLocked(index);
+      unlockButton.toggleAttribute("inert",unlockInactive);
+      unlockButton.setAttribute("aria-hidden",String(unlockInactive));
+    }
+    requestAnimationFrame(()=>{
+      (flipped ? returnButton : flipButton).focus({preventScroll:true});
+    });
+  }
+
+  flipButton.addEventListener("click",e=>{
+    if(e.detail!==0 && performance.now()<suppressPointerClickUntil){
+      e.preventDefault();
+      return;
+    }
+    setFlipped(true);
   });
-  card.addEventListener("keydown",e=>{
-    if(e.key!=="Enter" && e.key!==" ") return;
-    e.preventDefault();
-    openArchive(index,card);
+  returnButton.addEventListener("click",()=>setFlipped(false));
+  expandButton.addEventListener("click",()=>openArchive(index,expandButton));
+  unlockButton?.addEventListener("click",()=>{
+    unlockWork(index);
+    requestAnimationFrame(()=>flipButton.focus({preventScroll:true}));
   });
-  card.addEventListener("pointerdown",e=>{
-    startX=e.clientX;startY=e.clientY;held=false;
+
+  flipButton.addEventListener("pointerdown",e=>{
+    if(!e.isPrimary || (e.pointerType==="mouse" && e.button!==0)) return;
+    startX=e.clientX;startY=e.clientY;
     timer=setTimeout(async()=>{
       timer=null;
-      held=true;
+      suppressPointerClickUntil=performance.now()+800;
+      if(!imageAccessAllowed(index)) return;
       try{
         tip("正在生成完整角色卡");
         const blob=await fullCardBlob(work);
@@ -1285,15 +1638,15 @@ document.querySelectorAll(".card").forEach(card=>{
       }catch{tip("生成失败")}
     },650);
   });
-  card.addEventListener("pointermove",e=>{
+  flipButton.addEventListener("pointermove",e=>{
     if(timer && Math.hypot(e.clientX-startX,e.clientY-startY)>12){
-      clearTimeout(timer);timer=null;
+      clearHold();
     }
   });
-  ["pointerup","pointercancel","pointerleave"].forEach(type=>
-    card.addEventListener(type,()=>{clearTimeout(timer);timer=null})
+  ["pointerup","pointercancel","pointerleave","lostpointercapture"].forEach(type=>
+    flipButton.addEventListener(type,clearHold)
   );
-  card.addEventListener("contextmenu",e=>e.preventDefault());
+  flipButton.addEventListener("contextmenu",e=>e.preventDefault());
 });
 
 let glowFrame=0;
