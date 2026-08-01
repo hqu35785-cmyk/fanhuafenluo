@@ -1337,7 +1337,7 @@ footer::before{
         </section>
       </div>
       <div class="archive-actions">
-        <button class="archive-action primary" id="downloadCard" type="button">保存完整角色卡</button>
+        <button class="archive-action primary" id="downloadCard" type="button">保存角色卡 PNG</button>
         <button class="archive-action" id="downloadImage" type="button">仅图片 PNG</button>
         <button class="archive-action" id="downloadJson" type="button">导出 JSON</button>
       </div>
@@ -1410,7 +1410,7 @@ function cardHTML(work,index){
   const imageSensitive=Boolean(work.sensitive);
   const settingSensitive=Boolean(work.sensitiveSetting);
   const hint=index===0
-    ? `<p class="first-hint">点击卡片查看设定 · 长按保存完整角色卡</p>`
+    ? `<p class="first-hint">点击卡片查看设定 · 长按直接保存 PNG 角色卡</p>`
     : "";
   const privacyLabel=imageSensitive && settingSensitive
     ? "双重隐私"
@@ -1919,10 +1919,10 @@ downloadCard.addEventListener("click",async()=>{
   if(!work) return;
   if(!fullCardAccessAllowed(activeIndex)) return;
   try{
-    tip("正在生成完整角色卡");
+    tip("正在生成 PNG 角色卡");
     const blob=await fullCardBlob(work);
-    saveBlob(blob,`${work.name}-character-card.png`);
-    tip("开始下载完整角色卡");
+    saveBlob(blob,`${work.name}-角色卡.png`);
+    tip("开始下载 PNG 角色卡");
   }catch{tip("生成失败")}
 });
 
@@ -2011,10 +2011,10 @@ document.querySelectorAll(".card").forEach(card=>{
       suppressPointerClickUntil=performance.now()+800;
       if(!fullCardAccessAllowed(index)) return;
       try{
-        tip("正在生成完整角色卡");
+        tip("正在生成 PNG 角色卡");
         const blob=await fullCardBlob(work);
-        saveBlob(blob,`${work.name}-character-card.png`);
-        tip("开始下载完整角色卡");
+        saveBlob(blob,`${work.name}-角色卡.png`);
+        tip("开始下载 PNG 角色卡");
       }catch{tip("生成失败")}
     },650);
   });
