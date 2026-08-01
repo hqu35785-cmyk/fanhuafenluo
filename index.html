@@ -181,7 +181,7 @@ main{flex:1 0 auto;min-width:0;padding:20px 0 12px}
   display:grid;
   grid-template-columns:repeat(7,minmax(0,1fr));
   column-gap:clamp(10px,.72vw,14px);
-  row-gap:clamp(10px,2dvh,26px);
+  row-gap:clamp(18px,2dvh,26px);
 }
 .card-item{
   min-width:0;
@@ -218,7 +218,9 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
 .front:focus-visible,
 .back-return:focus-visible,
 .back-expand:focus-visible,
-.privacy-unlock:focus-visible{
+.privacy-unlock:focus-visible,
+.setting-unlock:focus-visible,
+.archive-setting-unlock:focus-visible{
   outline:2px solid rgba(243,170,194,.78);
   outline-offset:3px;
 }
@@ -271,13 +273,13 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   transition:transform .3s ease,background .3s ease,border-color .3s ease;
 }
 .first-hint{
-  margin:9px 4px 0;
+  margin:4px 4px 0;
   display:flex;
   align-items:center;
   gap:7px;
   color:rgba(192,184,201,.74);
-  font-size:10px;
-  line-height:1.5;
+  font-size:9px;
+  line-height:1.35;
   letter-spacing:.035em;
 }
 .first-hint::before{
@@ -559,6 +561,68 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   border-bottom:1px solid rgba(255,255,255,.065);
 }
 .setting b{display:block;margin-bottom:3px;color:#9890a2;font-size:9px;font-weight:600;letter-spacing:.18em}
+.back-setting-content[hidden],
+.back-setting-privacy[hidden]{display:none!important}
+.back-setting-privacy{
+  min-height:116px;
+  margin-top:10px;
+  padding:12px;
+  display:grid;
+  grid-template-columns:36px minmax(0,1fr);
+  align-items:center;
+  gap:9px 10px;
+  border:1px solid rgba(243,190,210,.13);
+  border-radius:14px;
+  background:
+    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px),
+    radial-gradient(circle at 12% 10%,rgba(243,170,194,.11),transparent 44%),
+    rgba(8,8,15,.31);
+  background-size:22px 22px,22px 22px,auto,auto;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 12px 30px rgba(0,0,0,.14);
+}
+.back-setting-mark,
+.archive-setting-mark{
+  position:relative;
+  display:block;
+  border:1px solid rgba(243,190,210,.24);
+  border-radius:10px;
+  background:
+    linear-gradient(rgba(243,190,210,.19),rgba(243,190,210,.19)) 9px 11px/52% 1px no-repeat,
+    linear-gradient(rgba(157,185,255,.16),rgba(157,185,255,.16)) 9px 17px/40% 1px no-repeat,
+    linear-gradient(150deg,rgba(255,255,255,.08),rgba(255,255,255,.018));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 10px 26px rgba(0,0,0,.24),0 0 24px rgba(243,170,194,.06);
+}
+.back-setting-mark{width:36px;height:42px}
+.back-setting-mark::after,
+.archive-setting-mark::after{
+  content:"";
+  position:absolute;
+  right:-5px;
+  bottom:-5px;
+  width:15px;
+  height:15px;
+  border:1px solid rgba(243,190,210,.3);
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(243,170,194,.5) 0 2px,rgba(17,14,24,.92) 3px);
+  box-shadow:0 5px 15px rgba(0,0,0,.28);
+}
+.back-setting-copy b{margin:0;color:rgba(248,239,245,.9);font-size:9px;letter-spacing:.08em}
+.back-setting-copy p{margin:4px 0 0;color:rgba(210,200,216,.53);font-size:8px;line-height:1.5}
+.setting-unlock{
+  grid-column:1/-1;
+  min-height:44px;
+  border:1px solid rgba(243,190,210,.21);
+  border-radius:11px;
+  color:#fff;
+  background:linear-gradient(135deg,rgba(243,170,194,.14),rgba(157,185,255,.06));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+  cursor:pointer;
+  font-size:9px;
+  font-weight:650;
+  letter-spacing:.07em;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease;
+}
 .back-actions{
   display:grid;
   grid-template-columns:44px minmax(0,1fr);
@@ -838,6 +902,42 @@ footer::before{
 .archive-profile section{display:grid;grid-template-columns:82px 1fr;gap:20px;padding:19px 0;border-bottom:1px solid rgba(255,255,255,.075)}
 .archive-profile b{color:rgba(159,150,171,.68);font-size:8px;font-weight:650;letter-spacing:.18em}
 .archive-profile p{margin:0;color:rgba(237,231,240,.84);font-size:12px;line-height:1.78;text-align:justify}
+.archive-profile p[hidden]{display:none!important}
+.archive-setting-privacy[hidden]{display:none!important}
+.archive-setting-privacy{
+  min-height:146px;
+  padding:18px;
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr);
+  align-items:center;
+  gap:11px 14px;
+  border:1px solid rgba(243,190,210,.13);
+  border-radius:16px;
+  background:
+    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px),
+    radial-gradient(circle at 12% 5%,rgba(243,170,194,.10),transparent 44%),
+    rgba(8,8,15,.28);
+  background-size:26px 26px,26px 26px,auto,auto;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 14px 34px rgba(0,0,0,.13);
+}
+.archive-setting-mark{width:48px;height:56px;border-radius:13px}
+.archive-setting-copy b{display:block;color:rgba(248,239,245,.92);font-size:11px;font-weight:650;letter-spacing:.07em}
+.archive-setting-copy p{margin:6px 0 0;color:rgba(210,200,216,.56);font-size:9px;line-height:1.6}
+.archive-setting-unlock{
+  grid-column:1/-1;
+  min-height:44px;
+  border:1px solid rgba(243,190,210,.22);
+  border-radius:12px;
+  color:#fff;
+  background:linear-gradient(135deg,rgba(243,170,194,.15),rgba(157,185,255,.065));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.065),0 10px 24px rgba(0,0,0,.14);
+  cursor:pointer;
+  font-size:9px;
+  font-weight:650;
+  letter-spacing:.07em;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease;
+}
 .archive-actions{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:9px;margin-top:auto;padding-top:28px}
 .archive-action{
   min-height:44px;
@@ -884,6 +984,7 @@ footer::before{
   .back-return:hover,.back-expand:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.35)}
   .back-expand:hover span:last-child{transform:translate(2px,-2px)}
   .privacy-unlock:hover{transform:translateX(-50%) translateY(-1px);border-color:rgba(243,170,194,.4)}
+  .setting-unlock:hover,.archive-setting-unlock:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.38);background:linear-gradient(135deg,rgba(243,170,194,.19),rgba(157,185,255,.09))}
   .archive-unlock:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.4)}
   .archive-action:hover{transform:translateY(-2px);border-color:rgba(243,170,194,.34);background:rgba(255,255,255,.08)}
   .placeholder-card:hover::after{animation:slotShine 1.35s ease}
@@ -927,6 +1028,7 @@ footer::before{
   .archive-actions{grid-template-columns:1fr 1fr;margin-top:0}
   .archive-action.primary{grid-column:1/-1}
   .archive-file{left:28px;right:28px;bottom:25px}
+  .archive-setting-privacy{min-height:130px;padding:14px}
 }
 @media(max-width:560px){
   .catalog{display:block}
@@ -950,6 +1052,43 @@ footer::before{
   .card-name b{font-size:20px}
   .card-meta span:first-child{display:none}
   .slot-cross{opacity:.12}
+  .archive-modal{
+    width:calc(100vw - 8px - env(safe-area-inset-left) - env(safe-area-inset-right));
+    height:calc(100dvh - 8px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    max-height:none;
+    border-radius:20px;
+  }
+  .archive-shell{
+    height:100%;
+    max-height:none;
+    overflow-y:auto;
+    border-radius:19px;
+  }
+  .archive-visual{height:clamp(210px,32dvh,270px)}
+  .archive-content{padding:25px 18px max(24px,env(safe-area-inset-bottom));overflow:visible}
+  .archive-title{margin:18px 0 6px;font-size:40px}
+  .archive-tags{margin:16px 0 20px}
+  .archive-profile section{
+    grid-template-columns:1fr;
+    gap:8px;
+    padding:14px 0;
+  }
+  .archive-setting-privacy{width:100%;min-height:128px;padding:13px}
+  .archive-actions{
+    position:sticky;
+    z-index:5;
+    bottom:0;
+    grid-template-columns:1.15fr 1fr 1fr;
+    gap:7px;
+    margin:18px -18px max(-24px,calc(-1 * env(safe-area-inset-bottom)));
+    padding:14px 18px max(14px,env(safe-area-inset-bottom));
+    background:linear-gradient(180deg,rgba(10,9,17,.22),rgba(10,9,17,.96) 26%,rgba(10,9,17,.99));
+    -webkit-backdrop-filter:blur(14px) saturate(120%);
+    backdrop-filter:blur(14px) saturate(120%);
+  }
+  .archive-action.primary{grid-column:auto}
+  .archive-action{min-height:46px;padding-inline:8px;font-size:9px}
+  .archive-close{top:max(11px,env(safe-area-inset-top));right:max(11px,env(safe-area-inset-right))}
 }
 @media(max-width:430px){
   .wrap{width:calc(100% - 20px)}
@@ -972,6 +1111,9 @@ footer::before{
   .back-actions{grid-template-columns:44px minmax(0,1fr);gap:6px;margin-top:10px}
   .back-return,.back-expand{min-height:44px}
   .back-expand{gap:5px;padding-inline:7px;font-size:8px}
+  .back-setting-privacy{min-height:104px;margin-top:7px;padding:9px;grid-template-columns:30px minmax(0,1fr);gap:7px 8px}
+  .back-setting-mark{width:30px;height:35px;border-radius:9px}
+  .back-setting-copy p{display:none}
   .card{--privacy-unlock-top:calc(100% - 144px)}
   .privacy-veil::before{width:50px;height:58px}
   .privacy-unlock{min-width:118px;min-height:44px}
@@ -982,12 +1124,92 @@ footer::before{
   .slot-cross{display:none}
 }
 
+/* Phones use a direct face swap. This avoids mirrored/stacked faces in
+   mobile WebKit while keeping the dimensional flip on larger screens. */
+@media(max-width:760px), (max-height:520px) and (orientation:landscape), (hover:none) and (pointer:coarse){
+  .card{perspective:none}
+  .card-inner{transform:none!important;transform-style:flat}
+  .face{
+    transform:none;
+    backface-visibility:visible;
+    -webkit-backface-visibility:visible;
+  }
+  .back{display:none}
+  .card.flipped .front{display:none}
+  .card.flipped .back{display:grid}
+}
+
+@media(max-width:620px) and (orientation:portrait){
+  .catalog{display:block}
+  .gallery{
+    grid-template-columns:minmax(0,380px);
+    justify-content:center;
+    gap:0;
+  }
+  .placeholder-item{display:none!important}
+  html.gallery-fit .gallery{grid-auto-rows:auto}
+  .card,
+  html.gallery-fit .card{
+    width:100%;
+    height:auto;
+    aspect-ratio:.64;
+    --privacy-unlock-top:58%;
+  }
+  .card-item.has-hint{display:block}
+  .first-hint{
+    margin:10px 4px 0;
+    padding:0 2px 3px;
+    display:flex;
+    font-size:11px;
+  }
+  .face{border-radius:22px}
+  .back{padding:18px}
+  .back-toolbar{margin-bottom:14px}
+  .back h2{font-size:28px}
+  .back .alias{margin:5px 0 10px}
+  .back-role{margin-bottom:12px;font-size:11px}
+  .back-tags{display:flex;margin-bottom:13px}
+  .back-tag{padding:5px 8px;font-size:8px}
+  .setting{gap:11px;font-size:12px;line-height:1.6}
+  .back .setting p{-webkit-line-clamp:3}
+  .setting div{padding-bottom:9px}
+  .back-setting-privacy{
+    min-height:124px;
+    margin-top:9px;
+    padding:11px;
+    grid-template-columns:36px minmax(0,1fr);
+    gap:8px 10px;
+  }
+  .back-setting-mark{display:block;width:36px;height:42px;border-radius:10px}
+  .back-setting-copy b{text-align:left;font-size:10px}
+  .back-setting-copy p{display:block;font-size:8px}
+  .back-actions{grid-template-columns:48px minmax(0,1fr);gap:8px;margin-top:14px}
+  .back-return,.back-expand{min-height:46px}
+  .back-expand{padding-inline:12px;font-size:10px}
+}
+
 @media(max-height:520px) and (orientation:landscape){
   header{height:54px}
   .brand img{width:34px;height:34px;border-radius:11px}
   .brand span{font-size:15px}
   main{padding:9px 0 6px}
-  .gallery{row-gap:8px}
+  .gallery{
+    grid-template-columns:none;
+    grid-auto-flow:column;
+    grid-auto-columns:clamp(188px,calc((100dvh - 108px) * .72),224px);
+    justify-content:safe center;
+    gap:12px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding-bottom:4px;
+    scroll-snap-type:x mandatory;
+    scrollbar-width:none;
+  }
+  .gallery::-webkit-scrollbar{display:none}
+  .gallery .card-item{scroll-snap-align:center}
+  .first-hint{margin:3px 2px 0;font-size:8px;line-height:1.2}
+  .placeholder-item{display:none!important}
+  .card{height:auto;aspect-ratio:.72}
   html.compact-landscape .card-meta{display:none}
   .card{--privacy-unlock-top:calc(100% - 118px)}
   .back{padding:11px}
@@ -999,6 +1221,9 @@ footer::before{
   .back .setting p{-webkit-line-clamp:2}
   .setting{gap:6px;font-size:9px;line-height:1.45}
   .setting div{padding-bottom:6px}
+  .back-setting-privacy{min-height:0;margin-top:6px;padding:7px;grid-template-columns:1fr;gap:6px}
+  .back-setting-mark,.back-setting-copy p{display:none}
+  .back-setting-copy b{text-align:center}
   .back-actions{margin-top:8px}
   .side-title{font-size:9px}
   footer{margin-top:0;padding:5px 0 max(5px,env(safe-area-inset-bottom));font-size:8px}
@@ -1010,21 +1235,29 @@ footer::before{
   .archive-shell{
     display:grid;
     grid-template-columns:minmax(220px,.82fr) minmax(320px,1.18fr);
+    grid-template-rows:minmax(0,1fr);
+    height:calc(100dvh - 12px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     min-height:0;
     max-height:calc(100dvh - 12px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     overflow:hidden;
     border-radius:19px;
   }
-  .archive-visual{height:auto;min-height:0}
+  .archive-visual{height:100%;min-height:0}
   .archive-content{
-    padding:22px max(58px,calc(28px + env(safe-area-inset-right))) max(18px,env(safe-area-inset-bottom)) 28px;
-    overflow:auto;
+    min-height:0;
+    height:100%;
+    padding:15px max(52px,calc(18px + env(safe-area-inset-right))) max(7px,env(safe-area-inset-bottom)) 18px;
+    overflow-y:auto;
   }
-  .archive-title{margin:14px 0 5px;font-size:34px}
-  .archive-tags{margin:12px 0 14px}
-  .archive-profile section{grid-template-columns:56px 1fr;gap:12px;padding:10px 0}
+  .archive-eyebrow{padding-right:0}
+  .archive-title{margin:8px 0 3px;font-size:32px}
+  .archive-tags{margin:8px 0 9px}
+  .archive-profile section{grid-template-columns:56px 1fr;gap:12px;padding:8px 0}
   .archive-profile p{font-size:11px;line-height:1.55}
-  .archive-actions{grid-template-columns:1.15fr 1fr 1fr;gap:7px;padding-top:14px}
+  .archive-setting-privacy{min-height:0;padding:9px;grid-template-columns:34px minmax(0,1fr);gap:7px 9px}
+  .archive-setting-mark{width:34px;height:40px;border-radius:10px}
+  .archive-setting-copy p{display:none}
+  .archive-actions{grid-template-columns:1.15fr 1fr 1fr;gap:7px;padding-top:9px}
   .archive-action.primary{grid-column:auto}
   .archive-action{min-height:44px;padding-inline:10px;font-size:9px}
   .archive-file{left:22px;right:22px;bottom:18px}
@@ -1039,7 +1272,7 @@ footer::before{
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .card,.card-inner,.front img,.action,.toast,.archive-modal,.archive-action,.card-open,.back-return,.back-expand,.privacy-unlock,.archive-unlock{transition:none}
+  .card,.card-inner,.front img,.action,.toast,.archive-modal,.archive-action,.card-open,.back-return,.back-expand,.privacy-unlock,.archive-unlock,.setting-unlock,.archive-setting-unlock{transition:none}
   .placeholder-card:hover::after{animation:none}
 }
 
@@ -1093,7 +1326,15 @@ footer::before{
       <div class="archive-tags" id="archiveTags"></div>
       <div class="archive-profile">
         <section><b>01 · 性格</b><p id="archivePersonality"></p></section>
-        <section><b>02 · 设定</b><p id="archiveSetting"></p></section>
+        <section>
+          <b>02 · 设定</b>
+          <p id="archiveSetting" tabindex="-1"></p>
+          <div class="archive-setting-privacy" id="archiveSettingPrivacy" aria-hidden="true" hidden>
+            <span class="archive-setting-mark" aria-hidden="true"></span>
+            <div class="archive-setting-copy"><b>敏感设定已隐藏</b><p>确认环境合适后，再解锁查看这段角色设定。</p></div>
+            <button class="archive-setting-unlock" id="archiveSettingUnlock" type="button" aria-controls="archiveSetting" aria-label="解锁敏感角色设定，仅本次页面有效">解锁设定</button>
+          </div>
+        </section>
       </div>
       <div class="archive-actions">
         <button class="archive-action primary" id="downloadCard" type="button">保存完整角色卡</button>
@@ -1121,7 +1362,9 @@ const works=[
     tags:["原创角色","便利店","日常系"],
     creator:"霖霖",
     sensitive:true,
-    sensitiveLabel:"敏感卡面"
+    sensitiveLabel:"敏感卡面",
+    sensitiveSetting:true,
+    sensitiveSettingLabel:"敏感设定"
   }
   /*
   继续添加：
@@ -1134,7 +1377,8 @@ const works=[
     setting:"背景设定",
     tags:["标签1","标签2"],
     creator:"霖霖",
-    sensitive:false
+    sensitive:false,
+    sensitiveSetting:false
   }
   */
 ];
@@ -1163,15 +1407,24 @@ function safe(text){
 
 function cardHTML(work,index){
   const file=String(index+1).padStart(2,"0");
-  const locked=Boolean(work.sensitive);
+  const imageSensitive=Boolean(work.sensitive);
+  const settingSensitive=Boolean(work.sensitiveSetting);
+  const hint=index===0
+    ? `<p class="first-hint">点击卡片查看设定 · 长按保存完整角色卡</p>`
+    : "";
+  const privacyLabel=imageSensitive && settingSensitive
+    ? "双重隐私"
+    : settingSensitive
+      ? (work.sensitiveSettingLabel || "敏感设定")
+      : (work.sensitiveLabel || "敏感卡面");
   const tags=(work.tags || []).slice(0,3).map(tag=>`<span class="back-tag">${safe(tag)}</span>`).join("");
   return `
-  <div class="card-item">
-    <article class="card${locked ? " is-sensitive" : ""}" data-index="${index}">
+  <div class="card-item${index===0 ? " has-hint" : ""}">
+    <article class="card${imageSensitive ? " is-sensitive" : ""}${settingSensitive ? " is-setting-sensitive" : ""}" data-index="${index}">
       <div class="card-inner">
-        <button class="face front card-flip${locked ? " is-locked" : ""}" type="button" aria-label="翻转查看${safe(work.name)}的简介" aria-expanded="false" aria-controls="card-back-${index}" aria-hidden="false">
-          <img ${locked ? "" : `src="${work.image}"`} alt="${locked ? "" : safe(work.name)}"${locked ? ' aria-hidden="true" hidden' : ""}>
-          ${locked ? '<span class="privacy-veil" aria-hidden="true"></span>' : ""}
+        <button class="face front card-flip${imageSensitive ? " is-locked" : ""}" type="button" aria-label="翻转查看${safe(work.name)}的简介" aria-expanded="false" aria-controls="card-back-${index}" aria-hidden="false">
+          <img ${imageSensitive ? "" : `src="${work.image}"`} alt="${imageSensitive ? "" : safe(work.name)}"${imageSensitive ? ' aria-hidden="true" hidden' : ""}>
+          ${imageSensitive ? '<span class="privacy-veil" aria-hidden="true"></span>' : ""}
           <span class="card-code">FILE ${file}</span>
           <span class="card-open" aria-hidden="true">↻</span>
           <span class="card-name">
@@ -1184,7 +1437,7 @@ function cardHTML(work,index){
           <div class="back-scroll">
             <div class="back-toolbar">
               <span class="back-file">FILE ${file}</span>
-              ${locked ? `<span class="back-privacy">${safe(work.sensitiveLabel || "敏感卡面")}</span>` : ""}
+              ${imageSensitive || settingSensitive ? `<span class="back-privacy">${safe(privacyLabel)}</span>` : ""}
             </div>
             <h2>${safe(work.name)}</h2>
             <p class="alias">${safe(work.alias || "ORIGINAL")}</p>
@@ -1192,7 +1445,12 @@ function cardHTML(work,index){
             <div class="back-tags">${tags}</div>
             <div class="setting">
               <div><b>性格</b><p>${safe(work.personality || "暂无性格介绍。")}</p></div>
-              <div><b>设定</b><p>${safe(work.setting || "暂无背景设定。")}</p></div>
+              <div class="back-setting-content" id="card-setting-${index}" tabindex="-1"${settingSensitive ? " hidden" : ""}><b>设定</b><p>${settingSensitive ? "" : safe(work.setting || "暂无背景设定。")}</p></div>
+            </div>
+            <div class="back-setting-privacy"${settingSensitive ? "" : " hidden"} aria-hidden="${settingSensitive ? "false" : "true"}">
+              <span class="back-setting-mark" aria-hidden="true"></span>
+              <div class="back-setting-copy"><b>敏感设定已隐藏</b><p>确认后再解锁查看这段角色设定。</p></div>
+              <button class="setting-unlock" type="button" aria-controls="card-setting-${index}" aria-label="解锁${safe(work.name)}的敏感角色设定，仅本次页面有效">解锁设定</button>
             </div>
           </div>
           <div class="back-actions">
@@ -1201,8 +1459,9 @@ function cardHTML(work,index){
           </div>
         </section>
       </div>
-      ${locked ? `<button class="privacy-unlock" type="button" data-index="${index}" aria-label="显示${safe(work.name)}的敏感图片，仅本次页面有效">解锁卡面</button>` : ""}
+      ${imageSensitive ? `<button class="privacy-unlock" type="button" data-index="${index}" aria-label="显示${safe(work.name)}的敏感图片，仅本次页面有效">解锁卡面</button>` : ""}
     </article>
+    ${hint}
   </div>`;
 }
 
@@ -1237,9 +1496,19 @@ function currentColumnCount(){
 function fitGalleryToViewport(){
   layoutFrame=0;
   const viewportHeight=Math.round(window.visualViewport?.height || window.innerHeight);
-  const columns=currentColumnCount();
+  const phonePortrait=window.innerWidth<=620 && viewportHeight>=window.innerWidth;
   const compactLandscape=window.innerWidth>viewportHeight && viewportHeight<=520;
-  const desiredRows=compactLandscape ? 1 : 2;
+
+  if(phonePortrait || compactLandscape){
+    placeholderNodes.forEach(node=>{node.hidden=true});
+    gallery.style.removeProperty("--gallery-row-height");
+    layoutRoot.classList.remove("gallery-fit");
+    layoutRoot.classList.toggle("compact-landscape",compactLandscape);
+    return;
+  }
+
+  const columns=currentColumnCount();
+  const desiredRows=2;
   const slotCapacity=Math.min(DISPLAY_SLOTS,Math.max(works.length,columns*desiredRows));
   const visiblePlaceholderCount=Math.max(0,slotCapacity-works.length);
 
@@ -1263,8 +1532,8 @@ function fitGalleryToViewport(){
     viewportHeight-footerHeight-mainBottomPadding-galleryTop-rowGap*(rows-1)
   );
   const targetHeight=availableHeight/rows;
-  const minimumHeight=cardWidth/(compactLandscape?.78:.8);
-  const maximumHeight=cardWidth/(compactLandscape?.62:(columns<=3?.52:.5));
+  const minimumHeight=cardWidth/.8;
+  const maximumHeight=cardWidth/(columns<=3?.52:.5);
   const rowHeight=Math.floor(Math.min(maximumHeight,Math.max(minimumHeight,targetHeight)));
 
   gallery.style.setProperty("--gallery-row-height",`${rowHeight}px`);
@@ -1389,10 +1658,13 @@ const archiveRole=document.getElementById("archiveRole");
 const archiveTags=document.getElementById("archiveTags");
 const archivePersonality=document.getElementById("archivePersonality");
 const archiveSetting=document.getElementById("archiveSetting");
+const archiveSettingPrivacy=document.getElementById("archiveSettingPrivacy");
+const archiveSettingUnlock=document.getElementById("archiveSettingUnlock");
 const downloadCard=document.getElementById("downloadCard");
 const downloadImage=document.getElementById("downloadImage");
 const downloadJson=document.getElementById("downloadJson");
 const unlockedWorks=new Set();
+const unlockedSettings=new Set();
 let activeWork=null;
 let activeIndex=null;
 let modalOpener=null;
@@ -1407,12 +1679,18 @@ function dataFor(work){
     tags:work.tags,
     creator:work.creator,
     sensitive:Boolean(work.sensitive),
-    sensitiveLabel:work.sensitiveLabel || ""
+    sensitiveLabel:work.sensitiveLabel || "",
+    sensitiveSetting:Boolean(work.sensitiveSetting),
+    sensitiveSettingLabel:work.sensitiveSettingLabel || ""
   };
 }
 
 function isWorkLocked(index){
   return Boolean(works[index]?.sensitive) && !unlockedWorks.has(index);
+}
+
+function isSettingLocked(index){
+  return Boolean(works[index]?.sensitiveSetting) && !unlockedSettings.has(index);
 }
 
 function syncCardPrivacy(index){
@@ -1447,6 +1725,45 @@ function syncCardPrivacy(index){
   }
 }
 
+function syncCardSettingPrivacy(index){
+  const work=works[index];
+  const card=gallery.querySelector(`.card[data-index="${index}"]`);
+  if(!work || !card) return;
+  const content=card.querySelector(".back-setting-content");
+  const settingText=content?.querySelector("p");
+  const gate=card.querySelector(".back-setting-privacy");
+  const locked=isSettingLocked(index);
+
+  card.classList.toggle("is-setting-unlocked",Boolean(work.sensitiveSetting) && !locked);
+  if(settingText) settingText.textContent=locked ? "" : (work.setting || "暂无背景设定。");
+  if(content){
+    content.hidden=locked;
+    content.setAttribute("aria-hidden",String(locked));
+  }
+  if(gate){
+    gate.hidden=!locked;
+    gate.toggleAttribute("inert",!locked);
+    gate.setAttribute("aria-hidden",String(!locked));
+  }
+}
+
+function syncArchiveDownloads(index){
+  const imageLocked=isWorkLocked(index);
+  const settingLocked=isSettingLocked(index);
+  downloadImage.disabled=imageLocked;
+  downloadJson.disabled=settingLocked;
+  downloadCard.disabled=imageLocked || settingLocked;
+  downloadImage.title=imageLocked ? "请先解锁敏感图片" : "";
+  downloadJson.title=settingLocked ? "请先解锁敏感设定" : "";
+  downloadCard.title=imageLocked && settingLocked
+    ? "请先解锁敏感图片和设定"
+    : imageLocked
+      ? "请先解锁敏感图片"
+      : settingLocked
+        ? "请先解锁敏感设定"
+        : "";
+}
+
 function syncArchivePrivacy(index){
   const work=works[index];
   if(!work) return;
@@ -1457,16 +1774,28 @@ function syncArchivePrivacy(index){
   archiveImage.hidden=true;
   archiveVisual.classList.toggle("is-locked",locked);
   archivePrivacy.hidden=!locked;
-  downloadCard.disabled=locked;
-  downloadImage.disabled=locked;
-  downloadCard.title=locked ? "请先解锁敏感图片" : "";
-  downloadImage.title=locked ? "请先解锁敏感图片" : "";
 
   if(!locked){
     archiveImage.src=work.image;
     archiveImage.alt=`${work.name}角色立绘`;
     archiveImage.hidden=false;
   }
+  syncArchiveDownloads(index);
+}
+
+function syncArchiveSettingPrivacy(index){
+  const work=works[index];
+  if(!work) return;
+  const locked=isSettingLocked(index);
+
+  archiveSetting.textContent="";
+  archiveSetting.hidden=locked;
+  archiveSetting.setAttribute("aria-hidden",String(locked));
+  archiveSettingPrivacy.hidden=!locked;
+  archiveSettingPrivacy.toggleAttribute("inert",!locked);
+  archiveSettingPrivacy.setAttribute("aria-hidden",String(!locked));
+  if(!locked) archiveSetting.textContent=work.setting || "暂无背景设定。";
+  syncArchiveDownloads(index);
 }
 
 function unlockWork(index){
@@ -1478,9 +1807,36 @@ function unlockWork(index){
   tip("敏感图片已解锁；刷新页面后会重新锁定");
 }
 
+function unlockSetting(index){
+  const work=works[index];
+  if(!work || !work.sensitiveSetting) return;
+  unlockedSettings.add(index);
+  syncCardSettingPrivacy(index);
+  if(activeIndex===index) syncArchiveSettingPrivacy(index);
+  tip("敏感设定已解锁；刷新页面后会重新锁定");
+}
+
 function imageAccessAllowed(index){
   if(index===null || index===undefined || !isWorkLocked(index)) return true;
   tip("请先解锁敏感图片");
+  return false;
+}
+
+function settingAccessAllowed(index){
+  if(index===null || index===undefined || !isSettingLocked(index)) return true;
+  tip("请先解锁敏感设定");
+  return false;
+}
+
+function fullCardAccessAllowed(index){
+  const imageLocked=isWorkLocked(index);
+  const settingLocked=isSettingLocked(index);
+  if(!imageLocked && !settingLocked) return true;
+  tip(imageLocked && settingLocked
+    ? "请先解锁敏感图片和设定"
+    : imageLocked
+      ? "请先解锁敏感图片"
+      : "请先解锁敏感设定");
   return false;
 }
 
@@ -1493,12 +1849,14 @@ function openArchive(index,opener){
   archiveImage.removeAttribute("src");
   archiveImage.alt="";
   archiveImage.hidden=true;
+  archiveSetting.textContent="";
+  archiveSetting.hidden=true;
+  archiveSettingPrivacy.hidden=true;
   archiveFile.textContent=`FILE ${String(index+1).padStart(2,"0")}`;
   archiveAlias.textContent=work.alias || "ORIGINAL";
   archiveName.textContent=work.name;
   archiveRole.textContent=work.role || "原创角色";
   archivePersonality.textContent=work.personality || "暂无性格介绍。";
-  archiveSetting.textContent=work.setting || "暂无背景设定。";
   archiveTags.replaceChildren(...(work.tags || []).map(tag=>{
     const span=document.createElement("span");
     span.className="archive-tag";
@@ -1506,6 +1864,7 @@ function openArchive(index,opener){
     return span;
   }));
   syncArchivePrivacy(index);
+  syncArchiveSettingPrivacy(index);
   document.body.classList.add("modal-open");
   if(!archiveModal.open) archiveModal.showModal();
   requestAnimationFrame(()=>archiveClose.focus());
@@ -1516,6 +1875,11 @@ archiveUnlock.addEventListener("click",()=>{
   if(activeIndex===null) return;
   unlockWork(activeIndex);
   requestAnimationFrame(()=>archiveClose.focus({preventScroll:true}));
+});
+archiveSettingUnlock.addEventListener("click",()=>{
+  if(activeIndex===null) return;
+  unlockSetting(activeIndex);
+  requestAnimationFrame(()=>archiveSetting.focus({preventScroll:true}));
 });
 archiveModal.addEventListener("click",e=>{
   if(e.target===archiveModal) archiveModal.close();
@@ -1537,15 +1901,23 @@ archiveModal.addEventListener("close",()=>{
   archiveImage.hidden=true;
   archiveVisual.classList.remove("is-locked");
   archivePrivacy.hidden=true;
-  downloadCard.disabled=false;
-  downloadImage.disabled=false;
+  archiveSetting.textContent="";
+  archiveSetting.hidden=false;
+  archiveSetting.removeAttribute("aria-hidden");
+  archiveSettingPrivacy.hidden=true;
+  archiveSettingPrivacy.setAttribute("aria-hidden","true");
+  archiveSettingPrivacy.setAttribute("inert","");
+  [downloadCard,downloadImage,downloadJson].forEach(button=>{
+    button.disabled=false;
+    button.title="";
+  });
   opener?.focus();
 });
 
 downloadCard.addEventListener("click",async()=>{
   const work=activeWork;
   if(!work) return;
-  if(!imageAccessAllowed(activeIndex)) return;
+  if(!fullCardAccessAllowed(activeIndex)) return;
   try{
     tip("正在生成完整角色卡");
     const blob=await fullCardBlob(work);
@@ -1568,6 +1940,7 @@ downloadImage.addEventListener("click",async()=>{
 downloadJson.addEventListener("click",()=>{
   const work=activeWork;
   if(!work) return;
+  if(!settingAccessAllowed(activeIndex)) return;
   saveBlob(
     new Blob([JSON.stringify(dataFor(work),null,2)],{type:"application/json;charset=utf-8"}),
     `${work.name}.json`
@@ -1583,9 +1956,12 @@ document.querySelectorAll(".card").forEach(card=>{
   const returnButton=card.querySelector(".back-return");
   const expandButton=card.querySelector(".back-expand");
   const unlockButton=card.querySelector(".privacy-unlock");
+  const settingUnlockButton=card.querySelector(".setting-unlock");
+  const settingContent=card.querySelector(".back-setting-content");
   let timer=null,startX=0,startY=0,suppressPointerClickUntil=0;
 
   syncCardPrivacy(index);
+  syncCardSettingPrivacy(index);
 
   function clearHold(){
     clearTimeout(timer);
@@ -1622,6 +1998,10 @@ document.querySelectorAll(".card").forEach(card=>{
     unlockWork(index);
     requestAnimationFrame(()=>flipButton.focus({preventScroll:true}));
   });
+  settingUnlockButton?.addEventListener("click",()=>{
+    unlockSetting(index);
+    requestAnimationFrame(()=>settingContent?.focus({preventScroll:true}));
+  });
 
   flipButton.addEventListener("pointerdown",e=>{
     if(!e.isPrimary || (e.pointerType==="mouse" && e.button!==0)) return;
@@ -1629,7 +2009,7 @@ document.querySelectorAll(".card").forEach(card=>{
     timer=setTimeout(async()=>{
       timer=null;
       suppressPointerClickUntil=performance.now()+800;
-      if(!imageAccessAllowed(index)) return;
+      if(!fullCardAccessAllowed(index)) return;
       try{
         tip("正在生成完整角色卡");
         const blob=await fullCardBlob(work);
