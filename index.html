@@ -32,7 +32,7 @@ body{
 }
 button{font:inherit}
 img{display:block;max-width:100%}
-.wrap{width:min(1240px,calc(100% - 16px));margin:auto}
+.wrap{width:min(1720px,calc(100% - 16px));margin:auto}
 
 header{
   height:68px;
@@ -66,7 +66,7 @@ main{padding:20px 0 12px}
 }
 .gallery{
   display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr));
+  grid-template-columns:repeat(7,minmax(0,1fr));
   gap:10px;
 }
 .card-item{
@@ -213,14 +213,29 @@ footer{
 }
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
-@media(max-width:1080px){.gallery{grid-template-columns:repeat(4,1fr)}}
-@media(max-width:820px){.gallery{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1550px){
+  .gallery{grid-template-columns:repeat(6,1fr)}
+  .gallery>.placeholder-item:nth-child(n+13){display:none}
+}
+@media(max-width:1320px){
+  .gallery{grid-template-columns:repeat(5,1fr)}
+  .gallery>.placeholder-item:nth-child(n+11){display:none}
+}
+@media(max-width:1080px){
+  .gallery{grid-template-columns:repeat(4,1fr)}
+  .gallery>.placeholder-item:nth-child(n+9){display:none}
+}
+@media(max-width:820px){
+  .gallery{grid-template-columns:repeat(3,1fr)}
+  .gallery>.placeholder-item:nth-child(n+7){display:none}
+}
 @media(max-width:620px){
   .catalog{grid-template-columns:22px minmax(0,1fr);gap:6px}
   .gallery{grid-template-columns:repeat(2,1fr)}
+  .gallery>.placeholder-item:nth-child(n+5){display:none}
 }
 @media(max-width:430px){
-  .wrap{width:min(100% - 10px,1240px)}
+  .wrap{width:min(100% - 10px,1720px)}
   main{padding-top:14px}
   .catalog{grid-template-columns:24px minmax(0,1fr);gap:7px}
   .side-title{font-size:11px;margin-top:3px}
@@ -368,10 +383,10 @@ function cardHTML(work,index){
   </div>`;
 }
 
-const DISPLAY_SLOTS=10;
+const DISPLAY_SLOTS=14;
 const emptyCount=Math.max(0,DISPLAY_SLOTS-works.length);
 const placeholders=Array.from({length:emptyCount},()=>`
-  <div class="card-item" aria-hidden="true">
+  <div class="card-item placeholder-item" aria-hidden="true">
     <div class="placeholder-card"></div>
   </div>
 `).join("");
