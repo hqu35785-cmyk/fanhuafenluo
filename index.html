@@ -1827,118 +1827,30 @@ window.addEventListener("orientationchange",scheduleGalleryFit,{passive:true});
 window.visualViewport?.addEventListener("resize",scheduleGalleryFit,{passive:true});
 document.fonts?.ready.then(scheduleGalleryFit);
 
-function save(uri,name){
-  const a=document.createElement("a");
-  a.href=uri;
-  a.download=name;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+function downloadDirectly(url,filename){
+  const link=document.createElement("a");
+  link.href=new URL(url,window.location.href).href;
+  link.download=filename;
+  // 不支持 download 的浏览器至少会打开原图，避免离开站点且可长按保存。
+  link.target="_blank";
+  link.rel="noopener";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }
-function saveBlob(blob,name){
-  const url=URL.createObjectURL(blob);
-  save(url,name);
-  setTimeout(()=>URL.revokeObjectURL(url),1200);
-}
-function readPngSource(bytes){
-  const signature=[137,80,78,71,13,10,26,10];
-  if(bytes.length<20 || signature.some((byte,index)=>bytes[index]!==byte))
-    throw new Error("invalid png");
-  const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
-  const chunks=[];
-  let offset=8;
-  let pngEnd=0;
-  while(offset+12<=bytes.length){
-    const length=view.getUint32(offset);
-    const dataStart=offset+8;
-    const dataEnd=dataStart+length;
-    const end=dataEnd+4;
-    if(end>bytes.length) throw new Error("invalid png");
-    const type=String.fromCharCode(...bytes.subarray(offset+4,offset+8));
-    chunks.push({type,start:offset,dataStart,dataEnd,end});
-    offset=end;
-    if(type==="IEND"){
-      pngEnd=end;
-      break;
-    }
+
+function downloadCharacterCard(work,index){
+  if(!work || !fullCardAccessAllowed(index)) return;
+  if(!work.image){
+    tip("下载失败，请尝试在外部浏览器打开");
+    return;
   }
-  if(!pngEnd) throw new Error("invalid png");
-  return {chunks,pngEnd};
-}
-
-function chunkKeyword(bytes,chunk){
-  if(!["tEXt","zTXt","iTXt"].includes(chunk.type)) return "";
-  let zero=chunk.dataStart;
-  while(zero<chunk.dataEnd && bytes[zero]!==0) zero++;
-  if(zero===chunk.dataEnd) return "";
-  return bytesToAscii(bytes,chunk.dataStart,zero);
-}
-
-function bytesToAscii(bytes,start,end){
-  let text="";
-  for(let offset=start;offset<end;offset+=0x8000)
-    text+=String.fromCharCode(...bytes.subarray(offset,Math.min(end,offset+0x8000)));
-  return text;
-}
-
-function decodeCardText(bytes,chunk){
-  let zero=chunk.dataStart;
-  while(zero<chunk.dataEnd && bytes[zero]!==0) zero++;
-  const encoded=bytesToAscii(bytes,zero+1,chunk.dataEnd);
-  const binary=atob(encoded);
-  const decoded=new Uint8Array(binary.length);
-  for(let i=0;i<binary.length;i++) decoded[i]=binary.charCodeAt(i);
-  return new TextDecoder().decode(decoded);
-}
-
-async function loadSourceCard(work){
-  const response=await fetch(work.image);
-  if(!response.ok) throw new Error("source image unavailable");
-  const sourceBlob=await response.blob();
-  const bytes=new Uint8Array(await sourceBlob.arrayBuffer());
-  const {chunks,pngEnd}=readPngSource(bytes);
-  const cardChunks=chunks.filter(
-    chunk=>chunk.type==="tEXt" && chunkKeyword(bytes,chunk)==="chara"
-  );
-  if(cardChunks.length===0){
-    const error=new Error("card metadata missing");
-    error.code="CARD_DATA_MISSING";
-    throw error;
+  try{
+    downloadDirectly(work.image,`${work.name}-角色卡.png`);
+    tip("已发起下载；若打开原图，请长按保存");
+  }catch{
+    tip("下载失败，请尝试在外部浏览器打开");
   }
-  if(cardChunks.length!==1){
-    const error=new Error("ambiguous card metadata");
-    error.code="CARD_DATA_INVALID";
-    throw error;
-  }
-  const jsonText=decodeCardText(bytes,cardChunks[0]);
-  try{JSON.parse(jsonText)}
-  catch{
-    const error=new Error("card metadata invalid");
-    error.code="CARD_DATA_INVALID";
-    throw error;
-  }
-  return {
-    blob:new Blob([bytes],{type:"image/png"}),
-    bytes,
-    chunks,
-    pngEnd,
-    jsonText
-  };
-}
-
-function getSourceCard(work,index){
-  if(!sourceCardJobs.has(index)){
-    const job=loadSourceCard(work).catch(error=>{
-      sourceCardJobs.delete(index);
-      throw error;
-    });
-    sourceCardJobs.set(index,job);
-  }
-  return sourceCardJobs.get(index);
-}
-
-async function fullCardBlob(work,index){
-  return (await getSourceCard(work,index)).blob;
 }
 
 const archiveClose=document.getElementById("archiveClose");
@@ -1960,9 +1872,6 @@ const archiveSetting=document.getElementById("archiveSetting");
 const archiveSettingPrivacy=document.getElementById("archiveSettingPrivacy");
 const downloadCard=document.getElementById("downloadCard");
 const unlockedWorks=new Set();
-const sourceCardJobs=new Map();
-const fullCardBlobJobs=new Map();
-const fullCardBlobs=new Map();
 const previewLoadStates=new Map();
 const previewLoadQueue=[];
 const queuedPreviewIndexes=new Set();
@@ -1973,7 +1882,6 @@ let activePreviewLoads=0;
 let activeWork=null;
 let activeIndex=null;
 let modalOpener=null;
-let cardDownloadBusy=false;
 
 function isWorkLocked(index){
   return Boolean(works[index]?.sensitive) && !unlockedWorks.has(index);
@@ -2016,22 +1924,6 @@ function syncUnlockAll(){
     : failedCount>0
       ? `重新加载 ${failedCount} 张失败的图片`
       : "全部敏感角色卡已解锁，图片将按查看顺序加载");
-}
-
-function getFullCardBlob(work,index){
-  if(!fullCardBlobJobs.has(index)){
-    const job=fullCardBlob(work,index)
-      .then(blob=>{
-        fullCardBlobs.set(index,blob);
-        return blob;
-      })
-      .catch(error=>{
-        fullCardBlobJobs.delete(index);
-        throw error;
-      });
-    fullCardBlobJobs.set(index,job);
-  }
-  return fullCardBlobJobs.get(index);
 }
 
 function previewForWork(work){
@@ -2219,9 +2111,9 @@ function syncCardPrivacy(index,{queueIfNear=true}={}){
       unlock.setAttribute("aria-label",`重新加载${work.name}的图片`);
     }else{
       unlock.dataset.mode="save";
-      unlock.disabled=cardDownloadBusy;
+      unlock.disabled=false;
       unlock.textContent="保存角色卡 PNG";
-      unlock.title=cardDownloadBusy ? "正在生成角色卡" : "";
+      unlock.title="";
       unlock.setAttribute("aria-label",`保存${work.name}角色卡 PNG`);
     }
     unlock.toggleAttribute("inert",flipped);
@@ -2253,39 +2145,15 @@ function syncCardSettingPrivacy(index){
 }
 
 function cardSaveTitle(index){
-  if(cardDownloadBusy) return "正在生成角色卡";
   if(isWorkLocked(index) || isSettingLocked(index)) return "请先解锁卡面";
   return "";
-}
-
-function syncFaceActions(){
-  works.forEach((_,index)=>syncCardPrivacy(index,{queueIfNear:false}));
 }
 
 function syncArchiveDownloads(index){
   const imageLocked=isWorkLocked(index);
   const settingLocked=isSettingLocked(index);
-  downloadCard.disabled=cardDownloadBusy || imageLocked || settingLocked;
+  downloadCard.disabled=imageLocked || settingLocked;
   downloadCard.title=cardSaveTitle(index);
-}
-
-async function downloadCharacterCard(work,index){
-  if(!work || cardDownloadBusy || !fullCardAccessAllowed(index)) return;
-  cardDownloadBusy=true;
-  syncArchiveDownloads(index);
-  syncFaceActions();
-  try{
-    tip("正在生成 PNG 角色卡");
-    const blob=await getFullCardBlob(work,index);
-    saveBlob(blob,`${work.name}-角色卡.png`);
-    tip("开始下载 PNG 角色卡");
-  }catch{
-    tip("生成失败");
-  }finally{
-    cardDownloadBusy=false;
-    if(activeIndex!==null) syncArchiveDownloads(activeIndex);
-    syncFaceActions();
-  }
 }
 
 function syncArchivePrivacy(index){
