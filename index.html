@@ -1047,7 +1047,7 @@ footer::before{
   letter-spacing:.07em;
   transition:transform .2s ease,border-color .2s ease,background .2s ease;
 }
-.archive-actions{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:9px;margin-top:auto;padding-top:28px}
+.archive-actions{display:grid;grid-template-columns:1fr;gap:9px;margin-top:auto;padding-top:28px}
 .archive-action{
   min-height:44px;
   padding:0 14px;
@@ -1066,23 +1066,6 @@ footer::before{
   background:linear-gradient(135deg,rgba(243,170,194,.16),rgba(157,185,255,.075));
 }
 .archive-action:disabled{cursor:not-allowed;opacity:.38;transform:none}
-.archive-action.is-pending{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:2px;
-  border-style:dashed;
-  border-color:rgba(188,184,195,.2);
-  color:rgba(213,208,218,.48);
-  background:linear-gradient(180deg,rgba(176,172,184,.055),rgba(116,113,124,.018));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
-  opacity:1;
-  filter:saturate(.18);
-}
-.archive-action.is-pending span{font-size:9px;font-weight:650;letter-spacing:.04em}
-.archive-action.is-pending small{font-size:7px;font-weight:500;letter-spacing:.02em;opacity:.72}
-.archive-action.is-pending:disabled{opacity:.38;filter:saturate(0)}
 .archive-action:focus-visible,.archive-close:focus-visible{outline:2px solid rgba(243,170,194,.75);outline-offset:3px}
 .back-setting-content:focus,
 #archiveSetting:focus{
@@ -1162,8 +1145,7 @@ footer::before{
   .archive-content{padding:30px 22px 24px;overflow:visible}
   .archive-title{margin-top:23px;font-size:42px}
   .archive-profile section{grid-template-columns:58px 1fr;gap:14px}
-  .archive-actions{grid-template-columns:1fr 1fr;margin-top:0}
-  .archive-action.primary{grid-column:1/-1}
+  .archive-actions{grid-template-columns:1fr;margin-top:0}
   .archive-file{left:28px;right:28px;bottom:25px}
   .archive-setting-privacy{min-height:130px;padding:14px}
 }
@@ -1249,7 +1231,7 @@ footer::before{
     position:sticky;
     z-index:5;
     bottom:0;
-    grid-template-columns:1.15fr 1fr 1fr;
+    grid-template-columns:1fr;
     gap:7px;
     margin:18px -18px max(-24px,calc(-1 * env(safe-area-inset-bottom)));
     margin-top:auto;
@@ -1258,7 +1240,6 @@ footer::before{
     -webkit-backdrop-filter:blur(14px) saturate(120%);
     backdrop-filter:blur(14px) saturate(120%);
   }
-  .archive-action.primary{grid-column:auto}
   .archive-action{min-height:46px;padding-inline:8px;font-size:9px}
   .archive-close{top:max(11px,env(safe-area-inset-top));right:max(11px,env(safe-area-inset-right))}
 }
@@ -1439,8 +1420,7 @@ footer::before{
   .archive-setting-privacy{min-height:0;padding:9px;grid-template-columns:34px minmax(0,1fr);gap:7px 9px}
   .archive-setting-mark{width:34px;height:40px;border-radius:10px}
   .archive-setting-copy p{display:none}
-  .archive-actions{grid-template-columns:1.15fr 1fr 1fr;gap:7px;padding-top:9px}
-  .archive-action.primary{grid-column:auto}
+  .archive-actions{grid-template-columns:1fr;gap:7px;padding-top:9px}
   .archive-action{min-height:44px;padding-inline:10px;font-size:9px}
   .archive-file{left:22px;right:22px;bottom:18px}
   .archive-file span:last-child{display:none}
@@ -1521,8 +1501,6 @@ footer::before{
       </div>
       <div class="archive-actions">
         <button class="archive-action primary" id="downloadCard" type="button">保存角色卡 PNG</button>
-        <button class="archive-action" id="downloadImage" type="button">仅图片 PNG</button>
-        <button class="archive-action is-pending" id="downloadJson" type="button" aria-label="导出 JSON，格式确认中，当前不包含图片" title="格式确认中，当前导出的 JSON 不包含图片"><span>格式确认中</span><small>当前不包含图片</small></button>
       </div>
     </section>
   </div>
@@ -1962,17 +1940,6 @@ async function fullCardBlob(work,index){
   return (await getSourceCard(work,index)).blob;
 }
 
-async function imageOnlyBlob(work,index){
-  const source=await getSourceCard(work,index);
-  const parts=[source.bytes.slice(0,8)];
-  for(const chunk of source.chunks){
-    if(chunkKeyword(source.bytes,chunk)==="chara") continue;
-    parts.push(source.bytes.slice(chunk.start,chunk.end));
-  }
-  if(source.pngEnd<source.bytes.length) parts.push(source.bytes.slice(source.pngEnd));
-  return new Blob(parts,{type:"image/png"});
-}
-
 const archiveClose=document.getElementById("archiveClose");
 const archiveVisual=document.getElementById("archiveVisual");
 const archiveImage=document.getElementById("archiveImage");
@@ -1991,8 +1958,6 @@ const archivePersonality=document.getElementById("archivePersonality");
 const archiveSetting=document.getElementById("archiveSetting");
 const archiveSettingPrivacy=document.getElementById("archiveSettingPrivacy");
 const downloadCard=document.getElementById("downloadCard");
-const downloadImage=document.getElementById("downloadImage");
-const downloadJson=document.getElementById("downloadJson");
 const unlockedWorks=new Set();
 const sourceCardJobs=new Map();
 const fullCardBlobJobs=new Map();
@@ -2275,13 +2240,7 @@ function syncCardSettingPrivacy(index){
 function syncArchiveDownloads(index){
   const imageLocked=isWorkLocked(index);
   const settingLocked=isSettingLocked(index);
-  downloadImage.disabled=imageLocked;
-  downloadJson.disabled=settingLocked;
   downloadCard.disabled=cardDownloadBusy || imageLocked || settingLocked;
-  downloadImage.title=imageLocked ? "请先解锁卡面" : "";
-  downloadJson.title=settingLocked
-    ? "请先解锁卡面"
-    : "格式确认中，当前导出的 JSON 不包含图片";
   downloadCard.title=cardDownloadBusy
     ? "正在生成角色卡"
     : imageLocked
@@ -2398,18 +2357,6 @@ function unlockAllWorks(){
   tip(`已一键解锁全部 ${lockedIndexes.length} 张敏感角色卡${failedIndexes.length ? `，并重试 ${failedIndexes.length} 张图片` : ""}；图片会按查看顺序加载`);
 }
 
-function imageAccessAllowed(index){
-  if(index===null || index===undefined || !isWorkLocked(index)) return true;
-  tip("请先解锁卡面");
-  return false;
-}
-
-function settingAccessAllowed(index){
-  if(index===null || index===undefined || !isSettingLocked(index)) return true;
-  tip("请先解锁卡面");
-  return false;
-}
-
 function fullCardAccessAllowed(index){
   const imageLocked=isWorkLocked(index);
   if(!imageLocked) return true;
@@ -2485,10 +2432,8 @@ archiveModal.addEventListener("close",()=>{
   archiveSettingPrivacy.hidden=true;
   archiveSettingPrivacy.setAttribute("aria-hidden","true");
   archiveSettingPrivacy.setAttribute("inert","");
-  [downloadCard,downloadImage,downloadJson].forEach(button=>{
-    button.disabled=false;
-    button.title="";
-  });
+  downloadCard.disabled=false;
+  downloadCard.title="";
   opener?.focus();
 });
 
@@ -2508,37 +2453,6 @@ downloadCard.addEventListener("click",async()=>{
   finally{
     cardDownloadBusy=false;
     if(activeIndex!==null) syncArchiveDownloads(activeIndex);
-  }
-});
-
-downloadImage.addEventListener("click",async()=>{
-  const work=activeWork;
-  const index=activeIndex;
-  if(!work) return;
-  if(!imageAccessAllowed(index)) return;
-  try{
-    const blob=await imageOnlyBlob(work,index);
-    saveBlob(blob,`${work.name}-image.png`);
-    tip("开始下载仅图片 PNG");
-  }catch(error){
-    tip(error?.code?.startsWith("CARD_DATA_") ? "原文件角色卡数据无效" : "导出失败");
-  }
-});
-
-downloadJson.addEventListener("click",async()=>{
-  const work=activeWork;
-  const index=activeIndex;
-  if(!work) return;
-  if(!settingAccessAllowed(index)) return;
-  try{
-    const source=await getSourceCard(work,index);
-    saveBlob(
-      new Blob([source.jsonText],{type:"application/json;charset=utf-8"}),
-      `${work.name}.json`
-    );
-    tip("开始下载 JSON");
-  }catch(error){
-    tip(error?.code?.startsWith("CARD_DATA_") ? "原文件角色卡数据无效" : "导出失败");
   }
 });
 
