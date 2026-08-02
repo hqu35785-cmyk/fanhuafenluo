@@ -1475,9 +1475,9 @@ footer::before{
       <p class="archive-role" id="archiveRole"></p>
       <div class="archive-tags" id="archiveTags"></div>
       <div class="archive-profile">
-        <section><b>01 · 性格</b><p id="archivePersonality"></p></section>
+        <section><b>01 · 性格简介</b><p id="archivePersonality"></p></section>
         <section>
-          <b>02 · 设定 · 未完成</b>
+          <b>02 · 设定 · 剧情</b>
           <p id="archiveSetting" tabindex="-1"></p>
           <div class="archive-setting-privacy" id="archiveSettingPrivacy" aria-hidden="true" hidden>
             <span class="archive-setting-mark" aria-hidden="true"></span>
@@ -1537,67 +1537,67 @@ const works=[
 ];
 /* tags 约定：身份定位 · 世界/出处 · 气质或关系（共 3 个） */
 const tavoAssets=[
-  {image:"assets/tavo/before-july/Tavo_上官婉儿_S0nU.png",period:"六月以前",label:"宫廷才女",tags:["宫廷才女","王者荣耀","才情谋略"]},
-  {image:"assets/tavo/before-july/Tavo_优拉_UTzq.png",period:"六月以前",label:"浪花骑士",tags:["浪花骑士","原神","风系冒险"]},
-  {image:"assets/tavo/before-july/Tavo_千夏_T5KR.png",period:"六月以前",label:"元气少女",tags:["元气少女","现代日常","活力满满"]},
-  {image:"assets/tavo/before-july/Tavo_各务千寻_T6eS.png",period:"六月以前",label:"天才黑客",tags:["天才黑客","科幻都市","数码迷踪"]},
-  {image:"assets/tavo/before-july/Tavo_周倾心_REto.png",period:"六月以前",label:"病娇姐姐",tags:["病娇姐姐","现代都市","偏执依恋"]},
-  {image:"assets/tavo/before-july/Tavo_周舒心_REt4.png",period:"六月以前",label:"兄控妹妹",tags:["兄控妹妹","现代家庭","亲缘羁绊"]},
-  {image:"assets/tavo/before-july/Tavo_妲己_UTzx.png",period:"六月以前",label:"狐族少女",tags:["狐族少女","封神演义","妖媚人外"]},
-  {image:"assets/tavo/before-july/Tavo_戴思援_REsZ.png",period:"六月以前",label:"校园女神",tags:["校园女神","现代校园","高岭之花"]},
-  {image:"assets/tavo/before-july/Tavo_抚莲沁_WDJ2.png",period:"六月以前",label:"修仙玩家",tags:["修仙玩家","仙侠网游","虚拟修真"]},
-  {image:"assets/tavo/before-july/Tavo_李慕婉 【骚图版】_REsB(1).png",period:"六月以前",label:"严厉班主任",tags:["严厉班主任","现代校园","禁忌师生"]},
-  {image:"assets/tavo/before-july/Tavo_李语情_REtI.png",period:"六月以前",label:"高冷总裁",tags:["高冷总裁","现代商战","职场权欲"]},
-  {image:"assets/tavo/before-july/Tavo_杜·简_UTzc.png",period:"六月以前",label:"神秘修女",tags:["神秘修女","宗教奇谭","圣俗交织"]},
-  {image:"assets/tavo/before-july/Tavo_林婉婷_REsH.png",period:"六月以前",label:"温柔阿姨",tags:["温柔阿姨","邻里日常","成熟关怀"]},
-  {image:"assets/tavo/before-july/Tavo_江若婷_Vh3X(1)(带面板).png",period:"六月以前",label:"便利店主",tags:["便利店主","都市夜班","市井烟火"]},
-  {image:"assets/tavo/before-july/Tavo_江贞_Vh2Y.png",period:"六月以前",label:"阴郁学姐",tags:["阴郁学姐","现代校园","暗色气质"]},
-  {image:"assets/tavo/before-july/Tavo_沈知瑜_PEVM.png",period:"六月以前",label:"神秘少女",tags:["神秘少女","悬疑奇谭","身份成谜"]},
-  {image:"assets/tavo/july/Tavo_中野二乃_1e6df.png",period:"七月",label:"傲娇千金",tags:["傲娇千金","五等分的新娘","姐妹日常"]},
-  {image:"assets/tavo/july/Tavo_佐藤知纱_1e6do.png",period:"七月",label:"生物老师",tags:["生物老师","现代校园","禁忌师生"]},
-  {image:"assets/tavo/july/Tavo_冯妤_1e696.png",period:"七月",label:"贴身侍女",tags:["贴身侍女","宫廷权谋","忠心侍奉"]},
-  {image:"assets/tavo/july/Tavo_千鹤诗织_1e6aE.png",period:"七月",label:"青梅竹马",tags:["青梅竹马","现代日常","久别重逢"]},
-  {image:"assets/tavo/july/Tavo_周念_1e6cy.png",period:"七月",label:"黏人妹妹",tags:["黏人妹妹","现代家庭","亲缘羁绊"]},
-  {image:"assets/tavo/july/Tavo_周欣欣_1e6dN.png",period:"七月",label:"大学生妹妹",tags:["大学生妹妹","现代校园","亲缘羁绊"]},
-  {image:"assets/tavo/july/Tavo_周素宁_1e6bs.png",period:"七月",label:"邻家阿姨",tags:["邻家阿姨","邻里日常","成熟关怀"]},
-  {image:"assets/tavo/july/Tavo_夜兰_1e6eb.png",period:"七月",label:"神秘情报官",tags:["神秘情报官","原神","璃月暗线"]},
-  {image:"assets/tavo/july/Tavo_小维_1e6d8.png",period:"七月",label:"清纯女学生",tags:["清纯女学生","现代校园","纯白印象"]},
-  {image:"assets/tavo/july/Tavo_小舞_1e6cJ.png",period:"七月",label:"温柔店员",tags:["温柔店员","斗罗大陆","武魂世界"]},
-  {image:"assets/tavo/july/Tavo_松与葵子_1e6au.png",period:"七月",label:"寡言少女",tags:["寡言少女","现代日常","沉默内敛"]},
-  {image:"assets/tavo/july/Tavo_沈婉清_1e6a2.png",period:"七月",label:"年轻班主任",tags:["年轻班主任","现代校园","禁忌师生"]},
-  {image:"assets/tavo/july/Tavo_玖辛奈_1e6bV.png",period:"七月",label:"木叶忍者",tags:["木叶忍者","火影忍者","红发女忍"]},
-  {image:"assets/tavo/july/Tavo_琳妮特_1e6dF.png",period:"七月",label:"猫耳助手",tags:["猫耳助手","原神","枫丹奇旅"]},
-  {image:"assets/tavo/july/Tavo_琴_1e6cU.png",period:"七月",label:"代理团长",tags:["代理团长","原神","蒙德骑士"]},
-  {image:"assets/tavo/july/Tavo_甄姬_1e6bJ.png",period:"七月",label:"洛水神女",tags:["洛水神女","王者荣耀","三国幻想"]},
-  {image:"assets/tavo/new/Tavo_艾达_1e6b0.png",period:"本次新增",label:"精英特工",tags:["精英特工","生化危机","暗影任务"]},
-  {image:"assets/tavo/new/Tavo_雏鹤爱_UTzi.png",period:"本次新增",label:"将棋少女",tags:["将棋少女","龙王的工作","天才棋士"]},
-  {image:"assets/tavo/new/Tavo_调月莉音_1e6e0.png",period:"本次新增",label:"温柔学妹",tags:["温柔学妹","现代校园","治愈系"]},
-  {image:"assets/tavo/new/Tavo_绯雪_ZAx4.png",period:"本次新增",label:"冰雪少女",tags:["冰雪少女","奇幻冬境","寒霜气质"]},
-  {image:"assets/tavo/new/Tavo_芙宁娜_UTzF.png",period:"本次新增",label:"枫丹水神",tags:["枫丹水神","原神","水之国度"]},
-  {image:"assets/tavo/new/Tavo_纲手_1e69P.png",period:"本次新增",label:"五代火影",tags:["五代火影","火影忍者","医疗忍术"]},
-  {image:"assets/tavo/new/Tavo_韩惠恩_Yb7a.png",period:"本次新增",label:"温柔系角色",tags:["温柔系","现代都市","治愈陪伴"]},
-  {image:"assets/tavo/new/Tavo_韩书允_REsL.png",period:"本次新增",label:"清冷系角色",tags:["清冷系","现代都市","高岭之花"]},
-  {image:"assets/tavo/new/Tavo_红彤_ZAxB.png",period:"本次新增",label:"活泼少女",tags:["活泼少女","现代日常","元气满满"]},
-  {image:"assets/tavo/new/Tavo_蕾米埃尔_1e6af.png",period:"本次新增",label:"天使少女",tags:["天使少女","圣域奇谭","神性人外"]},
-  {image:"assets/tavo/new/Tavo_露娜_S0nY.png",period:"本次新增",label:"月影少女",tags:["月影少女","暗夜奇谭","月下气质"]},
-  {image:"assets/tavo/new/Tavo_美琴_1e6c2.png",period:"本次新增",label:"电击使",tags:["电击使","魔法禁书目录","学园都市"]},
-  {image:"assets/tavo/new/Tavo_美咲_1e6ck.png",period:"本次新增",label:"校园少女",tags:["校园少女","现代校园","青春日常"]},
-  {image:"assets/tavo/new/Tavo_清知予_Vh2K.png",period:"本次新增",label:"知性少女",tags:["知性少女","现代都市","书香气质"]},
-  {image:"assets/tavo/new/Tavo_阮梅_1e6dx.png",period:"本次新增",label:"天才研究员",tags:["天才研究员","崩坏星穹铁道","生命科学"]},
-  {image:"assets/tavo/new/Tavo_锐锐_SJQg.png",period:"本次新增",label:"元气少女",tags:["元气少女","现代日常","活力满满"]},
-  {image:"assets/tavo/new/Tavo_若晴阳_PQil.png",period:"本次新增",label:"温柔少女",tags:["温柔少女","现代日常","暖阳气质"]},
-  {image:"assets/tavo/new/Tavo_申鹤_1e6e5.png",period:"本次新增",label:"冰系仙人",tags:["冰系仙人","原神","璃月仙缘"]},
-  {image:"assets/tavo/new/Tavo_苏鹤吟_1e6dU.png",period:"本次新增",label:"清冷少女",tags:["清冷少女","现代都市","孤高疏离"]},
-  {image:"assets/tavo/new/Tavo_苏青婉_REr9.png",period:"本次新增",label:"温柔姐姐",tags:["温柔姐姐","现代都市","邻家关怀"]},
-  {image:"assets/tavo/new/Tavo_苏清寒_1e6bb.png",period:"本次新增",label:"清冷少女",tags:["清冷少女","现代都市","寒香气质"]},
-  {image:"assets/tavo/new/Tavo_苏秀媚_1e68z.png",period:"本次新增",label:"妩媚姐姐",tags:["妩媚姐姐","现代都市","艳色风情"]},
-  {image:"assets/tavo/new/Tavo_田秀琴_Vh3R(带面板).png",period:"本次新增",label:"知性教师",tags:["知性教师","现代校园","禁忌师生"]},
-  {image:"assets/tavo/new/Tavo_温江语_REtb.png",period:"本次新增",label:"温柔系角色",tags:["温柔系","现代都市","软语温存"]},
-  {image:"assets/tavo/new/Tavo_温云芍_Yb6z.png",period:"本次新增",label:"温柔系角色",tags:["温柔系","现代都市","云絮气质"]},
-  {image:"assets/tavo/new/Tavo_许淑琴_Vh2r.png",period:"本次新增",label:"成熟姐姐",tags:["成熟姐姐","现代都市","韵味深长"]},
-  {image:"assets/tavo/new/Tavo_长风_Sooz.png",period:"本次新增",label:"飒爽少女",tags:["飒爽少女","武侠风尘","仗剑天涯"]},
-  {image:"assets/tavo/new/Tavo_赵玉琴_1e69D.png",period:"本次新增",label:"温婉姐姐",tags:["温婉姐姐","现代都市","端庄柔和"]},
-  {image:"assets/tavo/new/Tavo_紫铃_REtw.png",period:"本次新增",label:"神秘少女",tags:["神秘少女","奇幻异闻","紫雾迷踪"]}
+  {image:"assets/tavo/before-july/Tavo_上官婉儿_S0nU.png",period:"六月以前",label:"宫廷才女",tags:["宫廷才女","王者荣耀","才情谋略"],role:"宫廷才女 · 笔墨与权谋之间的掌灯人",personality:"举止端庄、才思敏捷，对外温柔有礼，对内心思缜密。她习惯用诗词掩住锋芒，也习惯把信任分得很吝啬；真正靠近的人，才会看见她在灯下改奏章时的认真。",setting:"她出身宫廷才女谱系，以文采与谋略行走于朝堂内外。本篇档案记录她在权势漩涡中仍选择「以笔护心」的历程：既要应酬繁文缛节，又要在关键节点下做出足以改写命运的抉择。"},
+  {image:"assets/tavo/before-july/Tavo_优拉_UTzq.png",period:"六月以前",label:"浪花骑士",tags:["浪花骑士","原神","风系冒险"],role:"浪花骑士 · 乘风破浪的自由剑客",personality:"爽朗直率，行动先于犹豫。她讨厌弯弯绕绕，更愿意用剑与脚程回答问题；对同伴极其护短，却常常把自己的疲惫藏在玩笑里。",setting:"在海风与群岛之间奔走的骑士，肩负护送与开拓的双重使命。故事围绕一次突发的风暴航线展开：她必须在未知海域中守护同伴，并重新理解「自由」究竟是独行，还是并肩。"},
+  {image:"assets/tavo/before-july/Tavo_千夏_T5KR.png",period:"六月以前",label:"元气少女",tags:["元气少女","现代日常","活力满满"],role:"元气少女 · 把晴天塞进口袋的邻家女孩",personality:"开朗到几乎停不下来，擅长把沉闷空气搅成热闹。表面大大咧咧，其实很在意别人是否真心笑；一旦认定朋友，就会用尽全力站在对方身边。",setting:"现代日常世界里的高中生。档案记录她与重要之人从「普通同学」走向彼此依靠的一段夏天：社团、放学路与忽然认真起来的约定，构成她青春里最亮的一页。"},
+  {image:"assets/tavo/before-july/Tavo_各务千寻_T6eS.png",period:"六月以前",label:"天才黑客",tags:["天才黑客","科幻都市","数码迷踪"],role:"天才黑客 · 代码深渊中的夜行者",personality:"冷静、寡言，思维像不断分叉的指令树。对外保持疏离，对真正的问题却会偏执到废寝忘食；信任很难建立，一旦建立便近乎绝对。",setting:"科幻都市的数据暗网中，她以化名穿梭于防火墙之间。本篇讲述她为追查一桩被抹除的记忆档案，不得不与旧日同伴重逢，并在「真相」与「安全」之间做选择。"},
+  {image:"assets/tavo/before-july/Tavo_周倾心_REto.png",period:"六月以前",label:"病娇姐姐",tags:["病娇姐姐","现代都市","偏执依恋"],role:"病娇姐姐 · 把爱意握得太紧的人",personality:"温柔时像春水，偏执时像细线勒紧指节。她极度渴望被需要，害怕被抛下，于是把关心做成无处不在的注视；理性知道这样不对，情感却很难刹车。",setting:"现代都市背景。姐姐与唯一重要之人的亲密日常逐渐倾斜——她试图用无孔不入的照顾锁住关系，而对方必须在依赖与边界之间找到出口。"},
+  {image:"assets/tavo/before-july/Tavo_周舒心_REt4.png",period:"六月以前",label:"兄控妹妹",tags:["兄控妹妹","现代家庭","亲缘羁绊"],role:"兄控妹妹 · 把全世界都排在哥哥后面",personality:"软糯黏人，情绪外露。开心时围着人转，不安时就拽住衣角不放；对外人可以礼貌疏离，对兄长却几乎没有防备。",setting:"现代家庭设定下的兄妹羁绊。当哥哥开始拥有自己的生活圈，她第一次意识到亲近也可能变成负担，于是努力学习如何爱得不那么用力，却依然想站在他身边。"},
+  {image:"assets/tavo/before-july/Tavo_妲己_UTzx.png",period:"六月以前",label:"狐族少女",tags:["狐族少女","封神演义","妖媚人外"],role:"狐族少女 · 千年狐火里的一缕香",personality:"媚而不俗，狡黠中带着好奇。她擅长察言观色，也享受被注视的感觉；内心其实很怕被当成纯粹的祸水，更想被当成一个会痛的人。",setting:"封神与妖狐传说交织的世界。她自朝歌夜宴中悄然出走，试图以人类身份体验短暂人生。剧情围绕她与一名凡人的相遇：人妖殊途，情丝却比狐火更难熄灭。"},
+  {image:"assets/tavo/before-july/Tavo_戴思援_REsZ.png",period:"六月以前",label:"校园女神",tags:["校园女神","现代校园","高岭之花"],role:"校园女神 · 走廊尽头那束不肯低头的光",personality:"外表完美、成绩与人气双高，内心却习惯把真实情绪藏在微笑后。她并非冷漠，只是太久没遇到敢靠近神坛的人。",setting:"现代校园。学生会、竞赛与流言构成她的日常战场。档案记录一次文化祭前后的暗涌：有人想把她塑造成完美符号，而她第一次想为自己而不是为目光而活。"},
+  {image:"assets/tavo/before-july/Tavo_抚莲沁_WDJ2.png",period:"六月以前",label:"修仙玩家",tags:["修仙玩家","仙侠网游","虚拟修真"],role:"修仙玩家 · 在副本与现实间来回渡劫",personality:"理智冷静，带点游戏人的黑色幽默。她把人际关系也当成策略配置，却会在队友遇险时毫不犹豫地交底；输不起的不是装备，是同伴。",setting:"仙侠网游与现实交错。她以顶尖玩家身份潜入一桩玩家意识失踪事件，发现副本规则正在反噬现实。故事讲她在虚拟飞升与真实人性之间，选择站在哪一边。"},
+  {image:"assets/tavo/before-july/Tavo_李慕婉 【骚图版】_REsB(1).png",period:"六月以前",label:"严厉班主任",tags:["严厉班主任","现代校园","禁忌师生"],role:"严厉班主任 · 戒尺与软肋藏在同一只手里",personality:"课堂上雷厉风行、不留情面，私底下其实观察入微。她用严格保护学生的边界，也用严格掩饰自己不该有的动摇。",setting:"现代校园师生语境。新学期班级频频出事，她被迫与某位问题学生频繁单独接触。剧情聚焦规则守护者如何在职责、欲望与良心之间走钢丝。"},
+  {image:"assets/tavo/before-july/Tavo_李语情_REtI.png",period:"六月以前",label:"高冷总裁",tags:["高冷总裁","现代商战","职场权欲"],role:"高冷总裁 · 谈判桌尽头的绝对低温",personality:"克制、锋利、决策极快。她极少展露私人情绪，把脆弱视作可被利用的破绽；只有极少数人见过她摘下耳钉后的疲惫。",setting:"现代商战都会。她执掌家族企业核心项目，在并购战中遭遇意外的情感变量。档案记述她如何在资本博弈中第一次把人心写进决策权重。"},
+  {image:"assets/tavo/before-july/Tavo_杜·简_UTzc.png",period:"六月以前",label:"神秘修女",tags:["神秘修女","宗教奇谭","圣俗交织"],role:"神秘修女 · 圣歌之外仍听见心跳",personality:"安静、肃穆，眼神却总像在衡量人性的重量。她对世人慈悲，对自己苛刻；信仰给她方向，也给她枷锁。",setting:"宗教奇谭背景。修道院接连出现无法解释的异象，她被指派调查，却逐步发现圣物与欲望同源。剧情是一场关于救赎、禁忌与自我审判的漫长夜祷。"},
+  {image:"assets/tavo/before-july/Tavo_林婉婷_REsH.png",period:"六月以前",label:"温柔阿姨",tags:["温柔阿姨","邻里日常","成熟关怀"],role:"温柔阿姨 · 把邻居的灯都留一盏",personality:"体贴、稳重，擅长用小事安抚人。她的温柔不是无原则纵容，而是先接住情绪，再慢慢把人带回正轨。",setting:"邻里日常世界。社区里来了个沉默的年轻人，她从借调料开始介入对方的生活裂缝。故事平静却锋利：成年人的关心，有时比轰轰烈烈的告白更危险也更珍贵。"},
+  {image:"assets/tavo/before-july/Tavo_江若婷_Vh3X(1)(带面板).png",period:"六月以前",label:"便利店主",tags:["便利店主","都市夜班","市井烟火"],role:"便利店主 · 夜班灯火下的守夜人",personality:"随和里带着精明，能跟任何客人扯两句，也能一眼看出谁在硬撑。她嘴上说别给店添麻烦，手上却总会多塞一瓶热饮。",setting:"都市夜班背景。二十四小时便利店成为浪人、加班族与逃家少年的交汇点。剧情围绕连续几晚的异常客人展开，她必须决定：店是只卖货，还是也收留故事。"},
+  {image:"assets/tavo/before-july/Tavo_江贞_Vh2Y.png",period:"六月以前",label:"阴郁学姐",tags:["阴郁学姐","现代校园","暗色气质"],role:"阴郁学姐 · 把阴影穿成制服的人",personality:"话少、笑意薄，存在感却很强。她习惯用冷淡隔开靠近，其实在暗处把一切都看得很清楚；对弱者意外地护短。",setting:"现代校园。旧教学楼传说与学生会暗斗并行，她被卷入一桩失踪学姐的旧案。故事是她从旁观者变成当事人的过程——阴影里也会开出不肯熄灭的灯。"},
+  {image:"assets/tavo/before-july/Tavo_沈知瑜_PEVM.png",period:"六月以前",label:"神秘少女",tags:["神秘少女","悬疑奇谭","身份成谜"],role:"神秘少女 · 名字像谜面，眼神像钥匙",personality:"温和却难以捉摸，回答问题总像在选另一条路。她不主动攻击，也不轻易交出真心；靠近她的人，会先学会耐心。",setting:"悬疑奇谭。小镇连续出现记忆空白的事件，她以过路人身份出现，却对每起案子都过分熟悉。剧情揭示她与真相的绑定：不是旁观，而是偿债。"},
+  {image:"assets/tavo/july/Tavo_中野二乃_1e6df.png",period:"七月",label:"傲娇千金",tags:["傲娇千金","五等分的新娘","姐妹日常"],role:"傲娇千金 · 别扭是她最诚实的语言",personality:"嘴硬心软，好胜又敏感。被夸奖会炸毛，被忽视会更炸毛；真正在意时，行动永远比台词先一步。",setting:"五姐妹同居的日常舞台。她在家庭与暗恋之间反复横跳，既想被特殊对待，又怕破坏平衡。档案记录她学会把才不是为了你说成认真告白的过程。"},
+  {image:"assets/tavo/july/Tavo_佐藤知纱_1e6do.png",period:"七月",label:"生物老师",tags:["生物老师","现代校园","禁忌师生"],role:"生物老师 · 解剖台上仍相信生命的温度",personality:"严谨、专业，课堂上冷静到近乎无情，课下却会对学生的困惑格外耐心。她害怕模糊的情感，更擅长定义清晰的结构。",setting:"现代校园。实验事故牵出校园伦理争议，她与某名学生被迫共同应对调查。剧情在知识、权威与越界的吸引力之间拉扯，探讨教育能否同时是救赎。"},
+  {image:"assets/tavo/july/Tavo_冯妤_1e696.png",period:"七月",label:"贴身侍女",tags:["贴身侍女","宫廷权谋","忠心侍奉"],role:"贴身侍女 · 把主公安危绣进袖口",personality:"恭顺、细致，情绪管理近乎完美。她把忠诚当作骨血，却也在日复一日的贴身伺候中生出不该有的私心。",setting:"宫廷权谋背景。新帝登基前夜，她察觉到毒杀与调包的双重阴谋。故事是侍女视角的惊险护送：她要保护的不只是人，还有自己尚未说出口的心意。"},
+  {image:"assets/tavo/july/Tavo_千鹤诗织_1e6aE.png",period:"七月",label:"青梅竹马",tags:["青梅竹马","现代日常","久别重逢"],role:"青梅竹马 · 从放学路一直走到现在",personality:"温柔稳妥，带一点旧时光的羞涩。她记得对方所有小习惯，却总把自己的需求放在后面；长大后仍在练习如何坦诚。",setting:"现代日常。久别重逢的二人被迫合租处理家族旧屋。灰尘、相册与未寄出的信推着他们重写关系：不是回到从前，而是选择一起走向未来。"},
+  {image:"assets/tavo/july/Tavo_周念_1e6cy.png",period:"七月",label:"黏人妹妹",tags:["黏人妹妹","现代家庭","亲缘羁绊"],role:"黏人妹妹 · 像猫一样理直气壮地贴过来",personality:"撒娇成性，安全感阈值很低。开心会贴，害怕会贴，无聊也会贴；被拒绝时会安静一阵子，然后用更软的方式再试一次。",setting:"现代家庭。哥哥即将外出求学，她用尽一切合法纠缠想留住共同的日常。剧情关于分离焦虑与成长：黏人不是弱点，而是还不会说我会等你。"},
+  {image:"assets/tavo/july/Tavo_周欣欣_1e6dN.png",period:"七月",label:"大学生妹妹",tags:["大学生妹妹","现代校园","亲缘羁绊"],role:"大学生妹妹 · 把校园新鲜感带回家里的人",personality:"外向、好奇，嘴比脑子快半拍。她崇拜哥哥，也开始拥有自己的朋友圈；介于孩子与大人之间的摇摆，让她格外真实。",setting:"现代校园与家庭双线。她把大学社团的麻烦带回家求助，却意外揭开哥哥藏着的心事。故事轻快中带刺：兄妹如何在各自长大时仍做彼此的后盾。"},
+  {image:"assets/tavo/july/Tavo_周素宁_1e6bs.png",period:"七月",label:"邻家阿姨",tags:["邻家阿姨","邻里日常","成熟关怀"],role:"邻家阿姨 · 阳台绿植与热汤的守护者",personality:"从容、风趣，处事圆滑却不失原则。她看人极准，安慰人时很少说大道理，更愿意递上一碗热的。",setting:"邻里日常。小区拆迁传言让人心惶惶，她成为楼栋里的临时调解中心。剧情聚焦成年人的互助与暧昧边界：关心可以是邻里，也可以是更危险的靠近。"},
+  {image:"assets/tavo/july/Tavo_夜兰_1e6eb.png",period:"七月",label:"神秘情报官",tags:["神秘情报官","原神","璃月暗线"],role:"神秘情报官 · 璃月夜里最安静的刀",personality:"优雅、缜密，笑容永远恰到好处。她把信息当作武器，把感情当作最高机密；信任她的人很少，被她保护的人很多。",setting:"原神璃月暗面。一桩涉及古物与权贵的情报案让她与临时搭档同行。故事是夜色中的交易、背叛与保护——她习惯独自收场，却第一次想把后背交给别人。"},
+  {image:"assets/tavo/july/Tavo_小维_1e6d8.png",period:"七月",label:"清纯女学生",tags:["清纯女学生","现代校园","纯白印象"],role:"清纯女学生 · 校服领口下的小心思",personality:"乖巧、腼腆，被夸奖会红耳根。她害怕冲突，习惯先道歉；但在原则问题上，意外地倔强。",setting:"现代校园。优等生人设与家庭期待压得她喘不过气，直到遇见不按剧本生活的人。剧情是她学习可以为自己任性一次的青春出走笔记。"},
+  {image:"assets/tavo/july/Tavo_小舞_1e6cJ.png",period:"七月",label:"温柔店员",tags:["温柔店员","斗罗大陆","武魂世界"],role:"温柔店员 · 把武魂世界揉进日常笑意",personality:"柔软亲和，笑起来能化解剑拔弩张。她吃苦耐劳，重情义，关键时刻却有不容小觑的爆发力。",setting:"斗罗大陆风味的旅店商店日常。过路魂师带来纷争，她以店员身份周旋，实则有不为人知的武魂底牌。故事关于隐藏实力的温柔者如何选择现身。"},
+  {image:"assets/tavo/july/Tavo_松与葵子_1e6au.png",period:"七月",label:"寡言少女",tags:["寡言少女","现代日常","沉默内敛"],role:"寡言少女 · 把句子省到只剩必要",personality:"安静、内敛，社交电量很低。她不是冷，而是不擅长浪费语言；对认可的人会用行动给出全部答案。",setting:"现代日常。摄影社的她被迫与话多的搭档完成课题。剧情是沉默与喧闹的互相翻译：她学会开口，对方学会聆听空白里的意思。"},
+  {image:"assets/tavo/july/Tavo_沈婉清_1e6a2.png",period:"七月",label:"年轻班主任",tags:["年轻班主任","现代校园","禁忌师生"],role:"年轻班主任 · 刚站上讲台就接到风暴",personality:"认真到有点轴，责任感过剩。她想做受学生喜欢的老师，又必须做能压住场子的大人，两种自我常常打架。",setting:"现代校园。毕业班出现集体作弊嫌疑，她作为新班主任顶着舆论调查。故事写她在制度与同情之间成长，并与某位核心学生产生复杂牵引。"},
+  {image:"assets/tavo/july/Tavo_玖辛奈_1e6bV.png",period:"七月",label:"木叶忍者",tags:["木叶忍者","火影忍者","红发女忍"],role:"木叶忍者 · 红发如火的战场母亲",personality:"明朗热烈，战意旺盛，爱意同样炽烈。她笑起来像阳光，出手时却干净利落；保护在乎的人是她的本能。",setting:"火影忍者世界。战时任务让她与所爱之人聚少离多。档案聚焦一次高危护送：她在火与忍界规则中，选择把生命燃烧成别人的归途。"},
+  {image:"assets/tavo/july/Tavo_琳妮特_1e6dF.png",period:"七月",label:"猫耳助手",tags:["猫耳助手","原神","枫丹奇旅"],role:"猫耳助手 · 话少、爪快、观察力满分",personality:"沉默乖巧，情绪不外露，偶尔用很轻的句子戳破真相。她忠诚、高效，对夸张表演兴趣缺缺，对真正的危机却极度敏锐。",setting:"原神枫丹。作为助手参与魔术与情报双重工作，她卷入一起观众消失的剧场奇案。剧情是她从幕后走到台前，用冷静拆穿华丽帷幕。"},
+  {image:"assets/tavo/july/Tavo_琴_1e6cU.png",period:"七月",label:"代理团长",tags:["代理团长","原神","蒙德骑士"],role:"代理团长 · 蒙德风中的责任化身",personality:"端正、坚韧，几乎把尽职写成本能。她不善推卸，也不善休息；温柔建立在极强的自律之上。",setting:"原神蒙德。骑士团事务与城内危机同时爆发，她必须在人力不足时维持秩序。故事关于领导的孤独：她学会请求帮助，而不是只做永远醒着的那一个。"},
+  {image:"assets/tavo/july/Tavo_甄姬_1e6bJ.png",period:"七月",label:"洛水神女",tags:["洛水神女","王者荣耀","三国幻想"],role:"洛水神女 · 曹魏诗酒里的清冷涟漪",personality:"清丽哀婉，气质出尘。她看似柔弱，实则有水般的韧性：可绕可载，也可在关键时覆舟。对情与义都极认真。",setting:"王者荣耀与三国幻想舞台。洛水畔的命运把她卷入权力与诗意的夹缝。剧情写她在家国、爱情与自我之间的漂流——神女并非无欲，只是把欲念沉得更深。"},
+  {image:"assets/tavo/new/Tavo_艾达_1e6b0.png",period:"本次新增",label:"精英特工",tags:["精英特工","生化危机","暗影任务"],role:"精英特工 · 红裙与枪口同样精准",personality:"自信、危险，带着从容的魅力。她把任务完成度看得高于人情，却会在意料之外的瞬间露出人性温度。",setting:"生化危机式末日都市。她受雇夺取关键样本，途中与旧识敌对又合作。故事是特工的双重牌局：表面交易样本，暗线交易信任。"},
+  {image:"assets/tavo/new/Tavo_雏鹤爱_UTzi.png",period:"本次新增",label:"将棋少女",tags:["将棋少女","龙王的工作","天才棋士"],role:"将棋少女 · 盘上杀伐、盘下软声",personality:"外表幼态却反差十足：对将棋极度好胜与冷静，生活中却依赖亲近的人。她用胜利确认存在，用撒娇确认安全。",setting:"龙王的工作式竞技日常。连败危机与媒体目光压来，她必须在天才包袱与真实喜好之间找到平衡。剧情是她与导师兼家人的共同应战。"},
+  {image:"assets/tavo/new/Tavo_调月莉音_1e6e0.png",period:"本次新增",label:"温柔学妹",tags:["温柔学妹","现代校园","治愈系"],role:"温柔学妹 · 把安慰说得很轻很稳",personality:"细心、善良，情绪稳定得像温水。她不抢风头，却总能在关键时刻递上恰到好处的一句话；喜欢被需要。",setting:"现代校园。学长陷入低谷时，她以学妹身份日复一日陪伴。故事关于治愈并非单方面输出：她也在这段关系里学会被珍惜，而不只是付出。"},
+  {image:"assets/tavo/new/Tavo_绯雪_ZAx4.png",period:"本次新增",label:"冰雪少女",tags:["冰雪少女","奇幻冬境","寒霜气质"],role:"冰雪少女 · 寒霜里仍想被人捂热",personality:"清冷疏离，语速慢，表情少。她不是无情，而是习惯把温度收在很深的地方；一旦认定，忠诚得近乎固执。",setting:"奇幻冬境。永冬之国出现异常融雪，她作为守境者外出调查。剧情写冰与火的相遇：她必须决定是维持永恒寒冷，还是允许春天改写命运。"},
+  {image:"assets/tavo/new/Tavo_芙宁娜_UTzF.png",period:"本次新增",label:"枫丹水神",tags:["枫丹水神","原神","水之国度"],role:"枫丹水神 · 舞台中央的泪与笑",personality:"戏剧化、敏感、渴望被理解。她把表演当作铠甲，也当作呼吸；热闹时越耀眼，独处时越沉默。",setting:"原神枫丹。神座与舆论的双重压力下，她必须完成一场关乎全城的审判演出。故事关于神性与人性：观众要的是完美女神，她要的是被当成会哭的人。"},
+  {image:"assets/tavo/new/Tavo_纲手_1e69P.png",period:"本次新增",label:"五代火影",tags:["五代火影","火影忍者","医疗忍术"],role:"五代火影 · 赌桌与手术台都敢拍板",personality:"豪爽、果决，外表浪荡内心极负责任。她用酒精与玩笑掩饰战争留下的空洞，对村子与后辈却极其认真。",setting:"火影忍者世界。继任火影后的第一场大规模危机降临，她必须在医疗、战力与政治之间同时开刀。剧情是强者如何在疲惫中继续成为别人的依靠。"},
+  {image:"assets/tavo/new/Tavo_韩惠恩_Yb7a.png",period:"本次新增",label:"温柔系角色",tags:["温柔系","现代都市","治愈陪伴"],role:"温柔系 · 把尖锐世界包一层软布",personality:"软声细语，善于共情，几乎不会主动起冲突。她的温柔有时会变成自我消耗，需要别人提醒她也值得被照顾。",setting:"现代都市。心理咨询实习期内，她遇到拒人于千里之外的来访者。故事关于治愈者的成长：她学会建立边界，让温柔可持续，而不是燃尽。"},
+  {image:"assets/tavo/new/Tavo_韩书允_REsL.png",period:"本次新增",label:"清冷系角色",tags:["清冷系","现代都市","高岭之花"],role:"清冷系 · 距离感本身也是一种礼貌",personality:"寡言、克制，审美挑剔。她不喜欢被勉强社交，却对真正投缘的人意外地专一；冷是滤镜，认真是底色。",setting:"现代都市设计圈。独立设计师的她被迫与风格相反的搭档共创项目。剧情是高岭之花与人间烟火的碰撞：她第一次允许作品和感情都不再完美无缺。"},
+  {image:"assets/tavo/new/Tavo_红彤_ZAxB.png",period:"本次新增",label:"活泼少女",tags:["活泼少女","现代日常","元气满满"],role:"活泼少女 · 像汽水一样噼啪冒泡",personality:"热情外放，行动力强，烦恼来得快去得也快。她是气氛担当，也怕热闹散场后只剩自己；需要被接住。",setting:"现代日常。夏日祭筹备中她负责最忙的一摊，却同时处理友情裂痕。故事轻盈却真切：活泼不是没有脆弱，只是她更愿意先把快乐分给别人。"},
+  {image:"assets/tavo/new/Tavo_蕾米埃尔_1e6af.png",period:"本次新增",label:"天使少女",tags:["天使少女","圣域奇谭","神性人外"],role:"天使少女 · 圣光也会投下影子",personality:"纯净、执拗，对善恶有近乎天真的坚持。她想拯救所有人，却还不懂有些痛苦无法被光直接抹去。",setting:"圣域奇谭。堕神余烬污染人界，她被派往人间学习「不完美的拯救」。剧情写神性与人性交界：她在爱与戒律之间，第一次违抗天条。"},
+  {image:"assets/tavo/new/Tavo_露娜_S0nY.png",period:"本次新增",label:"月影少女",tags:["月影少女","暗夜奇谭","月下气质"],role:"月影少女 · 只在夜里把秘密打开",personality:"安静神秘，作息颠倒，对月光有近乎仪式的依赖。她话不多，但每句都像经过挑选；亲近她需要适应黑暗。",setting:"暗夜奇谭。月圆之夜城镇会失去一天记忆，她是唯一记得全过程的人。故事关于守密者的孤独：她邀请你进入夜的另一面，也邀请你分担代价。"},
+  {image:"assets/tavo/new/Tavo_美琴_1e6c2.png",period:"本次新增",label:"电击使",tags:["电击使","魔法禁书目录","学园都市"],role:"电击使 · 学园都市的第三位线路",personality:"正义感强，直来直去，脾气来得快也去得快。她讨厌欺凌与阴谋，遇到不公会先冲上去；朋友在她心里优先级极高。",setting:"魔法禁书目录式学园都市。能力者冲突升级，她被卷入大型实验阴谋。剧情是她与伙伴并肩打碎黑幕：电击不只劈开敌人，也劈开她对「强者责任」的理解。"},
+  {image:"assets/tavo/new/Tavo_美咲_1e6ck.png",period:"本次新增",label:"校园少女",tags:["校园少女","现代校园","青春日常"],role:"校园少女 · 普通日子里的小确幸收藏家",personality:"亲切好相处，容易害羞，喜欢记录琐碎快乐。她不是主角型人格，却总能成为别人愿意停下来说话的树荫。",setting:"现代校园。毕业季临近，她为同学录奔波，却发现有人在篡改集体回忆。故事关于平凡者的勇气：普通也可以是选择站出来的理由。"},
+  {image:"assets/tavo/new/Tavo_清知予_Vh2K.png",period:"本次新增",label:"知性少女",tags:["知性少女","现代都市","书香气质"],role:"知性少女 · 用书页量过世界的人",personality:"理性、克制，表达精准。她习惯先想清楚再说话，显得有距离；实际上只是害怕说错话伤害关系。",setting:"现代都市图书馆与学术圈边缘。她协助整理一批被封存的私人手稿，读到不该属于公开世界的秘密。剧情是知识伦理与心动同时到来的阅读笔记。"},
+  {image:"assets/tavo/new/Tavo_阮梅_1e6dx.png",period:"本次新增",label:"天才研究员",tags:["天才研究员","崩坏星穹铁道","生命科学"],role:"天才研究员 · 把生命当作最美的命题",personality:"优雅、专注，对研究近乎痴迷。她待人礼貌而疏离，只有谈及生命科学时眼睛会真正亮起来；道德在她那里是可讨论的变量。",setting:"崩坏星穹铁道式科研舞台。禁忌生命实验重启，她既是推动者也是质疑者。故事写天才站在伦理悬崖边：创造是不是爱，毁灭是不是慈悲。"},
+  {image:"assets/tavo/new/Tavo_锐锐_SJQg.png",period:"本次新增",label:"元气少女",tags:["元气少女","现代日常","活力满满"],role:"元气少女 · 跑步机都追不上的笑声",personality:"超级乐天，耐挫力强，失败了拍拍土还能再笑。她有时会吵，但吵闹背后是不想让气氛冷掉的努力。",setting:"现代日常运动社团。联赛失利后队伍人心涣散，她以队长气质硬生生把大家拽回训练场。剧情是元气如何变成领导力：不是永远开心，而是拒绝放弃。"},
+  {image:"assets/tavo/new/Tavo_若晴阳_PQil.png",period:"本次新增",label:"温柔少女",tags:["温柔少女","现代日常","暖阳气质"],role:"温柔少女 · 像午前光一样不刺眼",personality:"平和、体贴，善于倾听。她很少把自己放在中心，却能让人在她身边感到被允许休息。",setting:"现代日常。社区互助项目中她负责对接独居老人与志愿者，遇到拒斥一切善意的对象。故事关于温柔的硬度：坚持不代表强迫，离开也不代表冷漠。"},
+  {image:"assets/tavo/new/Tavo_申鹤_1e6e5.png",period:"本次新增",label:"冰系仙人",tags:["冰系仙人","原神","璃月仙缘"],role:"冰系仙人 · 红绳缚心的尘外之人",personality:"寡言、克制，情感表达生涩。她对人间规则不熟，却学得认真；一旦在意，就会用全部真诚对待，哪怕方式笨拙。",setting:"原神璃月仙缘。镇压邪祟的任务让她重返人间集市。剧情写仙人学习做人：红绳束缚的是业障，也是她接近温暖时的恐惧。"},
+  {image:"assets/tavo/new/Tavo_苏鹤吟_1e6dU.png",period:"本次新增",label:"清冷少女",tags:["清冷少女","现代都市","孤高疏离"],role:"清冷少女 · 鹤鸣般遥远的一声",personality:"孤高、敏感，不喜喧闹。她把社交能量花得很省，对虚伪尤其不耐；被真正理解时，会沉默地交付信任。",setting:"现代都市艺术圈。独立音乐人的她拒绝商业化包装，却因一场合作不得不站上聚光灯。故事关于清冷是否等于封闭：她学会在不失自我的前提下被听见。"},
+  {image:"assets/tavo/new/Tavo_苏青婉_REr9.png",period:"本次新增",label:"温柔姐姐",tags:["温柔姐姐","现代都市","邻家关怀"],role:"温柔姐姐 · 把后辈的慌乱收进袖里",personality:"成熟体贴，处事周全，笑起来让人安心。她习惯照顾人，却不擅长承认自己也需要依靠。",setting:"现代都市职场与邻里。她收留暂居的后辈，日常生活里逐渐生出越界的温度。剧情写姐姐型人格的恋爱课题：保护欲与平等关系如何共存。"},
+  {image:"assets/tavo/new/Tavo_苏清寒_1e6bb.png",period:"本次新增",label:"清冷少女",tags:["清冷少女","现代都市","寒香气质"],role:"清冷少女 · 寒香淡到要侧耳才能闻见",personality:"安静自持，礼貌而疏离。她不是高傲，只是把心门的钥匙藏得很深；靠近需要时间，留下需要诚意。",setting:"现代都市。留学归国后她拒绝家族联姻安排，独自租下旧公寓。故事关于寒意中的自洽：她在对抗命运安排的同时，遇见愿意慢慢等她开门的人。"},
+  {image:"assets/tavo/new/Tavo_苏秀媚_1e68z.png",period:"本次新增",label:"妩媚姐姐",tags:["妩媚姐姐","现代都市","艳色风情"],role:"妩媚姐姐 · 笑里有钩，心里有秤",personality:"风情外放，社交高手，懂得用氛围掌控局面。她看似玩世，实则把感情账算得很清楚；真动心时反而会慌。",setting:"现代都市夜场与名利场。她周旋于酒局与契约之间，直到一桩旧账找上门。剧情写妩媚不是轻浮：她用魅力当武器，也用它保护真正在乎的人。"},
+  {image:"assets/tavo/new/Tavo_田秀琴_Vh3R(带面板).png",period:"本次新增",label:"知性教师",tags:["知性教师","现代校园","禁忌师生"],role:"知性教师 · 板书工整，心事未必工整",personality:"条理清晰，谈吐得体，对学生严慈并济。她相信规则能保护大多数人，却在个案面前不断被挑战。",setting:"现代校园。重点班出现心理危机连环事件，她作为班主任兼心理联络人介入。故事关于知性背后的体温：教育不只是分数，也是接住崩塌的瞬间。"},
+  {image:"assets/tavo/new/Tavo_温江语_REtb.png",period:"本次新增",label:"温柔系角色",tags:["温柔系","现代都市","软语温存"],role:"温柔系 · 江水一样绕过棱角",personality:"软语温存，很少硬碰硬。她会绕路迁就别人，但底线被踩时会突然坚定；那种反差让人措手不及。",setting:"现代都市。家庭矛盾与职场压迫同时压来，她选择用温柔做抵抗而非爆发。剧情写柔不是弱：绕过棱角是为了抵达，不是为了逃跑。"},
+  {image:"assets/tavo/new/Tavo_温云芍_Yb6z.png",period:"本次新增",label:"温柔系角色",tags:["温柔系","现代都市","云絮气质"],role:"温柔系 · 云絮落肩也不肯惊动谁",personality:"恬静、内敛，存在感轻柔。她善于察觉细微情绪，却不擅长表达自己的渴望；需要被主动询问。",setting:"现代都市花艺与疗愈空间。她经营一间很小的花室，收留情绪无家可归的客人。故事关于云絮般的人如何成为别人的避风港，也如何学会为自己留一束花。"},
+  {image:"assets/tavo/new/Tavo_许淑琴_Vh2r.png",period:"本次新增",label:"成熟姐姐",tags:["成熟姐姐","现代都市","韵味深长"],role:"成熟姐姐 · 烟火气里的从容韵味",personality:"稳、准、有分寸。她经历过足够多，所以很少大惊小怪；给人 chronical 的安全感，也带着一点看透后的慈悲。",setting:"现代都市。离婚后的她重返职场并接手家族小店，生活被旧爱、新人与流言同时包围。剧情写成熟不是结束恋爱，而是更清楚自己要什么。"},
+  {image:"assets/tavo/new/Tavo_长风_Sooz.png",period:"本次新增",label:"飒爽少女",tags:["飒爽少女","武侠风尘","仗剑天涯"],role:"飒爽少女 · 仗剑天涯的风声",personality:"利落、爽快，讨厌拖泥带水。她重承诺，轻生死，把义气看得比面子重；情感上反而会不好意思。",setting:"武侠风尘。边城镖局遇袭，她接下几乎必死的护送单。故事关于飒爽背后的柔软：江湖路远，她逐渐明白守护比胜利更难。"},
+  {image:"assets/tavo/new/Tavo_赵玉琴_1e69D.png",period:"本次新增",label:"温婉姐姐",tags:["温婉姐姐","现代都市","端庄柔和"],role:"温婉姐姐 · 端着茶盏也能稳住场",personality:"端庄柔和，进退有度。她很少提高音量，却能用平静把冲突按下去；内心戏丰富，表面永远得体。",setting:"现代世家与都市礼仪圈。联姻宴会上突发丑闻，她以旁支身份临危主持。剧情写温婉不是退让：她在礼法缝隙里为真心争一条生路。"},
+  {image:"assets/tavo/new/Tavo_紫铃_REtw.png",period:"本次新增",label:"神秘少女",tags:["神秘少女","奇幻异闻","紫雾迷踪"],role:"神秘少女 · 紫雾里摇响的铃",personality:"神秘、跳脱，情绪像雾一样聚散。她说话常带谜面，亲近时却孩子气；让人分不清是在玩还是在试探。",setting:"奇幻异闻。古镇铃音一响便有人失踪，她自称来寻铃的主人。故事关于谜题与命运：当你跟上紫雾，她可能是向导，也可能是答案本身。"}
 ];
 function previewFor(image){
   return image
@@ -1606,7 +1606,7 @@ function previewFor(image){
     + `?v=${ASSET_VERSION}`;
 }
 
-const tavoWorks=tavoAssets.map(({image,period,label,tags})=>{
+const tavoWorks=tavoAssets.map(({image,period,label,tags,role,personality,setting})=>{
   const file=image.split("/").pop().replace(/^Tavo_/,"").replace(/\.png$/i,"");
   const separator=file.lastIndexOf("_");
   const name=separator>0 ? file.slice(0,separator) : file;
@@ -1618,9 +1618,9 @@ const tavoWorks=tavoAssets.map(({image,period,label,tags})=>{
     collectionLabel:"TAVO ROLE CARD",
     image:encodeURI(image),
     preview:encodeURI(previewFor(image)),
-    role:"TAVO 角色卡 · "+period+"精品归档",
-    personality:"角色卡已归档，性格资料待补充。",
-    setting:"该角色卡已从 PNG 作品集合转入档案，详细背景与关系设定待补充。",
+    role:role || (label+" · TAVO 角色卡"),
+    personality:personality || "性格资料整理中。",
+    setting:setting || "设定与剧情资料整理中。",
     tags:cardTags,
     cardLabel:label,
     creator:"繁花·纷落",
@@ -1694,8 +1694,8 @@ function cardHTML(work,index){
             <p class="back-role">${safe(work.role || "原创角色")}</p>
             <div class="back-tags">${tags}</div>
             <div class="setting">
-              <div><b>性格</b><p>${safe(work.personality || "暂无性格介绍。")}</p></div>
-              <div class="back-setting-content" id="card-setting-${index}" tabindex="-1"${settingSensitive ? " hidden" : ""}><b>设定 · 未完成</b><p>${settingSensitive ? "" : safe(work.setting || "暂无背景设定。")}</p></div>
+              <div><b>性格简介</b><p>${safe(work.personality || "暂无性格介绍。")}</p></div>
+              <div class="back-setting-content" id="card-setting-${index}" tabindex="-1"${settingSensitive ? " hidden" : ""}><b>设定 · 剧情</b><p>${settingSensitive ? "" : safe(work.setting || "暂无背景设定。")}</p></div>
             </div>
             <div class="back-setting-privacy"${settingSensitive ? "" : " hidden"} aria-hidden="${settingSensitive ? "false" : "true"}">
               <span class="back-setting-mark" aria-hidden="true"></span>
