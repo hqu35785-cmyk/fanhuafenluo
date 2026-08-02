@@ -897,6 +897,8 @@ footer::before{
   object-fit:contain;
   background:#0a0910;
   -webkit-touch-callout:default;
+  user-select:auto;
+  -webkit-user-select:auto;
   pointer-events:auto;
 }
 .save-sheet-actions{
@@ -917,6 +919,17 @@ footer::before{
   font-size:11px;
   font-weight:650;
   letter-spacing:.06em;
+}
+.save-sheet-photo{
+  width:100%;
+  appearance:none;
+  -webkit-appearance:none;
+  cursor:pointer;
+}
+.save-sheet-photo:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
 }
 .save-sheet-note{
   color:rgba(204,195,211,.58);
@@ -1628,8 +1641,9 @@ footer::before{
         <img id="saveSheetImage" alt="角色卡原图" decoding="async">
       </div>
       <div class="save-sheet-actions">
+        <button class="save-sheet-link save-sheet-photo" id="saveSheetPhoto" type="button" aria-describedby="saveSheetNote" disabled>正在准备相册保存…</button>
         <a class="save-sheet-link" id="saveSheetLink" href="#" download>下载 PNG 原图</a>
-        <p class="save-sheet-note" id="saveSheetNote">手机端若无反应，请长按上方图片保存。</p>
+        <p class="save-sheet-note" id="saveSheetNote" aria-live="polite">手机端若无反应，请长按上方图片保存。</p>
       </div>
     </div>
   </div>
@@ -1959,11 +1973,172 @@ const saveSheetNote=document.getElementById("saveSheetNote");
 const saveSheetImage=document.getElementById("saveSheetImage");
 const saveSheetLink=document.getElementById("saveSheetLink");
 const saveSheetClose=document.getElementById("saveSheetClose");
+const saveSheetPhoto=document.getElementById("saveSheetPhoto");
+
+/*
+ * 完整角色卡 PNG 可能较大。
+ * 只缓存最近成功准备的一张 File，
+ * 避免手机内存不断增长。
+ */
+const SHARE_PNG_CACHE_LIMIT=1;
+const sharePngFileCache=new Map();
 
 let saveSheetLastFocus=null;
+let saveSheetActiveWork=null;
+let saveSheetShareFile=null;
+let saveSheetPrepareVersion=0;
+let saveSheetPrepareController=null;
+
+/*
+ * Web Share 全局状态。
+ * 即使用户关闭网页内的保存辅助层，
+ * 只要系统分享 Promise 没有结束，就不能解除此锁。
+ */
+let webSharePending=false;
+let webShareWatchdog=0;
 
 function absoluteAssetUrl(path){
   return new URL(path,window.location.href).href;
+}
+
+function setSaveSheetStatus(text){
+  if(saveSheetNote) saveSheetNote.textContent=text;
+}
+
+function safePngFilename(name){
+  const safeName=String(name || "角色卡")
+    .replace(/[\\/:*?"<>|\u0000-\u001f\u007f]/g,"_")
+    .replace(/[. ]+$/g,"")
+    .trim()
+    .slice(0,100);
+  return `${safeName || "角色卡"}-角色卡.png`;
+}
+
+function hasFileShareApi(){
+  return Boolean(
+    window.isSecureContext &&
+    typeof File==="function" &&
+    typeof navigator.share==="function" &&
+    typeof navigator.canShare==="function"
+  );
+}
+
+function canSharePngFile(file){
+  if(!file || !hasFileShareApi()) return false;
+  try{
+    return navigator.canShare({files:[file]});
+  }catch{
+    return false;
+  }
+}
+
+function rememberShareFile(url,file){
+  sharePngFileCache.delete(url);
+  sharePngFileCache.set(url,file);
+  while(sharePngFileCache.size>SHARE_PNG_CACHE_LIMIT){
+    const oldestUrl=sharePngFileCache.keys().next().value;
+    sharePngFileCache.delete(oldestUrl);
+  }
+}
+
+async function prepareOriginalPngFile(work,signal){
+  const url=absoluteAssetUrl(work.image);
+  const cachedFile=sharePngFileCache.get(url);
+  if(cachedFile){
+    rememberShareFile(url,cachedFile);
+    return cachedFile;
+  }
+
+  const response=await fetch(url,{
+    credentials:"same-origin",
+    signal
+  });
+  if(!response.ok) throw new Error(`PNG request failed: ${response.status}`);
+
+  const blob=await response.blob();
+  if(signal.aborted) throw new DOMException("Aborted","AbortError");
+  if(!blob.size) throw new Error("PNG response is empty");
+
+  /*
+   * 只检查 PNG 文件签名。
+   * 不重新编码、不修改完整文件。
+   */
+  const header=new Uint8Array(await blob.slice(0,8).arrayBuffer());
+  const signature=[137,80,78,71,13,10,26,10];
+  const validPng=header.length===signature.length && signature.every((byte,index)=>header[index]===byte);
+  if(!validPng) throw new Error("Downloaded asset is not a valid PNG");
+
+  const file=new File([blob],safePngFilename(work.name),{
+    type:"image/png",
+    lastModified:Date.now()
+  });
+  rememberShareFile(url,file);
+  return file;
+}
+
+async function prepareSaveToPhotos(work){
+  if(!saveSheetPhoto) return;
+
+  /* 中止上一张角色卡仍在执行的请求。 */
+  saveSheetPrepareController?.abort();
+  const controller=new AbortController();
+  saveSheetPrepareController=controller;
+  const version=++saveSheetPrepareVersion;
+
+  saveSheetActiveWork=work;
+  saveSheetShareFile=null;
+  saveSheetPhoto.disabled=true;
+  saveSheetPhoto.textContent="正在准备相册保存…";
+  saveSheetPhoto.removeAttribute("aria-busy");
+
+  if(!hasFileShareApi()){
+    saveSheetPhoto.textContent="当前浏览器不支持保存到相册";
+    setSaveSheetStatus("当前浏览器不支持 PNG 文件分享。请长按原图保存，或使用“下载 PNG 原图”。");
+    return;
+  }
+
+  setSaveSheetStatus("正在准备 PNG 原图。准备完成后可打开系统保存菜单。");
+
+  try{
+    const file=await prepareOriginalPngFile(work,controller.signal);
+
+    /*
+     * 防止上一张角色卡的结果
+     * 覆盖当前辅助层。
+     */
+    if(version!==saveSheetPrepareVersion || saveSheet.hidden || saveSheetActiveWork!==work) return;
+
+    if(!canSharePngFile(file)){
+      saveSheetPhoto.disabled=true;
+      saveSheetPhoto.textContent="当前浏览器不支持保存到相册";
+      setSaveSheetStatus("当前浏览器不能通过系统菜单分享此 PNG。请长按原图保存，或使用“下载 PNG 原图”。");
+      return;
+    }
+
+    saveSheetShareFile=file;
+
+    /*
+     * 浏览器仍在处理上一次分享时，
+     * 不能再次调用 navigator.share。
+     */
+    if(webSharePending){
+      saveSheetPhoto.disabled=true;
+      saveSheetPhoto.textContent="系统仍在处理上一次请求";
+      setSaveSheetStatus("浏览器仍在处理上一次系统分享。如果系统菜单已经关闭但按钮一直不可用，请刷新页面，或直接长按原图保存。");
+      return;
+    }
+
+    saveSheetPhoto.disabled=false;
+    saveSheetPhoto.textContent="保存到相册";
+    setSaveSheetStatus("点击“保存到相册”后，请在系统菜单中选择“存储图像”“保存到照片”或相册应用。若没有相应选项，请长按原图保存。需要保留角色卡数据时，请使用“下载 PNG 原图”。");
+  }catch(error){
+    if(error?.name==="AbortError") return;
+    console.error("准备相册 PNG 失败：",error);
+    if(version!==saveSheetPrepareVersion || saveSheet.hidden) return;
+    saveSheetPhoto.disabled=true;
+    saveSheetPhoto.textContent="相册保存准备失败";
+    setSaveSheetStatus("原始 PNG 加载失败。请检查网络后重新打开，或尝试“下载 PNG 原图”。");
+  }
 }
 
 function saveEnvironment(){
@@ -2010,7 +2185,7 @@ function triggerDirectDownload(work){
   const url=absoluteAssetUrl(work.image);
   const link=document.createElement("a");
   link.href=url;
-  link.download=`${work.name}-角色卡.png`;
+  link.download=safePngFilename(work.name);
   link.rel="noopener";
   document.body.appendChild(link);
   link.click();
@@ -2019,15 +2194,32 @@ function triggerDirectDownload(work){
 
 function closeSaveSheet(){
   if(!saveSheet || saveSheet.hidden) return;
+
+  /* 使旧的准备任务失效。 */
+  saveSheetPrepareVersion++;
+
+  /* 中止当前仍在进行的原始 PNG 请求。 */
+  saveSheetPrepareController?.abort();
+  saveSheetPrepareController=null;
+
+  saveSheetActiveWork=null;
+  saveSheetShareFile=null;
+
+  if(saveSheetPhoto){
+    saveSheetPhoto.disabled=true;
+    saveSheetPhoto.textContent=webSharePending ? "系统仍在处理…" : "正在准备相册保存…";
+    saveSheetPhoto.removeAttribute("aria-busy");
+  }
+
   saveSheet.hidden=true;
   saveSheetImage.removeAttribute("src");
   saveSheetLink.removeAttribute("href");
   document.removeEventListener("keydown",onSaveSheetKeydown,true);
+
   const restore=saveSheetLastFocus;
   saveSheetLastFocus=null;
-  // 不抢档案弹窗的焦点；有记录时再还回
   if(restore && typeof restore.focus==="function" && document.contains(restore)){
-    try{restore.focus({preventScroll:true})}catch{/* ignore */}
+    try{restore.focus({preventScroll:true})}catch{/* 忽略焦点恢复失败 */}
   }
 }
 
@@ -2041,14 +2233,14 @@ function onSaveSheetKeydown(event){
 
 function openSaveSheet(work){
   const url=absoluteAssetUrl(work.image);
-  const filename=`${work.name}-角色卡.png`;
+  const filename=safePngFilename(work.name);
   const env=saveEnvironment();
   const copy=saveCopyForEnv(env,work.name);
 
   saveSheetLastFocus=document.activeElement instanceof HTMLElement ? document.activeElement : null;
   saveSheetTitle.textContent=copy.title;
-  saveSheetHint.textContent=copy.hint;
-  saveSheetNote.textContent=copy.note;
+  saveSheetHint.textContent="可以使用“保存到相册”打开系统菜单，也可以长按下方原图保存。";
+  setSaveSheetStatus("正在准备 PNG 原图。保存到相册由手机系统处理，部分相册可能重新处理图片并移除角色卡数据。需要导入角色卡时，请使用“下载 PNG 原图”。");
   saveSheetImage.alt=`${work.name}角色卡原图`;
   saveSheetImage.src=url;
   saveSheetLink.href=url;
@@ -2056,6 +2248,12 @@ function openSaveSheet(work){
   saveSheetLink.textContent="下载 PNG 原图";
   saveSheet.hidden=false;
   document.addEventListener("keydown",onSaveSheetKeydown,true);
+
+  /*
+   * 先显示辅助层，再在后台准备 File。
+   * 用户点击“保存到相册”后不能再 fetch。
+   */
+  void prepareSaveToPhotos(work);
   saveSheetClose?.focus({preventScroll:true});
 }
 
@@ -2095,6 +2293,96 @@ saveSheet?.addEventListener("click",event=>{
 });
 // 面板内部点击不冒泡到遮罩关闭
 saveSheet?.querySelector(".save-sheet-panel")?.addEventListener("click",event=>event.stopPropagation());
+
+saveSheetPhoto?.addEventListener("click",()=>{
+  const file=saveSheetShareFile;
+  const version=saveSheetPrepareVersion;
+
+  if(webSharePending){
+    setSaveSheetStatus("系统仍在处理上一次分享请求。如果系统菜单已经关闭但按钮仍不可用，请刷新页面后重试。");
+    return;
+  }
+
+  if(!canSharePngFile(file)){
+    setSaveSheetStatus("当前浏览器无法打开 PNG 系统保存菜单。请长按原图保存，或使用“下载 PNG 原图”。");
+    return;
+  }
+
+  webSharePending=true;
+  saveSheetPhoto.disabled=true;
+  saveSheetPhoto.textContent="正在打开系统菜单…";
+  saveSheetPhoto.setAttribute("aria-busy","true");
+
+  let sharePromise;
+  try{
+    /*
+     * 必须在当前用户点击事件中立即调用。
+     * 这里前面不能添加 await。
+     */
+    sharePromise=navigator.share({files:[file]});
+  }catch(error){
+    sharePromise=Promise.reject(error);
+  }
+
+  clearTimeout(webShareWatchdog);
+
+  /*
+   * 部分旧版 iOS 可能不结束分享 Promise。
+   * 超时后只显示提示，不能擅自解除分享锁，
+   * 因为网页无法重置浏览器内部分享状态。
+   */
+  webShareWatchdog=setTimeout(()=>{
+    if(!webSharePending) return;
+    if(version===saveSheetPrepareVersion && !saveSheet.hidden){
+      saveSheetPhoto.disabled=true;
+      saveSheetPhoto.textContent="系统仍在处理…";
+      setSaveSheetStatus("系统没有返回分享结果。如果菜单已经关闭但按钮仍不可用，请刷新页面后重试；也可以长按原图保存。");
+    }
+  },20000);
+
+  Promise.resolve(sharePromise)
+    .then(()=>{
+      if(version!==saveSheetPrepareVersion || saveSheet.hidden) return;
+      setSaveSheetStatus("文件已交给系统菜单处理。是否保存到相册由所选系统应用决定。需要保留角色卡数据时，请使用“下载 PNG 原图”。");
+    })
+    .catch(error=>{
+      if(version!==saveSheetPrepareVersion || saveSheet.hidden) return;
+
+      /*
+       * AbortError 可能是用户取消，
+       * 也可能是没有可用分享目标。
+       */
+      if(error?.name==="AbortError"){
+        setSaveSheetStatus("系统菜单已关闭。未完成保存时可以再次尝试。");
+        return;
+      }
+      if(error?.name==="InvalidStateError"){
+        setSaveSheetStatus("浏览器仍认为上一次分享没有结束。请刷新页面后重试，或长按原图保存。");
+        return;
+      }
+      if(error?.name==="NotAllowedError"){
+        setSaveSheetStatus("浏览器阻止了系统分享请求。请重新点击按钮，或长按原图保存。");
+        return;
+      }
+      console.error("打开系统分享菜单失败：",error);
+      setSaveSheetStatus("无法打开系统保存菜单。请长按原图保存，或使用“下载 PNG 原图”。");
+    })
+    .finally(()=>{
+      /*
+       * 只有浏览器的 Promise 真正结束后，
+       * 才解除全局分享锁。
+       */
+      webSharePending=false;
+      clearTimeout(webShareWatchdog);
+      webShareWatchdog=0;
+
+      if(version!==saveSheetPrepareVersion || saveSheet.hidden || saveSheetShareFile!==file) return;
+
+      saveSheetPhoto.disabled=false;
+      saveSheetPhoto.textContent="保存到相册";
+      saveSheetPhoto.removeAttribute("aria-busy");
+    });
+});
 
 const archiveClose=document.getElementById("archiveClose");
 const archiveVisual=document.getElementById("archiveVisual");
