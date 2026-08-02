@@ -287,7 +287,6 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
 .back-return:focus-visible,
 .back-expand:focus-visible,
 .privacy-unlock:focus-visible,
-.card-save:focus-visible,
 .setting-unlock:focus-visible,
 .archive-setting-unlock:focus-visible{
   outline:2px solid rgba(243,170,194,.78);
@@ -531,7 +530,7 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   position:absolute;
   z-index:8;
   right:12px;
-  bottom:48px;
+  bottom:12px;
   min-width:82px;
   min-height:32px;
   padding:0 11px;
@@ -546,37 +545,18 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   font-size:9px;
   font-weight:650;
   letter-spacing:.08em;
-  transition:transform .2s ease,border-color .2s ease,opacity .2s ease;
-}
-.privacy-unlock[hidden]{display:none!important}
-.card.flipped .privacy-unlock,
-.card.flipped .card-save{opacity:0;pointer-events:none}
-.card-save{
-  position:absolute;
-  z-index:8;
-  right:12px;
-  bottom:12px;
-  min-height:32px;
-  padding:0 11px;
-  border:1px solid rgba(243,170,194,.28);
-  border-radius:999px;
-  color:#fff;
-  background:linear-gradient(135deg,rgba(243,170,194,.22),rgba(157,185,255,.1)),rgba(11,10,18,.72);
-  box-shadow:0 12px 28px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.08);
-  -webkit-backdrop-filter:blur(10px) saturate(120%);
-  backdrop-filter:blur(10px) saturate(120%);
-  cursor:pointer;
-  font-size:8px;
-  font-weight:650;
-  letter-spacing:.06em;
   white-space:nowrap;
-  transition:transform .2s ease,border-color .2s ease,opacity .2s ease;
+  transition:transform .2s ease,border-color .2s ease,opacity .2s ease,background .2s ease;
 }
-.card-save:disabled{cursor:not-allowed;opacity:.38;transform:none}
-.front.is-locked .card-name,
-.front.is-load-error .card-name{bottom:88px}
-.card:has(.privacy-unlock[hidden]) .card-name,
-.card:not(:has(.privacy-unlock)) .card-name{bottom:52px}
+.privacy-unlock[data-mode="save"]{
+  border-color:rgba(243,170,194,.28);
+  font-size:8px;
+  letter-spacing:.06em;
+  background:linear-gradient(135deg,rgba(243,170,194,.22),rgba(157,185,255,.1)),rgba(11,10,18,.72);
+}
+.privacy-unlock:disabled{cursor:not-allowed;opacity:.38;transform:none}
+.privacy-unlock[hidden]{display:none!important}
+.card.flipped .privacy-unlock{opacity:0;pointer-events:none}
 .front::before{
   content:"";
   position:absolute;
@@ -602,8 +582,10 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   z-index:3;
   left:16px;
   right:108px;
-  bottom:52px;
+  bottom:15px;
 }
+.front.is-locked .card-name,
+.front.is-load-error .card-name{bottom:15px}
 .card-name::before{
   content:"";
   display:block;
@@ -1137,7 +1119,6 @@ footer::before{
   .back-return:hover,.back-expand:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.35)}
   .back-expand:hover span:last-child{transform:translate(2px,-2px)}
   .privacy-unlock:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.4)}
-  .card-save:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.48)}
   .setting-unlock:hover,.archive-setting-unlock:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.38);background:linear-gradient(135deg,rgba(243,170,194,.19),rgba(157,185,255,.09))}
   .archive-unlock:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.4)}
   .archive-action:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.48)}
@@ -1300,12 +1281,8 @@ footer::before{
   .back-setting-privacy{min-height:104px;margin-top:7px;padding:9px;grid-template-columns:30px minmax(0,1fr);gap:7px 8px}
   .back-setting-mark{width:30px;height:35px;border-radius:9px}
   .back-setting-copy p{display:none}
-  .privacy-unlock{right:10px;bottom:44px}
-  .card-save{right:10px;bottom:10px;min-height:30px;padding-inline:10px;font-size:7px}
-  .front.is-locked .card-name,
-  .front.is-load-error .card-name{bottom:80px}
-  .card:has(.privacy-unlock[hidden]) .card-name,
-  .card:not(:has(.privacy-unlock)) .card-name{bottom:46px}
+  .privacy-unlock{right:10px;bottom:10px;min-height:30px;padding-inline:10px;font-size:8px}
+  .privacy-unlock[data-mode="save"]{font-size:7px}
   .card-name{right:96px}
   .archive-status em{display:none}
   .front{--badge-inset:8px}
@@ -1461,7 +1438,7 @@ footer::before{
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .card,.card-inner,.front img,.action,.toast,.archive-modal,.archive-action,.card-open,.back-return,.back-expand,.privacy-unlock,.card-save,.archive-unlock,.setting-unlock,.archive-setting-unlock,.unlock-all{transition:none}
+  .card,.card-inner,.front img,.action,.toast,.archive-modal,.archive-action,.card-open,.back-return,.back-expand,.privacy-unlock,.archive-unlock,.setting-unlock,.archive-setting-unlock,.unlock-all{transition:none}
   .placeholder-card:hover::after{animation:none}
 }
 
@@ -1756,8 +1733,7 @@ function cardHTML(work,index){
           </div>
         </section>
       </div>
-      ${imageSensitive ? `<button class="privacy-unlock" type="button" data-index="${index}" aria-label="显示${safe(work.name)}的敏感图片，仅本次页面有效">解锁卡面</button>` : ""}
-      <button class="card-save" type="button" data-index="${index}" aria-label="保存${safe(work.name)}角色卡 PNG"${imageSensitive ? " disabled title=\"请先解锁卡面\"" : ""}>保存角色卡 PNG</button>
+      <button class="privacy-unlock" type="button" data-index="${index}" data-mode="${imageSensitive ? "unlock" : "save"}" aria-label="${imageSensitive ? `显示${safe(work.name)}的敏感图片，仅本次页面有效` : `保存${safe(work.name)}角色卡 PNG`}">${imageSensitive ? "解锁卡面" : "保存角色卡 PNG"}</button>
     </article>
     ${hint}
   </div>`;
@@ -2227,18 +2203,31 @@ function syncCardPrivacy(index,{queueIfNear=true}={}){
   }
   if(veil) veil.hidden=!(locked || loading || failed);
   if(unlock){
-    const retryAvailable=failed;
-    unlock.hidden=!(locked || retryAvailable);
-    unlock.textContent=retryAvailable ? "重试图片" : "解锁卡面";
-    unlock.setAttribute("aria-label",retryAvailable
-      ? `重新加载${work.name}的图片`
-      : `显示${work.name}的敏感图片，仅本次页面有效`);
-    const unlockInactive=card.classList.contains("flipped") || (!locked && !retryAvailable);
-    unlock.toggleAttribute("inert",unlockInactive);
-    unlock.setAttribute("aria-hidden",String(unlockInactive));
+    const flipped=card.classList.contains("flipped");
+    unlock.hidden=false;
+    if(locked){
+      unlock.dataset.mode="unlock";
+      unlock.disabled=false;
+      unlock.textContent="解锁卡面";
+      unlock.title="";
+      unlock.setAttribute("aria-label",`显示${work.name}的敏感图片，仅本次页面有效`);
+    }else if(failed){
+      unlock.dataset.mode="retry";
+      unlock.disabled=false;
+      unlock.textContent="重试图片";
+      unlock.title="";
+      unlock.setAttribute("aria-label",`重新加载${work.name}的图片`);
+    }else{
+      unlock.dataset.mode="save";
+      unlock.disabled=cardDownloadBusy;
+      unlock.textContent="保存角色卡 PNG";
+      unlock.title=cardDownloadBusy ? "正在生成角色卡" : "";
+      unlock.setAttribute("aria-label",`保存${work.name}角色卡 PNG`);
+    }
+    unlock.toggleAttribute("inert",flipped);
+    unlock.setAttribute("aria-hidden",String(flipped));
   }
   if(queueIfNear && !locked && state==="idle" && isPreviewNearViewport(front)) queuePreviewLoad(index);
-  syncCardSave(index);
 }
 
 function syncCardSettingPrivacy(index){
@@ -2269,15 +2258,8 @@ function cardSaveTitle(index){
   return "";
 }
 
-function syncCardSave(index){
-  const saveButton=gallery.querySelector(`.card[data-index="${index}"] .card-save`);
-  if(!saveButton) return;
-  const locked=isWorkLocked(index) || isSettingLocked(index);
-  saveButton.disabled=cardDownloadBusy || locked;
-  saveButton.title=cardSaveTitle(index);
-  const flipped=saveButton.closest(".card")?.classList.contains("flipped");
-  saveButton.toggleAttribute("inert",Boolean(flipped));
-  saveButton.setAttribute("aria-hidden",String(Boolean(flipped)));
+function syncFaceActions(){
+  works.forEach((_,index)=>syncCardPrivacy(index,{queueIfNear:false}));
 }
 
 function syncArchiveDownloads(index){
@@ -2285,17 +2267,13 @@ function syncArchiveDownloads(index){
   const settingLocked=isSettingLocked(index);
   downloadCard.disabled=cardDownloadBusy || imageLocked || settingLocked;
   downloadCard.title=cardSaveTitle(index);
-  if(Number.isInteger(index)) syncCardSave(index);
 }
 
 async function downloadCharacterCard(work,index){
   if(!work || cardDownloadBusy || !fullCardAccessAllowed(index)) return;
   cardDownloadBusy=true;
   syncArchiveDownloads(index);
-  gallery.querySelectorAll(".card-save").forEach(button=>{
-    const cardIndex=Number(button.dataset.index);
-    if(Number.isInteger(cardIndex)) syncCardSave(cardIndex);
-  });
+  syncFaceActions();
   try{
     tip("正在生成 PNG 角色卡");
     const blob=await getFullCardBlob(work,index);
@@ -2306,10 +2284,7 @@ async function downloadCharacterCard(work,index){
   }finally{
     cardDownloadBusy=false;
     if(activeIndex!==null) syncArchiveDownloads(activeIndex);
-    gallery.querySelectorAll(".card-save").forEach(button=>{
-      const cardIndex=Number(button.dataset.index);
-      if(Number.isInteger(cardIndex)) syncCardSave(cardIndex);
-    });
+    syncFaceActions();
   }
 }
 
@@ -2514,8 +2489,7 @@ document.querySelectorAll(".card").forEach(card=>{
   const back=card.querySelector(".back");
   const returnButton=card.querySelector(".back-return");
   const expandButton=card.querySelector(".back-expand");
-  const unlockButton=card.querySelector(".privacy-unlock");
-  const saveButton=card.querySelector(".card-save");
+  const faceAction=card.querySelector(".privacy-unlock");
 
   syncCardPrivacy(index);
   syncCardSettingPrivacy(index);
@@ -2527,15 +2501,9 @@ document.querySelectorAll(".card").forEach(card=>{
     flipButton.setAttribute("aria-expanded",String(flipped));
     back.toggleAttribute("inert",!flipped);
     back.setAttribute("aria-hidden",String(!flipped));
-    if(unlockButton){
-      const retryAvailable=!isWorkLocked(index) && previewLoadStates.get(index)==="error";
-      const unlockInactive=flipped || (!isWorkLocked(index) && !retryAvailable);
-      unlockButton.toggleAttribute("inert",unlockInactive);
-      unlockButton.setAttribute("aria-hidden",String(unlockInactive));
-    }
-    if(saveButton){
-      saveButton.toggleAttribute("inert",flipped);
-      saveButton.setAttribute("aria-hidden",String(flipped));
+    if(faceAction){
+      faceAction.toggleAttribute("inert",flipped);
+      faceAction.setAttribute("aria-hidden",String(flipped));
     }
     requestAnimationFrame(()=>{
       const target=flipped ? returnButton : flipButton;
@@ -2546,13 +2514,15 @@ document.querySelectorAll(".card").forEach(card=>{
   flipButton.addEventListener("click",()=>setFlipped(true));
   returnButton.addEventListener("click",()=>setFlipped(false));
   expandButton.addEventListener("click",()=>openArchive(index,expandButton));
-  unlockButton?.addEventListener("click",()=>{
-    unlockWork(index);
-    requestAnimationFrame(()=>flipButton.focus({preventScroll:true}));
-  });
-  saveButton?.addEventListener("click",e=>{
+  faceAction?.addEventListener("click",e=>{
     e.stopPropagation();
-    downloadCharacterCard(work,index);
+    const mode=faceAction.dataset.mode;
+    if(mode==="unlock" || mode==="retry"){
+      unlockWork(index);
+      requestAnimationFrame(()=>flipButton.focus({preventScroll:true}));
+      return;
+    }
+    if(mode==="save") downloadCharacterCard(work,index);
   });
 });
 
