@@ -57,8 +57,8 @@ def card_metadata_state(source: Path) -> tuple[int, bool]:
 def main() -> None:
     index_text = INDEX.read_text(encoding="utf-8")
     sources = [WANWAN_SOURCE, *tavo_sources(index_text)]
-    if len(sources) != 62:
-        raise AssertionError(f"Expected 62 source cards, found {len(sources)}")
+    if len(sources) != 63:
+        raise AssertionError(f"Expected 63 source cards, found {len(sources)}")
     if 'data:image/png;base64' in index_text:
         raise AssertionError("Large source PNG is still embedded in index.html")
     if "const PREVIEW_LOAD_CONCURRENCY=3;" not in index_text:
