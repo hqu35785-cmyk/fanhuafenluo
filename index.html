@@ -1673,7 +1673,7 @@ function cardHTML(work,index){
   const previewSource=!imageSensitive && preview ? ` src="${preview}"` : "";
   const cardLabel=work.cardLabel || work.tags?.[0] || "角色卡";
   const hint=index===0
-    ? `<p class="first-hint"><span class="hint-copy">点击卡片查看设定 · 长按直接保存 PNG 角色卡</span></p>`
+    ? `<p class="first-hint"><span class="hint-copy">点击卡片查看设定</span></p>`
     : "";
   const privacyLabel=imageSensitive
     ? (work.sensitiveLabel || "敏感卡面")
@@ -2449,23 +2449,14 @@ downloadCard.addEventListener("click",async()=>{
 
 document.querySelectorAll(".card").forEach(card=>{
   const index=Number(card.dataset.index);
-  const work=works[index];
   const flipButton=card.querySelector(".card-flip");
   const back=card.querySelector(".back");
   const returnButton=card.querySelector(".back-return");
   const expandButton=card.querySelector(".back-expand");
   const unlockButton=card.querySelector(".privacy-unlock");
-  let timer=null,startX=0,startY=0,holdReady=false,activePointerId=null,suppressPointerClickUntil=0;
 
   syncCardPrivacy(index);
   syncCardSettingPrivacy(index);
-
-  function clearHold(){
-    clearTimeout(timer);
-    timer=null;
-    holdReady=false;
-    activePointerId=null;
-  }
 
   function setFlipped(flipped){
     card.classList.toggle("flipped",flipped);
@@ -2486,74 +2477,12 @@ document.querySelectorAll(".card").forEach(card=>{
     });
   }
 
-  flipButton.addEventListener("click",e=>{
-    if(e.detail!==0 && performance.now()<suppressPointerClickUntil){
-      e.preventDefault();
-      return;
-    }
-    setFlipped(true);
-  });
+  flipButton.addEventListener("click",()=>setFlipped(true));
   returnButton.addEventListener("click",()=>setFlipped(false));
   expandButton.addEventListener("click",()=>openArchive(index,expandButton));
   unlockButton?.addEventListener("click",()=>{
     unlockWork(index);
     requestAnimationFrame(()=>flipButton.focus({preventScroll:true}));
-  });
-
-  const holdSurfaces=[flipButton,back];
-
-  function isBackControl(e){
-    return e.currentTarget===back && e.target instanceof Element && Boolean(e.target.closest("button"));
-  }
-
-  function startHold(e){
-    if(!e.isPrimary || e.pointerType==="mouse" || activePointerId!==null || isBackControl(e)) return;
-    activePointerId=e.pointerId;
-    startX=e.clientX;startY=e.clientY;
-    holdReady=false;
-    timer=setTimeout(()=>{
-      timer=null;
-      holdReady=true;
-      if(!isWorkLocked(index) && !isSettingLocked(index)){
-        getFullCardBlob(work,index).catch(()=>{});
-      }
-    },650);
-  }
-
-  function moveHold(e){
-    if(e.pointerId===activePointerId && Math.hypot(e.clientX-startX,e.clientY-startY)>12){
-      clearHold();
-    }
-  }
-
-  async function finishHold(e){
-    if(e.pointerId!==activePointerId) return;
-    const shouldSave=holdReady;
-    clearHold();
-    if(!shouldSave) return;
-    e.preventDefault();
-    suppressPointerClickUntil=performance.now()+1200;
-    if(!fullCardAccessAllowed(index)) return;
-    try{
-      tip("正在生成 PNG 角色卡");
-      const blob=fullCardBlobs.get(index) || await getFullCardBlob(work,index);
-      saveBlob(blob,`${work.name}-角色卡.png`);
-      tip("开始下载 PNG 角色卡");
-    }catch{tip("生成失败")}
-  }
-
-  holdSurfaces.forEach(surface=>{
-      surface.addEventListener("pointerdown",startHold);
-      surface.addEventListener("pointermove",moveHold);
-      surface.addEventListener("pointerup",finishHold);
-      ["pointercancel","pointerleave","lostpointercapture"].forEach(type=>
-      surface.addEventListener(type,e=>{
-        if(e.pointerId===activePointerId) clearHold();
-      })
-    );
-    surface.addEventListener("contextmenu",e=>{
-      if(!isBackControl(e) && window.matchMedia("(hover:none), (pointer:coarse)").matches) e.preventDefault();
-    });
   });
 });
 
