@@ -822,6 +822,104 @@ footer::before{
 }
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
+.save-sheet{
+  width:min(420px,calc(100vw - 24px));
+  max-height:min(88dvh,760px);
+  margin:auto;
+  padding:0;
+  border:1px solid rgba(255,244,249,.14);
+  border-radius:22px;
+  color:var(--text);
+  background:rgba(12,11,18,.96);
+  box-shadow:0 36px 100px rgba(0,0,0,.72),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.save-sheet::backdrop{
+  background:rgba(4,4,9,.78);
+  -webkit-backdrop-filter:blur(12px) saturate(108%);
+  backdrop-filter:blur(12px) saturate(108%);
+}
+.save-sheet-inner{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  padding:18px 18px 16px;
+}
+.save-sheet-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.save-sheet-head b{
+  font-size:14px;
+  font-weight:650;
+  letter-spacing:.06em;
+}
+.save-sheet-head p{
+  margin:6px 0 0;
+  color:rgba(220,211,226,.68);
+  font-size:11px;
+  line-height:1.55;
+  letter-spacing:.02em;
+}
+.save-sheet-close{
+  flex:0 0 auto;
+  width:36px;
+  height:36px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:50%;
+  color:rgba(255,255,255,.82);
+  background:rgba(255,255,255,.04);
+  cursor:pointer;
+  font-size:18px;
+  line-height:1;
+}
+.save-sheet-preview{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  background:#0a0910;
+  -webkit-touch-callout:default;
+  user-select:auto;
+  -webkit-user-select:auto;
+}
+.save-sheet-preview img{
+  display:block;
+  width:100%;
+  max-height:min(52dvh,460px);
+  object-fit:contain;
+  background:#0a0910;
+  -webkit-touch-callout:default;
+  pointer-events:auto;
+}
+.save-sheet-actions{
+  display:grid;
+  gap:8px;
+}
+.save-sheet-link{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:0 14px;
+  border:1px solid rgba(243,170,194,.28);
+  border-radius:999px;
+  color:#fff;
+  text-decoration:none;
+  background:linear-gradient(135deg,rgba(243,170,194,.22),rgba(157,185,255,.1)),rgba(11,10,18,.72);
+  font-size:11px;
+  font-weight:650;
+  letter-spacing:.06em;
+}
+.save-sheet-note{
+  color:rgba(204,195,211,.58);
+  font-size:10px;
+  line-height:1.5;
+  letter-spacing:.02em;
+  text-align:center;
+}
+
 .archive-modal{
   width:min(1040px,calc(100vw - 34px));
   max-width:none;
@@ -1510,6 +1608,25 @@ footer::before{
 
 <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
+<dialog class="save-sheet" id="saveSheet" aria-labelledby="saveSheetTitle">
+  <div class="save-sheet-inner">
+    <div class="save-sheet-head">
+      <div>
+        <b id="saveSheetTitle">保存角色卡</b>
+        <p id="saveSheetHint">请按下方提示保存原图 PNG。</p>
+      </div>
+      <button class="save-sheet-close" id="saveSheetClose" type="button" aria-label="关闭保存面板">×</button>
+    </div>
+    <div class="save-sheet-preview">
+      <img id="saveSheetImage" alt="角色卡原图" decoding="async">
+    </div>
+    <div class="save-sheet-actions">
+      <a class="save-sheet-link" id="saveSheetLink" href="#" download>下载 PNG 原图</a>
+      <p class="save-sheet-note" id="saveSheetNote">手机端若无反应，请长按上方图片保存。</p>
+    </div>
+  </div>
+</dialog>
+
 <script>
 const IMAGE_SOURCE="assets/source/wanwan.png";
 const IMAGE_PREVIEW="assets/previews/wanwan.webp";
@@ -1827,31 +1944,134 @@ window.addEventListener("orientationchange",scheduleGalleryFit,{passive:true});
 window.visualViewport?.addEventListener("resize",scheduleGalleryFit,{passive:true});
 document.fonts?.ready.then(scheduleGalleryFit);
 
-function downloadDirectly(url,filename){
-  const link=document.createElement("a");
-  link.href=new URL(url,window.location.href).href;
-  link.download=filename;
-  // 不支持 download 的浏览器至少会打开原图，避免离开站点且可长按保存。
-  link.target="_blank";
-  link.rel="noopener";
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
+const saveSheet=document.getElementById("saveSheet");
+const saveSheetTitle=document.getElementById("saveSheetTitle");
+const saveSheetHint=document.getElementById("saveSheetHint");
+const saveSheetNote=document.getElementById("saveSheetNote");
+const saveSheetImage=document.getElementById("saveSheetImage");
+const saveSheetLink=document.getElementById("saveSheetLink");
+const saveSheetClose=document.getElementById("saveSheetClose");
+
+function absoluteAssetUrl(path){
+  return new URL(path,window.location.href).href;
+}
+
+function saveEnvironment(){
+  const ua=navigator.userAgent || "";
+  const wechat=/MicroMessenger/i.test(ua);
+  const qq=/QQ\//i.test(ua) && !/MicroMessenger/i.test(ua);
+  const ios=/iPhone|iPad|iPod/i.test(ua) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+  const android=/Android/i.test(ua);
+  const coarse=window.matchMedia("(hover:none), (pointer:coarse)").matches;
+  return {wechat,qq,ios,android,mobile:wechat || qq || ios || android || coarse};
+}
+
+function saveCopyForEnv(env,name){
+  if(env.wechat){
+    return {
+      title:`保存「${name}」`,
+      hint:"微信里常无法直接下载文件。请长按下方原图，选择「保存图片」；仍不行时点右上角 ··· 用系统浏览器打开本站后再保存。",
+      note:"长按上方图片保存最稳；「下载」按钮在微信里可能无效。",
+      autoDownload:false
+    };
+  }
+  if(env.qq){
+    return {
+      title:`保存「${name}」`,
+      hint:"内置浏览器可能拦截下载。请长按下方原图保存；或用系统浏览器打开本站后再试。",
+      note:"优先长按图片保存，成功率更高。",
+      autoDownload:false
+    };
+  }
+  if(env.ios){
+    return {
+      title:`保存「${name}」`,
+      hint:"iPhone / iPad 请长按下方原图，选择「存储图像」或「添加到照片」。",
+      note:"若点下载只打开图片，仍可长按保存；角色卡数据在原图里。",
+      autoDownload:false
+    };
+  }
+  if(env.mobile){
+    return {
+      title:`保存「${name}」`,
+      hint:"请先尝试下方「下载 PNG 原图」；若没有开始下载，请长按图片保存。",
+      note:"原图为同源 PNG，含角色卡数据。",
+      autoDownload:false
+    };
+  }
+  return {
+    title:`保存「${name}」`,
+    hint:"已尝试直接下载。若没有开始，请点「下载 PNG 原图」，或右键图片另存为。",
+    note:"原图为同源 PNG，含角色卡数据；无需再解析或转换。",
+    autoDownload:true
+  };
+}
+
+function closeSaveSheet(){
+  if(saveSheet.open) saveSheet.close();
+  saveSheetImage.removeAttribute("src");
+  saveSheetLink.removeAttribute("href");
+}
+
+function openSaveSheet(work){
+  const url=absoluteAssetUrl(work.image);
+  const filename=`${work.name}-角色卡.png`;
+  const env=saveEnvironment();
+  const copy=saveCopyForEnv(env,work.name);
+
+  saveSheetTitle.textContent=copy.title;
+  saveSheetHint.textContent=copy.hint;
+  saveSheetNote.textContent=copy.note;
+  saveSheetImage.alt=`${work.name}角色卡原图`;
+  saveSheetImage.src=url;
+  saveSheetLink.href=url;
+  saveSheetLink.setAttribute("download",filename);
+  saveSheetLink.textContent="下载 PNG 原图";
+
+  if(typeof saveSheet.showModal==="function") saveSheet.showModal();
+  else saveSheet.setAttribute("open","");
+
+  // 桌面端：在用户点击手势内立刻点真实 <a download>，避免异步/Blob。
+  if(copy.autoDownload){
+    try{saveSheetLink.click()}
+    catch{/* ignore */}
+  }
 }
 
 function downloadCharacterCard(work,index){
   if(!work || !fullCardAccessAllowed(index)) return;
   if(!work.image){
-    tip("下载失败，请尝试在外部浏览器打开");
+    tip("原图地址无效");
     return;
   }
   try{
-    downloadDirectly(work.image,`${work.name}-角色卡.png`);
-    tip("已发起下载；若打开原图，请长按保存");
+    openSaveSheet(work);
   }catch{
-    tip("下载失败，请尝试在外部浏览器打开");
+    // 面板失败时退回同源直链，至少不离开站点逻辑内无响应
+    try{
+      const url=absoluteAssetUrl(work.image);
+      const link=document.createElement("a");
+      link.href=url;
+      link.download=`${work.name}-角色卡.png`;
+      link.rel="noopener";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      tip("已发起下载；失败请用系统浏览器打开本站");
+    }catch{
+      tip("保存失败，请用系统浏览器打开本站后重试");
+    }
   }
 }
+
+saveSheetClose?.addEventListener("click",closeSaveSheet);
+saveSheet?.addEventListener("cancel",event=>{
+  event.preventDefault();
+  closeSaveSheet();
+});
+saveSheet?.addEventListener("click",event=>{
+  if(event.target===saveSheet) closeSaveSheet();
+});
 
 const archiveClose=document.getElementById("archiveClose");
 const archiveVisual=document.getElementById("archiveVisual");
