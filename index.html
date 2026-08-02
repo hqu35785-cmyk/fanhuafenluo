@@ -1498,8 +1498,9 @@ footer::before{
 <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <script>
+const ASSET_VERSION="20260802c";
 const IMAGE_SOURCE="assets/source/wanwan.png";
-const IMAGE_PREVIEW="assets/previews/wanwan.webp";
+const IMAGE_PREVIEW=`assets/previews/wanwan.webp?v=${ASSET_VERSION}`;
 
 const works=[
   {
@@ -1600,7 +1601,8 @@ const tavoAssets=[
 function previewFor(image){
   return image
     .replace(/^assets\/tavo\//,"assets/previews/tavo/")
-    .replace(/\.png$/i,".webp");
+    .replace(/\.png$/i,".webp")
+    + `?v=${ASSET_VERSION}`;
 }
 
 const tavoWorks=tavoAssets.map(({image,period,label})=>{
