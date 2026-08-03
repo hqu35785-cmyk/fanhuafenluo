@@ -255,6 +255,7 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   position:relative;
   aspect-ratio:.72;
   perspective:1200px;
+  -webkit-perspective:1200px;
   cursor:default;
   -webkit-touch-callout:none;
   -webkit-user-select:none;
@@ -266,9 +267,18 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   position:absolute;
   inset:0;
   transform-style:preserve-3d;
-  transition:transform .48s cubic-bezier(.2,.75,.2,1);
+  -webkit-transform-style:preserve-3d;
+  transform:rotateY(0deg);
+  -webkit-transform:rotateY(0deg);
+  transition:
+    transform .48s cubic-bezier(.2,.75,.2,1),
+    -webkit-transform .48s cubic-bezier(.2,.75,.2,1);
+  will-change:transform;
 }
-.card.flipped .card-inner{transform:rotateY(180deg)}
+.card.flipped .card-inner{
+  transform:rotateY(180deg);
+  -webkit-transform:rotateY(180deg);
+}
 .front{pointer-events:auto}
 .back{pointer-events:none}
 .card.flipped .front{pointer-events:none}
@@ -282,6 +292,8 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   cursor:pointer;
   font:inherit;
   appearance:none;
+  transform:rotateY(0deg) translateZ(.1px);
+  -webkit-transform:rotateY(0deg) translateZ(.1px);
 }
 .front:focus-visible,
 .back-return:focus-visible,
@@ -456,6 +468,7 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   -webkit-backface-visibility:hidden;
   box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.075);
   transition:border-color .28s ease,box-shadow .35s ease;
+  -webkit-font-smoothing:subpixel-antialiased;
 }
 .front img{
   width:100%;
@@ -629,7 +642,8 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
 .card-meta span:last-child{color:rgba(243,190,210,.82)}
 .back{
   padding:20px;
-  transform:rotateY(180deg);
+  transform:rotateY(180deg) translateZ(.1px);
+  -webkit-transform:rotateY(180deg) translateZ(.1px);
   display:grid;
   grid-template-rows:minmax(0,1fr) auto;
   overflow:hidden;
@@ -1504,21 +1518,6 @@ footer::before{
   .slot-cross{display:none}
 }
 
-/* Phones use a direct face swap. This avoids mirrored/stacked faces in
-   mobile WebKit while keeping the dimensional flip on larger screens. */
-@media(max-width:760px), (max-height:520px) and (orientation:landscape), (hover:none) and (pointer:coarse){
-  .card{perspective:none}
-  .card-inner{transform:none!important;transform-style:flat}
-  .face{
-    transform:none;
-    backface-visibility:visible;
-    -webkit-backface-visibility:visible;
-  }
-  .back{display:none}
-  .card.flipped .front{display:none}
-  .card.flipped .back{display:grid}
-}
-
 @media(max-width:620px) and (orientation:portrait){
   .catalog{display:block}
   .gallery{
@@ -1647,7 +1646,28 @@ footer::before{
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .card,.card-inner,.front img,.action,.toast,.archive-modal,.archive-action,.card-open,.back-return,.back-expand,.privacy-unlock,.archive-unlock,.setting-unlock,.archive-setting-unlock,.unlock-all,.unlock-choice-btn{transition:none}
+  .card,
+  .card-inner,
+  .front img,
+  .action,
+  .toast,
+  .archive-modal,
+  .archive-action,
+  .card-open,
+  .back-return,
+  .back-expand,
+  .privacy-unlock,
+  .archive-unlock,
+  .setting-unlock,
+  .archive-setting-unlock,
+  .unlock-all,
+  .unlock-choice-btn{
+    transition:none;
+    -webkit-transition:none;
+  }
+  .card-inner{
+    will-change:auto;
+  }
   .placeholder-card:hover::after{animation:none}
 }
 
