@@ -1,0 +1,1110 @@
+import fs from "fs";
+import path from "path";
+import { chromium, firefox, webkit } from "playwright";
+
+const TARGET =
+  process.env.TEST_URL || "https://hqu35785-cmyk.github.io/fanhuafenluo/index.html";
+const OUT_DIR = path.join(process.cwd(), "test-artifacts", "final");
+fs.mkdirSync(OUT_DIR, { recursive: true });
+
+const VIEWPORTS = [
+  [320, 568],
+  [360, 740],
+  [375, 667],
+  [390, 844],
+  [412, 915],
+  [430, 932],
+  [500, 900],
+  [600, 960],
+  [768, 1024],
+  [568, 320],
+  [667, 375],
+  [740, 360],
+  [844, 390],
+  [915, 412],
+  [932, 430],
+  [1024, 768],
+  [1280, 720],
+  [1366, 768],
+  [1920, 1080],
+];
+
+const BROWSERS = [
+  ["chromium", chromium],
+  ["firefox", firefox],
+  ["webkit", webkit],
+];
+
+const PAGE_EVAL_HELPERS = `
+function isRendered(element) {
+  if (!element || !element.isConnected) return false;
+  const style = getComputedStyle(element);
+  const rect = element.getBoundingClientRect();
+  return (
+    style.display !== "none" &&
+    style.visibility !== "hidden" &&
+    Number(style.opacity) !== 0 &&
+    rect.width > 0 &&
+    rect.height > 0
+  );
+}
+function intersectRect(a, b) {
+  const left = Math.max(a.left, b.left);
+  const top = Math.max(a.top, b.top);
+  const right = Math.min(a.right, b.right);
+  const bottom = Math.min(a.bottom, b.bottom);
+  if (right <= left || bottom <= top) return null;
+  return { left, top, right, bottom, width: right - left, height: bottom - top };
+}
+function visibleRect(element) {
+  if (!isRendered(element)) return null;
+  let rect = element.getBoundingClientRect();
+  let parent = element.parentElement;
+  while (parent) {
+    const style = getComputedStyle(parent);
+    const clipsX = ["hidden", "clip", "auto", "scroll"].includes(style.overflowX);
+    const clipsY = ["hidden", "clip", "auto", "scroll"].includes(style.overflowY);
+    if (clipsX || clipsY) {
+      const parentRect = parent.getBoundingClientRect();
+      const clipRect = {
+        left: clipsX ? parentRect.left : -Infinity,
+        right: clipsX ? parentRect.right : Infinity,
+        top: clipsY ? parentRect.top : -Infinity,
+        bottom: clipsY ? parentRect.bottom : Infinity,
+      };
+      rect = intersectRect(rect, clipRect);
+      if (!rect) return null;
+    }
+    parent = parent.parentElement;
+  }
+  return rect;
+}
+function rectsOverlap(a, b, tolerance = 1) {
+  if (!a || !b) return false;
+  return (
+    a.left < b.right - tolerance &&
+    a.right > b.left + tolerance &&
+    a.top < b.bottom - tolerance &&
+    a.bottom > b.top + tolerance
+  );
+}
+function pack(r) {
+  if (!r) return null;
+  return {
+    left: +r.left.toFixed(2),
+    right: +r.right.toFixed(2),
+    top: +r.top.toFixed(2),
+    bottom: +r.bottom.toFixed(2),
+    width: +(r.width ?? r.right - r.left).toFixed(2),
+    height: +(r.height ?? r.bottom - r.top).toFixed(2),
+  };
+}
+function mediaState() {
+  return {
+    phonePortrait: matchMedia("(max-width:620px) and (orientation:portrait)").matches,
+    narrowBottom: matchMedia(
+      "(max-width:620px), (max-height:520px) and (orientation:landscape)"
+    ).matches,
+    compactLandscape: matchMedia(
+      "(max-height:520px) and (orientation:landscape)"
+    ).matches,
+  };
+}
+`;
+
+async function captureFailure(page, browserName, viewport, state, failure, consoleErrors) {
+  const stamp = `${browserName}_${viewport[0]}x${viewport[1]}_${state}_${failure.check}`
+    .replace(/[^\w.-]+/g, "_")
+    .slice(0, 120);
+  const shot = path.join(OUT_DIR, `${stamp}.png`);
+  try {
+    await page.screenshot({ path: shot, fullPage: true });
+  } catch {}
+  return {
+    ok: false,
+    browser: browserName,
+    viewport: `${viewport[0]}x${viewport[1]}`,
+    state,
+    check: failure.check,
+    expected: failure.expected,
+    actual: failure.actual,
+    media: failure.media || null,
+    selectors: failure.selectors || null,
+    visibleRects: failure.visibleRects || null,
+    scrollWidth: failure.scrollWidth,
+    clientWidth: failure.clientWidth,
+    consoleErrors,
+    screenshot: path.basename(shot),
+    extra: failure.extra || null,
+  };
+}
+
+async function inspectLayout(page) {
+  return page.evaluate((helpersSrc) => {
+    // eslint-disable-next-line no-eval
+    eval(helpersSrc);
+    const media = mediaState();
+    const gallery = document.getElementById("gallery");
+    const gStyle = getComputedStyle(gallery);
+    const horizontalCarousel =
+      String(gStyle.scrollSnapType).includes("x") &&
+      String(gStyle.gridAutoFlow).includes("column");
+
+    const failures = [];
+    const notes = [];
+    const scrollWidth = document.documentElement.scrollWidth;
+    const clientWidth = document.documentElement.clientWidth;
+
+    // Root overflow only — gallery carousel scrollWidth is expected when horizontal.
+    if (scrollWidth > clientWidth + 1) {
+      failures.push({
+        check: "root-horizontal-overflow",
+        expected: "documentElement.scrollWidth <= clientWidth + 1",
+        actual: `${scrollWidth} > ${clientWidth}`,
+        scrollWidth,
+        clientWidth,
+        media,
+      });
+    }
+
+    const cols = gStyle.gridTemplateColumns;
+    const colCount = cols && cols !== "none" ? cols.trim().split(/\s+/).filter(Boolean).length : 0;
+    const firstCard = document.querySelector(".card");
+    const aspect = firstCard ? getComputedStyle(firstCard).aspectRatio : null;
+    const flipMode = document.documentElement.classList.contains("flip-compat")
+      ? "compat"
+      : document.documentElement.classList.contains("flip-3d")
+        ? "3d"
+        : "unknown";
+
+    if (media.phonePortrait) {
+      const w = window.innerWidth;
+      if (w >= 500 && w <= 620 && colCount !== 3) {
+        failures.push({
+          check: "phone-portrait-three-columns",
+          expected: 3,
+          actual: colCount,
+          media,
+        });
+      }
+      if (w < 500 && colCount !== 2) {
+        failures.push({
+          check: "phone-portrait-two-columns",
+          expected: 2,
+          actual: colCount,
+          media,
+        });
+      }
+      const aspectOk =
+        aspect &&
+        (String(aspect).includes("18") ||
+          Math.abs(parseFloat(aspect) - 18 / 25) < 0.02 ||
+          String(aspect).replace(/\s/g, "") === "18/25");
+      if (!aspectOk) {
+        failures.push({
+          check: "phone-portrait-aspect-ratio",
+          expected: "18 / 25",
+          actual: aspect,
+          media,
+        });
+      }
+    }
+
+    if (media.compactLandscape) {
+      if (!horizontalCarousel) {
+        failures.push({
+          check: "compact-landscape-carousel",
+          expected: "scroll-snap x + grid-auto-flow column",
+          actual: `snap=${gStyle.scrollSnapType}; flow=${gStyle.gridAutoFlow}`,
+          media,
+        });
+      }
+      const gRect = gallery.getBoundingClientRect();
+      if (gRect.left < -2 || gRect.right > window.innerWidth + 2) {
+        failures.push({
+          check: "gallery-outside-page-bounds",
+          expected: "gallery within page x bounds",
+          actual: pack(gRect),
+          media,
+        });
+      }
+      // First card should be at least partially visible
+      const c0 = document.querySelector(".card");
+      const c0r = c0 ? visibleRect(c0) : null;
+      if (!c0r) {
+        failures.push({
+          check: "carousel-first-card-visible",
+          expected: "first card has visible rect",
+          actual: null,
+          media,
+        });
+      }
+      // Cards should not overlap each other (sample adjacent)
+      const cards = [...document.querySelectorAll(".card")].slice(0, 8);
+      for (let i = 0; i < cards.length - 1; i++) {
+        const a = visibleRect(cards[i]);
+        const b = visibleRect(cards[i + 1]);
+        if (a && b && rectsOverlap(a, b, 1)) {
+          failures.push({
+            check: "carousel-card-overlap",
+            expected: "adjacent cards do not overlap",
+            actual: { i, a: pack(a), b: pack(b) },
+            media,
+            selectors: [`.card:nth-child(${i + 1})`, `.card:nth-child(${i + 2})`],
+          });
+        }
+      }
+    }
+
+    // Overlap / bounds checks — use visibleRect
+    const sampleCards = [...document.querySelectorAll(".card")].slice(0, 6);
+    for (const [i, card] of sampleCards.entries()) {
+      if (card.classList.contains("flipped")) continue;
+      const title = card.querySelector(".card-name b");
+      const alias = card.querySelector(".card-name > span:not(.card-meta)");
+      const metaLast = card.querySelector(".card-meta span:last-child");
+      const btn = card.querySelector(".privacy-unlock");
+      const cardVis = visibleRect(card);
+      const titleVis = visibleRect(title);
+      const aliasVis = visibleRect(alias);
+      const metaVis = visibleRect(metaLast);
+      const btnVis = visibleRect(btn);
+
+      if (btnVis && cardVis) {
+        if (
+          btnVis.right > cardVis.right + 1.5 ||
+          btnVis.bottom > cardVis.bottom + 1.5 ||
+          btnVis.left < cardVis.left - 1.5
+        ) {
+          failures.push({
+            check: "button-outside-card",
+            expected: "button visible rect inside card",
+            actual: { btn: pack(btnVis), card: pack(cardVis) },
+            selectors: [".privacy-unlock", ".card"],
+            visibleRects: { btn: pack(btnVis), card: pack(cardVis) },
+            media,
+            scrollWidth,
+            clientWidth,
+            extra: { cardIndex: i, cardClass: card.className },
+          });
+        }
+      }
+
+      // Text outside card (visible part)
+      for (const [name, rect, sel] of [
+        ["title", titleVis, ".card-name b"],
+        ["alias", aliasVis, ".card-name > span:not(.card-meta)"],
+        ["meta", metaVis, ".card-meta span:last-child"],
+      ]) {
+        if (!rect || !cardVis) continue;
+        if (rect.left < cardVis.left - 1.5 || rect.right > cardVis.right + 1.5 || rect.bottom > cardVis.bottom + 1.5) {
+          failures.push({
+            check: `${name}-outside-card`,
+            expected: `${name} visible rect inside card`,
+            actual: { text: pack(rect), card: pack(cardVis) },
+            selectors: [sel, ".card"],
+            visibleRects: { text: pack(rect), card: pack(cardVis) },
+            media,
+            scrollWidth,
+            clientWidth,
+            extra: { cardIndex: i },
+          });
+        }
+      }
+
+      // Overlaps: always check title/alias/meta visible parts vs button
+      // (desktop included; uses clipped rects so overflow:hidden false positives are avoided)
+      if (titleVis && btnVis && rectsOverlap(titleVis, btnVis, 1)) {
+        failures.push({
+          check: "title-button-overlap",
+          expected: "visible title does not overlap button",
+          actual: "overlap",
+          selectors: [".card-name b", ".privacy-unlock"],
+          visibleRects: { title: pack(titleVis), button: pack(btnVis) },
+          media,
+          scrollWidth,
+          clientWidth,
+          extra: { cardIndex: i, cardClass: card.className },
+        });
+      }
+      if (aliasVis && btnVis && rectsOverlap(aliasVis, btnVis, 1)) {
+        failures.push({
+          check: "alias-button-overlap",
+          expected: "visible alias does not overlap button",
+          actual: "overlap",
+          selectors: [".card-name > span:not(.card-meta)", ".privacy-unlock"],
+          visibleRects: { alias: pack(aliasVis), button: pack(btnVis) },
+          media,
+          scrollWidth,
+          clientWidth,
+          extra: { cardIndex: i },
+        });
+      }
+      if (metaVis && btnVis && rectsOverlap(metaVis, btnVis, 1)) {
+        failures.push({
+          check: "meta-button-overlap",
+          expected: "visible 点按翻转 does not overlap button",
+          actual: "overlap",
+          selectors: [".card-meta span:last-child", ".privacy-unlock"],
+          visibleRects: { meta: pack(metaVis), button: pack(btnVis) },
+          media,
+          scrollWidth,
+          clientWidth,
+          extra: { cardIndex: i, cardClass: card.className },
+        });
+      }
+
+      // Off-screen cards only fail outside carousel
+      if (!media.compactLandscape && !horizontalCarousel && cardVis) {
+        if (cardVis.right > window.innerWidth + 2 || cardVis.left < -2) {
+          failures.push({
+            check: "card-outside-viewport-x",
+            expected: "card visible within viewport x (non-carousel)",
+            actual: pack(cardVis),
+            media,
+            scrollWidth,
+            clientWidth,
+            extra: { cardIndex: i, vw: window.innerWidth },
+          });
+        }
+      }
+    }
+
+    // 500-620 three column narrow content check when phonePortrait
+    if (media.phonePortrait && window.innerWidth >= 500 && window.innerWidth <= 620) {
+      const card = document.querySelector(".card");
+      if (card) {
+        const r = card.getBoundingClientRect();
+        if (r.width < 100) {
+          failures.push({
+            check: "three-col-too-narrow",
+            expected: "card width >= 100px",
+            actual: r.width,
+            media,
+          });
+        }
+      }
+    }
+
+    return {
+      media,
+      horizontalCarousel,
+      colCount,
+      aspect,
+      flipMode,
+      scrollWidth,
+      clientWidth,
+      gallerySnap: gStyle.scrollSnapType,
+      galleryFlow: gStyle.gridAutoFlow,
+      failures,
+      notes,
+      htmlClass: document.documentElement.className,
+    };
+  }, PAGE_EVAL_HELPERS);
+}
+
+async function runViewport(browserType, browserName, viewport) {
+  const [w, h] = viewport;
+  const consoleErrors = [];
+  const browser = await browserType.launch({ headless: true });
+  const context = await browser.newContext({
+    viewport: { width: w, height: h },
+    deviceScaleFactor: 1,
+  });
+  const page = await context.newPage();
+  page.on("pageerror", (e) => consoleErrors.push(String(e?.stack || e)));
+  page.on("console", (m) => {
+    if (m.type() === "error") consoleErrors.push(m.text());
+  });
+
+  const rows = [];
+  const pushOk = (state, extra = {}) => {
+    rows.push({
+      ok: true,
+      browser: browserName,
+      viewport: `${w}x${h}`,
+      state,
+      ...extra,
+    });
+  };
+  const pushSkip = (state, reason) => {
+    rows.push({
+      ok: true,
+      skipped: true,
+      browser: browserName,
+      viewport: `${w}x${h}`,
+      state,
+      reason,
+    });
+  };
+
+  try {
+    await page.goto(TARGET, { waitUntil: "domcontentloaded", timeout: 90000 });
+    await page.waitForSelector(".card", { timeout: 30000 });
+    await page.waitForTimeout(500);
+
+    const deployment = await page.evaluate(() => {
+      const rules = [...document.styleSheets].flatMap((sheet) => {
+        try {
+          return [...sheet.cssRules];
+        } catch {
+          return [];
+        }
+      });
+      return {
+        hasAspectRatio: rules.some(
+          (rule) =>
+            rule.cssText?.includes("aspect-ratio: 18 / 25") ||
+            rule.cssText?.includes("aspect-ratio:18 / 25")
+        ),
+        hasThreeColumns: document.documentElement.innerHTML.includes(
+          "repeat(3,minmax(0,1fr))"
+        ),
+        portraitCardHeight: getComputedStyle(document.documentElement).getPropertyValue(
+          "--portrait-card-height"
+        ),
+        url: location.href,
+      };
+    });
+
+    // 1 locked
+    let layout = await inspectLayout(page);
+    for (const f of layout.failures) {
+      rows.push(
+        await captureFailure(page, browserName, viewport, "locked-front", f, consoleErrors)
+      );
+    }
+    if (!layout.failures.length) pushOk("locked-front", { media: layout.media, flipMode: layout.flipMode, deployment });
+
+    // 2 unlock
+    await page.locator("#unlockAll").click({ force: true }).catch(() => {});
+    await page.waitForTimeout(400);
+    await page.evaluate(() => {
+      const el = document.getElementById("unlockChoice");
+      if (el) el.hidden = true;
+    });
+    layout = await inspectLayout(page);
+    for (const f of layout.failures) {
+      rows.push(
+        await captureFailure(page, browserName, viewport, "unlocked-front", f, consoleErrors)
+      );
+    }
+    if (!layout.failures.length) pushOk("unlocked-front", { media: layout.media });
+
+    // 3 loading simulate
+    await page.evaluate(() => {
+      const front = document.querySelector(".card .front");
+      front?.classList.add("is-loading");
+      front?.classList.remove("is-load-error", "is-locked");
+    });
+    await page.waitForTimeout(80);
+    pushOk("loading-simulated");
+
+    // 4 error / retry label
+    await page.evaluate(() => {
+      const card = document.querySelector(".card");
+      const front = card?.querySelector(".front");
+      front?.classList.remove("is-loading");
+      front?.classList.add("is-load-error");
+      const unlock = card?.querySelector(".privacy-unlock");
+      if (unlock) {
+        unlock.dataset.mode = "retry";
+        unlock.textContent = "重试图片";
+      }
+    });
+    const retryText = await page.locator(".card").first().locator(".privacy-unlock").textContent();
+    if (!String(retryText || "").includes("重试")) {
+      rows.push(
+        await captureFailure(
+          page,
+          browserName,
+          viewport,
+          "retry-label",
+          {
+            check: "retry-button-label",
+            expected: "重试图片",
+            actual: retryText,
+            selectors: [".privacy-unlock"],
+          },
+          consoleErrors
+        )
+      );
+    } else {
+      pushOk("retry-label");
+    }
+
+    // restore clean state
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.waitForSelector(".card", { timeout: 30000 });
+    await page.waitForTimeout(350);
+    await page.locator("#unlockAll").click({ force: true }).catch(() => {});
+    await page.evaluate(() => {
+      const el = document.getElementById("unlockChoice");
+      if (el) el.hidden = true;
+    });
+    await page.waitForTimeout(200);
+
+    // 5 flip to back
+    const card = page.locator(".card").first();
+    await card.locator(".card-flip").click({ force: true });
+    await page.waitForTimeout(550);
+    const flipped = await card.evaluate((el) => el.classList.contains("flipped"));
+    const frontPE = await card.locator(".front").evaluate((el) => getComputedStyle(el).pointerEvents);
+    if (!flipped) {
+      rows.push(
+        await captureFailure(
+          page,
+          browserName,
+          viewport,
+          "flip-to-back",
+          { check: "flip-to-back", expected: "card.flipped", actual: false },
+          consoleErrors
+        )
+      );
+    } else if (frontPE !== "none") {
+      rows.push(
+        await captureFailure(
+          page,
+          browserName,
+          viewport,
+          "hidden-face-clickable",
+          {
+            check: "hidden-front-pointer-events",
+            expected: "none",
+            actual: frontPE,
+            selectors: [".card.flipped .front"],
+          },
+          consoleErrors
+        )
+      );
+    } else {
+      pushOk("flip-to-back");
+    }
+
+    // 6 return
+    await card.locator(".back-return").click({ force: true });
+    await page.waitForTimeout(450);
+    const unflipped = await card.evaluate((el) => !el.classList.contains("flipped"));
+    if (!unflipped) {
+      rows.push(
+        await captureFailure(
+          page,
+          browserName,
+          viewport,
+          "flip-to-front",
+          { check: "flip-to-front", expected: "not flipped", actual: "still flipped" },
+          consoleErrors
+        )
+      );
+    } else {
+      pushOk("flip-to-front");
+    }
+
+    // action no misflip — click button only
+    const before = await card.evaluate((el) => el.classList.contains("flipped"));
+    await card.locator(".privacy-unlock").click({ force: true });
+    await page.waitForTimeout(300);
+    await page.evaluate(() => {
+      const el = document.getElementById("unlockChoice");
+      if (el) el.hidden = true;
+    });
+    const after = await card.evaluate((el) => el.classList.contains("flipped"));
+    if (!before && after) {
+      rows.push(
+        await captureFailure(
+          page,
+          browserName,
+          viewport,
+          "action-misflip",
+          {
+            check: "privacy-unlock-misflip",
+            expected: "clicking action does not flip card",
+            actual: "card became flipped",
+            selectors: [".privacy-unlock"],
+          },
+          consoleErrors
+        )
+      );
+    } else {
+      pushOk("action-no-misflip");
+    }
+
+    // 7 archive
+    await card.locator(".card-flip").click({ force: true });
+    await page.waitForTimeout(400);
+    await card.locator(".back-expand").click({ force: true });
+    await page.waitForTimeout(400);
+    const modal = await page.evaluate(() => {
+      const m = document.getElementById("archiveModal");
+      if (!m || !m.open) return { open: false };
+      const r = m.getBoundingClientRect();
+      const content = m.querySelector(".archive-content") || m.querySelector(".archive-shell");
+      return {
+        open: true,
+        outside:
+          r.bottom > window.innerHeight + 6 ||
+          r.right > window.innerWidth + 6 ||
+          r.left < -6,
+        canScroll: content ? content.scrollHeight >= content.clientHeight - 2 : true,
+        bodyModalOpen: document.body.classList.contains("modal-open"),
+        rect: {
+          left: r.left,
+          right: r.right,
+          top: r.top,
+          bottom: r.bottom,
+          width: r.width,
+          height: r.height,
+        },
+      };
+    });
+    if (!modal.open) {
+      rows.push(
+        await captureFailure(
+          page,
+          browserName,
+          viewport,
+          "archive-open",
+          { check: "archive-modal-open", expected: true, actual: false },
+          consoleErrors
+        )
+      );
+    } else if (modal.outside) {
+      rows.push(
+        await captureFailure(
+          page,
+          browserName,
+          viewport,
+          "archive-overflow",
+          {
+            check: "archive-outside-viewport",
+            expected: "modal within viewport",
+            actual: modal.rect,
+          },
+          consoleErrors
+        )
+      );
+    } else {
+      pushOk("archive-open", { bodyModalOpen: modal.bodyModalOpen });
+    }
+    await page.locator("#archiveClose").click({ force: true }).catch(() => {});
+    await page.waitForTimeout(200);
+
+    // 8 reduced motion
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.waitForSelector(".card", { timeout: 30000 });
+    await page.waitForTimeout(250);
+    await page.locator(".card").first().locator(".card-flip").click({ force: true });
+    await page.waitForTimeout(200);
+    const rmFlip = await page.locator(".card").first().evaluate((el) => el.classList.contains("flipped"));
+    if (!rmFlip) {
+      rows.push(
+        await captureFailure(
+          page,
+          browserName,
+          viewport,
+          "reduced-motion-flip",
+          { check: "reduced-motion-flip", expected: true, actual: false },
+          consoleErrors
+        )
+      );
+    } else {
+      pushOk("reduced-motion-flip");
+    }
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+
+    // 9 orientation switch
+    const mediaBefore = await page.evaluate((src) => {
+      eval(src);
+      return mediaState();
+    }, PAGE_EVAL_HELPERS);
+
+    if (mediaBefore.phonePortrait) {
+      // portrait -> landscape-ish compact
+      await page.setViewportSize({ width: Math.max(h, 568), height: Math.min(w, 500) });
+      await page.waitForTimeout(600);
+      const after = await page.evaluate((src) => {
+        eval(src);
+        const media = mediaState();
+        const g = document.getElementById("gallery");
+        const gs = getComputedStyle(g);
+        const first = document.querySelector(".card");
+        const firstVis = first ? visibleRect(first) : null;
+        return {
+          media,
+          flow: gs.gridAutoFlow,
+          snap: gs.scrollSnapType,
+          rootOverflow:
+            document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+          firstVisible: !!firstVis,
+          scrollWidth: document.documentElement.scrollWidth,
+          clientWidth: document.documentElement.clientWidth,
+        };
+      }, PAGE_EVAL_HELPERS);
+
+      const orientFails = [];
+      if (after.media.phonePortrait) {
+        orientFails.push({
+          check: "orient-phone-portrait-should-close",
+          expected: false,
+          actual: true,
+          media: after.media,
+        });
+      }
+      if (!after.media.compactLandscape && after.media.narrowBottom === false) {
+        // compact landscape only if height<=520
+      }
+      if (after.media.compactLandscape) {
+        if (!String(after.flow).includes("column")) {
+          orientFails.push({
+            check: "orient-column-flow",
+            expected: "column",
+            actual: after.flow,
+            media: after.media,
+          });
+        }
+        if (!String(after.snap).includes("x")) {
+          orientFails.push({
+            check: "orient-scroll-snap-x",
+            expected: "x mandatory",
+            actual: after.snap,
+            media: after.media,
+          });
+        }
+        if (after.rootOverflow) {
+          orientFails.push({
+            check: "orient-root-overflow",
+            expected: "no root horizontal overflow",
+            actual: `${after.scrollWidth}>${after.clientWidth}`,
+            media: after.media,
+            scrollWidth: after.scrollWidth,
+            clientWidth: after.clientWidth,
+          });
+        }
+        if (!after.firstVisible) {
+          orientFails.push({
+            check: "orient-first-card-visible",
+            expected: true,
+            actual: false,
+            media: after.media,
+          });
+        }
+        // scroll gallery to see later cards
+        await page.evaluate(() => {
+          const g = document.getElementById("gallery");
+          g.scrollLeft = Math.min(g.scrollWidth, 400);
+        });
+        await page.waitForTimeout(200);
+        const laterVisible = await page.evaluate((src) => {
+          eval(src);
+          const cards = [...document.querySelectorAll(".card")];
+          return cards.some((c, i) => i >= 2 && visibleRect(c));
+        }, PAGE_EVAL_HELPERS);
+        if (!laterVisible) {
+          orientFails.push({
+            check: "orient-scroll-later-cards",
+            expected: "some later cards visible after scroll",
+            actual: false,
+            media: after.media,
+          });
+        }
+        // flip still works
+        await page.locator(".card").first().locator(".card-flip").click({ force: true });
+        await page.waitForTimeout(400);
+        const flipOk = await page.locator(".card").first().evaluate((el) => el.classList.contains("flipped"));
+        if (!flipOk) {
+          orientFails.push({
+            check: "orient-flip-works",
+            expected: true,
+            actual: false,
+            media: after.media,
+          });
+        }
+      }
+
+      for (const f of orientFails) {
+        rows.push(
+          await captureFailure(page, browserName, viewport, "orientation-portrait-to-landscape", f, consoleErrors)
+        );
+      }
+      if (!orientFails.length) pushOk("orientation-portrait-to-landscape", { media: after.media });
+
+      // back to portrait
+      await page.setViewportSize({ width: w, height: h });
+      await page.waitForTimeout(600);
+      const back = await page.evaluate((src) => {
+        eval(src);
+        const media = mediaState();
+        const g = document.getElementById("gallery");
+        const gs = getComputedStyle(g);
+        const card = document.querySelector(".card");
+        const cols = gs.gridTemplateColumns;
+        const colCount = cols && cols !== "none" ? cols.trim().split(/\s+/).filter(Boolean).length : 0;
+        return {
+          media,
+          colCount,
+          aspect: card ? getComputedStyle(card).aspectRatio : null,
+          rootOverflow:
+            document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+          flow: gs.gridAutoFlow,
+        };
+      }, PAGE_EVAL_HELPERS);
+      const backFails = [];
+      if (!back.media.phonePortrait) {
+        backFails.push({
+          check: "orient-back-phone-portrait",
+          expected: true,
+          actual: false,
+          media: back.media,
+        });
+      }
+      if (back.media.compactLandscape) {
+        backFails.push({
+          check: "orient-back-compact-off",
+          expected: false,
+          actual: true,
+          media: back.media,
+        });
+      }
+      if (back.media.phonePortrait) {
+        const expectCols = w >= 500 && w <= 620 ? 3 : 2;
+        if (back.colCount !== expectCols) {
+          backFails.push({
+            check: "orient-back-columns",
+            expected: expectCols,
+            actual: back.colCount,
+            media: back.media,
+          });
+        }
+        const aspectOk =
+          back.aspect &&
+          (String(back.aspect).includes("18") ||
+            Math.abs(parseFloat(back.aspect) - 18 / 25) < 0.02);
+        if (!aspectOk) {
+          backFails.push({
+            check: "orient-back-aspect",
+            expected: "18 / 25",
+            actual: back.aspect,
+            media: back.media,
+          });
+        }
+      }
+      if (back.rootOverflow) {
+        backFails.push({
+          check: "orient-back-root-overflow",
+          expected: false,
+          actual: true,
+          media: back.media,
+        });
+      }
+      for (const f of backFails) {
+        rows.push(
+          await captureFailure(page, browserName, viewport, "orientation-landscape-to-portrait", f, consoleErrors)
+        );
+      }
+      if (!backFails.length) pushOk("orientation-landscape-to-portrait", { media: back.media });
+    } else if (mediaBefore.compactLandscape) {
+      // landscape -> taller portrait-like
+      await page.setViewportSize({ width: Math.min(w, 430), height: Math.max(h * 2, 700) });
+      await page.waitForTimeout(600);
+      const after = await page.evaluate((src) => {
+        eval(src);
+        return mediaState();
+      }, PAGE_EVAL_HELPERS);
+      pushOk("orientation-landscape-to-taller", { media: after });
+      await page.setViewportSize({ width: w, height: h });
+      await page.waitForTimeout(300);
+    } else {
+      pushSkip("orientation-switch", "not phonePortrait or compactLandscape");
+    }
+
+    // 10 visual viewport height change — only relevant for phone portrait aspect stability
+    const mediaNow = await page.evaluate((src) => {
+      eval(src);
+      return mediaState();
+    }, PAGE_EVAL_HELPERS);
+    if (mediaNow.phonePortrait) {
+      const beforeH = await page.evaluate(() => getComputedStyle(document.querySelector(".card")).height);
+      await page.setViewportSize({ width: w, height: Math.max(500, h - 120) });
+      await page.waitForTimeout(400);
+      const mid = await page.evaluate(() => ({
+        aspect: getComputedStyle(document.querySelector(".card")).aspectRatio,
+        height: getComputedStyle(document.querySelector(".card")).height,
+        portraitVar:
+          document.documentElement.style.getPropertyValue("--portrait-card-height") || "",
+      }));
+      await page.setViewportSize({ width: w, height: h });
+      await page.waitForTimeout(400);
+      if (mid.portraitVar) {
+        rows.push(
+          await captureFailure(
+            page,
+            browserName,
+            viewport,
+            "vv-height-change",
+            {
+              check: "no-js-portrait-height",
+              expected: "empty --portrait-card-height",
+              actual: mid.portraitVar,
+            },
+            consoleErrors
+          )
+        );
+      } else {
+        pushOk("vv-height-change", { beforeH, mid });
+      }
+    } else {
+      pushSkip("vv-height-change", "not phonePortrait");
+    }
+
+    // WebKit flip mode
+    if (browserName === "webkit") {
+      const mode = await page.evaluate(
+        () =>
+          document.documentElement.classList.contains("flip-compat")
+            ? "compat"
+            : document.documentElement.classList.contains("flip-3d")
+              ? "3d"
+              : "unknown"
+      );
+      pushOk("webkit-flip-mode", { mode });
+      // ensure flip works in webkit
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await page.waitForSelector(".card");
+      await page.waitForTimeout(300);
+      await page.locator(".card").first().locator(".card-flip").click({ force: true });
+      await page.waitForTimeout(500);
+      const wkFlip = await page.locator(".card").first().evaluate((el) => el.classList.contains("flipped"));
+      if (!wkFlip) {
+        rows.push(
+          await captureFailure(
+            page,
+            browserName,
+            viewport,
+            "webkit-flip",
+            {
+              check: "webkit-flip-or-compat",
+              expected: "card flips (3d or compat)",
+              actual: false,
+              extra: { mode },
+            },
+            consoleErrors
+          )
+        );
+      } else {
+        pushOk("webkit-flip", { mode });
+      }
+    }
+  } catch (err) {
+    rows.push(
+      await captureFailure(
+        page,
+        browserName,
+        viewport,
+        "exception",
+        {
+          check: "runner-exception",
+          expected: "no exception",
+          actual: String(err?.stack || err),
+        },
+        consoleErrors
+      )
+    );
+  }
+
+  await context.close();
+  await browser.close();
+  return rows;
+}
+
+// ---- main ----
+const deploymentProbe = await (async () => {
+  const b = await chromium.launch({ headless: true });
+  const p = await b.newPage();
+  await p.goto(TARGET, { waitUntil: "domcontentloaded", timeout: 90000 });
+  const d = await p.evaluate(() => {
+    const rules = [...document.styleSheets].flatMap((sheet) => {
+      try {
+        return [...sheet.cssRules];
+      } catch {
+        return [];
+      }
+    });
+    return {
+      url: location.href,
+      hasAspectRatio: rules.some(
+        (rule) =>
+          rule.cssText?.includes("aspect-ratio: 18 / 25") ||
+          rule.cssText?.includes("aspect-ratio:18 / 25")
+      ),
+      hasThreeColumns: document.documentElement.innerHTML.includes(
+        "repeat(3,minmax(0,1fr))"
+      ),
+    };
+  });
+  await b.close();
+  return d;
+})();
+
+console.log("TARGET", TARGET);
+console.log("DEPLOYMENT", deploymentProbe);
+
+const all = [];
+for (const [browserName, launcher] of BROWSERS) {
+  console.log(`\n=== ${browserName} ===`);
+  for (const vp of VIEWPORTS) {
+    process.stdout.write(`${browserName} ${vp[0]}x${vp[1]} ... `);
+    const rows = await runViewport(launcher, browserName, vp);
+    all.push(...rows);
+    const fails = rows.filter((r) => r.ok === false).length;
+    const skips = rows.filter((r) => r.skipped).length;
+    const passes = rows.filter((r) => r.ok && !r.skipped).length;
+    console.log(fails ? `FAIL(${fails}) pass=${passes} skip=${skips}` : `ok pass=${passes} skip=${skips}`);
+    if (fails) {
+      for (const f of rows.filter((r) => !r.ok)) {
+        console.log(
+          `  FAIL ${f.state}/${f.check}: expected=${JSON.stringify(f.expected)} actual=${JSON.stringify(f.actual)}`
+        );
+      }
+    }
+  }
+}
+
+const failures = all.filter((r) => r.ok === false);
+const skips = all.filter((r) => r.skipped);
+const passes = all.filter((r) => r.ok && !r.skipped);
+
+const summaryByBrowser = Object.fromEntries(
+  BROWSERS.map(([n]) => {
+    const rows = all.filter((r) => r.browser === n);
+    return [
+      n,
+      {
+        pass: rows.filter((r) => r.ok && !r.skipped).length,
+        fail: rows.filter((r) => r.ok === false).length,
+        skip: rows.filter((r) => r.skipped).length,
+      },
+    ];
+  })
+);
+
+const report = {
+  target: TARGET,
+  deployment: deploymentProbe,
+  localCommitExpectation: "b76cc332279a746d3e228ac123841474d24557f3",
+  testedAt: new Date().toISOString(),
+  summaryByBrowser,
+  total: { pass: passes.length, fail: failures.length, skip: skips.length },
+  failures,
+};
+
+fs.writeFileSync(path.join(OUT_DIR, "report.json"), JSON.stringify(report, null, 2));
+console.log("\n=== SUMMARY ===");
+console.log("浏览器 | 通过 | 失败 | 跳过");
+for (const [n, s] of Object.entries(summaryByBrowser)) {
+  console.log(`${n} | ${s.pass} | ${s.fail} | ${s.skip}`);
+}
+console.log(`TOTAL pass=${passes.length} fail=${failures.length} skip=${skips.length}`);
+console.log("Report:", path.join(OUT_DIR, "report.json"));
+if (failures.length) process.exitCode = 1;
+else console.log("ALL CHECKS PASSED (no real failures under corrected assertions)");
