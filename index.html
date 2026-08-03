@@ -652,6 +652,61 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
     radial-gradient(110% 82% at 100% 100%,rgba(157,185,255,.085),transparent 52%),
     linear-gradient(145deg,#191624,#11111d);
 }
+
+/* Capability-based 2D compatibility flip. Only active when html.flip-compat is set
+   by runtime CSS.supports detection or ?flip=compat — never by device/UA heuristics. */
+html.flip-compat .card{
+  perspective:none;
+  -webkit-perspective:none;
+}
+html.flip-compat .card-inner,
+html.flip-compat .card.flipped .card-inner{
+  transform:none;
+  -webkit-transform:none;
+  transform-style:flat;
+  -webkit-transform-style:flat;
+  will-change:auto;
+}
+html.flip-compat .face{
+  backface-visibility:visible;
+  -webkit-backface-visibility:visible;
+  transition:
+    opacity .2s ease,
+    transform .2s cubic-bezier(.2,.75,.2,1),
+    -webkit-transform .2s cubic-bezier(.2,.75,.2,1),
+    visibility 0s linear .2s;
+}
+html.flip-compat .front{
+  opacity:1;
+  visibility:visible;
+  transform:scaleX(1);
+  -webkit-transform:scaleX(1);
+  transform-origin:center;
+}
+html.flip-compat .back{
+  opacity:0;
+  visibility:hidden;
+  transform:scaleX(.04);
+  -webkit-transform:scaleX(.04);
+  transform-origin:center;
+  pointer-events:none;
+}
+html.flip-compat .card.flipped .front{
+  opacity:0;
+  visibility:hidden;
+  transform:scaleX(.04);
+  -webkit-transform:scaleX(.04);
+  pointer-events:none;
+}
+html.flip-compat .card.flipped .back{
+  opacity:1;
+  visibility:visible;
+  transform:scaleX(1);
+  -webkit-transform:scaleX(1);
+  pointer-events:auto;
+  transition-delay:0s;
+}
+
 .back-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:none}
 .back-scroll::-webkit-scrollbar{display:none}
 .back-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}
@@ -1668,6 +1723,10 @@ footer::before{
   .card-inner{
     will-change:auto;
   }
+  html.flip-compat .face{
+    transition:none;
+    -webkit-transition:none;
+  }
   .placeholder-card:hover::after{animation:none}
 }
 
@@ -1781,6 +1840,31 @@ footer::before{
 </div>
 
 <script>
+(function setupFlipCompatibility(){
+  const root=document.documentElement;
+  const supportsCSS=typeof CSS!=="undefined" && typeof CSS.supports==="function";
+  const supportsTransformStyle=supportsCSS && (
+    CSS.supports("transform-style","preserve-3d") ||
+    CSS.supports("-webkit-transform-style","preserve-3d")
+  );
+  const supportsPerspective=supportsCSS && (
+    CSS.supports("perspective","1px") ||
+    CSS.supports("-webkit-perspective","1px")
+  );
+  const supportsBackface=supportsCSS && (
+    CSS.supports("backface-visibility","hidden") ||
+    CSS.supports("-webkit-backface-visibility","hidden")
+  );
+  const forceCompatibility=/(?:^|[?&])flip=compat(?:&|$)/.test(location.search);
+  const useCompatibilityFlip=
+    forceCompatibility ||
+    !supportsTransformStyle ||
+    !supportsPerspective ||
+    !supportsBackface;
+  root.classList.toggle("flip-compat",useCompatibilityFlip);
+  root.classList.toggle("flip-3d",!useCompatibilityFlip);
+})();
+
 const IMAGE_SOURCE="assets/source/wanwan.png";
 const IMAGE_PREVIEW="assets/previews/wanwan.webp";
 
