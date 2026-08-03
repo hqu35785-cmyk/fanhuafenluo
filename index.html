@@ -673,38 +673,31 @@ html.flip-compat .face{
   transition:
     opacity .2s ease,
     transform .2s cubic-bezier(.2,.75,.2,1),
-    -webkit-transform .2s cubic-bezier(.2,.75,.2,1),
-    visibility 0s linear .2s;
+    -webkit-transform .2s cubic-bezier(.2,.75,.2,1);
 }
 html.flip-compat .front{
   opacity:1;
   visibility:visible;
   transform:scaleX(1);
   -webkit-transform:scaleX(1);
-  transform-origin:center;
 }
 html.flip-compat .back{
   opacity:0;
   visibility:hidden;
   transform:scaleX(.04);
   -webkit-transform:scaleX(.04);
-  transform-origin:center;
-  pointer-events:none;
 }
 html.flip-compat .card.flipped .front{
   opacity:0;
   visibility:hidden;
   transform:scaleX(.04);
   -webkit-transform:scaleX(.04);
-  pointer-events:none;
 }
 html.flip-compat .card.flipped .back{
   opacity:1;
   visibility:visible;
   transform:scaleX(1);
   -webkit-transform:scaleX(1);
-  pointer-events:auto;
-  transition-delay:0s;
 }
 
 .back-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:none}
