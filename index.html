@@ -1898,6 +1898,60 @@ footer::before{
   .placeholder-card:hover::after{animation:none}
 }
 
+/* 手机竖屏：卡片底部信息归位 */
+@media (max-width:620px) and (orientation:portrait){
+
+  /* 普通卡片、加载失败卡片：名字区域贴底 */
+  .card-name,
+  .front.is-load-error .card-name{
+    left:10px;
+    right:10px;
+    bottom:10px;
+  }
+
+  /* 敏感卡片：给右下角解锁按钮留出空间 */
+  .front.is-locked .card-name{
+    left:10px;
+    right:88px;
+    bottom:10px;
+  }
+
+  /* 缩短名字上方装饰线与标题之间的距离 */
+  .card-name::before{
+    margin-bottom:6px;
+  }
+
+  /* 恢复手机竖屏下的底部信息行 */
+  .card-meta{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:6px;
+    margin-top:4px;
+    overflow:hidden;
+    font-size:7px;
+    line-height:1.2;
+    letter-spacing:.04em;
+  }
+
+  .card-meta span{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  /* 右侧翻转提示固定保留 */
+  .card-meta span:last-child{
+    flex:0 0 auto;
+  }
+
+  /* 敏感卡片空间不足，只显示“点按翻转” */
+  .front.is-locked .card-meta span:first-child{
+    display:none;
+  }
+}
+
 </style>
 </head>
 <body>
