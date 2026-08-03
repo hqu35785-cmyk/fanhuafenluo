@@ -1566,52 +1566,120 @@ footer::before{
   .slot-cross{display:none}
 }
 
+/* Phone portrait: 2-column grid.
+   First viewport aims for 1 full row + ~2/3 of the next row (not single full-width cards). */
 @media(max-width:620px) and (orientation:portrait){
+  main{
+    padding:10px 0 max(12px,env(safe-area-inset-bottom));
+  }
   .catalog{display:block}
+  .side-title,
+  .first-hint{
+    display:none!important;
+  }
   .gallery{
-    grid-template-columns:minmax(0,380px);
-    justify-content:center;
-    gap:0;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    justify-content:stretch;
+    align-items:start;
+    column-gap:10px;
+    row-gap:10px;
   }
   .placeholder-item{display:none!important}
   html.gallery-fit .gallery{grid-auto-rows:auto}
+  .card-item,
+  .card-item.has-hint{
+    min-width:0;
+    min-height:0;
+  }
   .card,
   html.gallery-fit .card{
     width:100%;
-    height:auto;
-    aspect-ratio:.64;
+    aspect-ratio:auto;
+    /* chrome ≈ header(68) + main pads + footer ≈ 136px + safe areas;
+       divisor 1.7 ≈ one full row + ~70% of the next row + row-gap share */
+    height:clamp(
+      248px,
+      calc((100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 136px) / 1.7),
+      336px
+    );
   }
-  .card-item.has-hint{display:block}
-  .first-hint{
-    margin:10px 4px 0;
-    padding:0 2px 3px;
-    display:flex;
-    font-size:11px;
+  .card-inner,
+  .front,
+  .back{
+    height:100%;
   }
-  .face{border-radius:22px}
-  .back{padding:18px}
-  .back-toolbar{margin-bottom:14px}
-  .back h2{font-size:28px}
-  .back .alias{margin:5px 0 10px}
-  .back-role{margin-bottom:12px;font-size:11px}
-  .back-tags{display:flex;margin-bottom:13px}
-  .back-tag{padding:5px 8px;font-size:8px}
-  .setting{gap:11px;font-size:12px;line-height:1.6}
-  .back .setting p{-webkit-line-clamp:3}
-  .setting div{padding-bottom:9px}
+  .front img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center 22%;
+  }
+  .face{border-radius:16px}
+  .card-name{
+    left:10px;
+    right:10px;
+    bottom:10px;
+  }
+  .card-name b{font-size:clamp(15px,4.2vw,18px)}
+  .card-name span{font-size:8px;letter-spacing:.14em}
+  .card-meta{display:none}
+  .privacy-unlock{
+    right:8px;
+    bottom:8px;
+    min-height:30px;
+    min-width:76px;
+    padding-inline:9px;
+    font-size:8px;
+  }
+  .privacy-unlock[data-mode="save"]{font-size:7px}
+  .back{padding:12px}
+  .back-toolbar{margin-bottom:8px}
+  .back h2{font-size:18px}
+  .back .alias{margin:3px 0 6px;font-size:8px}
+  .back-role{margin-bottom:7px;font-size:9px;line-height:1.4}
+  .back-tags{display:none}
+  .setting{gap:7px;font-size:10px;line-height:1.45}
+  .back .setting p{-webkit-line-clamp:2}
+  .setting div{padding-bottom:6px}
   .back-setting-privacy{
-    min-height:124px;
-    margin-top:9px;
-    padding:11px;
-    grid-template-columns:36px minmax(0,1fr);
-    gap:8px 10px;
+    min-height:0;
+    margin-top:6px;
+    padding:7px;
+    grid-template-columns:1fr;
+    gap:4px;
   }
-  .back-setting-mark{display:block;width:36px;height:42px;border-radius:10px}
-  .back-setting-copy b{text-align:left;font-size:10px}
-  .back-setting-copy p{display:block;font-size:8px}
-  .back-actions{grid-template-columns:48px minmax(0,1fr);gap:8px;margin-top:14px}
-  .back-return,.back-expand{min-height:46px}
-  .back-expand{padding-inline:12px;font-size:10px}
+  .back-setting-mark,
+  .back-setting-copy p{display:none}
+  .back-setting-copy b{text-align:center;font-size:8px}
+  .back-actions{
+    grid-template-columns:42px minmax(0,1fr);
+    gap:6px;
+    margin-top:8px;
+  }
+  .back-return,
+  .back-expand{min-height:42px}
+  .back-expand{padding-inline:8px;font-size:8px;gap:6px}
+  footer{
+    margin-top:2px;
+    padding:6px 0 max(10px,env(safe-area-inset-bottom));
+    font-size:8px;
+  }
+}
+
+/* Narrow phones stack the unlock button, so header is taller — rebalance card height. */
+@media(max-width:430px) and (orientation:portrait){
+  main{padding-top:8px}
+  .card,
+  html.gallery-fit .card{
+    height:clamp(
+      236px,
+      calc((100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 176px) / 1.7),
+      320px
+    );
+  }
+  .face{border-radius:15px}
+  .card-name b{font-size:clamp(14px,4.1vw,17px)}
 }
 
 @media(max-height:520px) and (orientation:landscape){
