@@ -1747,13 +1747,13 @@ footer::before{
       <div class="unlock-choice-head">
         <div>
           <b id="unlockChoiceTitle">是否要一键解锁？</b>
-          <p id="unlockChoiceMessage">是否一键解锁全部敏感角色卡？也可以不要一键解锁，只解锁当前这张。</p>
+          <p id="unlockChoiceMessage">是否一键解锁全部敏感角色卡？也可以仅解锁当前这一张。</p>
         </div>
         <button class="unlock-choice-close" id="unlockChoiceClose" type="button" aria-label="关闭解锁选项">×</button>
       </div>
       <div class="unlock-choice-actions">
-        <button class="unlock-choice-btn" id="unlockChoiceAll" type="button" data-action="all">一键解锁</button>
-        <button class="unlock-choice-btn" id="unlockChoiceSingle" type="button" data-action="single">不要一键解锁</button>
+        <button class="unlock-choice-btn" id="unlockChoiceAll" type="button" data-action="all">一键解锁全部</button>
+        <button class="unlock-choice-btn" id="unlockChoiceSingle" type="button" data-action="single">仅那一张</button>
       </div>
       <p class="unlock-choice-note" id="unlockChoiceNote">仅本次页面有效，刷新后会重新锁定。</p>
     </div>
@@ -2907,10 +2907,10 @@ function openUnlockChoice(index,opener){
     : (document.activeElement instanceof HTMLElement ? document.activeElement : null);
   if(unlockChoiceTitle) unlockChoiceTitle.textContent="是否要一键解锁？";
   if(unlockChoiceMessage){
-    unlockChoiceMessage.textContent=`正在解锁「${work.name}」。是否一键解锁全部 ${lockedCount} 张敏感角色卡？也可以不要一键解锁，只解锁这张。`;
+    unlockChoiceMessage.textContent=`正在解锁「${work.name}」。是否一键解锁全部 ${lockedCount} 张敏感角色卡？也可以仅解锁这一张。`;
   }
-  if(unlockChoiceAll) unlockChoiceAll.textContent="一键解锁";
-  if(unlockChoiceSingle) unlockChoiceSingle.textContent="不要一键解锁";
+  if(unlockChoiceAll) unlockChoiceAll.textContent="一键解锁全部";
+  if(unlockChoiceSingle) unlockChoiceSingle.textContent="仅那一张";
   unlockChoice.hidden=false;
   requestAnimationFrame(()=>{
     (unlockChoiceAll || unlockChoiceSingle || unlockChoiceClose)?.focus({preventScroll:true});
