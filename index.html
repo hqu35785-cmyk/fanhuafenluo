@@ -638,6 +638,15 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   letter-spacing:.02em;
   text-shadow:0 2px 16px rgba(0,0,0,.8);
 }
+.card-name-note{
+  display:inline;
+  margin-left:.12em;
+  font-size:.72em;
+  font-weight:600;
+  letter-spacing:.02em;
+  opacity:.88;
+  vertical-align:baseline;
+}
 .card-name span{
   display:block;
   min-width:0;
@@ -1675,8 +1684,9 @@ footer::before{
     white-space:nowrap;
     line-height:1.3;
   }
-  /* Base size; JS fitCardFaceTitles only shrinks when the line would overflow. */
-  .card-name b{font-size:clamp(12px,3.8vw,16px);letter-spacing:0}
+  /* Base size for the real name; annotation like 【骚图版】 stays smaller via .card-name-note. */
+  .card-name b{font-size:clamp(13px,4vw,17px);letter-spacing:0}
+  .card-name-note{font-size:.68em;margin-left:.1em;letter-spacing:0;opacity:.9}
   .card-name>span:not(.card-meta){font-size:clamp(7px,2vw,8px);letter-spacing:.08em}
   .card-meta{display:none}
   .privacy-unlock{
@@ -2186,6 +2196,20 @@ function safe(text){
   }[c]));
 }
 
+/** Split "李慕婉 【骚图版】" → main name + smaller annotation. */
+function splitCardDisplayName(name){
+  const raw=String(name||"");
+  const match=raw.match(/^(.*?)(\s*[【\[][^】\]]+[】\]])\s*$/u);
+  if(!match) return {main:raw,note:""};
+  return {main:match[1].replace(/\s+$/u,""),note:match[2].replace(/^\s+/u,"")};
+}
+
+function cardFaceNameHTML(name){
+  const {main,note}=splitCardDisplayName(name);
+  if(!note) return safe(main);
+  return `${safe(main)}<span class="card-name-note">${safe(note)}</span>`;
+}
+
 function cardHTML(work,index){
   const imageSensitive=Boolean(work.sensitive);
   const settingSensitive=Boolean(work.sensitive);
@@ -2213,7 +2237,7 @@ function cardHTML(work,index){
           <span class="card-badges" aria-label="角色标签">${cornerBadges}</span>
           <span class="card-open" aria-hidden="true">↻</span>
           <span class="card-name">
-            <b>${safe(work.name)}</b>
+            <b>${cardFaceNameHTML(work.name)}</b>
             <span>${safe(work.alias || "")}</span>
             <span class="card-meta"><span>${safe(work.collectionLabel || "ORIGINAL CHARACTER")}</span><span>点按翻转</span></span>
           </span>
@@ -2357,7 +2381,22 @@ function fitTextToWidth(el,{minPx=9}={}){
 }
 
 function fitCardFaceTitles(){
-  gallery.querySelectorAll(".card .card-name b").forEach(el=>fitTextToWidth(el,{minPx:10}));
+  // Keep the main name at CSS size; only shrink the whole line if it still overflows.
+  // Annotations like 【骚图版】 are already smaller via .card-name-note.
+  gallery.querySelectorAll(".card .card-name b").forEach(el=>{
+    const note=el.querySelector(".card-name-note");
+    if(note){
+      // Prefer shrinking only the annotation, not "李慕婉".
+      note.style.fontSize="";
+      let noteSize=parseFloat(getComputedStyle(note).fontSize);
+      let guard=20;
+      while(el.scrollWidth>el.clientWidth+0.5 && noteSize>7 && guard--){
+        noteSize=Math.max(7,+(noteSize-0.4).toFixed(2));
+        note.style.fontSize=`${noteSize}px`;
+      }
+    }
+    if(el.scrollWidth>el.clientWidth+0.5) fitTextToWidth(el,{minPx:11});
+  });
   gallery.querySelectorAll(".card .card-name > span:not(.card-meta)").forEach(el=>fitTextToWidth(el,{minPx:6.5}));
 }
 
