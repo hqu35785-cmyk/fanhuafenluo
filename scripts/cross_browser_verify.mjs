@@ -476,6 +476,150 @@ async function runViewport(browserType, browserName, viewport) {
     }
     if (!layout.failures.length) pushOk("locked-front", { media: layout.media, flipMode: layout.flipMode, deployment });
 
+    // 1b author switch: fanhua → shark (empty) → fanhua, runtime isolation
+    {
+      const before = await page.evaluate(() => ({
+        name: document.getElementById("authorName")?.textContent || "",
+        cards: document.querySelectorAll(".card").length,
+        empty: !!document.querySelector(".author-empty"),
+        footer: document.getElementById("footerAuthor")?.textContent || "",
+        count: document.getElementById("workCount")?.textContent || "",
+      }));
+
+      // Unlock first sensitive card only (if any) to verify isolation after switch
+      const unlockBtn = page.locator(".privacy-unlock[data-mode='unlock']").first();
+      if (await unlockBtn.count()) {
+        await unlockBtn.click({ force: true }).catch(() => {});
+        await page.waitForTimeout(150);
+        await page.locator("#unlockChoiceSingle").click({ force: true }).catch(() => {});
+        await page.waitForTimeout(200);
+      }
+      const unlockedBefore = await page.evaluate(
+        () => document.querySelectorAll(".card .front:not(.is-locked)").length
+      );
+
+      await page.locator("#authorSwitch").click({ force: true });
+      await page.waitForTimeout(350);
+
+      const shark = await page.evaluate(() => ({
+        name: document.getElementById("authorName")?.textContent || "",
+        cards: document.querySelectorAll(".card").length,
+        empty: !!document.querySelector(".author-empty"),
+        emptyCopy: document.querySelector(".author-empty")?.textContent || "",
+        footer: document.getElementById("footerAuthor")?.textContent || "",
+        count: document.getElementById("workCount")?.textContent || "",
+        total: document.getElementById("workTotal")?.textContent || "",
+        title: document.title || "",
+        aria: document.getElementById("authorSwitch")?.getAttribute("aria-label") || "",
+        avatar: document.getElementById("authorAvatar")?.getAttribute("src") || "",
+        hint: document.getElementById("authorSwitchHint")?.textContent || "",
+        unlockHidden: !!document.getElementById("unlockAll")?.hidden,
+        toast: document.getElementById("toast")?.textContent || "",
+        galleryEmptyClass: document.getElementById("gallery")?.classList.contains("is-empty"),
+      }));
+
+      const sharkFails = [];
+      if (shark.name !== "鲨鱼") sharkFails.push(["author-name-shark", "鲨鱼", shark.name]);
+      if (shark.cards !== 0) sharkFails.push(["author-cards-empty", 0, shark.cards]);
+      if (!shark.empty || !shark.galleryEmptyClass)
+        sharkFails.push(["author-empty-ui", true, { empty: shark.empty, cls: shark.galleryEmptyClass }]);
+      if (!String(shark.emptyCopy).includes("作品正在整理中"))
+        sharkFails.push(["author-empty-copy", "作品正在整理中", shark.emptyCopy.slice(0, 80)]);
+      if (shark.footer !== "鲨鱼") sharkFails.push(["author-footer-shark", "鲨鱼", shark.footer]);
+      if (shark.count !== "00") sharkFails.push(["author-count-zero", "00", shark.count]);
+      if (!String(shark.total).includes("0")) sharkFails.push(["author-total-zero", "/ 0", shark.total]);
+      if (!shark.title.includes("鲨鱼")) sharkFails.push(["author-title-shark", "contains 鲨鱼", shark.title]);
+      if (!shark.aria.includes("鲨鱼")) sharkFails.push(["author-aria-shark", "contains 鲨鱼", shark.aria]);
+      if (!shark.avatar.includes("assets/authors/shark.webp"))
+        sharkFails.push(["author-avatar-shark", "assets/authors/shark.webp", shark.avatar.slice(0, 60)]);
+      if (!shark.unlockHidden) sharkFails.push(["author-unlock-hidden", true, shark.unlockHidden]);
+      if (!String(shark.toast).includes("鲨鱼"))
+        sharkFails.push(["author-toast-shark", "contains 鲨鱼", shark.toast]);
+
+      for (const [check, expected, actual] of sharkFails) {
+        rows.push(
+          await captureFailure(
+            page,
+            browserName,
+            viewport,
+            "author-switch-shark",
+            { check, expected, actual },
+            consoleErrors
+          )
+        );
+      }
+      if (!sharkFails.length) pushOk("author-switch-shark", { beforeCards: before.cards });
+
+      // switch back to fanhua
+      await page.locator("#authorSwitch").click({ force: true });
+      await page.waitForTimeout(400);
+
+      const back = await page.evaluate(() => ({
+        name: document.getElementById("authorName")?.textContent || "",
+        cards: document.querySelectorAll(".card").length,
+        empty: !!document.querySelector(".author-empty"),
+        footer: document.getElementById("footerAuthor")?.textContent || "",
+        unlockedFaces: document.querySelectorAll(".card .front:not(.is-locked)").length,
+        avatarData: (document.getElementById("authorAvatar")?.getAttribute("src") || "").startsWith("data:"),
+      }));
+
+      const backFails = [];
+      if (back.name !== "繁花·纷落") backFails.push(["author-name-fanhua", "繁花·纷落", back.name]);
+      if (back.cards < 1) backFails.push(["author-cards-restored", ">=1", back.cards]);
+      if (back.empty) backFails.push(["author-not-empty", false, back.empty]);
+      if (back.footer !== "繁花·纷落") backFails.push(["author-footer-fanhua", "繁花·纷落", back.footer]);
+      if (!back.avatarData) backFails.push(["author-avatar-data", true, back.avatarData]);
+      // unlock isolation: prior single unlock should still be present
+      if (unlockedBefore > 0 && back.unlockedFaces < unlockedBefore)
+        backFails.push(["author-unlock-persist", unlockedBefore, back.unlockedFaces]);
+
+      for (const [check, expected, actual] of backFails) {
+        rows.push(
+          await captureFailure(
+            page,
+            browserName,
+            viewport,
+            "author-switch-back",
+            { check, expected, actual },
+            consoleErrors
+          )
+        );
+      }
+      if (!backFails.length) {
+        pushOk("author-switch-back", {
+          cards: back.cards,
+          unlockedFaces: back.unlockedFaces,
+        });
+      }
+
+      // refresh resets author (no storage)
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await page.waitForSelector(".card", { timeout: 30000 });
+      await page.waitForTimeout(300);
+      const afterReload = await page.evaluate(() => ({
+        name: document.getElementById("authorName")?.textContent || "",
+        cards: document.querySelectorAll(".card").length,
+      }));
+      if (afterReload.name !== "繁花·纷落" || afterReload.cards < 1) {
+        rows.push(
+          await captureFailure(
+            page,
+            browserName,
+            viewport,
+            "author-refresh-default",
+            {
+              check: "author-refresh-default",
+              expected: "繁花·纷落 with cards",
+              actual: afterReload,
+            },
+            consoleErrors
+          )
+        );
+      } else {
+        pushOk("author-refresh-default");
+      }
+    }
+
     // 2 unlock
     await page.locator("#unlockAll").click({ force: true }).catch(() => {});
     await page.waitForTimeout(400);
