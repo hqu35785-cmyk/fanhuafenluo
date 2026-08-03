@@ -939,6 +939,97 @@ footer::before{
   text-align:center;
 }
 
+.unlock-choice{
+  position:fixed;
+  inset:0;
+  z-index:125;
+  display:grid;
+  place-items:center;
+  padding:max(12px,env(safe-area-inset-top)) 12px max(12px,env(safe-area-inset-bottom));
+  background:rgba(4,4,9,.72);
+  -webkit-backdrop-filter:blur(12px) saturate(108%);
+  backdrop-filter:blur(12px) saturate(108%);
+}
+.unlock-choice[hidden]{display:none!important}
+.unlock-choice-panel{
+  width:min(380px,calc(100vw - 24px));
+  border:1px solid rgba(255,244,249,.14);
+  border-radius:22px;
+  color:var(--text);
+  background:rgba(12,11,18,.96);
+  box-shadow:0 36px 100px rgba(0,0,0,.72),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.unlock-choice-inner{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  padding:20px 18px 18px;
+}
+.unlock-choice-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.unlock-choice-head b{
+  font-size:14px;
+  font-weight:650;
+  letter-spacing:.06em;
+}
+.unlock-choice-head p{
+  margin:8px 0 0;
+  color:rgba(220,211,226,.68);
+  font-size:11px;
+  line-height:1.55;
+  letter-spacing:.02em;
+}
+.unlock-choice-close{
+  flex:0 0 auto;
+  width:36px;
+  height:36px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:50%;
+  color:rgba(255,255,255,.82);
+  background:rgba(255,255,255,.04);
+  cursor:pointer;
+  font-size:18px;
+  line-height:1;
+}
+.unlock-choice-actions{
+  display:grid;
+  gap:8px;
+}
+.unlock-choice-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:0 14px;
+  border:1px solid rgba(243,170,194,.28);
+  border-radius:999px;
+  color:#fff;
+  background:linear-gradient(135deg,rgba(243,170,194,.22),rgba(157,185,255,.1)),rgba(11,10,18,.72);
+  font-size:11px;
+  font-weight:650;
+  letter-spacing:.06em;
+  cursor:pointer;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,opacity .2s ease;
+}
+.unlock-choice-btn[data-action="single"]{
+  border-color:rgba(255,255,255,.12);
+  background:rgba(255,255,255,.05);
+  color:rgba(250,247,252,.9);
+}
+.unlock-choice-btn:focus-visible{outline:2px solid rgba(243,170,194,.78);outline-offset:3px}
+.unlock-choice-note{
+  margin:0;
+  color:rgba(204,195,211,.52);
+  font-size:10px;
+  line-height:1.5;
+  letter-spacing:.02em;
+  text-align:center;
+}
+
 .archive-modal{
   width:min(1040px,calc(100vw - 34px));
   max-width:none;
@@ -1232,6 +1323,7 @@ footer::before{
 
 @media (hover:hover) and (pointer:fine){
   .unlock-all:not(:disabled):hover{transform:translateY(-1px);border-color:rgba(243,170,194,.45);background:linear-gradient(135deg,rgba(243,170,194,.27),rgba(157,185,255,.17))}
+  .unlock-choice-btn:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.4)}
   .card:hover .card-open{transform:rotate(45deg);border-color:rgba(243,170,194,.34);background:rgba(20,15,26,.62)}
   .back-return:hover,.back-expand:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.35)}
   .back-expand:hover span:last-child{transform:translate(2px,-2px)}
@@ -1555,7 +1647,7 @@ footer::before{
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .card,.card-inner,.front img,.action,.toast,.archive-modal,.archive-action,.card-open,.back-return,.back-expand,.privacy-unlock,.archive-unlock,.setting-unlock,.archive-setting-unlock,.unlock-all{transition:none}
+  .card,.card-inner,.front img,.action,.toast,.archive-modal,.archive-action,.card-open,.back-return,.back-expand,.privacy-unlock,.archive-unlock,.setting-unlock,.archive-setting-unlock,.unlock-all,.unlock-choice-btn{transition:none}
   .placeholder-card:hover::after{animation:none}
 }
 
@@ -1645,6 +1737,25 @@ footer::before{
         <a class="save-sheet-link" id="saveSheetLink" href="#" download>下载 PNG 原图</a>
         <p class="save-sheet-note" id="saveSheetNote" aria-live="polite">手机端若无反应，请长按上方图片保存。</p>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="unlock-choice" id="unlockChoice" hidden>
+  <div class="unlock-choice-panel" role="dialog" aria-modal="true" aria-labelledby="unlockChoiceTitle" aria-describedby="unlockChoiceMessage unlockChoiceNote">
+    <div class="unlock-choice-inner">
+      <div class="unlock-choice-head">
+        <div>
+          <b id="unlockChoiceTitle">是否要一键解锁？</b>
+          <p id="unlockChoiceMessage">是否一键解锁全部敏感角色卡？也可以不要一键解锁，只解锁当前这张。</p>
+        </div>
+        <button class="unlock-choice-close" id="unlockChoiceClose" type="button" aria-label="关闭解锁选项">×</button>
+      </div>
+      <div class="unlock-choice-actions">
+        <button class="unlock-choice-btn" id="unlockChoiceAll" type="button" data-action="all">一键解锁</button>
+        <button class="unlock-choice-btn" id="unlockChoiceSingle" type="button" data-action="single">不要一键解锁</button>
+      </div>
+      <p class="unlock-choice-note" id="unlockChoiceNote">仅本次页面有效，刷新后会重新锁定。</p>
     </div>
   </div>
 </div>
@@ -2765,6 +2876,59 @@ function unlockWork(index){
     : "敏感卡面已解锁，图片加载中；刷新页面后会重新锁定");
 }
 
+const unlockChoice=document.getElementById("unlockChoice");
+const unlockChoiceTitle=document.getElementById("unlockChoiceTitle");
+const unlockChoiceMessage=document.getElementById("unlockChoiceMessage");
+const unlockChoiceSingle=document.getElementById("unlockChoiceSingle");
+const unlockChoiceAll=document.getElementById("unlockChoiceAll");
+const unlockChoiceClose=document.getElementById("unlockChoiceClose");
+let unlockChoiceIndex=null;
+let unlockChoiceLastFocus=null;
+
+function closeUnlockChoice(){
+  if(!unlockChoice || unlockChoice.hidden) return;
+  unlockChoice.hidden=true;
+  unlockChoiceIndex=null;
+  const restore=unlockChoiceLastFocus;
+  unlockChoiceLastFocus=null;
+  if(restore && document.contains(restore)){
+    requestAnimationFrame(()=>restore.focus({preventScroll:true}));
+  }
+}
+
+function openUnlockChoice(index,opener){
+  const work=works[index];
+  if(!unlockChoice || !work || !work.sensitive || !isWorkLocked(index)) return false;
+  const lockedCount=getLockedSensitiveIndexes().length;
+  if(lockedCount<=1) return false;
+  unlockChoiceIndex=index;
+  unlockChoiceLastFocus=opener instanceof HTMLElement
+    ? opener
+    : (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+  if(unlockChoiceTitle) unlockChoiceTitle.textContent="是否要一键解锁？";
+  if(unlockChoiceMessage){
+    unlockChoiceMessage.textContent=`正在解锁「${work.name}」。是否一键解锁全部 ${lockedCount} 张敏感角色卡？也可以不要一键解锁，只解锁这张。`;
+  }
+  if(unlockChoiceAll) unlockChoiceAll.textContent="一键解锁";
+  if(unlockChoiceSingle) unlockChoiceSingle.textContent="不要一键解锁";
+  unlockChoice.hidden=false;
+  requestAnimationFrame(()=>{
+    (unlockChoiceAll || unlockChoiceSingle || unlockChoiceClose)?.focus({preventScroll:true});
+  });
+  return true;
+}
+
+function requestSingleUnlock(index,opener){
+  const work=works[index];
+  if(!work || !work.sensitive) return;
+  if(previewLoadStates.get(index)==="error" && !isWorkLocked(index)){
+    unlockWork(index);
+    return;
+  }
+  if(isWorkLocked(index) && openUnlockChoice(index,opener)) return;
+  unlockWork(index);
+}
+
 function unlockAllWorks(){
   const lockedIndexes=getLockedSensitiveIndexes();
   const failedIndexes=getFailedPreviewIndexes();
@@ -2836,11 +3000,33 @@ function openArchive(index,opener){
 
 syncUnlockAll();
 unlockAll?.addEventListener("click",unlockAllWorks);
+unlockChoiceClose?.addEventListener("click",closeUnlockChoice);
+unlockChoice?.addEventListener("click",e=>{
+  if(e.target===unlockChoice) closeUnlockChoice();
+});
+unlockChoice?.querySelector(".unlock-choice-panel")?.addEventListener("click",e=>e.stopPropagation());
+unlockChoiceSingle?.addEventListener("click",()=>{
+  const index=unlockChoiceIndex;
+  closeUnlockChoice();
+  if(index===null) return;
+  unlockWork(index);
+});
+unlockChoiceAll?.addEventListener("click",()=>{
+  closeUnlockChoice();
+  unlockAllWorks();
+});
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape" || !unlockChoice || unlockChoice.hidden) return;
+  e.preventDefault();
+  closeUnlockChoice();
+});
 archiveClose.addEventListener("click",()=>archiveModal.close());
-archiveUnlock.addEventListener("click",()=>{
+archiveUnlock.addEventListener("click",e=>{
   if(activeIndex===null) return;
-  unlockWork(activeIndex);
-  requestAnimationFrame(()=>archiveClose.focus({preventScroll:true}));
+  requestSingleUnlock(activeIndex,e.currentTarget);
+  if(!unlockChoice || unlockChoice.hidden){
+    requestAnimationFrame(()=>archiveClose.focus({preventScroll:true}));
+  }
 });
 archiveModal.addEventListener("click",e=>{
   if(e.target===archiveModal) archiveModal.close();
@@ -2917,8 +3103,10 @@ document.querySelectorAll(".card").forEach(card=>{
     e.stopPropagation();
     const mode=faceAction.dataset.mode;
     if(mode==="unlock" || mode==="retry"){
-      unlockWork(index);
-      requestAnimationFrame(()=>flipButton.focus({preventScroll:true}));
+      requestSingleUnlock(index,faceAction);
+      if(!unlockChoice || unlockChoice.hidden){
+        requestAnimationFrame(()=>flipButton.focus({preventScroll:true}));
+      }
       return;
     }
     if(mode==="save") downloadCharacterCard(work,index);
