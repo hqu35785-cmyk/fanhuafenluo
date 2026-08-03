@@ -37,6 +37,7 @@ body{
   margin:0;
   display:flex;
   flex-direction:column;
+  overflow-x:hidden;
   overflow-x:clip;
   padding-left:env(safe-area-inset-left);
   padding-right:env(safe-area-inset-right);
@@ -101,7 +102,8 @@ img{display:block;max-width:100%}
 
 header{
   flex:0 0 auto;
-  height:calc(68px + env(safe-area-inset-top));
+  height:auto;
+  min-height:calc(68px + env(safe-area-inset-top));
   padding-top:env(safe-area-inset-top);
   display:flex;
   align-items:center;
@@ -243,6 +245,7 @@ main{flex:1 0 auto;min-width:0;padding:20px 0 12px}
   display:grid;
   grid-template-columns:repeat(7,minmax(0,1fr));
   column-gap:clamp(10px,.72vw,14px);
+  row-gap:clamp(18px,2vh,26px);
   row-gap:clamp(18px,2dvh,26px);
 }
 .card-item{
@@ -910,7 +913,7 @@ footer::before{
 }
 
 .toast{
-  position:fixed;left:50%;bottom:22px;z-index:90;
+  position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));z-index:90;
   transform:translate(-50%,12px);
   opacity:0;pointer-events:none;
   padding:10px 13px;border:1px solid rgba(255,255,255,.13);border-radius:12px;
@@ -935,6 +938,7 @@ footer::before{
 .save-sheet[hidden]{display:none!important}
 .save-sheet-panel{
   width:min(420px,calc(100vw - 24px));
+  max-height:min(88vh,760px);
   max-height:min(88dvh,760px);
   overflow:auto;
   border:1px solid rgba(255,244,249,.14);
@@ -992,6 +996,7 @@ footer::before{
 .save-sheet-preview img{
   display:block;
   width:100%;
+  max-height:min(52vh,460px);
   max-height:min(52dvh,460px);
   object-fit:contain;
   background:#0a0910;
@@ -1132,6 +1137,7 @@ footer::before{
 .archive-modal{
   width:min(1040px,calc(100vw - 34px));
   max-width:none;
+  max-height:min(820px,calc(100vh - 34px));
   max-height:min(820px,calc(100dvh - 34px));
   margin:auto;
   padding:0;
@@ -1161,6 +1167,7 @@ footer::before{
   position:relative;
   display:grid;
   grid-template-columns:minmax(320px,.92fr) minmax(390px,1.08fr);
+  min-height:min(720px,calc(100vh - 70px));
   min-height:min(720px,calc(100dvh - 70px));
   overflow:hidden;
   overscroll-behavior:contain;
@@ -1457,17 +1464,22 @@ footer::before{
 @media(max-width:880px){
   .archive-modal{
     width:calc(100vw - 14px - env(safe-area-inset-left) - env(safe-area-inset-right));
+    max-height:calc(100vh - 14px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     max-height:calc(100dvh - 14px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     border-radius:22px;
   }
   .archive-shell{
     display:block;
     min-height:0;
+    max-height:calc(100vh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     max-height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     overflow:auto;
     border-radius:21px;
   }
-  .archive-visual{height:clamp(220px,42dvh,360px)}
+  .archive-visual{
+    height:clamp(220px,42vh,360px);
+    height:clamp(220px,42dvh,360px);
+  }
   .archive-content{padding:30px 22px 24px;overflow:visible}
   .archive-title{margin-top:23px;font-size:42px}
   .archive-profile section{grid-template-columns:58px 1fr;gap:14px}
@@ -1530,6 +1542,7 @@ footer::before{
   .slot-cross{opacity:.12}
   .archive-modal{
     width:calc(100vw - 8px - env(safe-area-inset-left) - env(safe-area-inset-right));
+    height:calc(100vh - 8px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     height:calc(100dvh - 8px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     max-height:none;
     border-radius:20px;
@@ -1542,8 +1555,19 @@ footer::before{
     overflow-y:auto;
     border-radius:19px;
   }
-  .archive-visual{height:clamp(210px,32dvh,270px);flex:0 0 clamp(210px,32dvh,270px)}
-  .archive-content{min-height:calc(100% - clamp(210px,32dvh,270px));flex:1 0 auto;padding:25px 18px max(24px,env(safe-area-inset-bottom));overflow:visible}
+  .archive-visual{
+    height:clamp(210px,32vh,270px);
+    height:clamp(210px,32dvh,270px);
+    flex:0 0 clamp(210px,32vh,270px);
+    flex:0 0 clamp(210px,32dvh,270px);
+  }
+  .archive-content{
+    min-height:calc(100% - clamp(210px,32vh,270px));
+    min-height:calc(100% - clamp(210px,32dvh,270px));
+    flex:1 0 auto;
+    padding:25px 18px max(24px,env(safe-area-inset-bottom));
+    overflow:visible;
+  }
   .archive-title{margin:18px 0 6px;font-size:40px}
   .archive-tags{margin:16px 0 20px}
   .archive-profile section{
@@ -1558,7 +1582,10 @@ footer::before{
 }
 @media(max-width:430px){
   .wrap{width:calc(100% - 20px)}
-  header{height:calc(104px + env(safe-area-inset-top))}
+  header{
+    height:auto;
+    min-height:calc(104px + env(safe-area-inset-top));
+  }
   nav{
     grid-template-columns:minmax(0,1fr) auto;
     grid-template-rows:auto auto;
@@ -1604,9 +1631,7 @@ footer::before{
   .slot-cross{display:none}
 }
 
-/* Phone portrait: 2-column grid.
-   Card height comes from JS --portrait-card-height
-   (2 full rows + ~6–10% of the third row peeping at the bottom). */
+/* Phone portrait: 2-column grid; card size from aspect-ratio (no JS height). */
 @media(max-width:620px) and (orientation:portrait){
   main{
     padding:10px 0 max(12px,env(safe-area-inset-bottom));
@@ -1634,8 +1659,8 @@ footer::before{
   .card,
   html.gallery-fit .card{
     width:100%;
-    aspect-ratio:auto;
-    height:var(--portrait-card-height,calc((100vw - 30px) / 1.36));
+    height:auto;
+    aspect-ratio:18 / 25;
   }
   .card-inner,
   .front,
@@ -1789,15 +1814,26 @@ footer::before{
   .card-name b{font-size:clamp(14px,4.1vw,17px)}
 }
 
+@media(min-width:500px) and (max-width:620px) and (orientation:portrait){
+  .gallery{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+
 @media(max-height:520px) and (orientation:landscape){
-  header{height:calc(54px + env(safe-area-inset-top))}
+  header{
+    height:auto;
+    min-height:calc(54px + env(safe-area-inset-top));
+  }
   .brand img{width:34px;height:34px;border-radius:11px}
   .brand span{font-size:15px}
   main{padding:9px 0 6px}
   .gallery{
     grid-template-columns:none;
     grid-auto-flow:column;
-    grid-auto-columns:clamp(188px,calc((100dvh - 108px) * .72),224px);
+    grid-auto-columns:clamp(188px,calc((100vh - 108px) * .72),224px);
+    grid-auto-columns:clamp(188px,calc((100svh - 108px) * .72),224px);
+    justify-content:center;
     justify-content:safe center;
     gap:12px;
     overflow-x:auto;
@@ -1811,7 +1847,6 @@ footer::before{
   .first-hint{margin:3px 2px 0;font-size:8px;line-height:1.2}
   .placeholder-item{display:none!important}
   .card{height:auto;aspect-ratio:.72}
-  html.compact-landscape .card-meta{display:none}
   .back{padding:11px}
   .back-toolbar{margin-bottom:8px}
   .back h2{font-size:19px}
@@ -1829,6 +1864,7 @@ footer::before{
   footer{margin-top:0;padding:5px 0 max(5px,env(safe-area-inset-bottom));font-size:8px}
   .archive-modal{
     width:calc(100vw - 10px - env(safe-area-inset-left) - env(safe-area-inset-right));
+    max-height:calc(100vh - 10px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     max-height:calc(100dvh - 10px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     border-radius:20px;
   }
@@ -1836,8 +1872,10 @@ footer::before{
     display:grid;
     grid-template-columns:minmax(220px,.82fr) minmax(320px,1.18fr);
     grid-template-rows:minmax(0,1fr);
+    height:calc(100vh - 12px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     height:calc(100dvh - 12px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     min-height:0;
+    max-height:calc(100vh - 12px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     max-height:calc(100dvh - 12px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     overflow:hidden;
     border-radius:19px;
@@ -1864,6 +1902,111 @@ footer::before{
     right:max(10px,env(safe-area-inset-right));
     width:44px;
     height:44px;
+  }
+}
+
+/* 窄屏卡片底部布局：
+   标题和别名占满整行；
+   “点按翻转”和操作按钮位于同一底部行；
+   不再通过固定 right 值挤压整个名字区域。 */
+@media (max-width:620px), (max-height:520px) and (orientation:landscape){
+
+  .card{
+    --front-edge:clamp(8px,2.2vw,10px);
+    --front-action-width:clamp(68px,43%,108px);
+    --front-action-height:36px;
+  }
+
+  .card-name,
+  .front.is-locked .card-name,
+  .front.is-load-error .card-name{
+    left:var(--front-edge);
+    right:var(--front-edge);
+    bottom:var(--front-edge);
+
+    display:grid;
+    grid-template-columns:minmax(0,1fr) var(--front-action-width);
+    column-gap:8px;
+
+    min-width:0;
+    overflow:hidden;
+  }
+
+  .card-name::before{
+    grid-column:1 / -1;
+    margin-bottom:6px;
+  }
+
+  .card-name b,
+  .card-name > span:not(.card-meta){
+    grid-column:1 / -1;
+    min-width:0;
+  }
+
+  .card-name b{
+    overflow:hidden;
+    text-overflow:clip;
+    white-space:nowrap;
+    line-height:1.3;
+  }
+
+  .card-name > span:not(.card-meta){
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    line-height:1.3;
+  }
+
+  .card-meta,
+  html.compact-landscape .card-meta{
+    grid-column:1;
+    min-width:0;
+    min-height:var(--front-action-height);
+
+    margin-top:5px;
+    padding-top:6px;
+
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+
+    overflow:hidden;
+    border-top:1px solid rgba(255,255,255,.10);
+
+    font-size:clamp(7px,1.8vw,8px);
+    line-height:1.2;
+    letter-spacing:.04em;
+  }
+
+  /* 顶部已经有身份角标，窄屏底部不重复显示分类。 */
+  .card-meta span:first-child{
+    display:none;
+  }
+
+  .card-meta span:last-child{
+    display:block;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color:rgba(243,190,210,.86);
+  }
+
+  .privacy-unlock{
+    right:var(--front-edge);
+    bottom:var(--front-edge);
+
+    width:var(--front-action-width);
+    min-width:0;
+    max-width:none;
+    min-height:var(--front-action-height);
+
+    padding-inline:6px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+
+    font-size:clamp(7px,1.7vw,8px);
   }
 }
 
@@ -1896,60 +2039,6 @@ footer::before{
     -webkit-transition:none;
   }
   .placeholder-card:hover::after{animation:none}
-}
-
-/* 手机竖屏：卡片底部信息归位 */
-@media (max-width:620px) and (orientation:portrait){
-
-  /* 普通卡片、加载失败卡片：名字区域贴底 */
-  .card-name,
-  .front.is-load-error .card-name{
-    left:10px;
-    right:10px;
-    bottom:10px;
-  }
-
-  /* 敏感卡片：给右下角解锁按钮留出空间 */
-  .front.is-locked .card-name{
-    left:10px;
-    right:88px;
-    bottom:10px;
-  }
-
-  /* 缩短名字上方装饰线与标题之间的距离 */
-  .card-name::before{
-    margin-bottom:6px;
-  }
-
-  /* 恢复手机竖屏下的底部信息行 */
-  .card-meta{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:6px;
-    margin-top:4px;
-    overflow:hidden;
-    font-size:7px;
-    line-height:1.2;
-    letter-spacing:.04em;
-  }
-
-  .card-meta span{
-    min-width:0;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
-
-  /* 右侧翻转提示固定保留 */
-  .card-meta span:last-child{
-    flex:0 0 auto;
-  }
-
-  /* 敏感卡片空间不足，只显示“点按翻转” */
-  .front.is-locked .card-meta span:first-child{
-    display:none;
-  }
 }
 
 </style>
@@ -2351,67 +2440,12 @@ const pageMain=document.querySelector("main");
 const pageFooter=document.querySelector("footer");
 const placeholderNodes=[...gallery.querySelectorAll(".placeholder-item")];
 const phonePortraitQuery=window.matchMedia("(max-width:620px) and (orientation:portrait)");
-const PORTRAIT_THIRD_ROW_VISIBLE=0.08;
 let layoutFrame=0;
-let safeAreaProbe=null;
 
 function currentColumnCount(){
   const tracks=getComputedStyle(gallery).gridTemplateColumns.trim();
   if(!tracks || tracks==="none") return 1;
   return Math.max(1,tracks.split(/\s+/).filter(Boolean).length);
-}
-
-function readSafeAreaInsetBottom(){
-  if(!safeAreaProbe){
-    safeAreaProbe=document.createElement("div");
-    safeAreaProbe.setAttribute("aria-hidden","true");
-    safeAreaProbe.style.cssText="position:fixed;left:0;bottom:0;width:0;height:env(safe-area-inset-bottom,0px);pointer-events:none;visibility:hidden";
-    document.body.appendChild(safeAreaProbe);
-  }
-  return Math.max(0,safeAreaProbe.getBoundingClientRect().height||0);
-}
-
-function clearPortraitCardHeight(){
-  layoutRoot.style.removeProperty("--portrait-card-height");
-}
-
-function updatePortraitCardHeight(viewportHeight){
-  // Stable page offset of gallery top (independent of current scroll).
-  // Footer is below the gallery and must not be subtracted from first-screen peep math.
-  const galleryTop=Math.max(0,Math.round(gallery.getBoundingClientRect().top+(window.scrollY||0)));
-  const galleryStyle=getComputedStyle(gallery);
-  const rowGap=parseFloat(galleryStyle.rowGap);
-  const columnGapRaw=parseFloat(galleryStyle.columnGap);
-  const gapFallback=parseFloat(galleryStyle.gap);
-  const resolvedRowGap=Number.isFinite(rowGap) ? rowGap : (Number.isFinite(gapFallback) ? gapFallback : 10);
-  const columnGap=Number.isFinite(columnGapRaw) ? columnGapRaw : (Number.isFinite(gapFallback) ? gapFallback : 10);
-  const bottomSafe=Math.max(8,readSafeAreaInsetBottom());
-  // Two full rows + gaps + a peep of the third row. Do not reserve second-row-only space.
-  const usable=viewportHeight-galleryTop-bottomSafe;
-  if(!(usable>resolvedRowGap*2)){
-    clearPortraitCardHeight();
-    return;
-  }
-
-  // Target: cards 1–4 fully visible, cards 5–6 peep ~6–10% (about 8%) at the bottom.
-  const raw=(usable-resolvedRowGap*2)/(2+PORTRAIT_THIRD_ROW_VISIBLE);
-  const cardWidth=Math.max(1,(gallery.clientWidth-columnGap)/2);
-  // Aspect band keeps faces readable; slightly taller max lets tall phones hit ~8% peep.
-  const minHeight=cardWidth/0.78;
-  const maxHeight=cardWidth/0.50;
-  let cardHeight=Math.round(Math.min(maxHeight,Math.max(minHeight,raw)));
-
-  // Correct against the real viewport bottom (not only usable after bottomSafe),
-  // so the on-screen peep lands near 8% rather than 8% + safe-area leakage.
-  const visualUsable=viewportHeight-galleryTop;
-  const peepSpace=visualUsable-cardHeight*2-resolvedRowGap*2;
-  const peepRatio=cardHeight>0 ? peepSpace/cardHeight : 0;
-  if(peepRatio>0.10){
-    const tightened=(visualUsable-resolvedRowGap*2)/(2+0.08);
-    cardHeight=Math.round(Math.min(maxHeight,Math.max(cardHeight,tightened)));
-  }
-
-  layoutRoot.style.setProperty("--portrait-card-height",`${cardHeight}px`);
 }
 
 function fitTextToWidth(el,{minPx=9}={}){
@@ -2459,23 +2493,26 @@ function fitCardFaceTitles(){
 function fitGalleryToViewport(){
   layoutFrame=0;
   const viewportHeight=Math.round(window.visualViewport?.height || window.innerHeight);
-  const phonePortrait=phonePortraitQuery.matches || (window.innerWidth<=620 && viewportHeight>=window.innerWidth);
+  const phonePortrait=phonePortraitQuery.matches;
   const compactLandscape=window.innerWidth>viewportHeight && viewportHeight<=520;
 
   if(phonePortrait){
-    placeholderNodes.forEach(node=>{node.hidden=true});
+    placeholderNodes.forEach(node=>{
+      node.hidden=true;
+    });
+
     gallery.style.removeProperty("--gallery-row-height");
+    layoutRoot.style.removeProperty("--portrait-card-height");
     layoutRoot.classList.remove("gallery-fit","compact-landscape");
-    updatePortraitCardHeight(viewportHeight);
+
     fitCardFaceTitles();
     return;
   }
 
-  clearPortraitCardHeight();
-
   if(compactLandscape){
     placeholderNodes.forEach(node=>{node.hidden=true});
     gallery.style.removeProperty("--gallery-row-height");
+    layoutRoot.style.removeProperty("--portrait-card-height");
     layoutRoot.classList.remove("gallery-fit");
     layoutRoot.classList.add("compact-landscape");
     fitCardFaceTitles();
@@ -2512,6 +2549,7 @@ function fitGalleryToViewport(){
   const rowHeight=Math.floor(Math.min(maximumHeight,Math.max(minimumHeight,targetHeight)));
 
   gallery.style.setProperty("--gallery-row-height",`${rowHeight}px`);
+  layoutRoot.style.removeProperty("--portrait-card-height");
   layoutRoot.classList.toggle("compact-landscape",compactLandscape);
   layoutRoot.classList.add("gallery-fit");
   fitCardFaceTitles();
@@ -2530,7 +2568,11 @@ window.addEventListener("orientationchange",()=>{
   setTimeout(scheduleGalleryFit,120);
   setTimeout(scheduleGalleryFit,320);
 },{passive:true});
-window.visualViewport?.addEventListener("resize",scheduleGalleryFit,{passive:true});
+window.visualViewport?.addEventListener("resize",()=>{
+  if(!phonePortraitQuery.matches){
+    scheduleGalleryFit();
+  }
+},{passive:true});
 if(typeof phonePortraitQuery.addEventListener==="function"){
   phonePortraitQuery.addEventListener("change",scheduleGalleryFit);
 }else if(typeof phonePortraitQuery.addListener==="function"){
