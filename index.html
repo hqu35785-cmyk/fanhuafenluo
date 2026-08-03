@@ -1567,7 +1567,7 @@ footer::before{
 }
 
 /* Phone portrait: 2-column grid.
-   First viewport aims for 1 full row + ~2/3 of the next row (not single full-width cards). */
+   Card height comes from JS --portrait-card-height (1 full row + ~68% second row). */
 @media(max-width:620px) and (orientation:portrait){
   main{
     padding:10px 0 max(12px,env(safe-area-inset-bottom));
@@ -1596,13 +1596,7 @@ footer::before{
   html.gallery-fit .card{
     width:100%;
     aspect-ratio:auto;
-    /* chrome ≈ header(68) + main pads + footer ≈ 136px + safe areas;
-       divisor 1.7 ≈ one full row + ~70% of the next row + row-gap share */
-    height:clamp(
-      248px,
-      calc((100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 136px) / 1.7),
-      336px
-    );
+    height:var(--portrait-card-height,48vw);
   }
   .card-inner,
   .front,
@@ -1618,17 +1612,25 @@ footer::before{
   .face{border-radius:16px}
   .card-name{
     left:10px;
-    right:10px;
+    right:92px;
     bottom:10px;
+    max-width:calc(100% - 102px);
+  }
+  .card-name b,
+  .card-name>span:not(.card-meta){
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .card-name b{font-size:clamp(15px,4.2vw,18px)}
-  .card-name span{font-size:8px;letter-spacing:.14em}
+  .card-name>span:not(.card-meta){font-size:8px;letter-spacing:.14em}
   .card-meta{display:none}
   .privacy-unlock{
     right:8px;
     bottom:8px;
     min-height:30px;
     min-width:76px;
+    max-width:min(46%,118px);
     padding-inline:9px;
     font-size:8px;
   }
@@ -1667,17 +1669,8 @@ footer::before{
   }
 }
 
-/* Narrow phones stack the unlock button, so header is taller — rebalance card height. */
 @media(max-width:430px) and (orientation:portrait){
   main{padding-top:8px}
-  .card,
-  html.gallery-fit .card{
-    height:clamp(
-      236px,
-      calc((100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 176px) / 1.7),
-      320px
-    );
-  }
   .face{border-radius:15px}
   .card-name b{font-size:clamp(14px,4.1vw,17px)}
 }
@@ -2175,7 +2168,10 @@ const pageHeader=document.querySelector("header");
 const pageMain=document.querySelector("main");
 const pageFooter=document.querySelector("footer");
 const placeholderNodes=[...gallery.querySelectorAll(".placeholder-item")];
+const phonePortraitQuery=window.matchMedia("(max-width:620px) and (orientation:portrait)");
+const PORTRAIT_SECOND_ROW_VISIBLE=0.68;
 let layoutFrame=0;
+let safeAreaProbe=null;
 
 function currentColumnCount(){
   const tracks=getComputedStyle(gallery).gridTemplateColumns.trim();
@@ -2183,17 +2179,64 @@ function currentColumnCount(){
   return Math.max(1,tracks.split(/\s+/).filter(Boolean).length);
 }
 
+function readSafeAreaInsetBottom(){
+  if(!safeAreaProbe){
+    safeAreaProbe=document.createElement("div");
+    safeAreaProbe.setAttribute("aria-hidden","true");
+    safeAreaProbe.style.cssText="position:fixed;left:0;bottom:0;width:0;height:env(safe-area-inset-bottom,0px);pointer-events:none;visibility:hidden";
+    document.body.appendChild(safeAreaProbe);
+  }
+  return Math.max(0,safeAreaProbe.getBoundingClientRect().height||0);
+}
+
+function clearPortraitCardHeight(){
+  layoutRoot.style.removeProperty("--portrait-card-height");
+}
+
+function updatePortraitCardHeight(viewportHeight){
+  // Stable page offset of gallery top (independent of current scroll).
+  // Footer is below the gallery and must not be subtracted from first-screen peep math.
+  const galleryTop=Math.max(0,Math.round(gallery.getBoundingClientRect().top+(window.scrollY||0)));
+  const galleryStyle=getComputedStyle(gallery);
+  const rowGap=parseFloat(galleryStyle.rowGap);
+  const gapFallback=parseFloat(galleryStyle.gap);
+  const resolvedRowGap=Number.isFinite(rowGap) ? rowGap : (Number.isFinite(gapFallback) ? gapFallback : 10);
+  const bottomSafe=Math.max(8,readSafeAreaInsetBottom());
+  const usable=viewportHeight-galleryTop-resolvedRowGap-bottomSafe;
+  if(!(usable>0)){
+    clearPortraitCardHeight();
+    return;
+  }
+
+  // Target: row1 fully visible + ~68% of row2. Do not hard-cap near 320px.
+  const raw=usable/(1+PORTRAIT_SECOND_ROW_VISIBLE);
+  const minHeight=200;
+  const maxHeight=Math.max(minHeight,Math.floor(usable*0.92));
+  const cardHeight=Math.round(Math.min(maxHeight,Math.max(minHeight,raw)));
+  layoutRoot.style.setProperty("--portrait-card-height",`${cardHeight}px`);
+}
+
 function fitGalleryToViewport(){
   layoutFrame=0;
   const viewportHeight=Math.round(window.visualViewport?.height || window.innerHeight);
-  const phonePortrait=window.innerWidth<=620 && viewportHeight>=window.innerWidth;
+  const phonePortrait=phonePortraitQuery.matches || (window.innerWidth<=620 && viewportHeight>=window.innerWidth);
   const compactLandscape=window.innerWidth>viewportHeight && viewportHeight<=520;
 
-  if(phonePortrait || compactLandscape){
+  if(phonePortrait){
+    placeholderNodes.forEach(node=>{node.hidden=true});
+    gallery.style.removeProperty("--gallery-row-height");
+    layoutRoot.classList.remove("gallery-fit","compact-landscape");
+    updatePortraitCardHeight(viewportHeight);
+    return;
+  }
+
+  clearPortraitCardHeight();
+
+  if(compactLandscape){
     placeholderNodes.forEach(node=>{node.hidden=true});
     gallery.style.removeProperty("--gallery-row-height");
     layoutRoot.classList.remove("gallery-fit");
-    layoutRoot.classList.toggle("compact-landscape",compactLandscape);
+    layoutRoot.classList.add("compact-landscape");
     return;
   }
 
@@ -2238,8 +2281,18 @@ function scheduleGalleryFit(){
 
 scheduleGalleryFit();
 window.addEventListener("resize",scheduleGalleryFit,{passive:true});
-window.addEventListener("orientationchange",scheduleGalleryFit,{passive:true});
+window.addEventListener("orientationchange",()=>{
+  // iOS often reports stale metrics until after the rotation frame settles.
+  scheduleGalleryFit();
+  setTimeout(scheduleGalleryFit,120);
+  setTimeout(scheduleGalleryFit,320);
+},{passive:true});
 window.visualViewport?.addEventListener("resize",scheduleGalleryFit,{passive:true});
+if(typeof phonePortraitQuery.addEventListener==="function"){
+  phonePortraitQuery.addEventListener("change",scheduleGalleryFit);
+}else if(typeof phonePortraitQuery.addListener==="function"){
+  phonePortraitQuery.addListener(scheduleGalleryFit);
+}
 document.fonts?.ready.then(scheduleGalleryFit);
 
 const saveSheet=document.getElementById("saveSheet");
