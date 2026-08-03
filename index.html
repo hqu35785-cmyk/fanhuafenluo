@@ -1567,7 +1567,8 @@ footer::before{
 }
 
 /* Phone portrait: 2-column grid.
-   Card height comes from JS --portrait-card-height (1 full row + ~68% second row). */
+   Card height comes from JS --portrait-card-height
+   (2 full rows + ~20–35% of the third row peeping at the bottom). */
 @media(max-width:620px) and (orientation:portrait){
   main{
     padding:10px 0 max(12px,env(safe-area-inset-bottom));
@@ -1596,7 +1597,7 @@ footer::before{
   html.gallery-fit .card{
     width:100%;
     aspect-ratio:auto;
-    height:var(--portrait-card-height,48vw);
+    height:var(--portrait-card-height,calc((100vw - 30px) / 1.36));
   }
   .card-inner,
   .front,
@@ -2169,7 +2170,7 @@ const pageMain=document.querySelector("main");
 const pageFooter=document.querySelector("footer");
 const placeholderNodes=[...gallery.querySelectorAll(".placeholder-item")];
 const phonePortraitQuery=window.matchMedia("(max-width:620px) and (orientation:portrait)");
-const PORTRAIT_SECOND_ROW_VISIBLE=0.68;
+const PORTRAIT_THIRD_ROW_VISIBLE=0.28;
 let layoutFrame=0;
 let safeAreaProbe=null;
 
@@ -2199,20 +2200,34 @@ function updatePortraitCardHeight(viewportHeight){
   const galleryTop=Math.max(0,Math.round(gallery.getBoundingClientRect().top+(window.scrollY||0)));
   const galleryStyle=getComputedStyle(gallery);
   const rowGap=parseFloat(galleryStyle.rowGap);
+  const columnGapRaw=parseFloat(galleryStyle.columnGap);
   const gapFallback=parseFloat(galleryStyle.gap);
   const resolvedRowGap=Number.isFinite(rowGap) ? rowGap : (Number.isFinite(gapFallback) ? gapFallback : 10);
+  const columnGap=Number.isFinite(columnGapRaw) ? columnGapRaw : (Number.isFinite(gapFallback) ? gapFallback : 10);
   const bottomSafe=Math.max(8,readSafeAreaInsetBottom());
-  const usable=viewportHeight-galleryTop-resolvedRowGap-bottomSafe;
-  if(!(usable>0)){
+  // Two full rows + gaps + a peep of the third row. Do not reserve second-row-only space.
+  const usable=viewportHeight-galleryTop-bottomSafe;
+  if(!(usable>resolvedRowGap*2)){
     clearPortraitCardHeight();
     return;
   }
 
-  // Target: row1 fully visible + ~68% of row2. Do not hard-cap near 320px.
-  const raw=usable/(1+PORTRAIT_SECOND_ROW_VISIBLE);
-  const minHeight=200;
-  const maxHeight=Math.max(minHeight,Math.floor(usable*0.92));
-  const cardHeight=Math.round(Math.min(maxHeight,Math.max(minHeight,raw)));
+  // Target: cards 1–4 fully visible, cards 5–6 peep ~20–35% at the bottom.
+  const raw=(usable-resolvedRowGap*2)/(2+PORTRAIT_THIRD_ROW_VISIBLE);
+  const cardWidth=Math.max(1,(gallery.clientWidth-columnGap)/2);
+  // Aspect band keeps faces readable while still allowing the third-row peep target.
+  const minHeight=cardWidth/0.78;
+  const maxHeight=cardWidth/0.55;
+  let cardHeight=Math.round(Math.min(maxHeight,Math.max(minHeight,raw)));
+
+  // If aspect clamping made the third row peep too much, grow height (within max).
+  const peepSpace=usable-cardHeight*2-resolvedRowGap*2;
+  const peepRatio=cardHeight>0 ? peepSpace/cardHeight : 0;
+  if(peepRatio>0.35){
+    const tightened=(usable-resolvedRowGap*2)/(2+0.32);
+    cardHeight=Math.round(Math.min(maxHeight,Math.max(cardHeight,tightened)));
+  }
+
   layoutRoot.style.setProperty("--portrait-card-height",`${cardHeight}px`);
 }
 
