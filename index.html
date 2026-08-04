@@ -2400,6 +2400,7 @@ function previewFor(image){
   return image
     .replace(/^assets\/tavo\//,"assets/previews/tavo/")
     .replace(/^assets\/shark\//,"assets/previews/shark/")
+    .replace(/^assets\/wa\//,"assets/previews/wa/")
     .replace(/\.png$/i,".webp");
 }
 
@@ -2475,6 +2476,34 @@ const sharkWorks=sharkAssets.map(({image,preview,name,label,role,sensitive,code}
   };
 });
 
+const waAssets=[
+  {image:"assets/wa/Wa_商心慈_22BF.png",preview:"assets/previews/wa/Wa_商心慈_22BF.webp",name:"商心慈",label:"蛊修",role:"出自小说《蛊真人》中的女性角色",sensitive:true,code:"22BF"},
+  {image:"assets/wa/Wa_铃木晴奈_9D2B.png",preview:"assets/previews/wa/Wa_铃木晴奈_9D2B.webp",name:"铃木晴奈",label:"学园",role:"直到这次高中同学聚会，以前的同学都来到了这家酒楼喝酒吃饭，谈笑风生，怀念以前的日子…",sensitive:true,code:"9D2B"},
+  {image:"assets/wa/Wa_我也不想被三个极品老婆强上啊_F359.png",preview:"assets/previews/wa/Wa_我也不想被三个极品老婆强上啊_F359.webp",name:"我也不想被三个极品老婆强上啊",label:"群像",role:"出自二次元动漫《不时轻声地以俄语遮羞的邻座艾莉同学》中的三个女主角",sensitive:true,code:"F359"},
+  {image:"assets/wa/Wa_申鹤_B05C.png",preview:"assets/previews/wa/Wa_申鹤_B05C.webp",name:"申鹤",label:"仙鹤",role:"姓名：申鹤",sensitive:true,code:"B05C"},
+  {image:"assets/wa/Wa_林墨雅_9E7E.png",preview:"assets/previews/wa/Wa_林墨雅_9E7E.webp",name:"林墨雅",label:"嫂子",role:"故事采用双人物视角进行",sensitive:true,code:"9E7E"}
+];
+const waWorks=waAssets.map(({image,preview,name,label,role,sensitive,code})=>{
+  return {
+    name,
+    alias:"WA · "+code,
+    collectionLabel:"WA ROLE CARD",
+    image:encodeURI(image),
+    preview:encodeURI(preview || previewFor(image)),
+    role:role || ((label || "角色卡")+" · 咓角色卡"),
+    opening:"开场资料整理中。",
+    personality:"性格资料整理中。",
+    setting:"设定与剧情资料整理中。",
+    tags:[label || "角色卡"].slice(0,1),
+    cardLabel:label || "角色卡",
+    creator:"咓",
+    sensitive:Boolean(sensitive),
+    sensitiveSetting:false,
+    sensitiveLabel:"敏感卡面",
+    sensitiveSettingLabel:"敏感设定"
+  };
+});
+
 const ORIGINAL_AUTHOR_AVATAR = document.getElementById("authorAvatar")?.getAttribute("src") || "";
 const authors = [
   {
@@ -2495,8 +2524,8 @@ const authors = [
     id: "wa",
     name: "咓",
     avatar: "assets/authors/wa.webp",
-    status: "作品整理中 · 点头像切换作者",
-    works: []
+    status: "半成品 · 点头像切换作者",
+    works: waWorks
   }
 ];
 let activeAuthorIndex = 0;
