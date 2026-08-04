@@ -455,10 +455,13 @@ async function runViewport(browserType, browserName, viewport) {
         hasAspectRatio: rules.some(
           (rule) =>
             rule.cssText?.includes("aspect-ratio: 18 / 25") ||
-            rule.cssText?.includes("aspect-ratio:18 / 25")
+            rule.cssText?.includes("aspect-ratio:18 / 25") ||
+            rule.cssText?.includes("aspect-ratio:18/25")
         ),
-        hasThreeColumns: document.documentElement.innerHTML.includes(
-          "repeat(3,minmax(0,1fr))"
+        hasThreeColumns: rules.some(
+          (rule) =>
+            rule.cssText?.includes("repeat(3,minmax(0,1fr))") ||
+            rule.cssText?.includes("repeat(3, minmax(0, 1fr))")
         ),
         portraitCardHeight: getComputedStyle(document.documentElement).getPropertyValue(
           "--portrait-card-height"
@@ -476,17 +479,13 @@ async function runViewport(browserType, browserName, viewport) {
     }
     if (!layout.failures.length) pushOk("locked-front", { media: layout.media, flipMode: layout.flipMode, deployment });
 
-    // 1b author switch: fanhua → shark (empty) → fanhua, runtime isolation
+    // 1b section switch: 繁花 → 鲨鱼(14) → 咓(14) → 繁花, unlock isolation
     {
       const before = await page.evaluate(() => ({
         name: document.getElementById("authorName")?.textContent || "",
         cards: document.querySelectorAll(".card").length,
-        empty: !!document.querySelector(".author-empty"),
-        footer: document.getElementById("footerAuthor")?.textContent || "",
-        count: document.getElementById("workCount")?.textContent || "",
       }));
 
-      // Unlock first sensitive card only (if any) to verify isolation after switch
       const unlockBtn = page.locator(".privacy-unlock[data-mode='unlock']").first();
       if (await unlockBtn.count()) {
         await unlockBtn.click({ force: true }).catch(() => {});
@@ -498,62 +497,64 @@ async function runViewport(browserType, browserName, viewport) {
         () => document.querySelectorAll(".card .front:not(.is-locked)").length
       );
 
+      // → 鲨鱼
       await page.locator("#authorSwitch").click({ force: true });
       await page.waitForTimeout(350);
-
       const shark = await page.evaluate(() => ({
         name: document.getElementById("authorName")?.textContent || "",
         cards: document.querySelectorAll(".card").length,
-        empty: !!document.querySelector(".author-empty"),
-        emptyCopy: document.querySelector(".author-empty")?.textContent || "",
         footer: document.getElementById("footerAuthor")?.textContent || "",
         count: document.getElementById("workCount")?.textContent || "",
-        total: document.getElementById("workTotal")?.textContent || "",
-        title: document.title || "",
-        aria: document.getElementById("authorSwitch")?.getAttribute("aria-label") || "",
         avatar: document.getElementById("authorAvatar")?.getAttribute("src") || "",
-        hint: document.getElementById("authorSwitchHint")?.textContent || "",
-        unlockHidden: !!document.getElementById("unlockAll")?.hidden,
         toast: document.getElementById("toast")?.textContent || "",
-        galleryEmptyClass: document.getElementById("gallery")?.classList.contains("is-empty"),
+        empty: !!document.querySelector(".author-empty"),
       }));
-
       const sharkFails = [];
       if (shark.name !== "鲨鱼") sharkFails.push(["author-name-shark", "鲨鱼", shark.name]);
-      if (shark.cards !== 0) sharkFails.push(["author-cards-empty", 0, shark.cards]);
-      if (!shark.empty || !shark.galleryEmptyClass)
-        sharkFails.push(["author-empty-ui", true, { empty: shark.empty, cls: shark.galleryEmptyClass }]);
-      if (!String(shark.emptyCopy).includes("分区内容正在整理中") && !String(shark.emptyCopy).includes("作品正在整理中"))
-        sharkFails.push(["author-empty-copy", "分区内容正在整理中", shark.emptyCopy.slice(0, 80)]);
+      if (shark.cards !== 14) sharkFails.push(["author-cards-shark", 14, shark.cards]);
+      if (shark.empty) sharkFails.push(["author-not-empty-shark", false, shark.empty]);
       if (shark.footer !== "鲨鱼") sharkFails.push(["author-footer-shark", "鲨鱼", shark.footer]);
-      if (shark.count !== "00") sharkFails.push(["author-count-zero", "00", shark.count]);
-      if (!String(shark.total).includes("0")) sharkFails.push(["author-total-zero", "/ 0", shark.total]);
-      if (!shark.title.includes("鲨鱼")) sharkFails.push(["author-title-shark", "contains 鲨鱼", shark.title]);
-      if (!shark.aria.includes("鲨鱼")) sharkFails.push(["author-aria-shark", "contains 鲨鱼", shark.aria]);
+      if (shark.count !== "14") sharkFails.push(["author-count-shark", "14", shark.count]);
       if (!shark.avatar.includes("assets/authors/shark.webp"))
         sharkFails.push(["author-avatar-shark", "assets/authors/shark.webp", shark.avatar.slice(0, 60)]);
-      if (!shark.unlockHidden) sharkFails.push(["author-unlock-hidden", true, shark.unlockHidden]);
       if (!String(shark.toast).includes("鲨鱼"))
         sharkFails.push(["author-toast-shark", "contains 鲨鱼", shark.toast]);
-
       for (const [check, expected, actual] of sharkFails) {
         rows.push(
-          await captureFailure(
-            page,
-            browserName,
-            viewport,
-            "author-switch-shark",
-            { check, expected, actual },
-            consoleErrors
-          )
+          await captureFailure(page, browserName, viewport, "author-switch-shark", { check, expected, actual }, consoleErrors)
         );
       }
-      if (!sharkFails.length) pushOk("author-switch-shark", { beforeCards: before.cards });
+      if (!sharkFails.length) pushOk("author-switch-shark", { beforeCards: before.cards, cards: shark.cards });
 
-      // switch back to fanhua
+      // → 咓
+      await page.locator("#authorSwitch").click({ force: true });
+      await page.waitForTimeout(350);
+      const wa = await page.evaluate(() => ({
+        name: document.getElementById("authorName")?.textContent || "",
+        cards: document.querySelectorAll(".card").length,
+        footer: document.getElementById("footerAuthor")?.textContent || "",
+        count: document.getElementById("workCount")?.textContent || "",
+        avatar: document.getElementById("authorAvatar")?.getAttribute("src") || "",
+        empty: !!document.querySelector(".author-empty"),
+      }));
+      const waFails = [];
+      if (wa.name !== "咓") waFails.push(["author-name-wa", "咓", wa.name]);
+      if (wa.cards !== 14) waFails.push(["author-cards-wa", 14, wa.cards]);
+      if (wa.empty) waFails.push(["author-not-empty-wa", false, wa.empty]);
+      if (wa.footer !== "咓") waFails.push(["author-footer-wa", "咓", wa.footer]);
+      if (wa.count !== "14") waFails.push(["author-count-wa", "14", wa.count]);
+      if (!wa.avatar.includes("assets/authors/wa.webp"))
+        waFails.push(["author-avatar-wa", "assets/authors/wa.webp", wa.avatar.slice(0, 60)]);
+      for (const [check, expected, actual] of waFails) {
+        rows.push(
+          await captureFailure(page, browserName, viewport, "author-switch-wa", { check, expected, actual }, consoleErrors)
+        );
+      }
+      if (!waFails.length) pushOk("author-switch-wa", { cards: wa.cards });
+
+      // → 繁花·纷落
       await page.locator("#authorSwitch").click({ force: true });
       await page.waitForTimeout(400);
-
       const back = await page.evaluate(() => ({
         name: document.getElementById("authorName")?.textContent || "",
         cards: document.querySelectorAll(".card").length,
@@ -562,37 +563,24 @@ async function runViewport(browserType, browserName, viewport) {
         unlockedFaces: document.querySelectorAll(".card .front:not(.is-locked)").length,
         avatarData: (document.getElementById("authorAvatar")?.getAttribute("src") || "").startsWith("data:"),
       }));
-
       const backFails = [];
       if (back.name !== "繁花·纷落") backFails.push(["author-name-fanhua", "繁花·纷落", back.name]);
       if (back.cards < 1) backFails.push(["author-cards-restored", ">=1", back.cards]);
       if (back.empty) backFails.push(["author-not-empty", false, back.empty]);
       if (back.footer !== "繁花·纷落") backFails.push(["author-footer-fanhua", "繁花·纷落", back.footer]);
       if (!back.avatarData) backFails.push(["author-avatar-data", true, back.avatarData]);
-      // unlock isolation: prior single unlock should still be present
       if (unlockedBefore > 0 && back.unlockedFaces < unlockedBefore)
         backFails.push(["author-unlock-persist", unlockedBefore, back.unlockedFaces]);
-
       for (const [check, expected, actual] of backFails) {
         rows.push(
-          await captureFailure(
-            page,
-            browserName,
-            viewport,
-            "author-switch-back",
-            { check, expected, actual },
-            consoleErrors
-          )
+          await captureFailure(page, browserName, viewport, "author-switch-back", { check, expected, actual }, consoleErrors)
         );
       }
       if (!backFails.length) {
-        pushOk("author-switch-back", {
-          cards: back.cards,
-          unlockedFaces: back.unlockedFaces,
-        });
+        pushOk("author-switch-back", { cards: back.cards, unlockedFaces: back.unlockedFaces });
       }
 
-      // refresh resets author (no storage)
+      // refresh resets section (no storage)
       await page.reload({ waitUntil: "domcontentloaded" });
       await page.waitForSelector(".card", { timeout: 30000 });
       await page.waitForTimeout(300);

@@ -1,0 +1,20 @@
+﻿{
+  "name": "fanhuafenluo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test:browser": "node scripts/cross_browser_verify.mjs",
+    "test:twice": "node scripts/verify_two_clean_runs.mjs",
+    "invariants": "node scripts/record_invariants.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  },
+  "dependencies": {
+    "sharp": "^0.35.3"
+  }
+}
