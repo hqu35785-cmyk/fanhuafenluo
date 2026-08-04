@@ -2153,6 +2153,36 @@ footer::before{
   .gallery.is-author-switching{opacity:1;transform:none}
 }
 
+/* 修复桌面端角色卡重叠 */
+@media (min-width: 621px) {
+  html.gallery-fit .gallery {
+    grid-auto-rows: auto !important;
+  }
+
+  html.gallery-fit .card,
+  html.gallery-fit .placeholder-card {
+    width: 100%;
+    height: auto !important;
+    aspect-ratio: 0.72 !important;
+  }
+
+  .card-item,
+  .card-item.has-hint {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .card-item.has-hint {
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+  }
+
+  .card-item.has-hint .card {
+    flex: 0 0 auto;
+  }
+}
+
 </style>
 </head>
 <body>
