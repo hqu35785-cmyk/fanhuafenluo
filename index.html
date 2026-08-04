@@ -324,10 +324,9 @@ nav a{color:#d8ced8;text-decoration:none;font-size:12px}
 
 main{flex:1 0 auto;min-width:0;padding:20px 0 12px}
 .catalog{
-  display:grid;
-  grid-template-columns:26px minmax(0,1fr);
-  align-items:start;
-  gap:8px;
+  /* 侧栏「作品」标题已隐藏：不再预留 26px 列，避免 gallery 被挤进窄列导致卡片宽高为 0 */
+  display:block;
+  min-width:0;
 }
 .side-title{
   position:relative;
@@ -1566,7 +1565,7 @@ footer::before{
   .gallery{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:620px){
-  .catalog{grid-template-columns:22px minmax(0,1fr);gap:6px}
+  .catalog{display:block;min-width:0}
   .gallery{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:880px){
@@ -2153,33 +2152,54 @@ footer::before{
   .gallery.is-author-switching{opacity:1;transform:none}
 }
 
-/* 修复桌面端角色卡重叠 */
+/* 修复桌面端角色卡重叠：禁用固定行高，卡片按 0.72 比例自撑，hint 落在卡下方不占下一行 */
 @media (min-width: 621px) {
-  html.gallery-fit .gallery {
-    grid-auto-rows: auto !important;
+  .gallery{
+    align-items:start;
   }
-
+  html.gallery-fit .gallery{
+    grid-auto-rows:auto !important;
+    align-items:start !important;
+  }
+  /* 覆盖 gallery-fit 的 height:100% / aspect-ratio:auto */
   html.gallery-fit .card,
-  html.gallery-fit .placeholder-card {
-    width: 100%;
-    height: auto !important;
-    aspect-ratio: 0.72 !important;
+  html.gallery-fit .placeholder-card{
+    width:100%;
+    height:auto !important;
+    max-height:none !important;
+    aspect-ratio:.72 !important;
   }
-
-  .card-item,
-  .card-item.has-hint {
-    min-width: 0;
-    min-height: 0;
+  /*
+   * .card-inner 为 absolute，部分浏览器下 height:auto 的 aspect-ratio 盒子会塌成 0。
+   * 用 padding 百分比伪元素强制建立比例高度。
+   */
+  html.gallery-fit .card{
+    position:relative;
   }
-
-  .card-item.has-hint {
-    display: flex;
-    flex-direction: column;
-    align-self: start;
+  html.gallery-fit .card::before{
+    content:"";
+    display:block;
+    width:100%;
+    padding-top:138.8889%; /* 1 / 0.72 */
+    pointer-events:none;
   }
-
-  .card-item.has-hint .card {
-    flex: 0 0 auto;
+  .card-item{
+    min-width:0;
+    height:auto !important;
+    align-self:start;
+  }
+  .card-item.has-hint{
+    display:flex;
+    flex-direction:column;
+    align-self:start;
+  }
+  .card-item.has-hint .card{
+    flex:0 0 auto;
+    width:100%;
+  }
+  .card-item.has-hint .first-hint{
+    flex:0 0 auto;
+    margin-top:4px;
   }
 }
 
@@ -2914,38 +2934,13 @@ function fitGalleryToViewport(){
     return;
   }
 
-  const columns=currentColumnCount();
-  const desiredRows=2;
-  const slotCapacity=Math.min(works.length,Math.max(works.length,columns*desiredRows));
-  const visiblePlaceholderCount=Math.max(0,slotCapacity-works.length);
-
-  placeholderNodes.forEach((node,index)=>{
-    node.hidden=index>=visiblePlaceholderCount;
-  });
-
-  const visibleCount=works.length+visiblePlaceholderCount;
-  const rows=Math.max(1,Math.ceil(visibleCount/columns));
-  const galleryStyle=getComputedStyle(gallery);
-  const columnGap=parseFloat(galleryStyle.columnGap)||0;
-  const rowGap=parseFloat(galleryStyle.rowGap)||0;
-  const cardWidth=Math.max(1,(gallery.clientWidth-columnGap*(columns-1))/columns);
-  const footerStyle=getComputedStyle(pageFooter);
-  const footerHeight=pageFooter.getBoundingClientRect().height+(parseFloat(footerStyle.marginTop)||0);
-  const mainStyle=getComputedStyle(pageMain);
-  const mainBottomPadding=parseFloat(mainStyle.paddingBottom)||0;
-  const galleryTop=gallery.getBoundingClientRect().top+window.scrollY;
-  const availableHeight=Math.max(
-    cardWidth/.8,
-    viewportHeight-footerHeight-mainBottomPadding-galleryTop-rowGap*(rows-1)
-  );
-  const targetHeight=availableHeight/rows;
-  const minimumHeight=cardWidth/.8;
-  const maximumHeight=cardWidth/.58;
-  const rowHeight=Math.floor(Math.min(maximumHeight,Math.max(minimumHeight,targetHeight)));
-
-  gallery.style.setProperty("--gallery-row-height",`${rowHeight}px`);
+  // Desktop: never force equal row heights. First card's first-hint would
+  // otherwise overflow a fixed --gallery-row-height and stack into the next row.
+  placeholderNodes.forEach(node=>{node.hidden=true});
+  gallery.style.removeProperty("--gallery-row-height");
   layoutRoot.style.removeProperty("--portrait-card-height");
-  layoutRoot.classList.toggle("compact-landscape",compactLandscape);
+  layoutRoot.classList.remove("compact-landscape");
+  // Keep gallery-fit only for styling hooks; row height comes from aspect-ratio CSS.
   layoutRoot.classList.add("gallery-fit");
   fitCardFaceTitles();
 }
