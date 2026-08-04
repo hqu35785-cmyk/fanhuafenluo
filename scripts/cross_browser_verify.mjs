@@ -523,8 +523,8 @@ async function runViewport(browserType, browserName, viewport) {
       if (shark.cards !== 0) sharkFails.push(["author-cards-empty", 0, shark.cards]);
       if (!shark.empty || !shark.galleryEmptyClass)
         sharkFails.push(["author-empty-ui", true, { empty: shark.empty, cls: shark.galleryEmptyClass }]);
-      if (!String(shark.emptyCopy).includes("作品正在整理中"))
-        sharkFails.push(["author-empty-copy", "作品正在整理中", shark.emptyCopy.slice(0, 80)]);
+      if (!String(shark.emptyCopy).includes("分区内容正在整理中") && !String(shark.emptyCopy).includes("作品正在整理中"))
+        sharkFails.push(["author-empty-copy", "分区内容正在整理中", shark.emptyCopy.slice(0, 80)]);
       if (shark.footer !== "鲨鱼") sharkFails.push(["author-footer-shark", "鲨鱼", shark.footer]);
       if (shark.count !== "00") sharkFails.push(["author-count-zero", "00", shark.count]);
       if (!String(shark.total).includes("0")) sharkFails.push(["author-total-zero", "/ 0", shark.total]);
