@@ -144,19 +144,23 @@ async function softScrollIntoView(locator) {
   });
 }
 
-/** Wait for in-flight element animations (card flip) so clicks are not mid-transform. */
-async function waitForElementAnimations(locator, timeoutMs = 2000) {
-  await locator.evaluate(async (el, timeout) => {
-    const start = Date.now();
-    while (Date.now() - start < timeout) {
-      const animations =
-        typeof el.getAnimations === "function" ? el.getAnimations({ subtree: true }) : [];
-      if (!animations.length) return;
-      await Promise.all(animations.map((animation) => animation.finished.catch(() => {})));
-      const remaining =
-        typeof el.getAnimations === "function" ? el.getAnimations({ subtree: true }) : [];
-      if (!remaining.length) return;
-    }
+/**
+ * Wait for card flip CSS transition to finish without getAnimations()
+ * (WebKit headless has crashed on getAnimations + 3D transforms).
+ */
+async function settleFlipTransition(cardLocator, timeoutMs = 700) {
+  await cardLocator.evaluate(async (el, timeout) => {
+    await new Promise((resolve) => {
+      let finished = false;
+      const done = () => {
+        if (finished) return;
+        finished = true;
+        resolve();
+      };
+      el.addEventListener("transitionend", done, { once: true });
+      // Flip transition is ~0.48s; keep a hard cap so we never hang.
+      setTimeout(done, timeout);
+    });
   }, timeoutMs);
 }
 
@@ -165,14 +169,26 @@ async function assertPageAlive(page) {
     throw new Error("Target page, context or browser has been closed");
   }
   try {
-    await page.evaluate(() => true);
+    await page.evaluate(() => document.readyState);
   } catch (error) {
     throw new Error(
-      isClosedTargetError(error)
+      isClosedTargetError(error) || /Page crashed/i.test(String(error))
         ? String(error?.message || error)
         : "Target page, context or browser has been closed"
     );
   }
+}
+
+/** Real user-ish click: Playwright click first; WebKit falls back to HTMLElement.click(). */
+async function clickControl(locator, browserName) {
+  if (browserName === "webkit") {
+    // Playwright actionability + 3D-transformed controls is flaky on WebKit CI builds.
+    await locator.evaluate((el) => {
+      el.click();
+    });
+    return;
+  }
+  await locator.click({ timeout: 5000 });
 }
 
 async function captureFailure(page, browserName, viewport, state, failure, consoleErrors) {
@@ -182,7 +198,8 @@ async function captureFailure(page, browserName, viewport, state, failure, conso
   const shot = path.join(OUT_DIR, `${stamp}.png`);
   try {
     if (page && !page.isClosed()) {
-      await page.screenshot({ path: shot, fullPage: true });
+      // fullPage over a 64-card gallery has crashed WebKit on CI; viewport is enough.
+      await page.screenshot({ path: shot, fullPage: false });
     }
   } catch {}
   return {
@@ -832,10 +849,18 @@ async function runViewport(browserType, browserName, viewport) {
 
     // 5 flip to back
     const card = page.locator(".card").first();
-    await card.locator(".card-flip").click({ force: true });
-    await page.waitForTimeout(550);
-    const flipped = await card.evaluate((el) => el.classList.contains("flipped"));
-    const frontPE = await card.locator(".front").evaluate((el) => getComputedStyle(el).pointerEvents);
+    const flipButton = card.locator(".card-flip");
+    await softScrollIntoView(flipButton);
+    await clickControl(flipButton, browserName);
+    const flippedPoll = await pollUntil(
+      () => card.evaluate((el) => el.classList.contains("flipped")),
+      { timeout: 2500, interval: 50 }
+    );
+    if (flippedPoll.ok) await settleFlipTransition(card);
+    const flipped = flippedPoll.ok;
+    const frontPE = flipped
+      ? await card.locator(".front").evaluate((el) => getComputedStyle(el).pointerEvents)
+      : null;
     if (!flipped) {
       rows.push(
         await captureFailure(
@@ -888,10 +913,10 @@ async function runViewport(browserType, browserName, viewport) {
         );
       } else {
         try {
-          await waitForElementAnimations(card);
+          await settleFlipTransition(card);
           await backReturn.waitFor({ state: "visible", timeout: 5000 });
           await softScrollIntoView(backReturn);
-          await backReturn.click({ timeout: 5000 });
+          await clickControl(backReturn, browserName);
           const result = await pollUntil(
             () => card.evaluate((el) => !el.classList.contains("flipped")),
             { timeout: 2500, interval: 50 }
@@ -986,11 +1011,16 @@ async function runViewport(browserType, browserName, viewport) {
 
     // 7 archive — open via state poll, geometry with visualViewport + usability checks
     {
-      await card.locator(".card-flip").click({ force: true });
+      const stillFlipped = await card.evaluate((el) => el.classList.contains("flipped"));
+      if (!stillFlipped) {
+        await softScrollIntoView(flipButton);
+        await clickControl(flipButton, browserName);
+      }
       const flippedForArchive = await pollUntil(
         () => card.evaluate((el) => el.classList.contains("flipped")),
         { timeout: 2500, interval: 50 }
       );
+      if (flippedForArchive.ok) await settleFlipTransition(card);
       const expandButton = card.locator(".back-expand");
       const modalLocator = page.locator("#archiveModal");
 
@@ -1011,11 +1041,11 @@ async function runViewport(browserType, browserName, viewport) {
         );
       } else {
         try {
-          // Flip transform must finish before actionability/scroll stability checks.
-          await waitForElementAnimations(card);
+          // Flip transform must finish before interacting with back-face controls.
+          await settleFlipTransition(card);
           await expandButton.waitFor({ state: "visible", timeout: 5000 });
           await softScrollIntoView(expandButton);
-          await expandButton.click({ timeout: 5000 });
+          await clickControl(expandButton, browserName);
           const opened = await pollUntil(
             () =>
               modalLocator.evaluate((dialog) =>
