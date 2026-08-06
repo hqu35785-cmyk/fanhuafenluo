@@ -3,3 +3,9 @@ __pycache__/
 node_modules/
 test-artifacts/
 measure-*.png
+
+test-results/
+playwright-report/
+.refactor-backup/
+.refactor-invariants.json
+.pw-browsers/

@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "fanhuafenluo",
   "version": "0.1.0",
   "private": true,
@@ -9,10 +9,17 @@
   "scripts": {
     "test:browser": "node scripts/cross_browser_verify.mjs",
     "test:twice": "node scripts/verify_two_clean_runs.mjs",
-    "invariants": "node scripts/record_invariants.mjs"
+    "invariants": "node scripts/record_invariants.mjs",
+    "apply:phase-a": "node scripts/apply_phase_a.mjs",
+    "apply:phase-b": "node scripts/apply_phase_b.mjs",
+    "verify:phase-a": "node scripts/verify_refactor.mjs",
+    "verify:phase-b": "node scripts/verify_refactor.mjs --phase-b",
+    "test:refactor": "playwright test tests/refactor-regression.spec.mjs",
+    "test:matrix:twice": "node scripts/run_test_matrix_twice.mjs"
   },
   "devDependencies": {
-    "playwright": "^1.49.0"
+    "playwright": "^1.49.0",
+    "@playwright/test": "^1.49.0"
   },
   "dependencies": {
     "sharp": "^0.35.3"

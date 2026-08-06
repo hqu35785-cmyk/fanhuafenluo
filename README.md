@@ -1,23 +1,21 @@
-# fanhuafenluo
+# fanhuafenluo current audit V2
 
-Static GitHub Pages character-card gallery.
+This package replaces the earlier audit package.
 
-## Local verification
+It is corrected for the actual committed Phase 1 baseline at:
 
-Requirements: Node.js 22 or newer and Python 3.
-
-```bash
-npm install
-npx playwright install chromium firefox webkit
-python3 -m http.server 4173
+```text
+0aa90216d9279a3bd755fcdd01b1528212118272
 ```
 
-In another terminal:
+Corrections from V1:
 
-```bash
-TEST_URL=http://127.0.0.1:4173/index.html npm run test:twice
-```
+- invariant snapshot reads the current data prefix from `src/app.js`;
+- snapshot and verifier support multiple author sections;
+- Phase A inserts the missing `works.js` tag into the current externalized HTML;
+- regression tests no longer hard-code 14 cards;
+- CI allows a safe Phase A-only fallback;
+- test matrix owns and closes its server, including Windows force-cleanup fallback;
+- existing Playwright dependency versions are preserved when possible.
 
-`test:twice` runs the complete Chromium, Firefox, and WebKit verification twice in sequence. Any failed round exits immediately. After making a fix, restart from round 1; completion requires two consecutive clean rounds.
-
-Commit the generated `package-lock.json` so CI can use `npm ci` reproducibly.
+Start with `AGENT_EXECUTION.md`.
