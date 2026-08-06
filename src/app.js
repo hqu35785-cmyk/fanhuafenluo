@@ -38,7 +38,11 @@ function cardHTML(work,index){
   const imageSensitive=Boolean(work.sensitive);
   const settingSensitive=Boolean(work.sensitiveSetting);
   const preview=work.preview || null;
+  // LCP: first unlocked face loads eagerly; rest stay lazy until near viewport.
+  const eagerFace=!imageSensitive && index<2;
   const previewSource=!imageSensitive && preview ? ` src="${preview}"` : "";
+  const imgLoading=imageSensitive ? "" : (eagerFace ? ' loading="eager"' : ' loading="lazy"');
+  const imgPriority=imageSensitive ? "" : (eagerFace ? ' fetchpriority="high"' : ' fetchpriority="low"');
   const cardLabel=work.cardLabel || work.tags?.[0] || "角色卡";
   const hint=index===0
     ? `<p class="first-hint"><span class="hint-copy">点击卡片查看设定</span></p>`
@@ -55,7 +59,7 @@ function cardHTML(work,index){
     <article class="card${imageSensitive ? " is-sensitive" : ""}${settingSensitive ? " is-setting-sensitive" : ""}" data-index="${index}">
       <div class="card-inner">
         <button class="face front card-flip${imageSensitive ? " is-locked" : ""}" type="button" aria-label="翻转查看${safe(work.name)}的简介" aria-expanded="false" aria-controls="card-back-${index}" aria-hidden="false">
-          <img${imageSensitive ? "" : ' loading="lazy"'} decoding="async" fetchpriority="low"${previewSource} alt="${imageSensitive ? "" : safe(work.name)}"${imageSensitive ? ' aria-hidden="true" hidden' : ""}>
+          <img${imgLoading}${imgPriority} decoding="async" width="360" height="500"${previewSource} alt="${imageSensitive ? "" : safe(work.name)}"${imageSensitive ? ' aria-hidden="true" hidden' : ""}>
           ${imageSensitive ? '<span class="privacy-veil" aria-hidden="true"></span>' : ""}
           ${imageSensitive ? '<span class="preview-status sr-only" role="status" aria-live="polite"></span>' : ""}
           <span class="card-badges" aria-label="角色标签">${cornerBadges}</span>
@@ -339,8 +343,14 @@ function scheduleGalleryFit(){
   layoutFrame=requestAnimationFrame(fitGalleryToViewport);
 }
 
+let resizeFitTimer=0;
+function scheduleGalleryFitDebounced(){
+  clearTimeout(resizeFitTimer);
+  resizeFitTimer=setTimeout(scheduleGalleryFit,80);
+}
+
 scheduleGalleryFit();
-window.addEventListener("resize",scheduleGalleryFit,{passive:true});
+window.addEventListener("resize",scheduleGalleryFitDebounced,{passive:true});
 window.addEventListener("orientationchange",()=>{
   // iOS often reports stale metrics until after the rotation frame settles.
   scheduleGalleryFit();
@@ -349,7 +359,7 @@ window.addEventListener("orientationchange",()=>{
 },{passive:true});
 window.visualViewport?.addEventListener("resize",()=>{
   if(!phonePortraitQuery.matches){
-    scheduleGalleryFit();
+    scheduleGalleryFitDebounced();
   }
 },{passive:true});
 if(typeof phonePortraitQuery.addEventListener==="function"){
@@ -865,7 +875,9 @@ function getCardPreviewParts(index){
 
 function isPreviewNearViewport(element){
   const rect=element.getBoundingClientRect();
-  return rect.bottom>=-480 && rect.top<=window.innerHeight+640;
+  // Tighter band than before: fewer simultaneous image decodes off-screen.
+  const margin=Math.min(280,Math.round(window.innerHeight*.45));
+  return rect.bottom>=-margin && rect.top<=window.innerHeight+margin;
 }
 
 function queueUnlockedPreviewsNearViewport(){
@@ -1414,7 +1426,7 @@ function observeCardPreviews(){
         const index=Number(card?.dataset.index);
         if(Number.isInteger(index) && !isWorkLocked(index)) queuePreviewLoad(index);
       });
-    },{rootMargin:"640px 0px",threshold:.01});
+    },{rootMargin:"220px 0px",threshold:.01});
     images.forEach(image=>previewObserver.observe(image));
     return;
   }
