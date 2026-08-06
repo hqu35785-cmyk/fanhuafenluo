@@ -129,6 +129,52 @@ function isClosedTargetError(error) {
   return /page, context or browser has been closed/i.test(String(error?.stack || error));
 }
 
+function isFatalRunnerError(error) {
+  const message = String(error?.stack || error);
+  return (
+    isClosedTargetError(error) ||
+    /Page crashed|Target closed|browser has been closed|not attached to the DOM/i.test(message)
+  );
+}
+
+/** Instant scroll without Playwright stability waits (flip CSS animates ~0.48s). */
+async function softScrollIntoView(locator) {
+  await locator.evaluate((el) => {
+    el.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "auto" });
+  });
+}
+
+/** Wait for in-flight element animations (card flip) so clicks are not mid-transform. */
+async function waitForElementAnimations(locator, timeoutMs = 2000) {
+  await locator.evaluate(async (el, timeout) => {
+    const start = Date.now();
+    while (Date.now() - start < timeout) {
+      const animations =
+        typeof el.getAnimations === "function" ? el.getAnimations({ subtree: true }) : [];
+      if (!animations.length) return;
+      await Promise.all(animations.map((animation) => animation.finished.catch(() => {})));
+      const remaining =
+        typeof el.getAnimations === "function" ? el.getAnimations({ subtree: true }) : [];
+      if (!remaining.length) return;
+    }
+  }, timeoutMs);
+}
+
+async function assertPageAlive(page) {
+  if (!page || page.isClosed()) {
+    throw new Error("Target page, context or browser has been closed");
+  }
+  try {
+    await page.evaluate(() => true);
+  } catch (error) {
+    throw new Error(
+      isClosedTargetError(error)
+        ? String(error?.message || error)
+        : "Target page, context or browser has been closed"
+    );
+  }
+}
+
 async function captureFailure(page, browserName, viewport, state, failure, consoleErrors) {
   const stamp = `${browserName}_${viewport[0]}x${viewport[1]}_${state}_${failure.check}`
     .replace(/[^\w.-]+/g, "_")
@@ -842,8 +888,9 @@ async function runViewport(browserType, browserName, viewport) {
         );
       } else {
         try {
+          await waitForElementAnimations(card);
           await backReturn.waitFor({ state: "visible", timeout: 5000 });
-          await backReturn.scrollIntoViewIfNeeded();
+          await softScrollIntoView(backReturn);
           await backReturn.click({ timeout: 5000 });
           const result = await pollUntil(
             () => card.evaluate((el) => !el.classList.contains("flipped")),
@@ -885,7 +932,7 @@ async function runViewport(browserType, browserName, viewport) {
             pushOk("flip-to-front");
           }
         } catch (flipFrontError) {
-          if (isClosedTargetError(flipFrontError) || page.isClosed()) {
+          if (isFatalRunnerError(flipFrontError) || page.isClosed()) {
             throw flipFrontError;
           }
           rows.push(
@@ -906,9 +953,7 @@ async function runViewport(browserType, browserName, viewport) {
       }
     }
 
-    if (page.isClosed()) {
-      throw new Error("Target page, context or browser has been closed");
-    }
+    await assertPageAlive(page);
 
     // action no misflip — click button only
     const before = await card.evaluate((el) => el.classList.contains("flipped"));
@@ -966,8 +1011,10 @@ async function runViewport(browserType, browserName, viewport) {
         );
       } else {
         try {
+          // Flip transform must finish before actionability/scroll stability checks.
+          await waitForElementAnimations(card);
           await expandButton.waitFor({ state: "visible", timeout: 5000 });
-          await expandButton.scrollIntoViewIfNeeded();
+          await softScrollIntoView(expandButton);
           await expandButton.click({ timeout: 5000 });
           const opened = await pollUntil(
             () =>
@@ -1103,7 +1150,7 @@ async function runViewport(browserType, browserName, viewport) {
             }
           }
         } catch (archiveError) {
-          if (isClosedTargetError(archiveError) || page.isClosed()) {
+          if (isFatalRunnerError(archiveError) || page.isClosed()) {
             throw archiveError;
           }
           rows.push(
@@ -1120,18 +1167,35 @@ async function runViewport(browserType, browserName, viewport) {
               consoleErrors
             )
           );
+          // Soft click failures sometimes leave WebKit unstable; probe before more steps.
+          await assertPageAlive(page);
         }
       }
 
-      if (!page.isClosed()) {
-        await page.locator("#archiveClose").click({ timeout: 3000 }).catch(() => {});
-        await page.waitForTimeout(200);
+      try {
+        if (!page.isClosed()) {
+          const modalOpen = await page.evaluate(() => {
+            const dialog = document.getElementById("archiveModal");
+            return Boolean(dialog?.open);
+          });
+          if (modalOpen) {
+            await page.locator("#archiveClose").click({ timeout: 3000 });
+            await pollUntil(
+              () =>
+                page.evaluate(() => {
+                  const dialog = document.getElementById("archiveModal");
+                  return !dialog?.open;
+                }),
+              { timeout: 2000, interval: 50 }
+            );
+          }
+        }
+      } catch {
+        await assertPageAlive(page);
       }
     }
 
-    if (page.isClosed()) {
-      throw new Error("Target page, context or browser has been closed");
-    }
+    await assertPageAlive(page);
 
     // 8 reduced motion
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -1441,14 +1505,15 @@ async function runViewport(browserType, browserName, viewport) {
     }
   } catch (err) {
     const message = String(err?.stack || err);
-    const alreadyRecordedClosed = rows.some(
+    const fatal = isFatalRunnerError(err) || page?.isClosed?.();
+    const alreadyRecordedFatal = rows.some(
       (row) =>
         row.ok === false &&
         row.check === "runner-exception" &&
-        isClosedTargetError(row.actual)
+        isFatalRunnerError({ message: String(row.actual) })
     );
-    // One closed-page failure per viewport; do not stack cascading closed errors.
-    if (!(alreadyRecordedClosed && isClosedTargetError(err))) {
+    // One fatal runner failure per viewport; do not stack cascading closed/crash errors.
+    if (!(alreadyRecordedFatal && fatal)) {
       rows.push(
         await captureFailure(
           page,
@@ -1461,6 +1526,7 @@ async function runViewport(browserType, browserName, viewport) {
             actual: message,
             extra: {
               pageClosed: Boolean(page?.isClosed?.() || isClosedTargetError(err)),
+              pageCrashed: /Page crashed/i.test(message),
             },
           },
           consoleErrors
