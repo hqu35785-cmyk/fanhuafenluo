@@ -106,10 +106,18 @@ header{
   align-items:center;
   z-index:10;
   border-bottom:0;
-  background:linear-gradient(180deg,rgba(18,17,30,.84),rgba(10,10,18,.34));
+  background:linear-gradient(180deg,rgba(18,17,30,.92),rgba(10,10,18,.78));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
-  -webkit-backdrop-filter:blur(18px) saturate(125%);
-  backdrop-filter:blur(18px) saturate(125%);
+  /* Solid-ish header avoids constant backdrop-filter repaint while scrolling. */
+  -webkit-backdrop-filter:blur(8px) saturate(115%);
+  backdrop-filter:blur(8px) saturate(115%);
+}
+@media (max-width:620px){
+  header{
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
+    background:linear-gradient(180deg,rgba(14,13,22,.97),rgba(9,9,16,.94));
+  }
 }
 header::after{
   content:"";
@@ -351,13 +359,14 @@ main{flex:1 0 auto;min-width:0;padding:20px 0 12px}
   column-gap:clamp(10px,.72vw,14px);
   row-gap:clamp(18px,2vh,26px);
   row-gap:clamp(18px,2dvh,26px);
+  contain:layout style;
 }
 /* content-visibility skips layout/paint for off-screen cards in long galleries. */
 .card-item{
   min-width:0;
   min-height:0;
   content-visibility:auto;
-  contain-intrinsic-size:auto 420px;
+  contain-intrinsic-size:auto 300px;
   contain:layout style;
 }
 .placeholder-item[hidden]{display:none!important}
@@ -367,8 +376,7 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
 .card{
   position:relative;
   aspect-ratio:.72;
-  perspective:1200px;
-  -webkit-perspective:1200px;
+  /* Perspective only while focused/flipped — cheaper for 64–92 idle cards. */
   cursor:default;
   -webkit-touch-callout:none;
   -webkit-user-select:none;
@@ -376,6 +384,11 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   touch-action:manipulation;
   transition:transform .42s cubic-bezier(.2,.75,.2,1),filter .42s ease;
   contain:layout style;
+}
+.card.flipped,
+.card:focus-within{
+  perspective:1200px;
+  -webkit-perspective:1200px;
 }
 .card-inner{
   position:absolute;
@@ -663,12 +676,11 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   border:1px solid rgba(255,255,255,.1);
   border-radius:999px;
   color:rgba(245,240,248,.76);
-  background:rgba(9,9,15,.58);
+  background:rgba(9,9,15,.82);
   box-shadow:0 12px 30px rgba(0,0,0,.2);
   font-size:9px;
   font-weight:650;
   letter-spacing:.08em;
-  backdrop-filter:blur(10px);
 }
 .front.is-loading .privacy-veil::after{content:"图片加载中…"}
 .front.is-load-error .privacy-veil::after{content:"图片加载失败";color:#ffdce8}
@@ -683,16 +695,21 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   border:1px solid rgba(243,190,210,.24);
   border-radius:999px;
   color:#fff;
-  background:linear-gradient(135deg,rgba(243,170,194,.17),rgba(157,185,255,.08)),rgba(11,10,18,.72);
+  background:linear-gradient(135deg,rgba(243,170,194,.22),rgba(157,185,255,.12)),rgba(11,10,18,.88);
   box-shadow:0 14px 34px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.08);
-  -webkit-backdrop-filter:blur(12px);
-  backdrop-filter:blur(12px);
   cursor:pointer;
   font-size:9px;
   font-weight:650;
   letter-spacing:.08em;
   white-space:nowrap;
   transition:transform .2s ease,border-color .2s ease,opacity .2s ease,background .2s ease;
+}
+@media (hover:hover) and (pointer:fine){
+  .privacy-unlock{
+    -webkit-backdrop-filter:blur(10px);
+    backdrop-filter:blur(10px);
+    background:linear-gradient(135deg,rgba(243,170,194,.17),rgba(157,185,255,.08)),rgba(11,10,18,.72);
+  }
 }
 .privacy-unlock[data-mode="save"]{
   border-color:rgba(243,170,194,.28);
@@ -2158,6 +2175,23 @@ footer::before{
   .placeholder-card:hover::after{animation:none}
   .gallery{transition:none}
   .gallery.is-author-switching{opacity:1;transform:none}
+}
+
+/* Low-power / coarse pointer: drop remaining glass blurs that cost scroll FPS. */
+@media (max-width:620px),(pointer:coarse){
+  .unlock-all,
+  .card-code,
+  .back-file,
+  .back-privacy,
+  .archive-action,
+  .archive-unlock,
+  .save-sheet-panel,
+  .unlock-choice-panel,
+  .toast,
+  .archive-toast{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
 }
 
 /* 修复桌面端角色卡重叠：禁用固定行高，卡片按 0.72 比例自撑，hint 落在卡下方不占下一行 */

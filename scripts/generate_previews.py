@@ -55,13 +55,14 @@ def generate_preview(source: Path, destination: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     with Image.open(source) as original:
         image = ImageOps.exif_transpose(original)
-        image.thumbnail((960, 1440), Image.Resampling.LANCZOS, reducing_gap=3.0)
+        # Gallery cards are ~150–280 CSS px wide; 640w covers 2x retina without huge decode cost.
+        image.thumbnail((640, 960), Image.Resampling.LANCZOS, reducing_gap=3.0)
         if image.mode not in {"RGB", "RGBA"}:
             image = image.convert("RGBA" if "transparency" in image.info else "RGB")
         image.save(
             destination,
             format="WEBP",
-            quality=82,
+            quality=74,
             method=6,
             exact=True,
         )

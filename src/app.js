@@ -54,6 +54,7 @@ function cardHTML(work,index){
   const tags=tagList.map(tag=>`<span class="back-tag">${safe(tag)}</span>`).join("");
   const badgeTag=tagList[0] || cardLabel;
   const cornerBadges=`<span class="card-code"><span class="card-code-text">${safe(badgeTag)}</span></span>`;
+  // Defer long personality/setting copy until first flip/open — keeps 92-card DOM lean.
   return `
   <div class="card-item${index===0 ? " has-hint" : ""}">
     <article class="card${imageSensitive ? " is-sensitive" : ""}${settingSensitive ? " is-setting-sensitive" : ""}" data-index="${index}">
@@ -70,7 +71,7 @@ function cardHTML(work,index){
             <span class="card-meta"><span>${safe(work.collectionLabel || "ORIGINAL CHARACTER")}</span><span>点按翻转</span></span>
           </span>
         </button>
-        <section class="face back" id="card-back-${index}" aria-label="${safe(work.name)}角色简介" aria-hidden="true" inert>
+        <section class="face back" id="card-back-${index}" aria-label="${safe(work.name)}角色简介" aria-hidden="true" inert data-back-pending="1">
           <div class="back-scroll">
             <div class="back-toolbar">
               <span class="back-file">${safe(cardLabel)}</span>
@@ -78,11 +79,11 @@ function cardHTML(work,index){
             </div>
             <h2>${safe(work.name)}</h2>
             <p class="alias">${safe(work.alias || "ORIGINAL")}</p>
-            <p class="back-role">${safe(work.role || "原创角色")}</p>
+            <p class="back-role" data-field="role"></p>
             <div class="back-tags">${tags}</div>
             <div class="setting">
-              <div><b>性格简介</b><p>${safe(work.personality || "暂无性格介绍。")}</p></div>
-              <div class="back-setting-content" id="card-setting-${index}" tabindex="-1"${settingSensitive ? " hidden" : ""}><b>设定 · 剧情</b><p>${settingSensitive ? "" : safe(work.setting || "暂无背景设定。")}</p></div>
+              <div><b>性格简介</b><p data-field="personality"></p></div>
+              <div class="back-setting-content" id="card-setting-${index}" tabindex="-1"${settingSensitive ? " hidden" : ""}><b>设定 · 剧情</b><p data-field="setting"></p></div>
             </div>
             <div class="back-setting-privacy"${settingSensitive ? "" : " hidden"} aria-hidden="${settingSensitive ? "false" : "true"}">
               <span class="back-setting-mark" aria-hidden="true"></span>
@@ -99,6 +100,21 @@ function cardHTML(work,index){
     </article>
     ${hint}
   </div>`;
+}
+
+function ensureCardBackContent(index){
+  const work=works[index];
+  const card=gallery.querySelector(`.card[data-index="${index}"]`);
+  if(!work || !card) return;
+  const back=card.querySelector(".back");
+  if(!back || back.dataset.backPending!=="1") return;
+  const role=back.querySelector('[data-field="role"]');
+  const personality=back.querySelector('[data-field="personality"]');
+  const setting=back.querySelector('[data-field="setting"]');
+  if(role) role.textContent=work.role || "原创角色";
+  if(personality) personality.textContent=work.personality || "暂无性格介绍。";
+  if(setting && !isSettingLocked(index)) setting.textContent=work.setting || "暂无背景设定。";
+  delete back.dataset.backPending;
 }
 
 const layoutRoot=document.documentElement;
@@ -208,7 +224,8 @@ function renderActiveAuthor({announce=false,scrollToStart=false}={}){
   if(typeof bindCardInteractions==="function") bindCardInteractions();
   if(typeof observeCardPreviews==="function") observeCardPreviews();
   if(typeof scheduleGalleryFit==="function") scheduleGalleryFit();
-  if(typeof fitCardFaceTitles==="function") fitCardFaceTitles();
+  if(typeof fitCardFaceTitles==="function") fitCardFaceTitles({visibleOnly:true});
+  if(typeof observeTitleFits==="function") observeTitleFits();
 
   if(scrollToStart){
     try{
@@ -272,24 +289,71 @@ function fitTextToWidth(el,{minPx=9}={}){
   }
 }
 
-function fitCardFaceTitles(){
-  // Keep the main name at CSS size; only shrink the whole line if it still overflows.
-  // Annotations like 【骚图版】 are already smaller via .card-name-note.
-  gallery.querySelectorAll(".card .card-name b").forEach(el=>{
-    const note=el.querySelector(".card-name-note");
-    if(note){
-      // Prefer shrinking only the annotation, not "李慕婉".
-      note.style.fontSize="";
-      let noteSize=parseFloat(getComputedStyle(note).fontSize);
-      let guard=20;
-      while(el.scrollWidth>el.clientWidth+0.5 && noteSize>7 && guard--){
-        noteSize=Math.max(7,+(noteSize-0.4).toFixed(2));
-        note.style.fontSize=`${noteSize}px`;
-      }
+function fitCardFaceTitleEl(el){
+  if(!el || el.dataset.titleFit==="1") return;
+  const note=el.querySelector(".card-name-note");
+  if(note){
+    note.style.fontSize="";
+    let noteSize=parseFloat(getComputedStyle(note).fontSize);
+    let guard=20;
+    while(el.scrollWidth>el.clientWidth+0.5 && noteSize>7 && guard--){
+      noteSize=Math.max(7,+(noteSize-0.4).toFixed(2));
+      note.style.fontSize=`${noteSize}px`;
     }
-    if(el.scrollWidth>el.clientWidth+0.5) fitTextToWidth(el,{minPx:11});
+  }
+  if(el.scrollWidth>el.clientWidth+0.5) fitTextToWidth(el,{minPx:11});
+  el.dataset.titleFit="1";
+}
+
+function fitCardFaceTitles({visibleOnly=true}={}){
+  // Keep the main name at CSS size; only shrink when it still overflows.
+  // Prefer visible cards only — measuring 64–92 titles forces full-gallery layout.
+  const titles=[];
+  const aliases=[];
+  if(visibleOnly && "IntersectionObserver" in window){
+    const margin=Math.round(window.innerHeight*.35);
+    gallery.querySelectorAll(".card .card-name b").forEach(el=>{
+      const rect=el.getBoundingClientRect();
+      if(rect.bottom>=-margin && rect.top<=window.innerHeight+margin) titles.push(el);
+    });
+    gallery.querySelectorAll(".card .card-name > span:not(.card-meta)").forEach(el=>{
+      const rect=el.getBoundingClientRect();
+      if(rect.bottom>=-margin && rect.top<=window.innerHeight+margin) aliases.push(el);
+    });
+  }else{
+    titles.push(...gallery.querySelectorAll(".card .card-name b"));
+    aliases.push(...gallery.querySelectorAll(".card .card-name > span:not(.card-meta)"));
+  }
+  titles.forEach(fitCardFaceTitleEl);
+  aliases.forEach(el=>{
+    if(el.dataset.titleFit==="1") return;
+    fitTextToWidth(el,{minPx:6.5});
+    el.dataset.titleFit="1";
   });
-  gallery.querySelectorAll(".card .card-name > span:not(.card-meta)").forEach(el=>fitTextToWidth(el,{minPx:6.5}));
+}
+
+let titleFitObserver=null;
+function observeTitleFits(){
+  if(titleFitObserver){
+    titleFitObserver.disconnect();
+    titleFitObserver=null;
+  }
+  if(!("IntersectionObserver" in window)) return;
+  titleFitObserver=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting) return;
+      const name=entry.target;
+      const title=name.querySelector("b");
+      const alias=name.querySelector(":scope > span:not(.card-meta)");
+      if(title) fitCardFaceTitleEl(title);
+      if(alias && alias.dataset.titleFit!=="1"){
+        fitTextToWidth(alias,{minPx:6.5});
+        alias.dataset.titleFit="1";
+      }
+      titleFitObserver.unobserve(name);
+    });
+  },{rootMargin:"120px 0px",threshold:.01});
+  gallery.querySelectorAll(".card .card-name").forEach(el=>titleFitObserver.observe(el));
 }
 
 function fitGalleryToViewport(){
@@ -805,9 +869,10 @@ const archivePersonality=document.getElementById("archivePersonality");
 const archiveSetting=document.getElementById("archiveSetting");
 const archiveSettingPrivacy=document.getElementById("archiveSettingPrivacy");
 const downloadCard=document.getElementById("downloadCard");
-const PREVIEW_LOAD_CONCURRENCY=3;
+// Cap concurrent decodes so mid-range phones stay responsive while scrolling.
+const PREVIEW_LOAD_CONCURRENCY=2;
 const PREVIEW_MAX_ATTEMPTS=3;
-const PREVIEW_LOAD_TIMEOUT=45000;
+const PREVIEW_LOAD_TIMEOUT=30000;
 // runtime sets rebound via useAuthorRuntimeRefs(); activePreviewLoads lives on runtime
 let activeWork=null;
 let activeIndex=null;
@@ -875,8 +940,8 @@ function getCardPreviewParts(index){
 
 function isPreviewNearViewport(element){
   const rect=element.getBoundingClientRect();
-  // Tighter band than before: fewer simultaneous image decodes off-screen.
-  const margin=Math.min(280,Math.round(window.innerHeight*.45));
+  // Tight prefetch band: only near-viewport faces decode on low-end devices.
+  const margin=Math.min(180,Math.round(window.innerHeight*.3));
   return rect.bottom>=-margin && rect.top<=window.innerHeight+margin;
 }
 
@@ -933,11 +998,25 @@ async function loadPreviewWithRetry(index){
   if(!work || !parts) return false;
   const source=previewForWork(work);
   if(!source) return false;
+  // Already decoded and correct — skip network/decode churn on re-queue.
+  if(
+    parts.image.complete &&
+    parts.image.naturalWidth>0 &&
+    (parts.image.currentSrc || parts.image.src).includes(source.split("/").pop().split("?")[0])
+  ){
+    return true;
+  }
   for(let attempt=0;attempt<PREVIEW_MAX_ATTEMPTS;attempt++){
     try{
-      parts.image.removeAttribute("src");
+      // Avoid blanking a good paint when retrying the same URL.
+      if(attempt>0 || !parts.image.getAttribute("src")){
+        parts.image.removeAttribute("src");
+      }
       await waitForImageElement(parts.image,previewAttemptUrl(source,attempt));
-      if(typeof parts.image.decode==="function") await parts.image.decode().catch(()=>{});
+      // Fire-and-forget decode so the queue can start the next image sooner.
+      if(typeof parts.image.decode==="function"){
+        parts.image.decode().catch(()=>{});
+      }
       return parts.image.naturalWidth>0;
     }catch(error){
       parts.image.removeAttribute("src");
@@ -1066,12 +1145,16 @@ function syncCardSettingPrivacy(index){
   const card=gallery.querySelector(`.card[data-index="${index}"]`);
   if(!work || !card) return;
   const content=card.querySelector(".back-setting-content");
-  const settingText=content?.querySelector("p");
+  const settingText=content?.querySelector('[data-field="setting"]') || content?.querySelector("p");
   const gate=card.querySelector(".back-setting-privacy");
   const locked=isSettingLocked(index);
+  const backReady=card.querySelector(".back")?.dataset.backPending!=="1";
 
   card.classList.toggle("is-setting-unlocked",Boolean(work.sensitiveSetting) && !locked);
-  if(settingText) settingText.textContent=locked ? "" : (work.setting || "暂无背景设定。");
+  // Only write setting text after ensureCardBackContent has materialized the back face.
+  if(settingText && backReady){
+    settingText.textContent=locked ? "" : (work.setting || "暂无背景设定。");
+  }
   if(content){
     content.hidden=locked;
     content.setAttribute("aria-hidden",String(locked));
@@ -1364,52 +1447,89 @@ downloadCard.addEventListener("click",()=>{
   downloadCharacterCard(activeWork,activeIndex);
 });
 
-function bindCardInteractions(){
-document.querySelectorAll(".card").forEach(card=>{
+function setCardFlipped(card,flipped){
   const index=Number(card.dataset.index);
-  const work=works[index];
+  if(flipped) ensureCardBackContent(index);
   const flipButton=card.querySelector(".card-flip");
   const back=card.querySelector(".back");
   const returnButton=card.querySelector(".back-return");
-  const expandButton=card.querySelector(".back-expand");
   const faceAction=card.querySelector(".privacy-unlock");
+  if(!flipButton || !back) return;
+  card.classList.toggle("flipped",flipped);
+  flipButton.toggleAttribute("inert",flipped);
+  flipButton.setAttribute("aria-hidden",String(flipped));
+  flipButton.setAttribute("aria-expanded",String(flipped));
+  back.toggleAttribute("inert",!flipped);
+  back.setAttribute("aria-hidden",String(!flipped));
+  if(faceAction){
+    faceAction.toggleAttribute("inert",flipped);
+    faceAction.setAttribute("aria-hidden",String(flipped));
+  }
+  requestAnimationFrame(()=>{
+    const target=flipped ? returnButton : flipButton;
+    target?.focus({preventScroll:true});
+  });
+}
 
-  syncCardPrivacy(index);
-  syncCardSettingPrivacy(index);
-
-  function setFlipped(flipped){
-    card.classList.toggle("flipped",flipped);
-    flipButton.toggleAttribute("inert",flipped);
-    flipButton.setAttribute("aria-hidden",String(flipped));
-    flipButton.setAttribute("aria-expanded",String(flipped));
-    back.toggleAttribute("inert",!flipped);
-    back.setAttribute("aria-hidden",String(!flipped));
-    if(faceAction){
-      faceAction.toggleAttribute("inert",flipped);
-      faceAction.setAttribute("aria-hidden",String(flipped));
-    }
-    requestAnimationFrame(()=>{
-      const target=flipped ? returnButton : flipButton;
-      target.focus({preventScroll:true});
-    });
+let cardDelegationBound=false;
+function bindCardInteractions(){
+  // Sync privacy state for all cards without per-card click listeners.
+  for(let index=0;index<works.length;index++){
+    syncCardPrivacy(index);
+    syncCardSettingPrivacy(index);
   }
 
-  flipButton.addEventListener("click",()=>setFlipped(true));
-  returnButton.addEventListener("click",()=>setFlipped(false));
-  expandButton.addEventListener("click",()=>openArchive(index,expandButton));
-  faceAction?.addEventListener("click",e=>{
-    e.stopPropagation();
-    const mode=faceAction.dataset.mode;
-    if(mode==="unlock" || mode==="retry"){
-      requestSingleUnlock(index,faceAction);
-      if(!unlockChoice || unlockChoice.hidden){
-        requestAnimationFrame(()=>flipButton.focus({preventScroll:true}));
+  if(cardDelegationBound) return;
+  cardDelegationBound=true;
+
+  gallery.addEventListener("click",e=>{
+    // Firefox may target a Text node; climb to Element before closest().
+    const hit=e.target instanceof Element ? e.target : e.target?.parentElement;
+    if(!(hit instanceof Element) || !gallery.contains(hit)) return;
+
+    const faceAction=hit.closest(".privacy-unlock");
+    if(faceAction && gallery.contains(faceAction)){
+      e.stopPropagation();
+      const card=faceAction.closest(".card");
+      const index=Number(card?.dataset.index);
+      const work=works[index];
+      if(!card || !work) return;
+      const mode=faceAction.dataset.mode;
+      const flipButton=card.querySelector(".card-flip");
+      if(mode==="unlock" || mode==="retry"){
+        requestSingleUnlock(index,faceAction);
+        if(!unlockChoice || unlockChoice.hidden){
+          requestAnimationFrame(()=>flipButton?.focus({preventScroll:true}));
+        }
+        return;
       }
+      if(mode==="save") downloadCharacterCard(work,index);
       return;
     }
-    if(mode==="save") downloadCharacterCard(work,index);
+
+    const expandButton=hit.closest(".back-expand");
+    if(expandButton && gallery.contains(expandButton)){
+      const card=expandButton.closest(".card");
+      const index=Number(card?.dataset.index);
+      if(!Number.isInteger(index)) return;
+      ensureCardBackContent(index);
+      openArchive(index,expandButton);
+      return;
+    }
+
+    const returnButton=hit.closest(".back-return");
+    if(returnButton && gallery.contains(returnButton)){
+      const card=returnButton.closest(".card");
+      if(card) setCardFlipped(card,false);
+      return;
+    }
+
+    const flipButton=hit.closest(".card-flip");
+    if(flipButton && gallery.contains(flipButton)){
+      const card=flipButton.closest(".card");
+      if(card) setCardFlipped(card,true);
+    }
   });
-});
 }
 
 function observeCardPreviews(){
@@ -1426,7 +1546,7 @@ function observeCardPreviews(){
         const index=Number(card?.dataset.index);
         if(Number.isInteger(index) && !isWorkLocked(index)) queuePreviewLoad(index);
       });
-    },{rootMargin:"220px 0px",threshold:.01});
+    },{rootMargin:"160px 0px",threshold:.01});
     images.forEach(image=>previewObserver.observe(image));
     return;
   }
