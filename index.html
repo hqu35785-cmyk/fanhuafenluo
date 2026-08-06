@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="description" content="繁花·纷落角色卡作品档案">
+<meta name="theme-color" content="#070811">
+<title>繁花·纷落｜角色档案（半成品·未完成）</title>
+<link rel="preload" href="src/styles/main.css?v=9d45492dfb95" as="style">
+<link rel="preload" href="assets/authors/fanhuafenluo-avatar.webp" as="image" type="image/webp" fetchpriority="high">
+<link rel="preload" href="src/data/works.js?v=78078ea0fcbf" as="script">
+<link rel="preload" href="src/app.js?v=5c9495d4d172" as="script">
+<link rel="stylesheet" href="src/styles/main.css?v=9d45492dfb95">
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="brand">
+        <button class="author-switch" id="authorSwitch" type="button" aria-describedby="authorSwitchHint" aria-label="切换分区，当前分区为繁花·纷落">
+          <span class="author-avatar-frame">
+            <img id="authorAvatar" src="assets/authors/fanhuafenluo-avatar.webp" alt="繁花·纷落的分区头像" width="38" height="38" decoding="async" fetchpriority="high">
+            <span class="author-switch-mark" aria-hidden="true">↔</span>
+          </span>
+        </button>
+        <div class="brand-text"><span id="authorName" aria-live="polite">繁花·纷落</span><small class="build-state" id="authorSwitchHint">半成品 · 点头像切换不同分区</small></div>
+      </div>
+      <button class="unlock-all" id="unlockAll" type="button" aria-live="polite">一键解锁</button>
+      <div class="archive-status"><b id="workCount">01</b><span>CHARACTER ARCHIVE</span><em id="workTotal">/ 14</em></div>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="catalog">
+    <h1 class="side-title sr-only">角色档案</h1>
+    <section class="gallery" id="gallery"></section>
+  </div>
+</main>
+
+<footer class="wrap">
+  <span>© 2026 <span id="footerAuthor">繁花·纷落</span></span>
+  <span>ALL RIGHTS RESERVED</span>
+</footer>
+
+<dialog class="archive-modal" id="archiveModal" aria-labelledby="archiveName">
+  <button class="archive-close" id="archiveClose" type="button" aria-label="关闭角色档案">×</button>
+  <div class="archive-shell">
+    <div class="archive-visual" id="archiveVisual">
+      <img id="archiveImage" alt="" decoding="async">
+      <div class="archive-privacy" id="archivePrivacy" hidden>
+        <span class="archive-privacy-mark" aria-hidden="true"></span>
+        <b id="archivePrivacyTitle" role="status" aria-live="polite">敏感图片已隐藏</b>
+        <p id="archivePrivacyMessage">确认周围环境合适后，再解锁查看本次内容。</p>
+        <button class="archive-unlock" id="archiveUnlock" type="button">解锁查看</button>
+      </div>
+      <div class="archive-file">
+        <span id="archiveFile">角色标签</span>
+        <button class="archive-action" id="downloadCard" type="button">保存角色卡 PNG</button>
+      </div>
+    </div>
+    <section class="archive-content">
+      <div class="archive-eyebrow"><span>CHARACTER PROFILE</span><span id="archiveAlias"></span></div>
+      <h2 class="archive-title" id="archiveName"></h2>
+      <p class="archive-role" id="archiveRole"></p>
+      <div class="archive-tags" id="archiveTags"></div>
+      <div class="archive-profile">
+        <section><b>01 · 开场</b><p id="archiveOpening"></p></section>
+        <section><b>02 · 性格简介</b><p id="archivePersonality"></p></section>
+        <section>
+          <b>03 · 设定 · 剧情</b>
+          <p id="archiveSetting" tabindex="-1"></p>
+          <div class="archive-setting-privacy" id="archiveSettingPrivacy" aria-hidden="true" hidden>
+            <span class="archive-setting-mark" aria-hidden="true"></span>
+            <div class="archive-setting-copy"><b>卡面解锁后显示设定</b><p>解锁卡面后即可查看完整角色设定。</p></div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>
+  <div class="toast archive-toast" id="archiveToast" role="status" aria-live="polite" aria-atomic="true"></div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<div class="save-sheet" id="saveSheet" hidden>
+  <div class="save-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="saveSheetTitle">
+    <div class="save-sheet-inner">
+      <div class="save-sheet-head">
+        <div>
+          <b id="saveSheetTitle">保存角色卡</b>
+          <p id="saveSheetHint">请按下方提示保存原图 PNG。</p>
+        </div>
+        <button class="save-sheet-close" id="saveSheetClose" type="button" aria-label="关闭保存面板">×</button>
+      </div>
+      <div class="save-sheet-preview">
+        <img id="saveSheetImage" alt="角色卡原图" decoding="async">
+      </div>
+      <div class="save-sheet-actions">
+        <button class="save-sheet-link save-sheet-photo" id="saveSheetPhoto" type="button" aria-describedby="saveSheetNote" disabled>正在准备相册保存…</button>
+        <a class="save-sheet-link" id="saveSheetLink" href="#" download>下载 PNG 原图</a>
+        <p class="save-sheet-note" id="saveSheetNote" aria-live="polite">手机端若无反应，请长按上方图片保存。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="unlock-choice" id="unlockChoice" hidden>
+  <div class="unlock-choice-panel" role="dialog" aria-modal="true" aria-labelledby="unlockChoiceTitle" aria-describedby="unlockChoiceMessage unlockChoiceNote">
+    <div class="unlock-choice-inner">
+      <div class="unlock-choice-head">
+        <div>
+          <b id="unlockChoiceTitle">是否要一键解锁？</b>
+          <p id="unlockChoiceMessage">是否一键解锁全部敏感角色卡？也可以仅解锁当前这一张。</p>
+        </div>
+        <button class="unlock-choice-close" id="unlockChoiceClose" type="button" aria-label="关闭解锁选项">×</button>
+      </div>
+      <div class="unlock-choice-actions">
+        <button class="unlock-choice-btn" id="unlockChoiceAll" type="button" data-action="all">一键解锁全部</button>
+        <button class="unlock-choice-btn" id="unlockChoiceSingle" type="button" data-action="single">仅这张</button>
+      </div>
+      <p class="unlock-choice-note" id="unlockChoiceNote">仅本次页面有效，刷新后会重新锁定。</p>
+    </div>
+  </div>
+</div>
+
+<script src="src/data/works.js?v=78078ea0fcbf" defer></script>
+<script src="src/app.js?v=5c9495d4d172" defer></script>
+</body>
+</html>
