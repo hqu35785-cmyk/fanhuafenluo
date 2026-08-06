@@ -464,8 +464,27 @@ let saveSheetPrepareController=null;
 let webSharePending=false;
 let webShareWatchdog=0;
 
+/*
+ * Full card PNGs are multi-hundred MB in aggregate and cannot ship with Pages
+ * reliably. Prefer local paths when present; fall back to the main-branch raw
+ * CDN so save/download still works after a slim Pages deploy.
+ */
+const SOURCE_PNG_RE=/^(?:\.\/)?assets\/(?:tavo|shark|wa|source)\//i;
+const RAW_MAIN_BASE="https://raw.githubusercontent.com/hqu35785-cmyk/fanhuafenluo/main/";
+
 function absoluteAssetUrl(path){
-  return new URL(path,window.location.href).href;
+  const raw=String(path||"");
+  if(/^https?:\/\//i.test(raw) || raw.startsWith("data:")) return raw;
+  try{
+    const local=new URL(raw,window.location.href).href;
+    if(SOURCE_PNG_RE.test(raw.replace(/^\//,""))){
+      // Always load heavy source PNGs from main so Pages can stay lightweight.
+      return RAW_MAIN_BASE+raw.replace(/^\.\//,"").replace(/^\//,"");
+    }
+    return local;
+  }catch{
+    return raw;
+  }
 }
 
 function setSaveSheetStatus(text){

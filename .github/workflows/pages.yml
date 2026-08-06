@@ -24,12 +24,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Prepare static site
+      - name: Prepare lightweight static site
         run: |
-          mkdir -p _site
+          set -euo pipefail
+          mkdir -p _site/assets
           cp index.html _site/
           touch _site/.nojekyll
-          cp -a src assets _site/
+          cp -a src _site/src
+          # Gallery needs previews + author avatars only (~4–8MB).
+          # Full source PNGs stay on main and load via raw.githubusercontent.com.
+          cp -a assets/previews assets/authors _site/assets/
+          # Fail the job if the site ballooned again.
+          size_kb=$(du -sk _site | cut -f1)
+          echo "site_size_kb=$size_kb"
+          if [ "$size_kb" -gt 20000 ]; then
+            echo "Site artifact too large for reliable Pages deploy: ${size_kb}KB" >&2
+            exit 1
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -42,3 +53,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          timeout: 600000
