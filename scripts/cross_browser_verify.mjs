@@ -481,10 +481,60 @@ async function runViewport(browserType, browserName, viewport) {
 
     // 1b section switch: 繁花 → 鲨鱼(14) → 咓(14) → 繁花, unlock isolation
     {
-      const before = await page.evaluate(() => ({
-        name: document.getElementById("authorName")?.textContent || "",
-        cards: document.querySelectorAll(".card").length,
-      }));
+      await page
+        .waitForFunction(() => {
+          const avatar = document.getElementById("authorAvatar");
+          if (!avatar) return false;
+          const src = avatar.getAttribute("src") || "";
+          return (
+            /^assets\/authors\/fanhuafenluo-avatar\.(?:jpe?g|png|webp)(?:\?v=[a-f0-9]+)?$/i.test(src) &&
+            avatar.complete &&
+            avatar.naturalWidth > 0
+          );
+        }, { timeout: 10000 })
+        .catch(() => {});
+      const before = await page.evaluate(() => {
+        const avatar = document.getElementById("authorAvatar");
+        return {
+          name: document.getElementById("authorName")?.textContent || "",
+          cards: document.querySelectorAll(".card").length,
+          avatarSrc: avatar?.getAttribute("src") || "",
+          avatarComplete: !!avatar?.complete,
+          avatarNaturalWidth: avatar?.naturalWidth || 0,
+          avatarNaturalHeight: avatar?.naturalHeight || 0,
+        };
+      });
+      const initialAuthorAvatarSrc = before.avatarSrc;
+      const avatarPathOk =
+        /^assets\/authors\/fanhuafenluo-avatar\.(?:jpe?g|png|webp)(?:\?v=[a-f0-9]+)?$/i.test(
+          initialAuthorAvatarSrc
+        );
+      if (
+        !avatarPathOk ||
+        !before.avatarComplete ||
+        before.avatarNaturalWidth <= 0 ||
+        before.avatarNaturalHeight <= 0
+      ) {
+        rows.push(
+          await captureFailure(
+            page,
+            browserName,
+            viewport,
+            "author-switch-back",
+            {
+              check: "author-avatar-initial",
+              expected: "external fanhuafenluo avatar loaded",
+              actual: {
+                src: initialAuthorAvatarSrc,
+                complete: before.avatarComplete,
+                naturalWidth: before.avatarNaturalWidth,
+                naturalHeight: before.avatarNaturalHeight,
+              },
+            },
+            consoleErrors
+          )
+        );
+      }
 
       const unlockBtn = page.locator(".privacy-unlock[data-mode='unlock']").first();
       if (await unlockBtn.count()) {
@@ -555,20 +605,59 @@ async function runViewport(browserType, browserName, viewport) {
       // → 繁花·纷落
       await page.locator("#authorSwitch").click({ force: true });
       await page.waitForTimeout(400);
-      const back = await page.evaluate(() => ({
-        name: document.getElementById("authorName")?.textContent || "",
-        cards: document.querySelectorAll(".card").length,
-        empty: !!document.querySelector(".author-empty"),
-        footer: document.getElementById("footerAuthor")?.textContent || "",
-        unlockedFaces: document.querySelectorAll(".card .front:not(.is-locked)").length,
-        avatarData: (document.getElementById("authorAvatar")?.getAttribute("src") || "").startsWith("data:"),
-      }));
+      // Wait for restored external avatar to finish loading after section switch.
+      await page
+        .waitForFunction(
+          (expectedSrc) => {
+            const avatar = document.getElementById("authorAvatar");
+            if (!avatar) return false;
+            const src = avatar.getAttribute("src") || "";
+            return src === expectedSrc && avatar.complete && avatar.naturalWidth > 0;
+          },
+          initialAuthorAvatarSrc,
+          { timeout: 10000 }
+        )
+        .catch(() => {});
+      const back = await page.evaluate((initialAuthorAvatarSrc) => {
+        const avatar = document.getElementById("authorAvatar");
+        const avatarSrc = avatar?.getAttribute("src") || "";
+        const authorAvatarRestored =
+          avatarSrc === initialAuthorAvatarSrc &&
+          /^assets\/authors\/fanhuafenluo-avatar\.(?:jpe?g|png|webp)(?:\?v=[a-f0-9]+)?$/i.test(avatarSrc) &&
+          !!avatar?.complete &&
+          (avatar?.naturalWidth || 0) > 0 &&
+          (avatar?.naturalHeight || 0) > 0;
+        return {
+          name: document.getElementById("authorName")?.textContent || "",
+          cards: document.querySelectorAll(".card").length,
+          empty: !!document.querySelector(".author-empty"),
+          footer: document.getElementById("footerAuthor")?.textContent || "",
+          unlockedFaces: document.querySelectorAll(".card .front:not(.is-locked)").length,
+          authorAvatarRestored,
+          avatarSrc,
+          avatarComplete: !!avatar?.complete,
+          avatarNaturalWidth: avatar?.naturalWidth || 0,
+          avatarNaturalHeight: avatar?.naturalHeight || 0,
+        };
+      }, initialAuthorAvatarSrc);
       const backFails = [];
       if (back.name !== "繁花·纷落") backFails.push(["author-name-fanhua", "繁花·纷落", back.name]);
       if (back.cards < 1) backFails.push(["author-cards-restored", ">=1", back.cards]);
       if (back.empty) backFails.push(["author-not-empty", false, back.empty]);
       if (back.footer !== "繁花·纷落") backFails.push(["author-footer-fanhua", "繁花·纷落", back.footer]);
-      if (!back.avatarData) backFails.push(["author-avatar-data", true, back.avatarData]);
+      if (!back.authorAvatarRestored) {
+        backFails.push([
+          "author-avatar-restored",
+          true,
+          {
+            src: back.avatarSrc,
+            expectedSrc: initialAuthorAvatarSrc,
+            complete: back.avatarComplete,
+            naturalWidth: back.avatarNaturalWidth,
+            naturalHeight: back.avatarNaturalHeight,
+          },
+        ]);
+      }
       if (unlockedBefore > 0 && back.unlockedFaces < unlockedBefore)
         backFails.push(["author-unlock-persist", unlockedBefore, back.unlockedFaces]);
       for (const [check, expected, actual] of backFails) {

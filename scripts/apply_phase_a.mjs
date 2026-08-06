@@ -27,8 +27,18 @@ function writeAtomic(file, content) {
   fs.renameSync(temp, file);
 }
 
+function normalizeHashInput(content) {
+  return String(content)
+    .replace(/\r\n?/g, "\n")
+    .trim();
+}
+
 function hash12(content) {
-  return crypto.createHash("sha256").update(content.trim()).digest("hex").slice(0, 12);
+  return crypto
+    .createHash("sha256")
+    .update(normalizeHashInput(content), "utf8")
+    .digest("hex")
+    .slice(0, 12);
 }
 
 function backupOnce(files) {
