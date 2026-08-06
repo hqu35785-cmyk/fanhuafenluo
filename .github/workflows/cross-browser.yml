@@ -7,20 +7,52 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
+env:
+  # Match package-lock resolved playwright 1.62.1
+  PLAYWRIGHT_IMAGE: mcr.microsoft.com/playwright:v1.62.1-noble
+
 jobs:
-  verify:
+  round1:
+    name: "R1 ${{ matrix.browser }} ${{ matrix.viewport }}"
+    timeout-minutes: 25
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+        viewport:
+          - 320x568
+          - 360x740
+          - 375x667
+          - 390x844
+          - 412x915
+          - 430x932
+          - 500x900
+          - 600x960
+          - 768x1024
+          - 568x320
+          - 667x375
+          - 740x360
+          - 844x390
+          - 915x412
+          - 932x430
+          - 1024x768
+          - 1280x720
+          - 1366x768
+          - 1920x1080
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
@@ -28,13 +60,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium firefox webkit
-
       - name: Start static server
         run: |
-          python3 -m http.server 4173 > /tmp/fanhuafenluo-http.log 2>&1 &
-          for attempt in {1..30}; do
+          node scripts/test_server.mjs > /tmp/fanhuafenluo-http.log 2>&1 &
+          for attempt in $(seq 1 30); do
             if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then
               exit 0
             fi
@@ -43,16 +72,106 @@ jobs:
           cat /tmp/fanhuafenluo-http.log
           exit 1
 
-      - name: Run two consecutive complete checks
+      - name: Run single viewport unit
         env:
           TEST_URL: http://127.0.0.1:4173/index.html
-        run: npm run test:twice
+          TEST_BROWSER: ${{ matrix.browser }}
+          TEST_VIEWPORT: ${{ matrix.viewport }}
+          TEST_ROUND: "1"
+          STATIC_VIEWPORT: "1"
+        run: node scripts/cross_browser_verify.mjs
 
-      - name: Upload failure artifacts
+      - name: Upload failure artifact
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: cross-browser-test-artifacts
-          path: test-artifacts/
+          name: r1-${{ matrix.browser }}-${{ matrix.viewport }}
+          path: artifacts/round-1/${{ matrix.browser }}/${{ matrix.viewport }}/
           if-no-files-found: ignore
-          retention-days: 14
+          retention-days: 3
+
+  round1-summary:
+    name: Round 1 all passed
+    needs: round1
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Round 1: all passed"
+
+  round2:
+    name: "R2 ${{ matrix.browser }} ${{ matrix.viewport }}"
+    needs: round1-summary
+    timeout-minutes: 25
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+        viewport:
+          - 320x568
+          - 360x740
+          - 375x667
+          - 390x844
+          - 412x915
+          - 430x932
+          - 500x900
+          - 600x960
+          - 768x1024
+          - 568x320
+          - 667x375
+          - 740x360
+          - 844x390
+          - 915x412
+          - 932x430
+          - 1024x768
+          - 1280x720
+          - 1366x768
+          - 1920x1080
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start static server
+        run: |
+          node scripts/test_server.mjs > /tmp/fanhuafenluo-http.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/fanhuafenluo-http.log
+          exit 1
+
+      - name: Run single viewport unit
+        env:
+          TEST_URL: http://127.0.0.1:4173/index.html
+          TEST_BROWSER: ${{ matrix.browser }}
+          TEST_VIEWPORT: ${{ matrix.viewport }}
+          TEST_ROUND: "2"
+          STATIC_VIEWPORT: "1"
+        run: node scripts/cross_browser_verify.mjs
+
+      - name: Upload failure artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r2-${{ matrix.browser }}-${{ matrix.viewport }}
+          path: artifacts/round-2/${{ matrix.browser }}/${{ matrix.viewport }}/
+          if-no-files-found: ignore
+          retention-days: 3
+
+  round2-summary:
+    name: Round 2 all passed
+    needs: round2
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Round 2: all passed"

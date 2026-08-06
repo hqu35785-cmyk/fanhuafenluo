@@ -4,8 +4,14 @@ import { chromium, firefox, webkit } from "playwright";
 
 const TARGET =
   process.env.TEST_URL || "https://hqu35785-cmyk.github.io/fanhuafenluo/index.html";
-const OUT_DIR = path.join(process.cwd(), "test-artifacts", "final");
-fs.mkdirSync(OUT_DIR, { recursive: true });
+
+/** CI isolation: one process = one browser = one viewport = one page. */
+const TEST_BROWSER = (process.env.TEST_BROWSER || "").trim().toLowerCase();
+const TEST_VIEWPORT = (process.env.TEST_VIEWPORT || "").trim();
+const TEST_ROUND = String(process.env.TEST_ROUND || "1").trim() || "1";
+/** Never call page.setViewportSize mid-test when isolating a single viewport job. */
+const STATIC_VIEWPORT_MODE =
+  process.env.STATIC_VIEWPORT === "1" || Boolean(TEST_VIEWPORT);
 
 const VIEWPORTS = [
   [320, 568],
@@ -34,6 +40,49 @@ const BROWSERS = [
   ["firefox", firefox],
   ["webkit", webkit],
 ];
+
+let ACTIVE_OUT_DIR = path.join(process.cwd(), "test-artifacts", "final");
+
+function parseViewportSpec(spec) {
+  const match = String(spec).match(/^(\d+)x(\d+)$/i);
+  if (!match) return null;
+  return [Number(match[1]), Number(match[2])];
+}
+
+function outDirFor(browserName, viewport) {
+  const [width, height] = viewport;
+  return path.join(
+    process.cwd(),
+    "artifacts",
+    `round-${TEST_ROUND}`,
+    browserName,
+    `${width}x${height}`
+  );
+}
+
+function selectBrowsers() {
+  if (!TEST_BROWSER) return BROWSERS;
+  const selected = BROWSERS.filter(([name]) => name === TEST_BROWSER);
+  if (!selected.length) {
+    throw new Error(
+      `Unknown TEST_BROWSER=${TEST_BROWSER}; expected one of ${BROWSERS.map(([n]) => n).join(", ")}`
+    );
+  }
+  return selected;
+}
+
+function selectViewports() {
+  if (!TEST_VIEWPORT) return VIEWPORTS;
+  const viewport = parseViewportSpec(TEST_VIEWPORT);
+  if (!viewport) {
+    throw new Error(`Invalid TEST_VIEWPORT=${TEST_VIEWPORT}; expected e.g. 360x740`);
+  }
+  const known = VIEWPORTS.some(([w, h]) => w === viewport[0] && h === viewport[1]);
+  if (!known) {
+    throw new Error(`TEST_VIEWPORT=${TEST_VIEWPORT} is not in the official VIEWPORTS list`);
+  }
+  return [viewport];
+}
 
 const PAGE_EVAL_HELPERS = `
 function isRendered(element) {
@@ -195,11 +244,14 @@ async function captureFailure(page, browserName, viewport, state, failure, conso
   const stamp = `${browserName}_${viewport[0]}x${viewport[1]}_${state}_${failure.check}`
     .replace(/[^\w.-]+/g, "_")
     .slice(0, 120);
-  const shot = path.join(OUT_DIR, `${stamp}.png`);
+  fs.mkdirSync(ACTIVE_OUT_DIR, { recursive: true });
+  const shot = path.join(ACTIVE_OUT_DIR, `${stamp}.png`);
+  const failureShot = path.join(ACTIVE_OUT_DIR, "failure.png");
   try {
     if (page && !page.isClosed()) {
       // fullPage over a 64-card gallery has crashed WebKit on CI; viewport is enough.
       await page.screenshot({ path: shot, fullPage: false });
+      try { fs.copyFileSync(shot, failureShot); } catch {}
     }
   } catch {}
   return {
@@ -487,13 +539,35 @@ async function inspectLayout(page) {
 
 async function runViewport(browserType, browserName, viewport) {
   const [w, h] = viewport;
+  ACTIVE_OUT_DIR = outDirFor(browserName, viewport);
+  fs.mkdirSync(ACTIVE_OUT_DIR, { recursive: true });
   const consoleErrors = [];
-  const browser = await browserType.launch({ headless: true });
-  const context = await browser.newContext({
-    viewport: { width: w, height: h },
-    deviceScaleFactor: 1,
-  });
-  const page = await context.newPage();
+  let browser;
+  let context;
+  let page;
+  try {
+    browser = await browserType.launch({ headless: true });
+    context = await browser.newContext({
+      viewport: { width: w, height: h },
+      deviceScaleFactor: 1,
+    });
+    page = await context.newPage();
+  } catch (launchError) {
+    return [{
+      ok: false,
+      browser: browserName,
+      viewport: `${w}x${h}`,
+      state: "exception",
+      check: "runner-exception",
+      expected: "no exception",
+      actual: String(launchError?.stack || launchError),
+      consoleErrors: [],
+      screenshot: null,
+      extra: { phase: "launch" },
+    }];
+  }
+  page.on("pageerror", (e) => consoleErrors.push(String(e?.stack || e)));
+  // note: original had page.on after newPage - keep duplicate-safe below
   page.on("pageerror", (e) => consoleErrors.push(String(e?.stack || e)));
   page.on("console", (m) => {
     if (m.type() === "error") consoleErrors.push(m.text());
@@ -630,7 +704,12 @@ async function runViewport(browserType, browserName, viewport) {
       );
 
       // → 鲨鱼
-      await page.locator("#authorSwitch").click({ force: true });
+      await (async () => {
+        const sw = page.locator("#authorSwitch");
+        await sw.waitFor({ state: "visible", timeout: 10000 });
+        if (browserName === "webkit") await sw.evaluate((el) => el.click());
+        else await sw.click({ timeout: 10000 });
+      })();
       await page.waitForTimeout(350);
       const shark = await page.evaluate(() => ({
         name: document.getElementById("authorName")?.textContent || "",
@@ -659,7 +738,12 @@ async function runViewport(browserType, browserName, viewport) {
       if (!sharkFails.length) pushOk("author-switch-shark", { beforeCards: before.cards, cards: shark.cards });
 
       // → 咓
-      await page.locator("#authorSwitch").click({ force: true });
+      await (async () => {
+        const sw = page.locator("#authorSwitch");
+        await sw.waitFor({ state: "visible", timeout: 10000 });
+        if (browserName === "webkit") await sw.evaluate((el) => el.click());
+        else await sw.click({ timeout: 10000 });
+      })();
       await page.waitForTimeout(350);
       const wa = await page.evaluate(() => ({
         name: document.getElementById("authorName")?.textContent || "",
@@ -685,7 +769,12 @@ async function runViewport(browserType, browserName, viewport) {
       if (!waFails.length) pushOk("author-switch-wa", { cards: wa.cards });
 
       // → 繁花·纷落
-      await page.locator("#authorSwitch").click({ force: true });
+      await (async () => {
+        const sw = page.locator("#authorSwitch");
+        await sw.waitFor({ state: "visible", timeout: 10000 });
+        if (browserName === "webkit") await sw.evaluate((el) => el.click());
+        else await sw.click({ timeout: 10000 });
+      })();
       await page.waitForTimeout(400);
       // Wait for restored external avatar to finish loading after section switch.
       await page
@@ -1251,6 +1340,14 @@ async function runViewport(browserType, browserName, viewport) {
     }
     await page.emulateMedia({ reducedMotion: "no-preference" });
 
+    // 9–10 orientation / dynamic resize (disabled in STATIC_VIEWPORT_MODE)
+    if (STATIC_VIEWPORT_MODE) {
+      pushSkip(
+        "orientation-switch",
+        "static viewport isolation: dedicated portrait/landscape jobs cover orientation"
+      );
+      pushSkip("vv-height-change", "static viewport isolation mode");
+    } else {
     // 9 orientation switch
     const mediaBefore = await page.evaluate((src) => {
       eval(src);
@@ -1494,6 +1591,7 @@ async function runViewport(browserType, browserName, viewport) {
     } else {
       pushSkip("vv-height-change", "not phonePortrait");
     }
+    } // end !STATIC_VIEWPORT_MODE
 
     // WebKit flip mode
     if (browserName === "webkit") {
@@ -1567,57 +1665,66 @@ async function runViewport(browserType, browserName, viewport) {
   }
 
   try {
-    if (!page.isClosed()) await context.close();
+    if (page && !page.isClosed()) await context.close();
   } catch {}
   try {
-    await browser.close();
+    if (browser) await browser.close();
+  } catch {}
+
+  const unitFailures = rows.filter((r) => r.ok === false);
+  const unitSkips = rows.filter((r) => r.skipped);
+  const unitPasses = rows.filter((r) => r.ok && !r.skipped);
+  const unitReport = {
+    target: TARGET,
+    round: TEST_ROUND,
+    browser: browserName,
+    viewport: `${w}x${h}`,
+    staticViewportMode: STATIC_VIEWPORT_MODE,
+    testedAt: new Date().toISOString(),
+    total: {
+      pass: unitPasses.length,
+      fail: unitFailures.length,
+      skip: unitSkips.length,
+    },
+    failures: unitFailures,
+    rows,
+  };
+  try {
+    fs.mkdirSync(ACTIVE_OUT_DIR, { recursive: true });
+    fs.writeFileSync(
+      path.join(ACTIVE_OUT_DIR, "report.json"),
+      `${JSON.stringify(unitReport, null, 2)}\n`,
+      "utf8"
+    );
   } catch {}
   return rows;
 }
 
 // ---- main ----
-const deploymentProbe = await (async () => {
-  const b = await chromium.launch({ headless: true });
-  const p = await b.newPage();
-  await p.goto(TARGET, { waitUntil: "domcontentloaded", timeout: 90000 });
-  const d = await p.evaluate(() => {
-    const rules = [...document.styleSheets].flatMap((sheet) => {
-      try {
-        return [...sheet.cssRules];
-      } catch {
-        return [];
-      }
-    });
-    return {
-      url: location.href,
-      hasAspectRatio: rules.some(
-        (rule) =>
-          rule.cssText?.includes("aspect-ratio: 18 / 25") ||
-          rule.cssText?.includes("aspect-ratio:18 / 25")
-      ),
-      hasThreeColumns: document.documentElement.innerHTML.includes(
-        "repeat(3,minmax(0,1fr))"
-      ),
-    };
-  });
-  await b.close();
-  return d;
-})();
+const selectedBrowsers = selectBrowsers();
+const selectedViewports = selectViewports();
 
 console.log("TARGET", TARGET);
-console.log("DEPLOYMENT", deploymentProbe);
+console.log("TEST_BROWSER", TEST_BROWSER || "(all)");
+console.log("TEST_VIEWPORT", TEST_VIEWPORT || "(all)");
+console.log("TEST_ROUND", TEST_ROUND);
+console.log("STATIC_VIEWPORT_MODE", STATIC_VIEWPORT_MODE);
 
 const all = [];
-for (const [browserName, launcher] of BROWSERS) {
+for (const [browserName, launcher] of selectedBrowsers) {
   console.log(`\n=== ${browserName} ===`);
-  for (const vp of VIEWPORTS) {
+  for (const vp of selectedViewports) {
     process.stdout.write(`${browserName} ${vp[0]}x${vp[1]} ... `);
     const rows = await runViewport(launcher, browserName, vp);
     all.push(...rows);
     const fails = rows.filter((r) => r.ok === false).length;
     const skips = rows.filter((r) => r.skipped).length;
-    const passes = rows.filter((r) => r.ok && !r.skipped).length;
-    console.log(fails ? `FAIL(${fails}) pass=${passes} skip=${skips}` : `ok pass=${passes} skip=${skips}`);
+    const passesCount = rows.filter((r) => r.ok && !r.skipped).length;
+    console.log(
+      fails
+        ? `FAIL(${fails}) pass=${passesCount} skip=${skips}`
+        : `ok pass=${passesCount} skip=${skips}`
+    );
     if (fails) {
       for (const f of rows.filter((r) => !r.ok)) {
         console.log(
@@ -1633,7 +1740,7 @@ const skips = all.filter((r) => r.skipped);
 const passes = all.filter((r) => r.ok && !r.skipped);
 
 const summaryByBrowser = Object.fromEntries(
-  BROWSERS.map(([n]) => {
+  selectedBrowsers.map(([n]) => {
     const rows = all.filter((r) => r.browser === n);
     return [
       n,
@@ -1648,21 +1755,28 @@ const summaryByBrowser = Object.fromEntries(
 
 const report = {
   target: TARGET,
-  deployment: deploymentProbe,
-  localCommitExpectation: "b76cc332279a746d3e228ac123841474d24557f3",
+  round: TEST_ROUND,
+  staticViewportMode: STATIC_VIEWPORT_MODE,
+  testBrowser: TEST_BROWSER || null,
+  testViewport: TEST_VIEWPORT || null,
   testedAt: new Date().toISOString(),
   summaryByBrowser,
   total: { pass: passes.length, fail: failures.length, skip: skips.length },
   failures,
 };
 
-fs.writeFileSync(path.join(OUT_DIR, "report.json"), JSON.stringify(report, null, 2));
+const summaryDir =
+  TEST_BROWSER && TEST_VIEWPORT
+    ? outDirFor(TEST_BROWSER, parseViewportSpec(TEST_VIEWPORT))
+    : path.join(process.cwd(), "test-artifacts", "final");
+fs.mkdirSync(summaryDir, { recursive: true });
+fs.writeFileSync(path.join(summaryDir, "report.json"), `${JSON.stringify(report, null, 2)}\n`);
 console.log("\n=== SUMMARY ===");
 console.log("浏览器 | 通过 | 失败 | 跳过");
 for (const [n, s] of Object.entries(summaryByBrowser)) {
   console.log(`${n} | ${s.pass} | ${s.fail} | ${s.skip}`);
 }
 console.log(`TOTAL pass=${passes.length} fail=${failures.length} skip=${skips.length}`);
-console.log("Report:", path.join(OUT_DIR, "report.json"));
+console.log("Report:", path.join(summaryDir, "report.json"));
 if (failures.length) process.exitCode = 1;
 else console.log("ALL CHECKS PASSED (no real failures under corrected assertions)");

@@ -6,25 +6,33 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
 jobs:
   test:
-    timeout-minutes: 60
+    timeout-minutes: 20
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+
       - name: Install dependencies
         run: npm ci
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+
       - name: Verify Phase A
         run: npm run verify:phase-a
+
       - name: Verify Phase B when applied
         shell: bash
         run: |
@@ -33,13 +41,36 @@ jobs:
           else
             echo "Phase B has not been applied; Phase A-only state is allowed."
           fi
-      - name: Run complete clean matrix twice
-        run: npm run test:matrix:twice
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+
+      - name: Record and check catalog invariants
+        run: |
+          node scripts/snapshot_invariants.mjs record
+          node scripts/snapshot_invariants.mjs check
+
+      - name: Start static server
+        run: |
+          node scripts/test_server.mjs > /tmp/fanhuafenluo-http.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/fanhuafenluo-http.log
+          exit 1
+
+      - name: Playwright refactor regression (27 cases)
+        env:
+          TEST_URL: http://127.0.0.1:4173
+        run: npm run test:refactor
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-regression-report
           path: |
             playwright-report/
             test-results/
-          retention-days: 30
+          if-no-files-found: ignore
+          retention-days: 3
