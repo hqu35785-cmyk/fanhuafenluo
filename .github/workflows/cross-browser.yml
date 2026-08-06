@@ -94,7 +94,8 @@ jobs:
     needs: [round1]
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Round 1: all passed"
+      - name: Announce round1 success
+        run: echo Round1_all_passed
 
   round2:
     name: r2-${{ matrix.browser }}-${{ matrix.viewport }}
@@ -174,4 +175,5 @@ jobs:
     needs: [round2]
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Round 2: all passed"
+      - name: Announce round2 success
+        run: echo Round2_all_passed
