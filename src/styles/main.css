@@ -352,20 +352,18 @@ main{flex:1 0 auto;min-width:0;padding:20px 0 12px}
   row-gap:clamp(18px,2vh,26px);
   row-gap:clamp(18px,2dvh,26px);
 }
+/* content-visibility skips layout/paint for off-screen cards in long galleries. */
 .card-item{
   min-width:0;
   min-height:0;
+  content-visibility:auto;
+  contain-intrinsic-size:auto 420px;
+  contain:layout style;
 }
 .placeholder-item[hidden]{display:none!important}
 html.gallery-fit .gallery{grid-auto-rows:var(--gallery-row-height)}
 html.gallery-fit .card,
 html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
-/* Skip layout/paint for off-screen cards in long galleries (64+ items). */
-.card-item{
-  content-visibility:auto;
-  contain-intrinsic-size:auto 420px;
-  contain:layout style;
-}
 .card{
   position:relative;
   aspect-ratio:.72;
@@ -389,17 +387,11 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   transition:
     transform .48s cubic-bezier(.2,.75,.2,1),
     -webkit-transform .48s cubic-bezier(.2,.75,.2,1);
-  /* will-change only while flipping — permanent will-change wastes GPU memory. */
 }
+/* Permanent will-change on every card wastes GPU memory. */
 .card.flipped .card-inner,
 .card:focus-within .card-inner{
   will-change:transform;
-}
-.card .front img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  content-visibility:auto;
 }
 .card.flipped .card-inner{
   transform:rotateY(180deg);
