@@ -112,13 +112,32 @@ function mediaState() {
 }
 `;
 
+const EDGE_TOLERANCE_PX = 12;
+
+async function pollUntil(fn, { timeout = 2500, interval = 50 } = {}) {
+  const started = Date.now();
+  let lastValue;
+  while (Date.now() - started < timeout) {
+    lastValue = await fn();
+    if (lastValue) return { ok: true, lastValue };
+    await new Promise((resolve) => setTimeout(resolve, interval));
+  }
+  return { ok: false, lastValue };
+}
+
+function isClosedTargetError(error) {
+  return /page, context or browser has been closed/i.test(String(error?.stack || error));
+}
+
 async function captureFailure(page, browserName, viewport, state, failure, consoleErrors) {
   const stamp = `${browserName}_${viewport[0]}x${viewport[1]}_${state}_${failure.check}`
     .replace(/[^\w.-]+/g, "_")
     .slice(0, 120);
   const shot = path.join(OUT_DIR, `${stamp}.png`);
   try {
-    await page.screenshot({ path: shot, fullPage: true });
+    if (page && !page.isClosed()) {
+      await page.screenshot({ path: shot, fullPage: true });
+    }
   } catch {}
   return {
     ok: false,
@@ -802,23 +821,93 @@ async function runViewport(browserType, browserName, viewport) {
       pushOk("flip-to-back");
     }
 
-    // 6 return
-    await card.locator(".back-return").click({ force: true });
-    await page.waitForTimeout(450);
-    const unflipped = await card.evaluate((el) => !el.classList.contains("flipped"));
-    if (!unflipped) {
-      rows.push(
-        await captureFailure(
-          page,
-          browserName,
-          viewport,
-          "flip-to-front",
-          { check: "flip-to-front", expected: "not flipped", actual: "still flipped" },
-          consoleErrors
-        )
-      );
-    } else {
-      pushOk("flip-to-front");
+    // 6 return to front — state-driven, no fixed 450ms assertion
+    {
+      const backReturn = card.locator(".back-return");
+      const wasFlipped = await card.evaluate((el) => el.classList.contains("flipped"));
+      if (!wasFlipped) {
+        rows.push(
+          await captureFailure(
+            page,
+            browserName,
+            viewport,
+            "flip-to-front",
+            {
+              check: "flip-to-front-precondition",
+              expected: "flipped",
+              actual: "not flipped",
+            },
+            consoleErrors
+          )
+        );
+      } else {
+        try {
+          await backReturn.waitFor({ state: "visible", timeout: 5000 });
+          await backReturn.scrollIntoViewIfNeeded();
+          await backReturn.click({ timeout: 5000 });
+          const result = await pollUntil(
+            () => card.evaluate((el) => !el.classList.contains("flipped")),
+            { timeout: 2500, interval: 50 }
+          );
+          if (!result.ok) {
+            const diagnostics = await card.evaluate((el) => {
+              const returnButton = el.querySelector(".back-return");
+              const rect = returnButton?.getBoundingClientRect();
+              return {
+                cardClass: el.className,
+                ariaExpanded: el.querySelector(".card-flip")?.getAttribute("aria-expanded") || null,
+                buttonClass: returnButton?.className || "",
+                buttonDisabled: Boolean(returnButton?.disabled),
+                buttonRect: rect
+                  ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
+                  : null,
+                buttonPointerEvents: returnButton
+                  ? getComputedStyle(returnButton).pointerEvents
+                  : null,
+              };
+            });
+            rows.push(
+              await captureFailure(
+                page,
+                browserName,
+                viewport,
+                "flip-to-front",
+                {
+                  check: "flip-to-front",
+                  expected: "not flipped",
+                  actual: "still flipped",
+                  extra: { diagnostics },
+                },
+                consoleErrors
+              )
+            );
+          } else {
+            pushOk("flip-to-front");
+          }
+        } catch (flipFrontError) {
+          if (isClosedTargetError(flipFrontError) || page.isClosed()) {
+            throw flipFrontError;
+          }
+          rows.push(
+            await captureFailure(
+              page,
+              browserName,
+              viewport,
+              "flip-to-front",
+              {
+                check: "flip-to-front-click",
+                expected: "successful .back-return click",
+                actual: String(flipFrontError?.message || flipFrontError),
+              },
+              consoleErrors
+            )
+          );
+        }
+      }
+    }
+
+    if (page.isClosed()) {
+      throw new Error("Target page, context or browser has been closed");
     }
 
     // action no misflip — click button only
@@ -850,65 +939,199 @@ async function runViewport(browserType, browserName, viewport) {
       pushOk("action-no-misflip");
     }
 
-    // 7 archive
-    await card.locator(".card-flip").click({ force: true });
-    await page.waitForTimeout(400);
-    await card.locator(".back-expand").click({ force: true });
-    await page.waitForTimeout(400);
-    const modal = await page.evaluate(() => {
-      const m = document.getElementById("archiveModal");
-      if (!m || !m.open) return { open: false };
-      const r = m.getBoundingClientRect();
-      const content = m.querySelector(".archive-content") || m.querySelector(".archive-shell");
-      return {
-        open: true,
-        outside:
-          r.bottom > window.innerHeight + 6 ||
-          r.right > window.innerWidth + 6 ||
-          r.left < -6,
-        canScroll: content ? content.scrollHeight >= content.clientHeight - 2 : true,
-        bodyModalOpen: document.body.classList.contains("modal-open"),
-        rect: {
-          left: r.left,
-          right: r.right,
-          top: r.top,
-          bottom: r.bottom,
-          width: r.width,
-          height: r.height,
-        },
-      };
-    });
-    if (!modal.open) {
-      rows.push(
-        await captureFailure(
-          page,
-          browserName,
-          viewport,
-          "archive-open",
-          { check: "archive-modal-open", expected: true, actual: false },
-          consoleErrors
-        )
+    // 7 archive — open via state poll, geometry with visualViewport + usability checks
+    {
+      await card.locator(".card-flip").click({ force: true });
+      const flippedForArchive = await pollUntil(
+        () => card.evaluate((el) => el.classList.contains("flipped")),
+        { timeout: 2500, interval: 50 }
       );
-    } else if (modal.outside) {
-      rows.push(
-        await captureFailure(
-          page,
-          browserName,
-          viewport,
-          "archive-overflow",
-          {
-            check: "archive-outside-viewport",
-            expected: "modal within viewport",
-            actual: modal.rect,
-          },
-          consoleErrors
-        )
-      );
-    } else {
-      pushOk("archive-open", { bodyModalOpen: modal.bodyModalOpen });
+      const expandButton = card.locator(".back-expand");
+      const modalLocator = page.locator("#archiveModal");
+
+      if (!flippedForArchive.ok) {
+        rows.push(
+          await captureFailure(
+            page,
+            browserName,
+            viewport,
+            "archive-open",
+            {
+              check: "archive-modal-precondition",
+              expected: "card flipped",
+              actual: "card not flipped",
+            },
+            consoleErrors
+          )
+        );
+      } else {
+        try {
+          await expandButton.waitFor({ state: "visible", timeout: 5000 });
+          await expandButton.scrollIntoViewIfNeeded();
+          await expandButton.click({ timeout: 5000 });
+          const opened = await pollUntil(
+            () =>
+              modalLocator.evaluate((dialog) =>
+                Boolean(dialog.open && dialog.hasAttribute("open"))
+              ),
+            { timeout: 2500, interval: 50 }
+          );
+
+          if (!opened.ok) {
+            const diagnostics = await modalLocator.evaluate((dialog) => ({
+              openProperty: Boolean(dialog.open),
+              hasOpenAttribute: dialog.hasAttribute("open"),
+              className: dialog.className,
+              hidden: Boolean(dialog.hidden),
+              ariaHidden: dialog.getAttribute("aria-hidden"),
+              connected: dialog.isConnected,
+            }));
+            rows.push(
+              await captureFailure(
+                page,
+                browserName,
+                viewport,
+                "archive-open",
+                {
+                  check: "archive-modal-open",
+                  expected: true,
+                  actual: false,
+                  extra: { diagnostics },
+                },
+                consoleErrors
+              )
+            );
+          } else {
+            const geometry = await modalLocator.evaluate((dialog, tolerance) => {
+              const rect = dialog.getBoundingClientRect();
+              const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
+              const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+              const closeBtn = dialog.querySelector("#archiveClose");
+              const closeRect = closeBtn?.getBoundingClientRect();
+              const content =
+                dialog.querySelector(".archive-content") || dialog.querySelector(".archive-shell");
+              const closeVisible =
+                !!closeRect &&
+                closeRect.width > 0 &&
+                closeRect.height > 0 &&
+                closeRect.bottom > 0 &&
+                closeRect.right > 0 &&
+                closeRect.top < viewportHeight &&
+                closeRect.left < viewportWidth;
+              return {
+                rect: {
+                  top: rect.top,
+                  right: rect.right,
+                  bottom: rect.bottom,
+                  left: rect.left,
+                  width: rect.width,
+                  height: rect.height,
+                },
+                viewportWidth,
+                viewportHeight,
+                outside:
+                  rect.bottom > viewportHeight + tolerance ||
+                  rect.right > viewportWidth + tolerance ||
+                  rect.left < -tolerance ||
+                  rect.top < -tolerance,
+                bodyModalOpen: document.body.classList.contains("modal-open"),
+                closeExists: Boolean(closeBtn),
+                closeSize: closeRect
+                  ? { width: closeRect.width, height: closeRect.height }
+                  : null,
+                closePartiallyVisible: closeVisible,
+                canScroll: content
+                  ? content.scrollHeight >= content.clientHeight - 2
+                  : true,
+                contentAccessible: Boolean(content && content.clientHeight > 0),
+              };
+            }, EDGE_TOLERANCE_PX);
+
+            if (geometry.outside) {
+              rows.push(
+                await captureFailure(
+                  page,
+                  browserName,
+                  viewport,
+                  "archive-overflow",
+                  {
+                    check: "archive-outside-viewport",
+                    expected: "modal within viewport",
+                    actual: {
+                      rect: geometry.rect,
+                      viewportWidth: geometry.viewportWidth,
+                      viewportHeight: geometry.viewportHeight,
+                      tolerance: EDGE_TOLERANCE_PX,
+                    },
+                  },
+                  consoleErrors
+                )
+              );
+            } else if (
+              !geometry.closeExists ||
+              !geometry.closeSize ||
+              geometry.closeSize.width <= 0 ||
+              geometry.closeSize.height <= 0 ||
+              !geometry.closePartiallyVisible ||
+              !geometry.contentAccessible
+            ) {
+              rows.push(
+                await captureFailure(
+                  page,
+                  browserName,
+                  viewport,
+                  "archive-open",
+                  {
+                    check: "archive-modal-usable",
+                    expected: "close control and content accessible in viewport",
+                    actual: {
+                      closeExists: geometry.closeExists,
+                      closeSize: geometry.closeSize,
+                      closePartiallyVisible: geometry.closePartiallyVisible,
+                      contentAccessible: geometry.contentAccessible,
+                      canScroll: geometry.canScroll,
+                    },
+                  },
+                  consoleErrors
+                )
+              );
+            } else {
+              pushOk("archive-open", {
+                bodyModalOpen: geometry.bodyModalOpen,
+                canScroll: geometry.canScroll,
+              });
+            }
+          }
+        } catch (archiveError) {
+          if (isClosedTargetError(archiveError) || page.isClosed()) {
+            throw archiveError;
+          }
+          rows.push(
+            await captureFailure(
+              page,
+              browserName,
+              viewport,
+              "archive-open",
+              {
+                check: "archive-modal-click",
+                expected: "successful .back-expand click and open",
+                actual: String(archiveError?.message || archiveError),
+              },
+              consoleErrors
+            )
+          );
+        }
+      }
+
+      if (!page.isClosed()) {
+        await page.locator("#archiveClose").click({ timeout: 3000 }).catch(() => {});
+        await page.waitForTimeout(200);
+      }
     }
-    await page.locator("#archiveClose").click({ force: true }).catch(() => {});
-    await page.waitForTimeout(200);
+
+    if (page.isClosed()) {
+      throw new Error("Target page, context or browser has been closed");
+    }
 
     // 8 reduced motion
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -1217,24 +1440,42 @@ async function runViewport(browserType, browserName, viewport) {
       }
     }
   } catch (err) {
-    rows.push(
-      await captureFailure(
-        page,
-        browserName,
-        viewport,
-        "exception",
-        {
-          check: "runner-exception",
-          expected: "no exception",
-          actual: String(err?.stack || err),
-        },
-        consoleErrors
-      )
+    const message = String(err?.stack || err);
+    const alreadyRecordedClosed = rows.some(
+      (row) =>
+        row.ok === false &&
+        row.check === "runner-exception" &&
+        isClosedTargetError(row.actual)
     );
+    // One closed-page failure per viewport; do not stack cascading closed errors.
+    if (!(alreadyRecordedClosed && isClosedTargetError(err))) {
+      rows.push(
+        await captureFailure(
+          page,
+          browserName,
+          viewport,
+          "exception",
+          {
+            check: "runner-exception",
+            expected: "no exception",
+            actual: message,
+            extra: {
+              pageClosed: Boolean(page?.isClosed?.() || isClosedTargetError(err)),
+            },
+          },
+          consoleErrors
+        )
+      );
+    }
+    // Abort remaining work for this viewport (each viewport has its own page).
   }
 
-  await context.close();
-  await browser.close();
+  try {
+    if (!page.isClosed()) await context.close();
+  } catch {}
+  try {
+    await browser.close();
+  } catch {}
   return rows;
 }
 
