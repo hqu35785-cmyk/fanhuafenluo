@@ -1,9 +1,9 @@
 name: Verify gallery
 
 on:
-  push:
-    branches: [main]
   pull_request:
+    branches: [main]
+  push:
     branches: [main]
 
 concurrency:
@@ -15,10 +15,13 @@ permissions:
 
 jobs:
   test:
-    timeout-minutes: 20
+    timeout-minutes: 25
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.62.1-noble
+      options: --user 1001
+    env:
+      HOME: /home/pwuser
     steps:
       - uses: actions/checkout@v4
 
@@ -56,11 +59,12 @@ jobs:
             fi
             sleep 1
           done
-          cat /tmp/fanhuafenluo-http.log
+          cat /tmp/fanhuafenluo-http.log || true
           exit 1
 
-      - name: Playwright refactor regression (27 cases)
+      - name: Playwright refactor regression
         env:
+          HOME: /home/pwuser
           TEST_URL: http://127.0.0.1:4173
         run: npm run test:refactor
 

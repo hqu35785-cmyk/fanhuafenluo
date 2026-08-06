@@ -1,9 +1,9 @@
 name: Cross-browser verification
 
 on:
-  push:
-    branches: [main]
   pull_request:
+    branches: [main]
+  push:
     branches: [main]
   workflow_dispatch:
 
@@ -14,41 +14,42 @@ concurrency:
 permissions:
   contents: read
 
-env:
-  # Match package-lock resolved playwright 1.62.1
-  PLAYWRIGHT_IMAGE: mcr.microsoft.com/playwright:v1.62.1-noble
-
 jobs:
   round1:
-    name: "R1 ${{ matrix.browser }} ${{ matrix.viewport }}"
+    name: r1-${{ matrix.browser }}-${{ matrix.viewport }}
     timeout-minutes: 25
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.62.1-noble
+      options: --user 1001
+    env:
+      HOME: /home/pwuser
     strategy:
       fail-fast: false
       matrix:
         browser: [chromium, firefox, webkit]
         viewport:
-          - 320x568
-          - 360x740
-          - 375x667
-          - 390x844
-          - 412x915
-          - 430x932
-          - 500x900
-          - 600x960
-          - 768x1024
-          - 568x320
-          - 667x375
-          - 740x360
-          - 844x390
-          - 915x412
-          - 932x430
-          - 1024x768
-          - 1280x720
-          - 1366x768
-          - 1920x1080
+          [
+            320x568,
+            360x740,
+            375x667,
+            390x844,
+            412x915,
+            430x932,
+            500x900,
+            600x960,
+            768x1024,
+            568x320,
+            667x375,
+            740x360,
+            844x390,
+            915x412,
+            932x430,
+            1024x768,
+            1280x720,
+            1366x768,
+            1920x1080,
+          ]
     steps:
       - uses: actions/checkout@v4
 
@@ -69,11 +70,12 @@ jobs:
             fi
             sleep 1
           done
-          cat /tmp/fanhuafenluo-http.log
+          cat /tmp/fanhuafenluo-http.log || true
           exit 1
 
       - name: Run single viewport unit
         env:
+          HOME: /home/pwuser
           TEST_URL: http://127.0.0.1:4173/index.html
           TEST_BROWSER: ${{ matrix.browser }}
           TEST_VIEWPORT: ${{ matrix.viewport }}
@@ -92,42 +94,47 @@ jobs:
 
   round1-summary:
     name: Round 1 all passed
-    needs: round1
+    needs: [round1]
     runs-on: ubuntu-latest
     steps:
       - run: echo "Round 1: all passed"
 
   round2:
-    name: "R2 ${{ matrix.browser }} ${{ matrix.viewport }}"
-    needs: round1-summary
+    name: r2-${{ matrix.browser }}-${{ matrix.viewport }}
+    needs: [round1-summary]
     timeout-minutes: 25
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.62.1-noble
+      options: --user 1001
+    env:
+      HOME: /home/pwuser
     strategy:
       fail-fast: false
       matrix:
         browser: [chromium, firefox, webkit]
         viewport:
-          - 320x568
-          - 360x740
-          - 375x667
-          - 390x844
-          - 412x915
-          - 430x932
-          - 500x900
-          - 600x960
-          - 768x1024
-          - 568x320
-          - 667x375
-          - 740x360
-          - 844x390
-          - 915x412
-          - 932x430
-          - 1024x768
-          - 1280x720
-          - 1366x768
-          - 1920x1080
+          [
+            320x568,
+            360x740,
+            375x667,
+            390x844,
+            412x915,
+            430x932,
+            500x900,
+            600x960,
+            768x1024,
+            568x320,
+            667x375,
+            740x360,
+            844x390,
+            915x412,
+            932x430,
+            1024x768,
+            1280x720,
+            1366x768,
+            1920x1080,
+          ]
     steps:
       - uses: actions/checkout@v4
 
@@ -148,11 +155,12 @@ jobs:
             fi
             sleep 1
           done
-          cat /tmp/fanhuafenluo-http.log
+          cat /tmp/fanhuafenluo-http.log || true
           exit 1
 
       - name: Run single viewport unit
         env:
+          HOME: /home/pwuser
           TEST_URL: http://127.0.0.1:4173/index.html
           TEST_BROWSER: ${{ matrix.browser }}
           TEST_VIEWPORT: ${{ matrix.viewport }}
@@ -171,7 +179,7 @@ jobs:
 
   round2-summary:
     name: Round 2 all passed
-    needs: round2
+    needs: [round2]
     runs-on: ubuntu-latest
     steps:
       - run: echo "Round 2: all passed"
