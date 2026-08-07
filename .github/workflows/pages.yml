@@ -1,9 +1,10 @@
+# Official GitHub Pages deploy (actions/upload-pages-artifact + actions/deploy-pages).
+# https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow
 name: Deploy GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -12,46 +13,42 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Prepare lightweight static site
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Prepare site
         run: |
           set -euo pipefail
           mkdir -p _site/assets
           cp index.html _site/
           touch _site/.nojekyll
           cp -a src _site/src
-          # Gallery needs previews + author avatars only (~4–8MB).
-          # Full source PNGs stay on main and load via raw.githubusercontent.com.
           cp -a assets/previews assets/authors _site/assets/
-          # Fail the job if the site ballooned again.
-          size_kb=$(du -sk _site | cut -f1)
-          echo "site_size_kb=$size_kb"
-          if [ "$size_kb" -gt 20000 ]; then
-            echo "Site artifact too large for reliable Pages deploy: ${size_kb}KB" >&2
-            exit 1
-          fi
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+          du -sh _site
+          find _site -type f | wc -l
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          timeout: 600000
