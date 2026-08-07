@@ -47,14 +47,10 @@ function cardHTML(work,index){
   const hint=index===0
     ? `<p class="first-hint"><span class="hint-copy">点击卡片查看设定</span></p>`
     : "";
-  const privacyLabel=imageSensitive
-    ? (work.sensitiveLabel || "敏感卡面")
-    : (work.sensitiveSettingLabel || "敏感设定");
   const tagList=(work.tags || []).slice(0,1);
-  const tags=tagList.map(tag=>`<span class="back-tag">${safe(tag)}</span>`).join("");
   const badgeTag=tagList[0] || cardLabel;
   const cornerBadges=`<span class="card-code"><span class="card-code-text">${safe(badgeTag)}</span></span>`;
-  // Defer long personality/setting copy until first flip/open — keeps 92-card DOM lean.
+  // Shell-only back face: long copy + toolbar materialize on first flip to cut 64-card DOM cost.
   return `
   <div class="card-item${index===0 ? " has-hint" : ""}">
     <article class="card${imageSensitive ? " is-sensitive" : ""}${settingSensitive ? " is-setting-sensitive" : ""}" data-index="${index}">
@@ -71,30 +67,7 @@ function cardHTML(work,index){
             <span class="card-meta"><span>${safe(work.collectionLabel || "ORIGINAL CHARACTER")}</span><span>点按翻转</span></span>
           </span>
         </button>
-        <section class="face back" id="card-back-${index}" aria-label="${safe(work.name)}角色简介" aria-hidden="true" inert data-back-pending="1">
-          <div class="back-scroll">
-            <div class="back-toolbar">
-              <span class="back-file">${safe(cardLabel)}</span>
-              ${imageSensitive || settingSensitive ? `<span class="back-privacy">${safe(privacyLabel)}</span>` : ""}
-            </div>
-            <h2>${safe(work.name)}</h2>
-            <p class="alias">${safe(work.alias || "ORIGINAL")}</p>
-            <p class="back-role" data-field="role"></p>
-            <div class="back-tags">${tags}</div>
-            <div class="setting">
-              <div><b>性格简介</b><p data-field="personality"></p></div>
-              <div class="back-setting-content" id="card-setting-${index}" tabindex="-1"${settingSensitive ? " hidden" : ""}><b>设定 · 剧情</b><p data-field="setting"></p></div>
-            </div>
-            <div class="back-setting-privacy"${settingSensitive ? "" : " hidden"} aria-hidden="${settingSensitive ? "false" : "true"}">
-              <span class="back-setting-mark" aria-hidden="true"></span>
-              <div class="back-setting-copy"><b>卡面解锁后显示设定</b><p>解锁卡面后即可查看完整角色设定。</p></div>
-            </div>
-          </div>
-          <div class="back-actions">
-            <button class="back-return" type="button" aria-label="返回${safe(work.name)}卡面">←</button>
-            <button class="back-expand" type="button" aria-haspopup="dialog" aria-controls="archiveModal"><span>展开完整档案</span><span aria-hidden="true">↗</span></button>
-          </div>
-        </section>
+        <section class="face back" id="card-back-${index}" aria-label="${safe(work.name)}角色简介" aria-hidden="true" inert data-back-pending="1"></section>
       </div>
       <button class="privacy-unlock" type="button" data-index="${index}" data-mode="${imageSensitive ? "unlock" : "save"}" aria-label="${imageSensitive ? `显示${safe(work.name)}的敏感图片，仅本次页面有效` : `保存${safe(work.name)}角色卡 PNG`}">${imageSensitive ? "解锁卡面" : "保存角色卡 PNG"}</button>
     </article>
@@ -102,19 +75,76 @@ function cardHTML(work,index){
   </div>`;
 }
 
+function cardBackInnerHTML(work,index){
+  const imageSensitive=Boolean(work.sensitive);
+  const settingSensitive=Boolean(work.sensitiveSetting);
+  const cardLabel=work.cardLabel || work.tags?.[0] || "角色卡";
+  const privacyLabel=imageSensitive
+    ? (work.sensitiveLabel || "敏感卡面")
+    : (work.sensitiveSettingLabel || "敏感设定");
+  const tagList=(work.tags || []).slice(0,1);
+  const tags=tagList.map(tag=>`<span class="back-tag">${safe(tag)}</span>`).join("");
+  const settingLocked=isSettingLocked(index);
+  return `
+          <div class="back-scroll">
+            <div class="back-toolbar">
+              <span class="back-file">${safe(cardLabel)}</span>
+              ${imageSensitive || settingSensitive ? `<span class="back-privacy">${safe(privacyLabel)}</span>` : ""}
+            </div>
+            <h2>${safe(work.name)}</h2>
+            <p class="alias">${safe(work.alias || "ORIGINAL")}</p>
+            <p class="back-role" data-field="role">${safe(work.role || "原创角色")}</p>
+            <div class="back-tags">${tags}</div>
+            <div class="setting">
+              <div><b>性格简介</b><p data-field="personality">${safe(work.personality || "暂无性格介绍。")}</p></div>
+              <div class="back-setting-content" id="card-setting-${index}" tabindex="-1"${settingLocked ? " hidden" : ""}><b>设定 · 剧情</b><p data-field="setting">${settingLocked ? "" : safe(work.setting || "暂无背景设定。")}</p></div>
+            </div>
+            <div class="back-setting-privacy"${settingLocked ? "" : " hidden"} aria-hidden="${settingLocked ? "false" : "true"}"${settingLocked ? "" : " inert"}>
+              <span class="back-setting-mark" aria-hidden="true"></span>
+              <div class="back-setting-copy"><b>卡面解锁后显示设定</b><p>解锁卡面后即可查看完整角色设定。</p></div>
+            </div>
+          </div>
+          <div class="back-actions">
+            <button class="back-return" type="button" aria-label="返回${safe(work.name)}卡面">←</button>
+            <button class="back-expand" type="button" aria-haspopup="dialog" aria-controls="archiveModal"><span>展开完整档案</span><span aria-hidden="true">↗</span></button>
+          </div>`;
+}
+
+const cardNodeCache=new Map();
+let cardPartsCache=new Map();
+
+function clearCardCaches(){
+  cardNodeCache.clear();
+  cardPartsCache.clear();
+}
+
+function getCardNode(index){
+  const cached=cardNodeCache.get(index);
+  if(cached && cached.isConnected) return cached;
+  const card=gallery.querySelector(`.card[data-index="${index}"]`);
+  if(card) cardNodeCache.set(index,card);
+  return card;
+}
+
+function indexCardNodes(){
+  clearCardCaches();
+  gallery.querySelectorAll(".card[data-index]").forEach(card=>{
+    const index=Number(card.dataset.index);
+    if(Number.isInteger(index)) cardNodeCache.set(index,card);
+  });
+}
+
 function ensureCardBackContent(index){
   const work=works[index];
-  const card=gallery.querySelector(`.card[data-index="${index}"]`);
+  const card=getCardNode(index);
   if(!work || !card) return;
   const back=card.querySelector(".back");
   if(!back || back.dataset.backPending!=="1") return;
-  const role=back.querySelector('[data-field="role"]');
-  const personality=back.querySelector('[data-field="personality"]');
-  const setting=back.querySelector('[data-field="setting"]');
-  if(role) role.textContent=work.role || "原创角色";
-  if(personality) personality.textContent=work.personality || "暂无性格介绍。";
-  if(setting && !isSettingLocked(index)) setting.textContent=work.setting || "暂无背景设定。";
+  back.innerHTML=cardBackInnerHTML(work,index);
   delete back.dataset.backPending;
+  cardPartsCache.delete(index);
+  // Force layout so newly injected expand/return controls are hit-testable (Firefox).
+  void back.offsetWidth;
 }
 
 const layoutRoot=document.documentElement;
@@ -212,11 +242,13 @@ function renderActiveAuthor({announce=false,scrollToStart=false}={}){
     gallery.classList.add("is-empty");
     gallery.innerHTML=authorEmptyHTML(activeAuthor);
     placeholderNodes=[];
+    clearCardCaches();
   }else{
     gallery.classList.remove("is-empty");
     const emptyCount=0;
     gallery.innerHTML=works.map(cardHTML).join("")+buildPlaceholders(emptyCount);
     placeholderNodes=[...gallery.querySelectorAll(".placeholder-item")];
+    indexCardNodes();
   }
 
   syncAuthorChrome();
@@ -224,8 +256,12 @@ function renderActiveAuthor({announce=false,scrollToStart=false}={}){
   if(typeof bindCardInteractions==="function") bindCardInteractions();
   if(typeof observeCardPreviews==="function") observeCardPreviews();
   if(typeof scheduleGalleryFit==="function") scheduleGalleryFit();
-  if(typeof fitCardFaceTitles==="function") fitCardFaceTitles({visibleOnly:true});
-  if(typeof observeTitleFits==="function") observeTitleFits();
+  // Title fit deferred to rAF so first paint is not blocked by measuring 64 titles.
+  requestAnimationFrame(()=>{
+    if(version!==authorRenderVersion || authorId!==activeAuthor.id) return;
+    if(typeof fitCardFaceTitles==="function") fitCardFaceTitles({visibleOnly:true});
+    if(typeof observeTitleFits==="function") observeTitleFits();
+  });
 
   if(scrollToStart){
     try{
@@ -466,25 +502,41 @@ let webShareWatchdog=0;
 
 /*
  * Full card PNGs are multi-hundred MB in aggregate and cannot ship with Pages
- * reliably. Prefer local paths when present; fall back to the main-branch raw
- * CDN so save/download still works after a slim Pages deploy.
+ * reliably. Resolve on demand with a short fallback chain (local → jsDelivr → raw).
  */
 const SOURCE_PNG_RE=/^(?:\.\/)?assets\/(?:tavo|shark|wa|source)\//i;
+const REPO_MAIN_REF="hqu35785-cmyk/fanhuafenluo@main";
 const RAW_MAIN_BASE="https://raw.githubusercontent.com/hqu35785-cmyk/fanhuafenluo/main/";
+const JSDELIVR_MAIN_BASE=`https://cdn.jsdelivr.net/gh/${REPO_MAIN_REF}/`;
+
+function normalizeAssetPath(path){
+  return String(path||"").replace(/^\.\//,"").replace(/^\//,"");
+}
 
 function absoluteAssetUrl(path){
   const raw=String(path||"");
   if(/^https?:\/\//i.test(raw) || raw.startsWith("data:")) return raw;
+  const rel=normalizeAssetPath(raw);
   try{
-    const local=new URL(raw,window.location.href).href;
-    if(SOURCE_PNG_RE.test(raw.replace(/^\//,""))){
-      // Always load heavy source PNGs from main so Pages can stay lightweight.
-      return RAW_MAIN_BASE+raw.replace(/^\.\//,"").replace(/^\//,"");
+    if(SOURCE_PNG_RE.test(rel)){
+      // Prefer CDN first for full PNGs (often faster + cached vs raw.githubusercontent).
+      return JSDELIVR_MAIN_BASE+rel;
     }
-    return local;
+    return new URL(raw,window.location.href).href;
   }catch{
     return raw;
   }
+}
+
+function sourcePngCandidateUrls(path){
+  const rel=normalizeAssetPath(path);
+  const urls=[];
+  try{
+    urls.push(new URL(rel,window.location.href).href);
+  }catch(_){}
+  urls.push(JSDELIVR_MAIN_BASE+rel);
+  urls.push(RAW_MAIN_BASE+rel);
+  return [...new Set(urls)];
 }
 
 function setSaveSheetStatus(text){
@@ -527,24 +579,17 @@ function rememberShareFile(url,file){
   }
 }
 
-async function prepareOriginalPngFile(work,signal){
-  const url=absoluteAssetUrl(work.image);
-  const cachedFile=sharePngFileCache.get(url);
-  if(cachedFile){
-    rememberShareFile(url,cachedFile);
-    return cachedFile;
-  }
-
+async function fetchValidatedPngBlob(url,signal){
   const response=await fetch(url,{
-    credentials:"same-origin",
-    signal
+    credentials:"omit",
+    mode:"cors",
+    signal,
+    cache:"force-cache"
   });
   if(!response.ok) throw new Error(`PNG request failed: ${response.status}`);
-
   const blob=await response.blob();
-  if(signal.aborted) throw new DOMException("Aborted","AbortError");
+  if(signal?.aborted) throw new DOMException("Aborted","AbortError");
   if(!blob.size) throw new Error("PNG response is empty");
-
   /*
    * 只检查 PNG 文件签名。
    * 不重新编码、不修改完整文件。
@@ -553,13 +598,35 @@ async function prepareOriginalPngFile(work,signal){
   const signature=[137,80,78,71,13,10,26,10];
   const validPng=header.length===signature.length && signature.every((byte,index)=>header[index]===byte);
   if(!validPng) throw new Error("Downloaded asset is not a valid PNG");
+  return blob;
+}
 
-  const file=new File([blob],safePngFilename(work.name),{
-    type:"image/png",
-    lastModified:Date.now()
-  });
-  rememberShareFile(url,file);
-  return file;
+async function prepareOriginalPngFile(work,signal){
+  const candidates=sourcePngCandidateUrls(work.image);
+  for(const url of candidates){
+    const cachedFile=sharePngFileCache.get(url);
+    if(cachedFile){
+      rememberShareFile(url,cachedFile);
+      return cachedFile;
+    }
+  }
+
+  let lastError=null;
+  for(const url of candidates){
+    try{
+      const blob=await fetchValidatedPngBlob(url,signal);
+      const file=new File([blob],safePngFilename(work.name),{
+        type:"image/png",
+        lastModified:Date.now()
+      });
+      rememberShareFile(url,file);
+      return file;
+    }catch(error){
+      if(error?.name==="AbortError") throw error;
+      lastError=error;
+    }
+  }
+  throw lastError || new Error("PNG unavailable");
 }
 
 async function prepareSaveToPhotos(work){
@@ -945,9 +1012,11 @@ function previewForWork(work){
 }
 
 function getCardPreviewParts(index){
-  const card=gallery.querySelector(`.card[data-index="${index}"]`);
+  const cached=cardPartsCache.get(index);
+  if(cached?.card?.isConnected) return cached;
+  const card=getCardNode(index);
   if(!card) return null;
-  return {
+  const parts={
     card,
     front:card.querySelector(".front"),
     image:card.querySelector(".front img"),
@@ -955,6 +1024,8 @@ function getCardPreviewParts(index){
     unlock:card.querySelector(".privacy-unlock"),
     status:card.querySelector(".preview-status")
   };
+  cardPartsCache.set(index,parts);
+  return parts;
 }
 
 function isPreviewNearViewport(element){
@@ -1161,17 +1232,21 @@ function syncCardPrivacy(index,{queueIfNear=true}={}){
 
 function syncCardSettingPrivacy(index){
   const work=works[index];
-  const card=gallery.querySelector(`.card[data-index="${index}"]`);
+  const card=getCardNode(index);
   if(!work || !card) return;
+  const back=card.querySelector(".back");
+  // Back shell not materialized yet — state will apply on first flip.
+  if(!back || back.dataset.backPending==="1"){
+    card.classList.toggle("is-setting-unlocked",Boolean(work.sensitiveSetting) && !isSettingLocked(index));
+    return;
+  }
   const content=card.querySelector(".back-setting-content");
   const settingText=content?.querySelector('[data-field="setting"]') || content?.querySelector("p");
   const gate=card.querySelector(".back-setting-privacy");
   const locked=isSettingLocked(index);
-  const backReady=card.querySelector(".back")?.dataset.backPending!=="1";
 
   card.classList.toggle("is-setting-unlocked",Boolean(work.sensitiveSetting) && !locked);
-  // Only write setting text after ensureCardBackContent has materialized the back face.
-  if(settingText && backReady){
+  if(settingText){
     settingText.textContent=locked ? "" : (work.setting || "暂无背景设定。");
   }
   if(content){
@@ -1369,6 +1444,8 @@ function fullCardAccessAllowed(index){
 function openArchive(index,opener){
   const work=works[index];
   if(!work) return;
+  // Re-open of the same archive while already open is a no-op (rapid double click).
+  if(archiveModal.open && activeIndex===index) return;
   activeWork=work;
   activeIndex=index;
   modalOpener=opener;
@@ -1466,7 +1543,12 @@ downloadCard.addEventListener("click",()=>{
   downloadCharacterCard(activeWork,activeIndex);
 });
 
+let flipGuardUntil=0;
 function setCardFlipped(card,flipped){
+  const now=performance.now();
+  // Ignore rapid double-taps that would bounce face mid-animation.
+  if(now<flipGuardUntil && card.classList.contains("flipped")===flipped) return;
+  flipGuardUntil=now+280;
   const index=Number(card.dataset.index);
   if(flipped) ensureCardBackContent(index);
   const flipButton=card.querySelector(".card-flip");
@@ -1491,12 +1573,59 @@ function setCardFlipped(card,flipped){
 }
 
 let cardDelegationBound=false;
-function bindCardInteractions(){
-  // Sync privacy state for all cards without per-card click listeners.
-  for(let index=0;index<works.length;index++){
-    syncCardPrivacy(index);
+let privacySyncToken=0;
+
+function syncCardPrivacyRange(start,end,{queueIfNear=true}={}){
+  const last=Math.min(end,works.length);
+  for(let index=start;index<last;index++){
+    syncCardPrivacy(index,{queueIfNear});
     syncCardSettingPrivacy(index);
   }
+}
+
+function scheduleCardPrivacySync(){
+  const token=++privacySyncToken;
+  const total=works.length;
+  if(!total) return;
+  // Immediate pass for near-viewport faces only — avoids 64× layout thrash on author switch.
+  const near=[];
+  for(let index=0;index<total;index++){
+    const parts=getCardPreviewParts(index);
+    if(parts?.front && isPreviewNearViewport(parts.front)) near.push(index);
+  }
+  near.forEach(index=>{
+    syncCardPrivacy(index,{queueIfNear:true});
+    syncCardSettingPrivacy(index);
+  });
+  // Remaining cards in idle chunks so first paint/scroll stay responsive.
+  let cursor=0;
+  const step=12;
+  const pump=()=>{
+    if(token!==privacySyncToken) return;
+    const end=Math.min(cursor+step,total);
+    for(let index=cursor;index<end;index++){
+      if(near.includes(index)) continue;
+      syncCardPrivacy(index,{queueIfNear:false});
+      syncCardSettingPrivacy(index);
+    }
+    cursor=end;
+    if(cursor<total){
+      if(typeof requestIdleCallback==="function"){
+        requestIdleCallback(pump,{timeout:180});
+      }else{
+        setTimeout(pump,0);
+      }
+    }
+  };
+  if(typeof requestIdleCallback==="function"){
+    requestIdleCallback(pump,{timeout:120});
+  }else{
+    setTimeout(pump,0);
+  }
+}
+
+function bindCardInteractions(){
+  scheduleCardPrivacySync();
 
   if(cardDelegationBound) return;
   cardDelegationBound=true;
@@ -1528,9 +1657,12 @@ function bindCardInteractions(){
 
     const expandButton=hit.closest(".back-expand");
     if(expandButton && gallery.contains(expandButton)){
+      e.preventDefault();
       const card=expandButton.closest(".card");
       const index=Number(card?.dataset.index);
       if(!Number.isInteger(index)) return;
+      // Ensure face is flipped so controls stay interactive if expand was forced early.
+      if(card && !card.classList.contains("flipped")) setCardFlipped(card,true);
       ensureCardBackContent(index);
       openArchive(index,expandButton);
       return;

@@ -360,13 +360,14 @@ main{flex:1 0 auto;min-width:0;padding:20px 0 12px}
   row-gap:clamp(18px,2vh,26px);
   row-gap:clamp(18px,2dvh,26px);
   contain:layout style;
+  overflow-anchor:none;
 }
 /* content-visibility skips layout/paint for off-screen cards in long galleries. */
 .card-item{
   min-width:0;
   min-height:0;
   content-visibility:auto;
-  contain-intrinsic-size:auto 300px;
+  contain-intrinsic-size:auto 260px;
   contain:layout style;
 }
 .placeholder-item[hidden]{display:none!important}
@@ -613,6 +614,16 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.075);
   transition:border-color .28s ease,box-shadow .35s ease;
   -webkit-font-smoothing:subpixel-antialiased;
+}
+@media (max-width:620px),(pointer:coarse){
+  .face{
+    /* Lighter shadows on phones reduce overdraw while scrolling long galleries. */
+    box-shadow:0 10px 28px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  .front img{
+    /* Avoid sub-pixel scale blur cost on low-end GPUs. */
+    transform:none;
+  }
 }
 .front img{
   width:100%;
