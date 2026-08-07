@@ -134,12 +134,45 @@ function indexCardNodes(){
   });
 }
 
+function workDetailsReady(work){
+  return Boolean(work && (work._detailsReady || (work.personality!=null && work.setting!=null && work.opening!=null)));
+}
+
+async function ensureWorkDetailsForActive(){
+  if(typeof ensureWorkDetails!=="function") return;
+  await ensureWorkDetails(activeAuthor);
+  works=activeAuthor.works || works;
+}
+
 function ensureCardBackContent(index){
   const work=works[index];
   const card=getCardNode(index);
   if(!work || !card) return;
   const back=card.querySelector(".back");
   if(!back || back.dataset.backPending!=="1") return;
+  // If details still lazy, inject shell copy now and refresh once details arrive.
+  if(!workDetailsReady(work)){
+    ensureWorkDetailsForActive().then(()=>{
+      if(activeAuthor.works) works=activeAuthor.works;
+      const w=works[index];
+      const c=getCardNode(index);
+      const b=c?.querySelector(".back");
+      if(!w || !b) return;
+      if(b.dataset.backPending==="1"){
+        b.innerHTML=cardBackInnerHTML(w,index);
+        delete b.dataset.backPending;
+      }else{
+        // Already opened with placeholders — rewrite text fields.
+        const role=b.querySelector('[data-field="role"]');
+        const personality=b.querySelector('[data-field="personality"]');
+        const setting=b.querySelector('[data-field="setting"]');
+        if(role) role.textContent=w.role || "原创角色";
+        if(personality) personality.textContent=w.personality || "暂无性格介绍。";
+        if(setting && !isSettingLocked(index)) setting.textContent=w.setting || "暂无背景设定。";
+      }
+      void b.offsetWidth;
+    }).catch(()=>{});
+  }
   back.innerHTML=cardBackInnerHTML(work,index);
   delete back.dataset.backPending;
   cardPartsCache.delete(index);
@@ -221,10 +254,71 @@ function useAuthorRuntimeRefs(){
   queuedPreviewIndexes=rt.queuedPreviewIndexes;
 }
 
+/** Per-author mounted gallery DOM — switching reuses nodes instead of re-parsing HTML. */
+const authorDomCache=new Map();
+let mountedAuthorId=null;
+
+function stashMountedAuthorDom(){
+  if(!mountedAuthorId) return;
+  const children=[];
+  while(gallery.firstChild) children.push(gallery.removeChild(gallery.firstChild));
+  authorDomCache.set(mountedAuthorId,{
+    children,
+    placeholders:placeholderNodes,
+    cardNodes:new Map(cardNodeCache),
+    cardParts:new Map(cardPartsCache),
+    scrollTop:gallery.scrollTop||0,
+    empty:gallery.classList.contains("is-empty")
+  });
+  clearCardCaches();
+  placeholderNodes=[];
+  mountedAuthorId=null;
+}
+
+function restoreAuthorDom(authorId){
+  const cached=authorDomCache.get(authorId);
+  if(!cached) return false;
+  gallery.textContent="";
+  cached.children.forEach(node=>gallery.appendChild(node));
+  placeholderNodes=cached.placeholders || [];
+  cardNodeCache.clear();
+  cardPartsCache.clear();
+  cached.cardNodes.forEach((node,index)=>cardNodeCache.set(index,node));
+  cached.cardParts.forEach((parts,index)=>cardPartsCache.set(index,parts));
+  gallery.classList.toggle("is-empty",Boolean(cached.empty));
+  try{gallery.scrollTop=cached.scrollTop||0;}catch(_){}
+  mountedAuthorId=authorId;
+  return true;
+}
+
+function buildAuthorGalleryDom(author){
+  const list=author.works || [];
+  if(!list.length){
+    gallery.classList.add("is-empty");
+    gallery.innerHTML=authorEmptyHTML(author);
+    placeholderNodes=[];
+    clearCardCaches();
+  }else{
+    gallery.classList.remove("is-empty");
+    gallery.innerHTML=list.map(cardHTML).join("");
+    placeholderNodes=[];
+    indexCardNodes();
+  }
+  mountedAuthorId=author.id;
+}
+
+function bumpDecodeGeneration(authorId){
+  const rt=getAuthorRuntime(authorId);
+  rt.decodeGeneration=(rt.decodeGeneration||0)+1;
+  rt.previewLoadQueue.length=0;
+  rt.queuedPreviewIndexes.clear();
+  rt.activePreviewLoads=0;
+}
+
 function renderActiveAuthor({announce=false,scrollToStart=false}={}){
   const version=++authorRenderVersion;
   const authorId=activeAuthor.id;
-  works=activeAuthor.works;
+  works=activeAuthor.works || [];
   useAuthorRuntimeRefs();
 
   closeTransientUI();
@@ -238,25 +332,25 @@ function renderActiveAuthor({announce=false,scrollToStart=false}={}){
     gallery.classList.remove("is-author-switching");
   };
 
-  if(!works.length){
-    gallery.classList.add("is-empty");
-    gallery.innerHTML=authorEmptyHTML(activeAuthor);
-    placeholderNodes=[];
-    clearCardCaches();
-  }else{
-    gallery.classList.remove("is-empty");
-    const emptyCount=0;
-    gallery.innerHTML=works.map(cardHTML).join("")+buildPlaceholders(emptyCount);
-    placeholderNodes=[...gallery.querySelectorAll(".placeholder-item")];
-    indexCardNodes();
+  const previousId=mountedAuthorId;
+  if(previousId && previousId!==authorId){
+    bumpDecodeGeneration(previousId);
+    stashMountedAuthorDom();
   }
+
+  const restored=previousId===authorId ? true : restoreAuthorDom(authorId);
+  if(!restored){
+    buildAuthorGalleryDom(activeAuthor);
+  }
+
+  works=activeAuthor.works || [];
+  useAuthorRuntimeRefs();
 
   syncAuthorChrome();
   if(typeof syncUnlockAll==="function") syncUnlockAll();
   if(typeof bindCardInteractions==="function") bindCardInteractions();
   if(typeof observeCardPreviews==="function") observeCardPreviews();
   if(typeof scheduleGalleryFit==="function") scheduleGalleryFit();
-  // Title fit deferred to rAF so first paint is not blocked by measuring 64 titles.
   requestAnimationFrame(()=>{
     if(version!==authorRenderVersion || authorId!==activeAuthor.id) return;
     if(typeof fitCardFaceTitles==="function") fitCardFaceTitles({visibleOnly:true});
@@ -285,11 +379,33 @@ function renderActiveAuthor({announce=false,scrollToStart=false}={}){
   if(announce) tip(`已切换至「${activeAuthor.name}」分区`);
 }
 
-function switchToNextAuthor(){
-  activeAuthorIndex=(activeAuthorIndex+1)%authors.length;
-  activeAuthor=authors[activeAuthorIndex];
-  works=activeAuthor.works;
-  renderActiveAuthor({announce:true,scrollToStart:true});
+let authorSwitchBusy=false;
+async function switchToNextAuthor(){
+  if(authorSwitchBusy) return;
+  authorSwitchBusy=true;
+  try{
+    const nextIndex=(activeAuthorIndex+1)%authors.length;
+    const next=authors[nextIndex];
+    // Ensure catalog for next author before swapping DOM (lazy-loaded partitions).
+    if(typeof ensureAuthorCatalog==="function"){
+      try{
+        await ensureAuthorCatalog(next);
+      }catch(error){
+        tip(`「${next.name}」分区加载失败，请稍后重试`);
+        return;
+      }
+    }
+    activeAuthorIndex=nextIndex;
+    activeAuthor=next;
+    works=activeAuthor.works || [];
+    renderActiveAuthor({announce:true,scrollToStart:true});
+    // Prefetch details in background after switch.
+    if(typeof ensureWorkDetails==="function"){
+      ensureWorkDetails(activeAuthor).catch(()=>{});
+    }
+  }finally{
+    authorSwitchBusy=false;
+  }
 }
 
 let unlockedWorks=getActiveRuntime().unlockedWorks;
@@ -579,30 +695,74 @@ function rememberShareFile(url,file){
   }
 }
 
+const PNG_FETCH_TIMEOUT_MS=12000;
+const pngFailCache=new Map(); // url -> expiry timestamp
+const pngInflight=new Map(); // url -> Promise<Blob>
+const PNG_FAIL_TTL_MS=60000;
+
+function pngUrlRecentlyFailed(url){
+  const exp=pngFailCache.get(url);
+  if(!exp) return false;
+  if(Date.now()>exp){
+    pngFailCache.delete(url);
+    return false;
+  }
+  return true;
+}
+
+function markPngUrlFailed(url){
+  pngFailCache.set(url,Date.now()+PNG_FAIL_TTL_MS);
+}
+
 async function fetchValidatedPngBlob(url,signal){
-  const response=await fetch(url,{
-    credentials:"omit",
-    mode:"cors",
-    signal,
-    cache:"force-cache"
-  });
-  if(!response.ok) throw new Error(`PNG request failed: ${response.status}`);
-  const blob=await response.blob();
-  if(signal?.aborted) throw new DOMException("Aborted","AbortError");
-  if(!blob.size) throw new Error("PNG response is empty");
-  /*
-   * 只检查 PNG 文件签名。
-   * 不重新编码、不修改完整文件。
-   */
-  const header=new Uint8Array(await blob.slice(0,8).arrayBuffer());
-  const signature=[137,80,78,71,13,10,26,10];
-  const validPng=header.length===signature.length && signature.every((byte,index)=>header[index]===byte);
-  if(!validPng) throw new Error("Downloaded asset is not a valid PNG");
-  return blob;
+  if(pngUrlRecentlyFailed(url)) throw new Error("PNG recently failed");
+  if(pngInflight.has(url)){
+    return pngInflight.get(url);
+  }
+  const controller=new AbortController();
+  const onAbort=()=>controller.abort();
+  if(signal){
+    if(signal.aborted) throw new DOMException("Aborted","AbortError");
+    signal.addEventListener("abort",onAbort,{once:true});
+  }
+  const timer=setTimeout(()=>controller.abort(),PNG_FETCH_TIMEOUT_MS);
+  const task=(async()=>{
+    try{
+      const response=await fetch(url,{
+        credentials:"omit",
+        mode:"cors",
+        signal:controller.signal,
+        cache:"force-cache"
+      });
+      if(!response.ok) throw new Error(`PNG request failed: ${response.status}`);
+      const blob=await response.blob();
+      if(signal?.aborted) throw new DOMException("Aborted","AbortError");
+      if(!blob.size) throw new Error("PNG response is empty");
+      /*
+       * 只检查 PNG 文件签名。
+       * 不重新编码、不修改完整文件。
+       */
+      const header=new Uint8Array(await blob.slice(0,8).arrayBuffer());
+      const signature=[137,80,78,71,13,10,26,10];
+      const validPng=header.length===signature.length && signature.every((byte,index)=>header[index]===byte);
+      if(!validPng) throw new Error("Downloaded asset is not a valid PNG");
+      pngFailCache.delete(url);
+      return blob;
+    }catch(error){
+      if(error?.name!=="AbortError") markPngUrlFailed(url);
+      throw error;
+    }finally{
+      clearTimeout(timer);
+      if(signal) signal.removeEventListener("abort",onAbort);
+      pngInflight.delete(url);
+    }
+  })();
+  pngInflight.set(url,task);
+  return task;
 }
 
 async function prepareOriginalPngFile(work,signal){
-  const candidates=sourcePngCandidateUrls(work.image);
+  const candidates=sourcePngCandidateUrls(work.image).filter(url=>!pngUrlRecentlyFailed(url));
   for(const url of candidates){
     const cachedFile=sharePngFileCache.get(url);
     if(cachedFile){
@@ -956,9 +1116,30 @@ const archiveSetting=document.getElementById("archiveSetting");
 const archiveSettingPrivacy=document.getElementById("archiveSettingPrivacy");
 const downloadCard=document.getElementById("downloadCard");
 // Cap concurrent decodes so mid-range phones stay responsive while scrolling.
+// Cap concurrent image decode/network so multi-unlock stays responsive.
 const PREVIEW_LOAD_CONCURRENCY=2;
+const PREVIEW_DECODE_CONCURRENCY=1;
 const PREVIEW_MAX_ATTEMPTS=3;
-const PREVIEW_LOAD_TIMEOUT=30000;
+const PREVIEW_LOAD_TIMEOUT=20000;
+let activePreviewDecodes=0;
+const previewDecodeWaiters=[];
+
+function acquirePreviewDecodeSlot(){
+  if(activePreviewDecodes<PREVIEW_DECODE_CONCURRENCY){
+    activePreviewDecodes++;
+    return Promise.resolve();
+  }
+  return new Promise(resolve=>previewDecodeWaiters.push(resolve));
+}
+
+function releasePreviewDecodeSlot(){
+  activePreviewDecodes=Math.max(0,activePreviewDecodes-1);
+  const next=previewDecodeWaiters.shift();
+  if(next){
+    activePreviewDecodes++;
+    next();
+  }
+}
 // runtime sets rebound via useAuthorRuntimeRefs(); activePreviewLoads lives on runtime
 let activeWork=null;
 let activeIndex=null;
@@ -1082,12 +1263,20 @@ function previewRetryDelay(attempt){
   return new Promise(resolve=>setTimeout(resolve,400*(2**attempt)));
 }
 
-async function loadPreviewWithRetry(index){
+async function loadPreviewWithRetry(index,{generation,authorId}={}){
   const work=works[index];
   const parts=getCardPreviewParts(index);
   if(!work || !parts) return false;
   const source=previewForWork(work);
   if(!source) return false;
+  const stillCurrent=()=>{
+    if(authorId && authorId!==activeAuthor.id) return false;
+    if(generation!=null){
+      const rt=getAuthorRuntime(authorId || activeAuthor.id);
+      if(rt.decodeGeneration!==generation) return false;
+    }
+    return true;
+  };
   // Already decoded and correct — skip network/decode churn on re-queue.
   if(
     parts.image.complete &&
@@ -1097,18 +1286,29 @@ async function loadPreviewWithRetry(index){
     return true;
   }
   for(let attempt=0;attempt<PREVIEW_MAX_ATTEMPTS;attempt++){
+    if(!stillCurrent()) return false;
     try{
       // Avoid blanking a good paint when retrying the same URL.
       if(attempt>0 || !parts.image.getAttribute("src")){
         parts.image.removeAttribute("src");
       }
       await waitForImageElement(parts.image,previewAttemptUrl(source,attempt));
-      // Fire-and-forget decode so the queue can start the next image sooner.
+      if(!stillCurrent()) return false;
+      // Serialize decode work to avoid multi-image main-thread stalls after unlock-all.
       if(typeof parts.image.decode==="function"){
-        parts.image.decode().catch(()=>{});
+        await acquirePreviewDecodeSlot();
+        try{
+          if(!stillCurrent()) return false;
+          await parts.image.decode();
+        }catch(_){
+          /* decode can reject on detached nodes; naturalWidth check below is source of truth */
+        }finally{
+          releasePreviewDecodeSlot();
+        }
       }
       return parts.image.naturalWidth>0;
     }catch(error){
+      if(!stillCurrent()) return false;
       parts.image.removeAttribute("src");
       if(error?.name==="TimeoutError") break;
       if(attempt+1<PREVIEW_MAX_ATTEMPTS) await previewRetryDelay(attempt);
@@ -1144,17 +1344,21 @@ function queuePreviewLoad(index,{priority=false,force=false}={}){
 }
 
 function pumpPreviewLoads(){
-  while(getActiveRuntime().activePreviewLoads<PREVIEW_LOAD_CONCURRENCY && previewLoadQueue.length){
+  const rtActive=getActiveRuntime();
+  while(rtActive.activePreviewLoads<PREVIEW_LOAD_CONCURRENCY && previewLoadQueue.length){
     const index=previewLoadQueue.shift();
     queuedPreviewIndexes.delete(index);
     if(previewLoadStates.get(index)!=="queued" || isWorkLocked(index)) continue;
-    getActiveRuntime().activePreviewLoads++;
+    rtActive.activePreviewLoads++;
     previewLoadStates.set(index,"loading");
     syncCardPrivacy(index);
     const loadAuthorId=activeAuthor.id;
     const loadVersion=authorRenderVersion;
-    loadPreviewWithRetry(index).then(loaded=>{
+    const generation=rtActive.decodeGeneration||0;
+    loadPreviewWithRetry(index,{generation,authorId:loadAuthorId}).then(loaded=>{
       const rt=getAuthorRuntime(loadAuthorId);
+      // Ignore results from abandoned generations (author switch / closed sheet).
+      if(rt.decodeGeneration!==generation) return;
       rt.previewLoadStates.set(index,loaded ? "loaded" : "error");
       if(loadVersion!==authorRenderVersion || loadAuthorId!==activeAuthor.id) return;
       syncCardPrivacy(index);
@@ -1441,20 +1645,7 @@ function fullCardAccessAllowed(index){
   return false;
 }
 
-function openArchive(index,opener){
-  const work=works[index];
-  if(!work) return;
-  // Re-open of the same archive while already open is a no-op (rapid double click).
-  if(archiveModal.open && activeIndex===index) return;
-  activeWork=work;
-  activeIndex=index;
-  modalOpener=opener;
-  archiveImage.removeAttribute("src");
-  archiveImage.alt="";
-  archiveImage.hidden=true;
-  archiveSetting.textContent="";
-  archiveSetting.hidden=true;
-  archiveSettingPrivacy.hidden=true;
+function fillArchiveFields(work,index){
   archiveFile.textContent=work.cardLabel || work.tags?.[0] || "角色卡";
   archiveAlias.textContent=work.alias || "ORIGINAL";
   archiveName.textContent=work.name;
@@ -1469,9 +1660,38 @@ function openArchive(index,opener){
   }));
   syncArchivePrivacy(index);
   syncArchiveSettingPrivacy(index);
+}
+
+function openArchive(index,opener){
+  const work=works[index];
+  if(!work) return;
+  // Re-open of the same archive while already open is a no-op (rapid double click).
+  if(archiveModal.open && activeIndex===index) return;
+  activeWork=work;
+  activeIndex=index;
+  modalOpener=opener;
+  archiveImage.removeAttribute("src");
+  archiveImage.alt="";
+  archiveImage.hidden=true;
+  archiveSetting.textContent="";
+  archiveSetting.hidden=true;
+  archiveSettingPrivacy.hidden=true;
+  fillArchiveFields(work,index);
   document.body.classList.add("modal-open");
   if(!archiveModal.open) archiveModal.showModal();
   requestAnimationFrame(()=>archiveClose.focus());
+  // Refresh long-form fields if details were still lazy when the dialog opened.
+  if(!workDetailsReady(work)){
+    const openVersion=authorRenderVersion;
+    const openIndex=index;
+    ensureWorkDetailsForActive().then(()=>{
+      if(openVersion!==authorRenderVersion || activeIndex!==openIndex || !archiveModal.open) return;
+      const fresh=works[openIndex];
+      if(!fresh) return;
+      activeWork=fresh;
+      fillArchiveFields(fresh,openIndex);
+    }).catch(()=>{});
+  }
 }
 
 syncUnlockAll();
@@ -1548,9 +1768,13 @@ function setCardFlipped(card,flipped){
   const now=performance.now();
   // Ignore rapid double-taps that would bounce face mid-animation.
   if(now<flipGuardUntil && card.classList.contains("flipped")===flipped) return;
-  flipGuardUntil=now+280;
+  flipGuardUntil=now+160;
   const index=Number(card.dataset.index);
-  if(flipped) ensureCardBackContent(index);
+  if(flipped){
+    ensureCardBackContent(index);
+    // Prefetch long-form details so archive text is ready right after flip.
+    if(!workDetailsReady(works[index])) ensureWorkDetailsForActive().catch(()=>{});
+  }
   const flipButton=card.querySelector(".card-flip");
   const back=card.querySelector(".back");
   const returnButton=card.querySelector(".back-return");
@@ -1716,12 +1940,24 @@ function observeCardPreviews(){
 }
 
 renderActiveAuthor({announce:false,scrollToStart:false});
+// Warm non-default catalogs + long-form details after first paint.
+if(typeof scheduleIdleCatalogPrefetch==="function"){
+  scheduleIdleCatalogPrefetch();
+}else if(typeof ensureWorkDetails==="function"){
+  const warm=()=>ensureWorkDetails(activeAuthor).catch(()=>{});
+  if(typeof requestIdleCallback==="function") requestIdleCallback(warm,{timeout:1800});
+  else setTimeout(warm,600);
+}
 authorSwitch?.addEventListener("click",switchToNextAuthor);
 window.addEventListener("online",()=>{
   getFailedPreviewIndexes().forEach(index=>{
     const parts=getCardPreviewParts(index);
     if(parts && isPreviewNearViewport(parts.front)) queuePreviewLoad(index,{force:true});
   });
+});
+// Drop failed PNG URL cache on online recovery so retries can proceed.
+window.addEventListener("online",()=>{
+  try{pngFailCache.clear();}catch(_){}
 });
 
 const glowPointerMedia=window.matchMedia(
