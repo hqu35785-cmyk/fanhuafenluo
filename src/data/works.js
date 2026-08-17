@@ -1,11 +1,13 @@
 (function setupFlipCompatibility(){
   const root=document.documentElement;
-  const supportsCSS=typeof CSS!=="undefined" && typeof CSS.supports==="function";
   root.classList.toggle("flip-3d",true);
 })();
-
 const ORIGINAL_AUTHOR_AVATAR = document.getElementById("authorAvatar")?.getAttribute("src") || "";
-const fanhuaWorks = [{"name":"刻律德菈","alias":"TAVO · 7B5E","collectionLabel":"TAVO ROLE CARD","image":"assets/tavo/new/Tavo_刻律德菈_7B5E.png","preview":"assets/previews/tavo/new/Tavo_刻律德菈_7B5E.webp","role":"逆徒冲师 · 嘴硬心软的白发弟子","tags":["逆徒冲师","白发"],"cardLabel":"逆徒冲师","creator":"繁花·纷落","sensitive":true,"sensitiveSetting":false,"sensitiveLabel":"敏感卡面","sensitiveSettingLabel":"敏感设定","_detailKey":"assets/tavo/new/Tavo_刻律德菈_7B5E.png"},{"name":"云璃","alias":"TAVO · 0DAC","collectionLabel":"TAVO ROLE CARD","image":"assets/tavo/new/Tavo_云璃_0DAC.png","preview":"assets/previews/tavo/new/Tavo_云璃_0DAC.webp","role":"逆徒冲师 · 坦荡要你目光的剑客弟子","tags":["逆徒冲师","金瞳"],"cardLabel":"逆徒冲师","creator":"繁花·纷落","sensitive":true,"sensitiveSetting":false,"sensitiveLabel":"敏感卡面","sensitiveSettingLabel":"敏感设定","_detailKey":"assets/tavo/new/Tavo_云璃_0DAC.png"},{"name":"雾矢葵","alias":"TAVO · 9813","collectionLabel":"TAVO ROLE CARD","image":"assets/tavo/new/Tavo_雾矢葵_9813.png","preview":"assets/previews/tavo/new/Tavo_雾矢葵_9813.webp","role":"逆妹想上兄 · 不爱说话却黏人的妹妹","tags":["逆妹","水手服"],"cardLabel":"逆妹想上兄","creator":"繁花·纷落","sensitive":true,"sensitiveSetting":false,"sensitiveLabel":"敏感卡面","sensitiveSettingLabel":"敏感设定","_detailKey":"assets/tavo/new/Tavo_雾矢葵_9813.png"}];
+const fanhuaWorks = [
+{"name":"刻律德菈","alias":"TAVO · 7B5E","collectionLabel":"TAVO ROLE CARD","image":"assets/tavo/new/Tavo_刻律德菈_7B5E.png","preview":"assets/previews/tavo/new/Tavo_刻律德菈_7B5E.webp","role":"逆徒冲师 · 嘴硬心软的白发弟子","tags":["逆徒冲师","白发"],"cardLabel":"逆徒冲师","creator":"繁花·纷落","sensitive":true,"sensitiveSetting":false,"sensitiveLabel":"敏感卡面","sensitiveSettingLabel":"敏感设定","_detailKey":"assets/tavo/new/Tavo_刻律德菈_7B5E.png"},
+{"name":"云璃","alias":"TAVO · 0DAC","collectionLabel":"TAVO ROLE CARD","image":"assets/tavo/new/Tavo_云璃_0DAC.png","preview":"assets/previews/tavo/new/Tavo_云璃_0DAC.webp","role":"逆徒冲师 · 坦荡要你目光的剑客弟子","tags":["逆徒冲师","金瞳"],"cardLabel":"逆徒冲师","creator":"繁花·纷落","sensitive":true,"sensitiveSetting":false,"sensitiveLabel":"敏感卡面","sensitiveSettingLabel":"敏感设定","_detailKey":"assets/tavo/new/Tavo_云璃_0DAC.png"},
+{"name":"雾矢葵","alias":"TAVO · 9813","collectionLabel":"TAVO ROLE CARD","image":"assets/tavo/new/Tavo_雾矢葵_9813.png","preview":"assets/previews/tavo/new/Tavo_雾矢葵_9813.webp","role":"逆妹想上兄 · 不爱说话却黏人的妹妹","tags":["逆妹","水手服"],"cardLabel":"逆妹想上兄","creator":"繁花·纷落","sensitive":true,"sensitiveSetting":false,"sensitiveLabel":"敏感卡面","sensitiveSettingLabel":"敏感设定","_detailKey":"assets/tavo/new/Tavo_雾矢葵_9813.png"}
+];
 const sharkWorks = [];
 const waWorks = [];
 const authors = [
@@ -20,7 +22,6 @@ let authorRenderVersion = 0;
 const authorRuntimeStates = new Map();
 const workDetailStore = new Map();
 const workDetailLoadState = new Map();
-
 function getAuthorRuntime(authorId){
   if(!authorRuntimeStates.has(authorId)){
     authorRuntimeStates.set(authorId,{unlockedWorks:new Set(),previewLoadStates:new Map(),previewLoadQueue:[],queuedPreviewIndexes:new Set(),activePreviewLoads:0,decodeGeneration:0});
@@ -55,6 +56,10 @@ function applyDetailsToWorks(list){
   for (const w of list) {
     const d = workDetailStore.get(w._detailKey || w.image);
     if (d) { w.opening = d.opening; w.personality = d.personality; w.setting = d.setting; w._detailsReady = true; }
+    if (window.__CARD_PREVIEWS__) {
+      if (window.__CARD_PREVIEWS__[w.preview]) w.preview = window.__CARD_PREVIEWS__[w.preview];
+      if (window.__CARD_PREVIEWS__[w.image]) w.image = window.__CARD_PREVIEWS__[w.image];
+    }
   }
 }
 async function ensureAuthorCatalog(author){ return author.works || []; }
