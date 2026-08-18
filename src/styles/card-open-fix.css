@@ -1,0 +1,11 @@
+/* ↻ flip hint: true top-right (badge is top-left, no need to offset down) */
+.card-open{
+  top: var(--badge-inset, 10px) !important;
+  right: var(--badge-inset, 10px) !important;
+}
+@media (max-width: 620px) and (orientation: portrait){
+  .card-open{
+    top: var(--badge-inset, 8px) !important;
+    right: 8px !important;
+  }
+}
