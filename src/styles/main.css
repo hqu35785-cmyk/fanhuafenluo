@@ -94,7 +94,6 @@ img{display:block;max-width:100%}
   border:0!important;
 }
 .wrap{width:min(3300px,calc(100% - clamp(12px,2.4vw,42px)));margin-inline:auto}
-
 header{
   flex:0 0 auto;
   height:auto;
@@ -323,12 +322,8 @@ nav a{color:#d8ced8;text-decoration:none;font-size:12px}
 }
 .archive-status b{color:#fff;font-size:10px;letter-spacing:.1em}
 .archive-status em{color:rgba(161,152,174,.62);font-style:normal}
-
 main{flex:1 0 auto;min-width:0;padding:20px 0 12px}
-.catalog{
-  display:block;
-  min-width:0;
-}
+.catalog{display:block;min-width:0}
 .side-title{
   position:relative;
   margin:4px 0 0;
@@ -395,14 +390,10 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   -webkit-transform-style:preserve-3d;
   transform:rotateY(0deg);
   -webkit-transform:rotateY(0deg);
-  transition:
-    transform .48s cubic-bezier(.2,.75,.2,1),
-    -webkit-transform .48s cubic-bezier(.2,.75,.2,1);
+  transition:transform .48s cubic-bezier(.2,.75,.2,1),-webkit-transform .48s cubic-bezier(.2,.75,.2,1);
 }
 .card.flipped .card-inner,
-.card:focus-within .card-inner{
-  will-change:transform;
-}
+.card:focus-within .card-inner{will-change:transform}
 .card.flipped .card-inner{
   transform:rotateY(180deg);
   -webkit-transform:rotateY(180deg);
@@ -411,13 +402,8 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
 .back{pointer-events:none}
 .card.flipped .front{pointer-events:none!important}
 .card.flipped .back{pointer-events:auto}
-.card.flipped .back-actions{
-  position:relative;
-  z-index:6;
-}
-.card.flipped .privacy-unlock{
-  pointer-events:none!important;
-}
+.card.flipped .back-actions{position:relative;z-index:6}
+.card.flipped .privacy-unlock{pointer-events:none!important}
 .front{
   --badge-inset:10px;
   --flip-btn-size:28px;
@@ -518,3 +504,4 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   pointer-events:none;
   transition:transform .3s ease,background .3s ease,border-color .3s ease;
 }
+@import url("./main-part2.css");
