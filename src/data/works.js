@@ -4,9 +4,9 @@
 })();
 const ORIGINAL_AUTHOR_AVATAR = document.getElementById("authorAvatar")?.getAttribute("src") || "";
 const fanhuaWorks = [
-{"name":"刻律德菈","alias":"TAVO · 7B5E","collectionLabel":"TAVO ROLE CARD","image":"assets/cards/kelude.jpg","preview":"assets/cards/kelude_prev.jpg","role":"逆徒冲师 · 嘴硬心软的白发弟子","tags":["逆徒冲师","白发"],"cardLabel":"逆徒冲师","creator":"繁花·纷落","sensitive":true,"sensitiveSetting":false,"sensitiveLabel":"敏感卡面","sensitiveSettingLabel":"敏感设定","_detailKey":"assets/cards/kelude.jpg"},
-{"name":"云璃","alias":"TAVO · 0DAC","collectionLabel":"TAVO ROLE CARD","image":"assets/cards/yunli.jpg","preview":"assets/cards/yunli_prev.jpg","role":"逆徒冲师 · 坦荡要你目光的剑客弟子","tags":["逆徒冲师","金瞳"],"cardLabel":"逆徒冲师","creator":"繁花·纷落","sensitive":true,"sensitiveSetting":false,"sensitiveLabel":"敏感卡面","sensitiveSettingLabel":"敏感设定","_detailKey":"assets/cards/yunli.jpg"},
-{"name":"雾矢葵","alias":"TAVO · 9813","collectionLabel":"TAVO ROLE CARD","image":"assets/cards/wushi.jpg","preview":"assets/cards/wushi_prev.jpg","role":"逆妹想上兄 · 不爱说话却黏人的妹妹","tags":["逆妹","水手服"],"cardLabel":"逆妹想上兄","creator":"繁花·纷落","sensitive":true,"sensitiveSetting":false,"sensitiveLabel":"敏感卡面","sensitiveSettingLabel":"敏感设定","_detailKey":"assets/cards/wushi.jpg"}
+{"name":"刻律德菈","alias":"TAVO · 7B5E","collectionLabel":"TAVO ROLE CARD","image":"https://tmpfiles.org/dl/1787031197.d192f5d48ae92249/w4wPC8a6ddY9/kelude.jpg","preview":"https://tmpfiles.org/dl/1787031198.cdc95a85437c6002/wewbCKaZdy1S/kelude_prev.jpg","role":"逆徒冲师 · 嘴硬心软的白发弟子","tags":["逆徒冲师","白发"],"cardLabel":"逆徒冲师","creator":"繁花·纷落","sensitive":true,"sensitiveSetting":false,"sensitiveLabel":"敏感卡面","sensitiveSettingLabel":"敏感设定","_detailKey":"kelude"},
+{"name":"云璃","alias":"TAVO · 0DAC","collectionLabel":"TAVO ROLE CARD","image":"https://tmpfiles.org/dl/1787031198.e30517c5531fb01b/wawJCWa0d6uO/yunli.jpg","preview":"https://tmpfiles.org/dl/1787031198.de676f05ec911c81/wJwNCfawda9P/yunli_prev.jpg","role":"逆徒冲师 · 坦荡要你目光的剑客弟子","tags":["逆徒冲师","金瞳"],"cardLabel":"逆徒冲师","creator":"繁花·纷落","sensitive":true,"sensitiveSetting":false,"sensitiveLabel":"敏感卡面","sensitiveSettingLabel":"敏感设定","_detailKey":"yunli"},
+{"name":"雾矢葵","alias":"TAVO · 9813","collectionLabel":"TAVO ROLE CARD","image":"https://tmpfiles.org/dl/1787031199.41c0c7ce1a0b88d9/wPw7CGa9dNQD/wushi.jpg","preview":"https://tmpfiles.org/dl/1787031199.20edda945c6e22da/wNwkCQaDdXzZ/wushi_prev.jpg","role":"逆妹想上兄 · 不爱说话却黏人的妹妹","tags":["逆妹","水手服"],"cardLabel":"逆妹想上兄","creator":"繁花·纷落","sensitive":true,"sensitiveSetting":false,"sensitiveLabel":"敏感卡面","sensitiveSettingLabel":"敏感设定","_detailKey":"wushi"}
 ];
 const sharkWorks = [];
 const waWorks = [];
@@ -56,10 +56,6 @@ function applyDetailsToWorks(list){
   for (const w of list) {
     const d = workDetailStore.get(w._detailKey || w.image);
     if (d) { w.opening = d.opening; w.personality = d.personality; w.setting = d.setting; w._detailsReady = true; }
-    if (window.__CARD_PREVIEWS__) {
-      if (window.__CARD_PREVIEWS__[w.preview]) w.preview = window.__CARD_PREVIEWS__[w.preview];
-      if (window.__CARD_PREVIEWS__[w.image]) w.image = window.__CARD_PREVIEWS__[w.image];
-    }
   }
 }
 async function ensureAuthorCatalog(author){ return author.works || []; }
