@@ -9,39 +9,24 @@
 <title>繁花·纷落｜角色档案</title>
 <link rel="stylesheet" href="src/styles/main.css?v=2fa84f4a65b1">
 <style id="layout-fix">
-/* Inline so phones cannot keep a stale external CSS cache for these rules */
-.card-open{
-  top:8px !important;
-  right:8px !important;
+.card-open{top:8px !important;right:8px !important;}
+.card-name,.front.is-locked .card-name,.front.is-load-error .card-name{
+  left:8px !important;right:auto !important;bottom:8px !important;
+  max-width:calc(100% - 96px) !important;overflow:visible !important;
 }
-.card-name,
-.front.is-locked .card-name,
-.front.is-load-error .card-name{
-  left:8px !important;
-  right:auto !important;
-  bottom:8px !important;
-  max-width:calc(100% - 96px) !important;
-  overflow:visible !important;
-}
+.card-name::before{margin-bottom:4px !important;}
+.card-name>span{margin-top:3px !important;}
 .card-meta{
-  display:flex !important;
-  visibility:visible !important;
-  opacity:1 !important;
-  margin-top:4px !important;
-  padding-top:4px !important;
+  display:flex !important;visibility:visible !important;opacity:1 !important;
+  margin-top:3px !important;padding-top:3px !important;
   border-top:1px solid rgba(255,255,255,.12) !important;
 }
 .card-meta span:first-child{display:none !important;}
 .card-meta span:last-child{
-  display:inline !important;
-  color:rgba(243,190,210,.9) !important;
-  font-size:8px !important;
-  letter-spacing:.1em !important;
+  display:inline !important;color:rgba(243,190,210,.9) !important;
+  font-size:8px !important;letter-spacing:.1em !important;
 }
-.privacy-unlock{
-  right:8px !important;
-  bottom:8px !important;
-}
+.privacy-unlock{right:8px !important;bottom:8px !important;}
 </style>
 </head>
 <body>
@@ -153,5 +138,6 @@
 <script src="src/app.js?v=93557fd6c88b" defer></script>
 <script src="src/gallery-count-fix.js?v=1beb74" defer></script>
 <script src="src/no-lock.js?v=paint2" defer></script>
+<script src="src/layout-pin.js?v=1" defer></script>
 </body>
 </html>
