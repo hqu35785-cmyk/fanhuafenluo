@@ -9,12 +9,12 @@ const NEW_FANHUA_CARDS = [
 {"name":"雾矢葵","alias":"TAVO · 9813","collectionLabel":"TAVO ROLE CARD","image":"https://tmpfiles.org/dl/1787031199.41c0c7ce1a0b88d9/wPw7CGa9dNQD/wushi.jpg","preview":"https://tmpfiles.org/dl/1787031199.20edda945c6e22da/wNwkCQaDdXzZ/wushi_prev.jpg","role":"逆妹想上兄 · 不爱说话却黏人的妹妹","tags":["逆妹","水手服"],"cardLabel":"逆妹想上兄","creator":"繁花·纷落","sensitive":true,"sensitiveSetting":false,"sensitiveLabel":"敏感卡面","sensitiveSettingLabel":"敏感设定","_detailKey":"wushi"}
 ];
 let fanhuaWorks = NEW_FANHUA_CARDS.slice();
-const sharkWorks = [];
-const waWorks = [];
+let sharkWorks = [];
+let waWorks = [];
 const authors = [
   {id:"fanhuafenluo",name:"繁花·纷落",avatar:ORIGINAL_AUTHOR_AVATAR,status:"半成品 · 点头像切换不同分区",works:fanhuaWorks,detailSrc:"src/data/details-fanhua.js",dataReady:false},
-  {id:"shark",name:"鲨鱼",avatar:"assets/authors/shark.webp",status:"半成品 · 点头像切换不同分区",works:sharkWorks,detailSrc:"src/data/details-shark.js",dataReady:true},
-  {id:"wa",name:"咓",avatar:"assets/authors/wa.webp",status:"半成品 · 点头像切换不同分区",works:waWorks,detailSrc:"src/data/details-wa.js",dataReady:true}
+  {id:"shark",name:"鲨鱼",avatar:"assets/authors/shark.webp",status:"半成品 · 点头像切换不同分区",works:sharkWorks,detailSrc:"src/data/details-shark.js",dataReady:false},
+  {id:"wa",name:"咓",avatar:"assets/authors/wa.webp",status:"半成品 · 点头像切换不同分区",works:waWorks,detailSrc:"src/data/details-wa.js",dataReady:false}
 ];
 let activeAuthorIndex = 0;
 let activeAuthor = authors[activeAuthorIndex];
@@ -84,23 +84,40 @@ function scheduleIdleCatalogPrefetch(){
   if (typeof requestIdleCallback === "function") requestIdleCallback(run, { timeout: 1800 });
   else setTimeout(run, 600);
 }
-(function loadFullFanhuaCatalog(){
+(function loadFullCatalog(){
   const url = "https://cdn.jsdelivr.net/gh/hqu35785-cmyk/fanhuafenluo@d602c92bfcb73fe6fc27e4b4dfa10122cfaaede6/src/data/works.js";
   fetch(url).then(r=>r.text()).then(code=>{
-    const m = code.match(/const fanhuaWorks\s*=\s*(\[[\s\S]*?\]);\s*const sharkWorks/);
-    if(!m) return;
+    const fanhuaMatch = code.match(/const fanhuaWorks\s*=\s*(\[[\s\S]*?\]);\s*const sharkWorks/);
+    const sharkMatch = code.match(/const sharkWorks\s*=\s*(\[[\s\S]*?\]);\s*const waWorks/);
+    const waMatch = code.match(/const waWorks\s*=\s*(\[[\s\S]*?\]);\s*const authors/);
+    if(!fanhuaMatch || !sharkMatch || !waMatch) throw new Error("catalog sections not found");
     try {
-      const old = (0, eval)("(" + m[1] + ")");
-      fanhuaWorks = NEW_FANHUA_CARDS.concat(old);
+      const oldFanhua = (0, eval)("(" + fanhuaMatch[1] + ")");
+      const oldShark = (0, eval)("(" + sharkMatch[1] + ")");
+      const oldWa = (0, eval)("(" + waMatch[1] + ")");
+
+      fanhuaWorks = NEW_FANHUA_CARDS.concat(oldFanhua);
+      sharkWorks = oldShark;
+      waWorks = oldWa;
+
       authors[0].works = fanhuaWorks;
-      authors[0].dataReady = true;
-      if (activeAuthor && activeAuthor.id === "fanhuafenluo") {
-        works = fanhuaWorks;
+      authors[1].works = sharkWorks;
+      authors[2].works = waWorks;
+      authors.forEach(author=>{
+        author.dataReady = true;
+        applyDetailsToWorks(author.works);
+      });
+
+      if (activeAuthor) {
+        works = activeAuthor.works || [];
         if (typeof renderActiveAuthor === "function") {
           renderActiveAuthor({announce:false,scrollToStart:false});
         } else {
           authorRenderVersion++;
-          document.dispatchEvent(new CustomEvent("fanhua-catalog-ready"));
+          document.dispatchEvent(new CustomEvent("catalog-ready"));
+          if (activeAuthor.id === "fanhuafenluo") {
+            document.dispatchEvent(new CustomEvent("fanhua-catalog-ready"));
+          }
         }
       }
     } catch(e) { console.error("catalog merge failed", e); }
