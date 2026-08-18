@@ -110,6 +110,18 @@ function scheduleIdleCatalogPrefetch(){
 
       if (activeAuthor) {
         works = activeAuthor.works || [];
+        // Force gallery rebuild: same-author path used to skip DOM when count grew.
+        try {
+          if (typeof authorDomCache !== "undefined" && authorDomCache && typeof authorDomCache.delete === "function") {
+            authorDomCache.delete(activeAuthor.id);
+          }
+          if (typeof mountedAuthorId !== "undefined") {
+            mountedAuthorId = null;
+          }
+          if (typeof gallery !== "undefined" && gallery) {
+            gallery.innerHTML = "";
+          }
+        } catch (_) {}
         if (typeof renderActiveAuthor === "function") {
           renderActiveAuthor({announce:false,scrollToStart:false});
         } else {
