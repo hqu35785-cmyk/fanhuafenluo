@@ -1,0 +1,11 @@
+/* Explicit pin: ↻ always true top-right */
+.card-open{
+  top: var(--badge-inset, 10px) !important;
+  right: var(--badge-inset, 10px) !important;
+}
+@media (max-width: 620px){
+  .card-open{
+    top: var(--badge-inset, 8px) !important;
+    right: 8px !important;
+  }
+}
