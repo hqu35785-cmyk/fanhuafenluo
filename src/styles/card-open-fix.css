@@ -1,11 +1,30 @@
-/* ↻ flip hint: true top-right (badge is top-left, no need to offset down) */
+/* ↻ flip hint: true top-right */
 .card-open{
   top: var(--badge-inset, 10px) !important;
   right: var(--badge-inset, 10px) !important;
 }
-@media (max-width: 620px) and (orientation: portrait){
+
+/* Name block: true bottom-left, leave room for save button on the right */
+.card-name,
+.front.is-locked .card-name,
+.front.is-load-error .card-name{
+  left: 12px !important;
+  right: auto !important;
+  bottom: 12px !important;
+  max-width: calc(100% - 100px) !important;
+}
+
+@media (max-width: 620px){
   .card-open{
     top: var(--badge-inset, 8px) !important;
     right: 8px !important;
+  }
+  .card-name,
+  .front.is-locked .card-name,
+  .front.is-load-error .card-name{
+    left: 8px !important;
+    right: auto !important;
+    bottom: 8px !important;
+    max-width: calc(100% - 88px) !important;
   }
 }
