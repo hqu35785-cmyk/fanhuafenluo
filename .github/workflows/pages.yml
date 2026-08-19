@@ -34,6 +34,10 @@ jobs:
           touch _site/.nojekyll
           cp -a src _site/src
           cp -a assets/previews assets/authors _site/assets/
+          # Ship full card PNGs same-origin so the <a download> attribute actually
+          # triggers a download. Cross-origin hrefs (jsDelivr/raw) ignore `download`
+          # and merely open the image, which broke the "保存角色卡" button.
+          cp -a assets/tavo assets/wa assets/shark assets/source _site/assets/
           du -sh _site
           find _site -type f | wc -l
 
