@@ -634,11 +634,9 @@ function absoluteAssetUrl(path){
   if(/^https?:\/\//i.test(raw) || raw.startsWith("data:")) return raw;
   const rel=normalizeAssetPath(raw);
   try{
-    if(SOURCE_PNG_RE.test(rel)){
-      // Prefer CDN first for full PNGs (often faster + cached vs raw.githubusercontent).
-      return JSDELIVR_MAIN_BASE+rel;
-    }
-    return new URL(raw,window.location.href).href;
+    // Same-origin so the <a download> attribute actually works in the browser.
+    // Cross-origin hrefs (jsDelivr/catbox) ignore `download` and just open the image.
+    return new URL(rel,window.location.href).href;
   }catch{
     return raw;
   }
@@ -659,13 +657,14 @@ function setSaveSheetStatus(text){
   if(saveSheetNote) saveSheetNote.textContent=text;
 }
 
-function safePngFilename(name){
+function safePngFilename(name,src){
   const safeName=String(name || "角色卡")
     .replace(/[\\/:*?"<>|\u0000-\u001f\u007f]/g,"_")
     .replace(/[. ]+$/g,"")
     .trim()
     .slice(0,100);
-  return `${safeName || "角色卡"}-角色卡.png`;
+  const ext=/\.jpe?g(\?|#|$)/i.test(String(src||"")) ? "jpg" : "png";
+  return `${safeName || "角色卡"}-角色卡.${ext}`;
 }
 
 function hasFileShareApi(){
@@ -739,15 +738,16 @@ async function fetchValidatedPngBlob(url,signal){
       if(signal?.aborted) throw new DOMException("Aborted","AbortError");
       if(!blob.size) throw new Error("PNG response is empty");
       /*
-       * 只检查 PNG 文件签名。
+       * 只检查文件签名（PNG 或 JPEG）。
        * 不重新编码、不修改完整文件。
        */
-      const header=new Uint8Array(await blob.slice(0,8).arrayBuffer());
-      const signature=[137,80,78,71,13,10,26,10];
-      const validPng=header.length===signature.length && signature.every((byte,index)=>header[index]===byte);
-      if(!validPng) throw new Error("Downloaded asset is not a valid PNG");
+      const head=new Uint8Array(await blob.slice(0,8).arrayBuffer());
+      const pngSignature=[137,80,78,71,13,10,26,10];
+      const isPng=head.length>=8 && pngSignature.every((byte,index)=>head[index]===byte);
+      const isJpeg=head.length>=3 && head[0]===255 && head[1]===216 && head[2]===255;
+      if(!isPng && !isJpeg) throw new Error("Downloaded asset is not a valid PNG/JPEG");
       pngFailCache.delete(url);
-      return blob;
+      return { blob, kind: isPng ? "png" : "jpeg" };
     }catch(error){
       if(error?.name!=="AbortError") markPngUrlFailed(url);
       throw error;
@@ -774,9 +774,9 @@ async function prepareOriginalPngFile(work,signal){
   let lastError=null;
   for(const url of candidates){
     try{
-      const blob=await fetchValidatedPngBlob(url,signal);
-      const file=new File([blob],safePngFilename(work.name),{
-        type:"image/png",
+      const { blob, kind }=await fetchValidatedPngBlob(url,signal);
+      const file=new File([blob],safePngFilename(work.name,url),{
+        type:kind==="jpeg" ? "image/jpeg" : "image/png",
         lastModified:Date.now()
       });
       rememberShareFile(url,file);
@@ -898,7 +898,7 @@ function triggerDirectDownload(work){
   const url=absoluteAssetUrl(work.image);
   const link=document.createElement("a");
   link.href=url;
-  link.download=safePngFilename(work.name);
+  link.download=safePngFilename(work.name,work.image);
   link.rel="noopener";
   document.body.appendChild(link);
   link.click();
@@ -946,7 +946,7 @@ function onSaveSheetKeydown(event){
 
 function openSaveSheet(work){
   const url=absoluteAssetUrl(work.image);
-  const filename=safePngFilename(work.name);
+  const filename=safePngFilename(work.name,work.image);
   const env=saveEnvironment();
   const copy=saveCopyForEnv(env,work.name);
 
