@@ -613,6 +613,7 @@ let saveSheetActiveWork=null;
 let saveSheetShareFile=null;
 let saveSheetPrepareVersion=0;
 let saveSheetPrepareController=null;
+let saveSheetDownloadObjectUrl=null;
 
 /*
  * Web Share 全局状态。
@@ -767,6 +768,53 @@ async function fetchValidatedPngBlob(url,signal){
   return task;
 }
 
+function revokeSaveSheetDownloadUrl(){
+  if(!saveSheetDownloadObjectUrl) return;
+  try{ URL.revokeObjectURL(saveSheetDownloadObjectUrl) }catch{/* 忽略旧对象 URL 回收失败 */}
+  saveSheetDownloadObjectUrl=null;
+}
+
+function triggerBlobDownload(blob,filename){
+  if(!blob || !blob.size) throw new Error("PNG response is empty");
+  if(typeof URL?.createObjectURL!=="function") throw new Error("Blob download is unavailable");
+
+  const objectUrl=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=objectUrl;
+  link.download=filename;
+  link.rel="noopener";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  /* 给浏览器留出启动下载的时间，再释放临时对象 URL。 */
+  window.setTimeout(()=>{
+    try{ URL.revokeObjectURL(objectUrl) }catch{/* 忽略对象 URL 回收失败 */}
+  },30000);
+}
+
+async function fetchOriginalPngResource(work,signal){
+  const candidates=sourcePngCandidateUrls(work?.image).filter(url=>!pngUrlRecentlyFailed(url));
+  for(const url of candidates){
+    const cachedFile=sharePngFileCache.get(url);
+    if(cachedFile){
+      rememberShareFile(url,cachedFile);
+      return {url,blob:cachedFile};
+    }
+  }
+
+  let lastError=null;
+  for(const url of candidates){
+    try{
+      return {url,blob:await fetchValidatedPngBlob(url,signal)};
+    }catch(error){
+      if(error?.name==="AbortError") throw error;
+      lastError=error;
+    }
+  }
+  throw lastError || new Error("PNG unavailable");
+}
+
 async function prepareOriginalPngFile(work,signal){
   const candidates=sourcePngCandidateUrls(work.image).filter(url=>!pngUrlRecentlyFailed(url));
   for(const url of candidates){
@@ -777,35 +825,48 @@ async function prepareOriginalPngFile(work,signal){
     }
   }
 
-  let lastError=null;
-  for(const url of candidates){
-    try{
-      const blob=await fetchValidatedPngBlob(url,signal);
-      const file=new File([blob],safePngFilename(work.name),{
-        type:"image/png",
-        lastModified:Date.now()
-      });
-      rememberShareFile(url,file);
-      return file;
-    }catch(error){
-      if(error?.name==="AbortError") throw error;
-      lastError=error;
-    }
-  }
-  throw lastError || new Error("PNG unavailable");
+  const {url,blob}=await fetchOriginalPngResource(work,signal);
+  const file=new File([blob],safePngFilename(work.name),{
+    type:"image/png",
+    lastModified:Date.now()
+  });
+  rememberShareFile(url,file);
+  return file;
 }
 
-async function prepareSaveToPhotos(work){
+async function prepareSaveSheetDownload(work,signal,version){
+  if(!saveSheetLink) return;
+
+  try{
+    const {blob}=await fetchOriginalPngResource(work,signal);
+    if(version!==saveSheetPrepareVersion || saveSheet.hidden || saveSheetActiveWork!==work) return;
+    if(typeof URL?.createObjectURL!=="function") throw new Error("Blob download is unavailable");
+
+    revokeSaveSheetDownloadUrl();
+    saveSheetDownloadObjectUrl=URL.createObjectURL(blob);
+    saveSheetLink.href=saveSheetDownloadObjectUrl;
+    saveSheetLink.setAttribute("download",safePngFilename(work.name));
+    saveSheetLink.removeAttribute("aria-disabled");
+    saveSheetLink.removeAttribute("aria-busy");
+    saveSheetLink.removeAttribute("tabindex");
+    saveSheetLink.textContent="下载 PNG 原图";
+  }catch(error){
+    if(error?.name==="AbortError") return;
+    if(version!==saveSheetPrepareVersion || saveSheet.hidden || saveSheetActiveWork!==work) return;
+
+    /* Blob 下载失败时仍保留可手动长按保存的原图入口，并明确提示原因。 */
+    saveSheetLink.href=absoluteAssetUrl(work.image);
+    saveSheetLink.setAttribute("download",safePngFilename(work.name));
+    saveSheetLink.removeAttribute("aria-disabled");
+    saveSheetLink.removeAttribute("aria-busy");
+    saveSheetLink.removeAttribute("tabindex");
+    saveSheetLink.textContent="打开 PNG 原图";
+    setSaveSheetStatus("文件下载准备失败。请长按上方原图保存，或检查网络后重新打开保存面板。");
+  }
+}
+
+async function prepareSaveToPhotos(work,controller,version){
   if(!saveSheetPhoto) return;
-
-  /* 中止上一张角色卡仍在执行的请求。 */
-  saveSheetPrepareController?.abort();
-  const controller=new AbortController();
-  saveSheetPrepareController=controller;
-  const version=++saveSheetPrepareVersion;
-
-  saveSheetActiveWork=work;
-  saveSheetShareFile=null;
   saveSheetPhoto.disabled=true;
   saveSheetPhoto.textContent="正在准备相册保存…";
   saveSheetPhoto.removeAttribute("aria-busy");
@@ -901,14 +962,9 @@ function saveCopyForEnv(env,name){
 }
 
 function triggerDirectDownload(work){
-  const url=absoluteAssetUrl(work.image);
-  const link=document.createElement("a");
-  link.href=url;
-  link.download=safePngFilename(work.name);
-  link.rel="noopener";
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
+  return fetchOriginalPngResource(work).then(({blob})=>{
+    triggerBlobDownload(blob,safePngFilename(work.name));
+  });
 }
 
 function closeSaveSheet(){
@@ -923,6 +979,7 @@ function closeSaveSheet(){
 
   saveSheetActiveWork=null;
   saveSheetShareFile=null;
+  revokeSaveSheetDownloadUrl();
 
   if(saveSheetPhoto){
     saveSheetPhoto.disabled=true;
@@ -933,6 +990,10 @@ function closeSaveSheet(){
   saveSheet.hidden=true;
   saveSheetImage.removeAttribute("src");
   saveSheetLink.removeAttribute("href");
+  saveSheetLink.removeAttribute("download");
+  saveSheetLink.removeAttribute("aria-disabled");
+  saveSheetLink.removeAttribute("aria-busy");
+  saveSheetLink.removeAttribute("tabindex");
   document.removeEventListener("keydown",onSaveSheetKeydown,true);
 
   const restore=saveSheetLastFocus;
@@ -952,9 +1013,16 @@ function onSaveSheetKeydown(event){
 
 function openSaveSheet(work){
   const url=absoluteAssetUrl(work.image);
-  const filename=safePngFilename(work.name);
   const env=saveEnvironment();
   const copy=saveCopyForEnv(env,work.name);
+
+  saveSheetPrepareController?.abort();
+  const controller=new AbortController();
+  saveSheetPrepareController=controller;
+  const version=++saveSheetPrepareVersion;
+  saveSheetActiveWork=work;
+  saveSheetShareFile=null;
+  revokeSaveSheetDownloadUrl();
 
   saveSheetLastFocus=document.activeElement instanceof HTMLElement ? document.activeElement : null;
   saveSheetTitle.textContent=copy.title;
@@ -962,9 +1030,12 @@ function openSaveSheet(work){
   setSaveSheetStatus("正在准备 PNG 原图。保存到相册由手机系统处理，部分相册可能重新处理图片并移除角色卡数据。需要导入角色卡时，请使用“下载 PNG 原图”。");
   saveSheetImage.alt=`${work.name}角色卡原图`;
   saveSheetImage.src=url;
-  saveSheetLink.href=url;
-  saveSheetLink.setAttribute("download",filename);
-  saveSheetLink.textContent="下载 PNG 原图";
+  saveSheetLink.removeAttribute("href");
+  saveSheetLink.removeAttribute("download");
+  saveSheetLink.setAttribute("aria-disabled","true");
+  saveSheetLink.setAttribute("aria-busy","true");
+  saveSheetLink.setAttribute("tabindex","-1");
+  saveSheetLink.textContent="正在准备下载…";
   saveSheet.hidden=false;
   document.addEventListener("keydown",onSaveSheetKeydown,true);
 
@@ -972,7 +1043,8 @@ function openSaveSheet(work){
    * 先显示辅助层，再在后台准备 File。
    * 用户点击“保存到相册”后不能再 fetch。
    */
-  void prepareSaveToPhotos(work);
+  void prepareSaveSheetDownload(work,controller.signal,version);
+  void prepareSaveToPhotos(work,controller,version);
   saveSheetClose?.focus({preventScroll:true});
 }
 
@@ -985,24 +1057,20 @@ function downloadCharacterCard(work,index){
   const env=saveEnvironment();
   // 桌面等可直接下载的环境：静默同源下载，不打断浏览。
   if(!env.needsAssist){
-    try{
-      triggerDirectDownload(work);
-      tip("已开始下载");
-    }catch{
-      tip("下载失败，请右键卡面图片另存为");
-    }
+    tip("正在准备 PNG 下载…");
+    void triggerDirectDownload(work)
+      .then(()=>tip("已开始下载"))
+      .catch(()=>tip("下载失败，请右键卡面图片另存为"));
     return;
   }
   // 手机 / 微信 / iOS：弹出保存辅助层，可随时关闭，不影响档案与画廊。
   try{
     openSaveSheet(work);
   }catch{
-    try{
-      triggerDirectDownload(work);
-      tip("已发起下载；失败请用系统浏览器打开本站");
-    }catch{
-      tip("保存失败，请用系统浏览器打开本站后重试");
-    }
+    tip("正在准备 PNG 下载…");
+    void triggerDirectDownload(work)
+      .then(()=>tip("已发起下载；失败请用系统浏览器打开本站"))
+      .catch(()=>tip("保存失败，请用系统浏览器打开本站后重试"));
   }
 }
 
