@@ -39,13 +39,14 @@ function cardFaceNameHTML(name){
 
 function cardHTML(work,index){
   const imageSensitive=Boolean(work.sensitive);
+  const imageLocked=imageSensitive && CARD_VISIBILITY_MODE!=="open";
   const settingSensitive=Boolean(work.sensitiveSetting);
   const preview=work.preview || null;
   // LCP: first unlocked face loads eagerly; rest stay lazy until near viewport.
-  const eagerFace=!imageSensitive && index<2;
-  const previewSource=!imageSensitive && preview ? ` src="${preview}"` : "";
-  const imgLoading=imageSensitive ? "" : (eagerFace ? ' loading="eager"' : ' loading="lazy"');
-  const imgPriority=imageSensitive ? "" : (eagerFace ? ' fetchpriority="high"' : ' fetchpriority="low"');
+  const eagerFace=!imageLocked && index<2;
+  const previewSource=!imageLocked && preview ? ` src="${preview}"` : "";
+  const imgLoading=imageLocked ? "" : (eagerFace ? ' loading="eager"' : ' loading="lazy"');
+  const imgPriority=imageLocked ? "" : (eagerFace ? ' fetchpriority="high"' : ' fetchpriority="low"');
   const cardLabel=work.cardLabel || work.tags?.[0] || "角色卡";
   const hint=index===0
     ? `<p class="first-hint"><span class="hint-copy">点击卡片查看设定</span></p>`
@@ -58,10 +59,10 @@ function cardHTML(work,index){
   <div class="card-item${index===0 ? " has-hint" : ""}">
     <article class="card${imageSensitive ? " is-sensitive" : ""}${settingSensitive ? " is-setting-sensitive" : ""}" data-index="${index}">
       <div class="card-inner">
-        <button class="face front card-flip${imageSensitive ? " is-locked" : ""}" type="button" aria-label="翻转查看${safe(work.name)}的简介" aria-expanded="false" aria-controls="card-back-${index}" aria-hidden="false">
-          <img${imgLoading}${imgPriority} decoding="async" width="360" height="500"${previewSource} alt="${imageSensitive ? "" : safe(work.name)}"${imageSensitive ? ' aria-hidden="true" hidden' : ""}>
-          ${imageSensitive ? '<span class="privacy-veil" aria-hidden="true"></span>' : ""}
-          ${imageSensitive ? '<span class="preview-status sr-only" role="status" aria-live="polite"></span>' : ""}
+        <button class="face front card-flip${imageLocked ? " is-locked" : ""}" type="button" aria-label="翻转查看${safe(work.name)}的简介" aria-expanded="false" aria-controls="card-back-${index}" aria-hidden="false">
+          <img${imgLoading}${imgPriority} decoding="async" width="360" height="500"${previewSource} alt="${imageLocked ? "" : safe(work.name)}"${imageLocked ? ' aria-hidden="true" hidden' : ""}>
+          ${imageLocked ? '<span class="privacy-veil" aria-hidden="true"></span>' : ""}
+          ${imageLocked ? '<span class="preview-status sr-only" role="status" aria-live="polite"></span>' : ""}
           <span class="card-badges" aria-label="角色标签">${cornerBadges}</span>
           <span class="card-open" aria-hidden="true">↻</span>
           <span class="card-name">
@@ -72,7 +73,7 @@ function cardHTML(work,index){
         </button>
         <section class="face back" id="card-back-${index}" aria-label="${safe(work.name)}角色简介" aria-hidden="true" inert data-back-pending="1"></section>
       </div>
-      <button class="privacy-unlock" type="button" data-index="${index}" data-mode="${imageSensitive ? "unlock" : "save"}" aria-label="${imageSensitive ? `显示${safe(work.name)}的敏感图片，仅本次页面有效` : `保存${safe(work.name)}角色卡 PNG`}">${imageSensitive ? "解锁卡面" : "保存角色卡 PNG"}</button>
+      <button class="privacy-unlock" type="button" data-index="${index}" data-mode="${imageLocked ? "unlock" : "save"}" aria-label="${imageLocked ? `显示${safe(work.name)}的敏感图片，仅本次页面有效` : `保存${safe(work.name)}角色卡 PNG`}">${imageLocked ? "解锁卡面" : "保存角色卡 PNG"}</button>
     </article>
     ${hint}
   </div>`;

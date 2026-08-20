@@ -610,7 +610,10 @@ async function runViewport(browserType, browserName, viewport) {
         .slice(0, 6)
         .map((el) => el.textContent?.trim() || ""),
       firstAction: document.querySelector(".card .privacy-unlock")?.dataset.mode || "",
-      firstVeilHidden: document.querySelector(".card .privacy-veil")?.hidden ?? false,
+      firstVeilHidden: (() => {
+        const veil = document.querySelector(".card .privacy-veil");
+        return !veil || veil.hidden;
+      })(),
     }));
     const openFailures = [];
     if (openContract.visibility !== "open") openFailures.push(["open-mode-dataset", "open", openContract.visibility]);
