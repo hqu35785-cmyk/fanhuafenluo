@@ -8,6 +8,12 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      test_url:
+        description: "Optional deployed URL to test instead of the local static server"
+        required: false
+        type: string
+        default: ""
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -60,6 +66,7 @@ jobs:
         run: npx playwright install --with-deps ${{ matrix.browser }}
 
       - name: Start static server
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.test_url == '' }}
         run: |
           node scripts/test_server.mjs > /tmp/fanhuafenluo-http.log 2>&1 &
           for attempt in $(seq 1 30); do
@@ -73,7 +80,7 @@ jobs:
 
       - name: Run single viewport unit
         env:
-          TEST_URL: http://127.0.0.1:4173/index.html
+          TEST_URL: ${{ inputs.test_url || 'http://127.0.0.1:4173/index.html' }}
           TEST_BROWSER: ${{ matrix.browser }}
           TEST_VIEWPORT: ${{ matrix.viewport }}
           TEST_ROUND: "1"
@@ -141,6 +148,7 @@ jobs:
         run: npx playwright install --with-deps ${{ matrix.browser }}
 
       - name: Start static server
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.test_url == '' }}
         run: |
           node scripts/test_server.mjs > /tmp/fanhuafenluo-http.log 2>&1 &
           for attempt in $(seq 1 30); do
@@ -154,7 +162,7 @@ jobs:
 
       - name: Run single viewport unit
         env:
-          TEST_URL: http://127.0.0.1:4173/index.html
+          TEST_URL: ${{ inputs.test_url || 'http://127.0.0.1:4173/index.html' }}
           TEST_BROWSER: ${{ matrix.browser }}
           TEST_VIEWPORT: ${{ matrix.viewport }}
           TEST_ROUND: "2"
@@ -177,3 +185,62 @@ jobs:
     steps:
       - name: Announce round2 success
         run: echo Round2_all_passed
+
+  dynamic-orientation:
+    name: dynamic-${{ matrix.browser }}
+    needs: [round2-summary]
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Start static server
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.test_url == '' }}
+        run: |
+          node scripts/test_server.mjs > /tmp/fanhuafenluo-http.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/fanhuafenluo-http.log || true
+          exit 1
+
+      - name: Run dynamic orientation unit
+        env:
+          TEST_URL: ${{ inputs.test_url || 'http://127.0.0.1:4173/index.html' }}
+          TEST_BROWSER: ${{ matrix.browser }}
+        run: node scripts/dynamic_orientation_verify.mjs
+
+      - name: Upload dynamic failure artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dynamic-${{ matrix.browser }}
+          path: artifacts/dynamic/${{ matrix.browser }}/
+          if-no-files-found: ignore
+          retention-days: 3
+
+  dynamic-orientation-summary:
+    name: Dynamic orientation all passed
+    needs: [dynamic-orientation]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Announce dynamic orientation success
+        run: echo Dynamic_orientation_all_passed
