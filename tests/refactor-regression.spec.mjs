@@ -100,6 +100,49 @@ test("open cards keep detail content and archive controls directly accessible", 
   await expect(page.locator("#archiveModal")).toHaveJSProperty("open", false);
 });
 
+test("saving an original PNG uses a file download instead of cross-origin navigation", async ({ page }) => {
+  await load(page);
+
+  await page.evaluate(() => {
+    window.__galleryDownloadCapture = [];
+    window.__galleryOriginalCreateElement = document.createElement;
+    document.createElement = function (tagName, options) {
+      const element = window.__galleryOriginalCreateElement.call(document, tagName, options);
+      if (String(tagName).toLowerCase() === "a") {
+        element.click = function () {
+          window.__galleryDownloadCapture.push({
+            href: this.href,
+            download: this.download,
+          });
+        };
+      }
+      return element;
+    };
+  });
+
+  try {
+    await page.locator(".card").first().locator(".privacy-unlock").click();
+    await expect
+      .poll(
+        () => page.evaluate(() => window.__galleryDownloadCapture?.[0]?.href || ""),
+        { timeout: 15000, intervals: [100, 250, 500] }
+      )
+      .toMatch(/^blob:/);
+
+    const download = await page.evaluate(() => window.__galleryDownloadCapture?.[0] || null);
+    expect(download?.href).toMatch(/^blob:/);
+    expect(download?.download).toMatch(/-角色卡\.png$/);
+  } finally {
+    await page.evaluate(() => {
+      if (window.__galleryOriginalCreateElement) {
+        document.createElement = window.__galleryOriginalCreateElement;
+      }
+      delete window.__galleryOriginalCreateElement;
+      delete window.__galleryDownloadCapture;
+    });
+  }
+});
+
 for (const viewport of [
   { name: "phone", width: 390, height: 844 },
   { name: "phone-landscape", width: 844, height: 390 },

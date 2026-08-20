@@ -1159,7 +1159,6 @@ async function runViewport(browserType, browserName, viewport) {
       };
     });
     await card.locator(".privacy-unlock").evaluate((element) => element.click());
-    await page.waitForTimeout(300);
     await page.evaluate(() => {
       const el = document.getElementById("unlockChoice");
       if (el) el.hidden = true;
@@ -1184,19 +1183,33 @@ async function runViewport(browserType, browserName, viewport) {
     } else {
       pushOk("action-no-misflip");
     }
-    const downloadClick = await page.evaluate(() => {
-      let click = window.__galleryTestDownloadClicks?.[0] || null;
-      const saveLink = document.getElementById("saveSheetLink");
-      if (!click && saveLink && !document.getElementById("saveSheet")?.hidden) {
-        click = { href: saveLink.href, download: saveLink.download };
-      }
+    const downloadPoll = await pollUntil(
+      () =>
+        page.evaluate(() => {
+          let click = window.__galleryTestDownloadClicks?.[0] || null;
+          const saveLink = document.getElementById("saveSheetLink");
+          if (!click && saveLink && !document.getElementById("saveSheet")?.hidden) {
+            const href = saveLink.getAttribute("href") || "";
+            if (href.startsWith("blob:") && saveLink.download) {
+              click = { href: saveLink.href, download: saveLink.download };
+            }
+          }
+          return click;
+        }),
+      { timeout: 15000, interval: 100 }
+    );
+    const downloadClick = downloadPoll.ok ? downloadPoll.lastValue : null;
+    await page.evaluate(() => {
       if (window.__galleryTestOriginalCreateElement) {
         document.createElement = window.__galleryTestOriginalCreateElement;
       }
       delete window.__galleryTestOriginalCreateElement;
-      return click;
     });
-    if (!downloadClick || !downloadClick.download.endsWith("-角色卡.png")) {
+    if (
+      !downloadClick ||
+      !downloadClick.href.startsWith("blob:") ||
+      !downloadClick.download.endsWith("-角色卡.png")
+    ) {
       rows.push(
         await captureFailure(
           page,
@@ -1205,7 +1218,7 @@ async function runViewport(browserType, browserName, viewport) {
           "download-action",
           {
             check: "download-filename",
-            expected: "anchor download ends with -角色卡.png",
+            expected: "anchor uses a blob URL and download ends with -角色卡.png",
             actual: downloadClick,
           },
           consoleErrors
