@@ -50,6 +50,14 @@ jobs:
           node scripts/snapshot_invariants.mjs record
           node scripts/snapshot_invariants.mjs check
 
+      - name: Validate all catalog assets
+        run: npm run validate:assets
+
+      - name: Build and verify Pages artifact
+        run: |
+          npm run build:pages
+          npm run verify:pages-site
+
       - name: Start static server
         run: |
           node scripts/test_server.mjs > /tmp/fanhuafenluo-http.log 2>&1 &
@@ -65,6 +73,26 @@ jobs:
       - name: Playwright refactor regression
         env:
           TEST_URL: http://127.0.0.1:4173
+        run: npm run test:refactor
+
+      - name: Start Pages artifact server
+        env:
+          PORT: "4174"
+          SITE_ROOT: ${{ github.workspace }}/_site
+        run: |
+          node scripts/test_server.mjs > /tmp/fanhuafenluo-pages-http.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4174/index.html > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/fanhuafenluo-pages-http.log || true
+          exit 1
+
+      - name: Playwright Pages artifact regression
+        env:
+          TEST_URL: http://127.0.0.1:4174
         run: npm run test:refactor
 
       - name: Upload Playwright report on failure

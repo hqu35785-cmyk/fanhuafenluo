@@ -40,42 +40,64 @@ async function cycleSections(page, visitor) {
   return seen;
 }
 
-test("every author section renders a self-consistent card count", async ({ page }) => {
+test("open visibility mode renders the approved sections and latest-first order", async ({ page }) => {
   await load(page);
-  const seen = await cycleSections(page, async section => {
-    expect(section.count).toBeGreaterThan(0);
-    expect(section.workCount).toBe(section.count);
-    expect(section.workTotal).toBe(section.count);
-  });
-  expect(seen.size).toBeGreaterThan(0);
+
+  await expect(page.locator("html")).toHaveAttribute("data-card-visibility", "open");
+  await expect(page.locator("#unlockAll")).toBeHidden();
+  await expect(page.locator("#unlockChoice")).toBeHidden();
+
+  const firstCard = page.locator(".card").first();
+  await expect(firstCard.locator(".front img")).toBeVisible();
+  await expect(firstCard.locator(".privacy-veil")).toBeHidden();
+  await expect(firstCard.locator(".privacy-unlock")).toHaveAttribute("data-mode", "save");
+
+  const expected = [
+    { name: "繁花·纷落", count: 70, first: ["刻律德菈", "云璃", "雾矢葵", "许知予", "八尺大姐姐", "康娜"] },
+    { name: "鲨鱼", count: 14 },
+    { name: "咓", count: 14 },
+  ];
+  const switcher = page.locator("#authorSwitch");
+  for (let round = 0; round < 2; round += 1) {
+    for (const section of expected) {
+      await expect(page.locator("#authorName")).toHaveText(section.name);
+      await expect(page.locator(".card")).toHaveCount(section.count);
+      await expect(page.locator("#workCount")).toHaveText(String(section.count).padStart(2, "0"));
+      await expect(page.locator("#workTotal")).toHaveText(`/ ${section.count}`);
+      if (section.first) {
+        const names = await page.locator(".card .card-name b").evaluateAll(elements =>
+          elements.slice(0, 6).map(element => element.textContent?.trim() || "")
+        );
+        expect(names).toEqual(section.first);
+      }
+      await switcher.click();
+      await expect(page.locator(".card").first()).toBeVisible();
+    }
+  }
 });
 
-test("image sensitivity and setting sensitivity are independent", async ({ page }) => {
+test("open cards keep detail content and archive controls directly accessible", async ({ page }) => {
   await load(page);
-  let found = false;
+  const candidate = page.locator(".card").first();
 
-  await cycleSections(page, async () => {
-    if (found) return;
-    const candidate = page.locator(".card.is-sensitive:not(.is-setting-sensitive)").first();
-    if (!(await candidate.count())) return;
+  await candidate.locator(".card-flip").evaluate(element => element.click());
+  await expect(candidate).toHaveClass(/flipped/);
+  // Firefox/WebKit do not reliably hit-test the back face during the 3D flip.
+  await page.waitForTimeout(550);
+  await expect(candidate.locator(".back-expand")).toBeVisible();
+  await expect(candidate.locator(".back-setting-content")).toBeVisible();
+  await expect(candidate.locator(".back-setting-content")).not.toHaveText("");
+  await expect(candidate.locator(".back-setting-privacy")).toBeHidden();
 
-    found = true;
-    await expect(candidate.locator(".front img")).toBeHidden();
-    await candidate.locator(".card-flip").evaluate(element => element.click());
-    await expect(candidate).toHaveClass(/flipped/);
-    await expect(candidate.locator(".back-setting-content")).toBeVisible();
-    await expect(candidate.locator(".back-setting-content")).not.toHaveText("");
-    await expect(candidate.locator(".back-setting-privacy")).toBeHidden();
-
-    await candidate.locator(".back-expand").click();
-    await expect(page.locator("#archiveModal")).toHaveJSProperty("open", true);
-    await expect(page.locator("#archiveSetting")).toBeVisible();
-    await expect(page.locator("#archiveSetting")).not.toHaveText("");
-    await expect(page.locator("#archiveSettingPrivacy")).toBeHidden();
-    await page.keyboard.press("Escape");
-  });
-
-  expect(found).toBe(true);
+  await candidate.locator(".back-expand").click();
+  await expect(page.locator("#archiveModal")).toHaveJSProperty("open", true);
+  await expect(page.locator("#archiveOpening")).not.toHaveText("");
+  await expect(page.locator("#archivePersonality")).not.toHaveText("");
+  await expect(page.locator("#archiveSetting")).not.toHaveText("");
+  await expect(page.locator("#archiveSettingPrivacy")).toBeHidden();
+  await expect(page.locator("#downloadCard")).toBeEnabled();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#archiveModal")).toHaveJSProperty("open", false);
 });
 
 for (const viewport of [
@@ -121,6 +143,8 @@ test("archive dialog closes with Escape", async ({ page }) => {
   await load(page);
   const card = page.locator(".card").first();
   await card.locator(".card-flip").evaluate(element => element.click());
+  await page.waitForTimeout(550);
+  await expect(card.locator(".back-expand")).toBeVisible();
   await card.locator(".back-expand").click();
   await expect(page.locator("#archiveModal")).toHaveJSProperty("open", true);
   await page.keyboard.press("Escape");

@@ -599,6 +599,42 @@ async function runViewport(browserType, browserName, viewport) {
     await page.waitForSelector(".card", { timeout: 30000 });
     await page.waitForTimeout(500);
 
+    const openContract = await page.evaluate(() => ({
+      visibility: document.documentElement.dataset.cardVisibility || "",
+      cards: document.querySelectorAll(".card").length,
+      unlockAllHidden: document.getElementById("unlockAll")?.hidden ?? false,
+      unlockAllInert: document.getElementById("unlockAll")?.hasAttribute("inert") ?? false,
+      unlockChoiceHidden: document.getElementById("unlockChoice")?.hidden ?? false,
+      unlockChoiceInert: document.getElementById("unlockChoice")?.hasAttribute("inert") ?? false,
+      firstNames: [...document.querySelectorAll(".card .card-name b")]
+        .slice(0, 6)
+        .map((el) => el.textContent?.trim() || ""),
+      firstAction: document.querySelector(".card .privacy-unlock")?.dataset.mode || "",
+      firstVeilHidden: document.querySelector(".card .privacy-veil")?.hidden ?? false,
+    }));
+    const openFailures = [];
+    if (openContract.visibility !== "open") openFailures.push(["open-mode-dataset", "open", openContract.visibility]);
+    if (openContract.cards !== 70) openFailures.push(["open-mode-fanhua-count", 70, openContract.cards]);
+    if (!openContract.unlockAllHidden || !openContract.unlockAllInert) {
+      openFailures.push(["open-mode-unlock-all-hidden", { hidden: true, inert: true }, openContract]);
+    }
+    if (!openContract.unlockChoiceHidden || !openContract.unlockChoiceInert) {
+      openFailures.push(["open-mode-unlock-choice-hidden", { hidden: true, inert: true }, openContract]);
+    }
+    const expectedLatest = ["刻律德菈", "云璃", "雾矢葵", "许知予", "八尺大姐姐", "康娜"];
+    if (JSON.stringify(openContract.firstNames) !== JSON.stringify(expectedLatest)) {
+      openFailures.push(["open-mode-latest-order", expectedLatest, openContract.firstNames]);
+    }
+    if (openContract.firstAction !== "save" || openContract.firstVeilHidden !== true) {
+      openFailures.push(["open-mode-first-card-direct", { action: "save", veilHidden: true }, openContract]);
+    }
+    for (const [check, expected, actual] of openFailures) {
+      rows.push(
+        await captureFailure(page, browserName, viewport, "open-mode", { check, expected, actual }, consoleErrors)
+      );
+    }
+    if (!openFailures.length) pushOk("open-mode", { contract: openContract });
+
     const deployment = await page.evaluate(() => {
       const rules = [...document.styleSheets].flatMap((sheet) => {
         try {
@@ -626,14 +662,14 @@ async function runViewport(browserType, browserName, viewport) {
       };
     });
 
-    // 1 locked
+    // 1 open cards
     let layout = await inspectLayout(page);
     for (const f of layout.failures) {
       rows.push(
-        await captureFailure(page, browserName, viewport, "locked-front", f, consoleErrors)
+        await captureFailure(page, browserName, viewport, "open-front", f, consoleErrors)
       );
     }
-    if (!layout.failures.length) pushOk("locked-front", { media: layout.media, flipMode: layout.flipMode, deployment });
+    if (!layout.failures.length) pushOk("open-front", { media: layout.media, flipMode: layout.flipMode, deployment });
 
     // 1b section switch: 繁花 → 鲨鱼(14) → 咓(14) → 繁花, unlock isolation
     {
@@ -692,13 +728,6 @@ async function runViewport(browserType, browserName, viewport) {
         );
       }
 
-      const unlockBtn = page.locator(".privacy-unlock[data-mode='unlock']").first();
-      if (await unlockBtn.count()) {
-        await unlockBtn.click({ force: true }).catch(() => {});
-        await page.waitForTimeout(150);
-        await page.locator("#unlockChoiceSingle").click({ force: true }).catch(() => {});
-        await page.waitForTimeout(200);
-      }
       const unlockedBefore = await page.evaluate(
         () => document.querySelectorAll(".card .front:not(.is-locked)").length
       );
@@ -813,7 +842,7 @@ async function runViewport(browserType, browserName, viewport) {
       }, initialAuthorAvatarSrc);
       const backFails = [];
       if (back.name !== "繁花·纷落") backFails.push(["author-name-fanhua", "繁花·纷落", back.name]);
-      if (back.cards < 1) backFails.push(["author-cards-restored", ">=1", back.cards]);
+      if (back.cards !== 70) backFails.push(["author-cards-restored", 70, back.cards]);
       if (back.empty) backFails.push(["author-not-empty", false, back.empty]);
       if (back.footer !== "繁花·纷落") backFails.push(["author-footer-fanhua", "繁花·纷落", back.footer]);
       if (!back.authorAvatarRestored) {
@@ -829,8 +858,8 @@ async function runViewport(browserType, browserName, viewport) {
           },
         ]);
       }
-      if (unlockedBefore > 0 && back.unlockedFaces < unlockedBefore)
-        backFails.push(["author-unlock-persist", unlockedBefore, back.unlockedFaces]);
+      if (back.unlockedFaces !== 70)
+        backFails.push(["author-open-faces-restored", 70, back.unlockedFaces]);
       for (const [check, expected, actual] of backFails) {
         rows.push(
           await captureFailure(page, browserName, viewport, "author-switch-back", { check, expected, actual }, consoleErrors)
@@ -848,7 +877,7 @@ async function runViewport(browserType, browserName, viewport) {
         name: document.getElementById("authorName")?.textContent || "",
         cards: document.querySelectorAll(".card").length,
       }));
-      if (afterReload.name !== "繁花·纷落" || afterReload.cards < 1) {
+      if (afterReload.name !== "繁花·纷落" || afterReload.cards !== 70) {
         rows.push(
           await captureFailure(
             page,
@@ -857,7 +886,7 @@ async function runViewport(browserType, browserName, viewport) {
             "author-refresh-default",
             {
               check: "author-refresh-default",
-              expected: "繁花·纷落 with cards",
+              expected: "繁花·纷落 with 70 cards",
               actual: afterReload,
             },
             consoleErrors
@@ -868,20 +897,38 @@ async function runViewport(browserType, browserName, viewport) {
       }
     }
 
-    // 2 unlock
-    await page.locator("#unlockAll").click({ force: true }).catch(() => {});
-    await page.waitForTimeout(400);
-    await page.evaluate(() => {
-      const el = document.getElementById("unlockChoice");
-      if (el) el.hidden = true;
-    });
+    // 2 open mode remains directly available after repeated section changes
+    const openAfterSwitch = await page.evaluate(() => ({
+      visibility: document.documentElement.dataset.cardVisibility || "",
+      cards: document.querySelectorAll(".card").length,
+      unlockAllHidden: document.getElementById("unlockAll")?.hidden ?? false,
+      unlockChoiceHidden: document.getElementById("unlockChoice")?.hidden ?? false,
+      actionModes: [...document.querySelectorAll(".card .privacy-unlock")]
+        .slice(0, 6)
+        .map((el) => el.dataset.mode || ""),
+    }));
+    const openAfterSwitchFailures = [];
+    if (openAfterSwitch.visibility !== "open") openAfterSwitchFailures.push(["open-mode-after-switch", "open", openAfterSwitch.visibility]);
+    if (openAfterSwitch.cards !== 70) openAfterSwitchFailures.push(["open-mode-after-switch-count", 70, openAfterSwitch.cards]);
+    if (!openAfterSwitch.unlockAllHidden || !openAfterSwitch.unlockChoiceHidden) {
+      openAfterSwitchFailures.push(["open-mode-controls-after-switch", { unlockAllHidden: true, unlockChoiceHidden: true }, openAfterSwitch]);
+    }
+    if (openAfterSwitch.actionModes.some((mode) => mode !== "save")) {
+      openAfterSwitchFailures.push(["open-mode-actions-after-switch", "all save", openAfterSwitch.actionModes]);
+    }
+    for (const [check, expected, actual] of openAfterSwitchFailures) {
+      rows.push(
+        await captureFailure(page, browserName, viewport, "open-mode-after-switch", { check, expected, actual }, consoleErrors)
+      );
+    }
+    if (!openAfterSwitchFailures.length) pushOk("open-mode-after-switch", { contract: openAfterSwitch });
     layout = await inspectLayout(page);
     for (const f of layout.failures) {
       rows.push(
-        await captureFailure(page, browserName, viewport, "unlocked-front", f, consoleErrors)
+        await captureFailure(page, browserName, viewport, "open-front-after-switch", f, consoleErrors)
       );
     }
-    if (!layout.failures.length) pushOk("unlocked-front", { media: layout.media });
+    if (!layout.failures.length) pushOk("open-front-after-switch", { media: layout.media });
 
     // 3 loading simulate
     await page.evaluate(() => {
@@ -929,11 +976,6 @@ async function runViewport(browserType, browserName, viewport) {
     await page.reload({ waitUntil: "domcontentloaded" });
     await page.waitForSelector(".card", { timeout: 30000 });
     await page.waitForTimeout(350);
-    await page.locator("#unlockAll").click({ force: true }).catch(() => {});
-    await page.evaluate(() => {
-      const el = document.getElementById("unlockChoice");
-      if (el) el.hidden = true;
-    });
     await page.waitForTimeout(200);
 
     // 5 flip to back
@@ -1004,7 +1046,10 @@ async function runViewport(browserType, browserName, viewport) {
         try {
           await settleFlipTransition(card);
           await backReturn.waitFor({ state: "visible", timeout: 5000 });
-          await softScrollIntoView(backReturn);
+          await backReturn.evaluate((element) => {
+            element.scrollIntoView({ block: "center", inline: "center", behavior: "auto" });
+          });
+          await page.waitForTimeout(80);
           await clickControl(backReturn, browserName);
           const result = await pollUntil(
             () => card.evaluate((el) => !el.classList.contains("flipped")),
@@ -1071,7 +1116,23 @@ async function runViewport(browserType, browserName, viewport) {
 
     // action no misflip — click button only
     const before = await card.evaluate((el) => el.classList.contains("flipped"));
-    await card.locator(".privacy-unlock").click({ force: true });
+    await page.evaluate(() => {
+      window.__galleryTestDownloadClicks = [];
+      window.__galleryTestOriginalCreateElement = document.createElement;
+      document.createElement = function (tagName, options) {
+        const element = window.__galleryTestOriginalCreateElement.call(document, tagName, options);
+        if (String(tagName).toLowerCase() === "a") {
+          element.click = function () {
+            window.__galleryTestDownloadClicks.push({
+              href: this.href,
+              download: this.download,
+            });
+          };
+        }
+        return element;
+      };
+    });
+    await card.locator(".privacy-unlock").evaluate((element) => element.click());
     await page.waitForTimeout(300);
     await page.evaluate(() => {
       const el = document.getElementById("unlockChoice");
@@ -1096,6 +1157,44 @@ async function runViewport(browserType, browserName, viewport) {
       );
     } else {
       pushOk("action-no-misflip");
+    }
+    const downloadClick = await page.evaluate(() => {
+      let click = window.__galleryTestDownloadClicks?.[0] || null;
+      const saveLink = document.getElementById("saveSheetLink");
+      if (!click && saveLink && !document.getElementById("saveSheet")?.hidden) {
+        click = { href: saveLink.href, download: saveLink.download };
+      }
+      if (window.__galleryTestOriginalCreateElement) {
+        document.createElement = window.__galleryTestOriginalCreateElement;
+      }
+      delete window.__galleryTestOriginalCreateElement;
+      return click;
+    });
+    if (!downloadClick || !downloadClick.download.endsWith("-角色卡.png")) {
+      rows.push(
+        await captureFailure(
+          page,
+          browserName,
+          viewport,
+          "download-action",
+          {
+            check: "download-filename",
+            expected: "anchor download ends with -角色卡.png",
+            actual: downloadClick,
+          },
+          consoleErrors
+        )
+      );
+    } else {
+      pushOk("download-action", { href: downloadClick.href, download: downloadClick.download });
+    }
+    const saveSheet = page.locator("#saveSheet");
+    if (await saveSheet.isVisible().catch(() => false)) {
+      await page.locator("#saveSheetClose").click({ force: true }).catch(() => {});
+      await pollUntil(
+        () => page.evaluate(() => document.getElementById("saveSheet")?.hidden === true),
+        { timeout: 2000, interval: 50 }
+      );
     }
 
     // 7 archive — open via state poll, geometry with visualViewport + usability checks

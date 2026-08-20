@@ -3,7 +3,7 @@ import http from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ROOT = process.cwd();
+const ROOT = path.resolve(process.env.SITE_ROOT || process.cwd());
 const HOST = "127.0.0.1";
 const PORT = Number(process.env.PORT || 4173);
 

@@ -1,3 +1,6 @@
+const CARD_VISIBILITY_MODE="open";
+document.documentElement.dataset.cardVisibility=CARD_VISIBILITY_MODE;
+
 const gallery=document.getElementById("gallery");
 const toast=document.getElementById("toast");
 const archiveModal=document.getElementById("archiveModal");
@@ -236,7 +239,9 @@ function syncAuthorChrome(){
     authorAvatar.alt=`${activeAuthor.name}的分区头像`;
   }
   if(authorNameEl) authorNameEl.textContent=activeAuthor.name;
-  if(authorSwitchHint) authorSwitchHint.textContent=activeAuthor.status;
+  if(authorSwitchHint) authorSwitchHint.textContent=CARD_VISIBILITY_MODE==="open"
+    ? "公开浏览 · 点头像切换不同分区"
+    : activeAuthor.status;
   if(authorSwitch){
     authorSwitch.setAttribute("aria-label",`切换分区，当前分区为${activeAuthor.name}`);
   }
@@ -1117,7 +1122,7 @@ const archiveSettingPrivacy=document.getElementById("archiveSettingPrivacy");
 const downloadCard=document.getElementById("downloadCard");
 // Cap concurrent decodes so mid-range phones stay responsive while scrolling.
 // Cap concurrent image decode/network so multi-unlock stays responsive.
-const PREVIEW_LOAD_CONCURRENCY=2;
+const PREVIEW_LOAD_CONCURRENCY=3;
 const PREVIEW_DECODE_CONCURRENCY=1;
 const PREVIEW_MAX_ATTEMPTS=3;
 const PREVIEW_LOAD_TIMEOUT=20000;
@@ -1146,10 +1151,12 @@ let activeIndex=null;
 let modalOpener=null;
 
 function isWorkLocked(index){
+  if(CARD_VISIBILITY_MODE==="open") return false;
   return Boolean(works[index]?.sensitive) && !unlockedWorks.has(index);
 }
 
 function isSettingLocked(index){
+  if(CARD_VISIBILITY_MODE==="open") return false;
   return Boolean(works[index]?.sensitiveSetting) && !unlockedWorks.has(index);
 }
 
@@ -1169,6 +1176,18 @@ function getFailedPreviewIndexes(){
 
 function syncUnlockAll(){
   if(!unlockAll) return;
+  if(CARD_VISIBILITY_MODE==="open"){
+    unlockAll.hidden=true;
+    unlockAll.disabled=true;
+    unlockAll.setAttribute("aria-hidden","true");
+    unlockAll.setAttribute("inert","");
+    if(typeof unlockChoice!=="undefined" && unlockChoice){
+      unlockChoice.hidden=true;
+      unlockChoice.setAttribute("aria-hidden","true");
+      unlockChoice.setAttribute("inert","");
+    }
+    return;
+  }
   const sensitiveCount=works.reduce((count,work)=>count+(work.sensitive ? 1 : 0),0);
   const lockedCount=getLockedSensitiveIndexes().length;
   const failedCount=getFailedPreviewIndexes().length;
