@@ -127,14 +127,33 @@ for (const viewport of [
             }
           }
         }
+        const arrowGeometry = [...document.querySelectorAll(".card")].slice(0, 6).map(card => {
+          const front = card.querySelector(".front");
+          const arrow = card.querySelector(".card-open");
+          if (!front || !arrow) return null;
+          const frontRect = front.getBoundingClientRect();
+          const arrowRect = arrow.getBoundingClientRect();
+          const edge = Number.parseFloat(getComputedStyle(front).getPropertyValue("--badge-inset")) || 0;
+          return {
+            topOffset: arrowRect.top - frontRect.top,
+            rightOffset: frontRect.right - arrowRect.right,
+            edge,
+          };
+        }).filter(Boolean);
         return {
           viewportWidth: document.documentElement.clientWidth,
           scrollWidth: document.documentElement.scrollWidth,
           overlaps,
+          arrowGeometry,
         };
       });
       expect(result.scrollWidth).toBeLessThanOrEqual(result.viewportWidth + 1);
       expect(result.overlaps).toEqual([]);
+      expect(result.arrowGeometry.length).toBeGreaterThan(0);
+      for (const geometry of result.arrowGeometry) {
+        expect(Math.abs(geometry.topOffset - geometry.edge)).toBeLessThanOrEqual(1.5);
+        expect(Math.abs(geometry.rightOffset - geometry.edge)).toBeLessThanOrEqual(1.5);
+      }
     });
   });
 }
