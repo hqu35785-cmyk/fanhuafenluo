@@ -398,11 +398,34 @@ async function inspectLayout(page) {
       const alias = card.querySelector(".card-name > span:not(.card-meta)");
       const metaLast = card.querySelector(".card-meta span:last-child");
       const btn = card.querySelector(".privacy-unlock");
+      const front = card.querySelector(".front");
+      const cardOpen = card.querySelector(".card-open");
       const cardVis = visibleRect(card);
       const titleVis = visibleRect(title);
       const aliasVis = visibleRect(alias);
       const metaVis = visibleRect(metaLast);
       const btnVis = visibleRect(btn);
+
+      if (front && cardOpen && cardVis) {
+        const frontRect = front.getBoundingClientRect();
+        const openRect = cardOpen.getBoundingClientRect();
+        const edge = Number.parseFloat(getComputedStyle(front).getPropertyValue("--badge-inset")) || 0;
+        const topOffset = openRect.top - frontRect.top;
+        const rightOffset = frontRect.right - openRect.right;
+        if (Math.abs(topOffset - edge) > 1.5 || Math.abs(rightOffset - edge) > 1.5) {
+          failures.push({
+            check: "card-open-top-right",
+            expected: { topOffset: edge, rightOffset: edge },
+            actual: { topOffset, rightOffset, open: pack(openRect), front: pack(frontRect) },
+            selectors: [".card-open", ".front"],
+            visibleRects: { open: pack(openRect), card: pack(cardVis) },
+            media,
+            scrollWidth,
+            clientWidth,
+            extra: { cardIndex: i, cardClass: card.className },
+          });
+        }
+      }
 
       if (btnVis && cardVis) {
         if (

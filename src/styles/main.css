@@ -424,6 +424,7 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
 }
 .front{
   --badge-inset:10px;
+  --card-open-size:28px;
   width:100%;
   padding:0;
   color:inherit;
@@ -449,9 +450,9 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   z-index:3;
   top:var(--badge-inset);
   left:var(--badge-inset);
-  right:var(--badge-inset);
+  right:calc(var(--badge-inset) + var(--card-open-size) + 6px);
   width:auto;
-  max-width:calc(100% - var(--badge-inset) * 2);
+  max-width:calc(100% - var(--badge-inset) * 2 - var(--card-open-size) - 6px);
   height:30px;
   min-width:0;
   overflow:hidden;
@@ -504,10 +505,10 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
 .card-open{
   position:absolute;
   z-index:4;
-  top:calc(var(--badge-inset) + 34px);
+  top:var(--badge-inset);
   right:var(--badge-inset);
-  width:28px;
-  height:28px;
+  width:var(--card-open-size);
+  height:var(--card-open-size);
   display:grid;
   place-items:center;
   border:1px solid rgba(255,255,255,.13);
@@ -1771,13 +1772,12 @@ footer::before{
   .privacy-unlock[data-mode="save"]{font-size:7px}
   .card-name{right:96px}
   .archive-status em{display:none}
-  .front{--badge-inset:8px}
+  .front{--badge-inset:8px;--card-open-size:26px}
   .card-badges{
     height:26px;
-    max-width:calc(100% - 16px);
   }
   .card-code{height:24px;padding:0 7px;font-size:7px;letter-spacing:.04em;gap:5px}
-  .card-open{width:26px;height:26px;font-size:11px}
+  .card-open{font-size:11px}
   .card-meta{display:none}
   .slot-cross{display:none}
 }
@@ -1826,8 +1826,7 @@ footer::before{
   }
   .face{border-radius:16px}
   .card-badges{
-    right:8px;
-    max-width:calc(100% - 16px);
+    right:calc(var(--badge-inset) + var(--card-open-size) + 6px);
   }
   .card-code{
     max-width:100%;
@@ -1841,12 +1840,12 @@ footer::before{
     max-width:100%;
   }
   .card-open{
-    top:calc(var(--badge-inset) + 30px);
-    right:8px;
+    right:var(--badge-inset);
     width:24px;
     height:24px;
     font-size:11px;
   }
+  .front{--card-open-size:24px}
   /* Name sits above the face action so long titles (e.g. 李慕婉 【骚图版】) can stay one full line. */
   .card-name,
   .front.is-locked .card-name,
