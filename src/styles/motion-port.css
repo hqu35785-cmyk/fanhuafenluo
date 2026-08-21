@@ -1,0 +1,231 @@
+/* Final motion/geometry layer ported from the supplied template.
+   This deliberately contains no role-card data or asset paths. */
+
+:root{
+  --motion-ease-out:cubic-bezier(.16,1,.3,1);
+}
+
+/* Exact final header sequence from the template: avatar -> CN name -> EN -> count. */
+.site-header .author-header-row{
+  width:calc(100% - 22px)!important;
+  height:100%!important;
+  margin-inline:auto!important;
+  display:grid!important;
+  grid-template-columns:48px max-content minmax(0,1fr) auto!important;
+  grid-template-rows:1fr!important;
+  grid-template-areas:"avatar name english count"!important;
+  column-gap:12px!important;
+  row-gap:0!important;
+  align-items:center!important;
+}
+.author-avatar-shell{
+  grid-area:avatar!important;
+  width:48px!important;
+  height:48px!important;
+  align-self:center!important;
+  border-radius:15px!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 9px 24px rgba(0,0,0,.28)!important;
+}
+.author-avatar-img{width:100%!important;height:100%!important;display:block!important;object-fit:cover!important}
+.author-primary{
+  grid-area:name!important;
+  min-width:0!important;
+  align-self:center!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+}
+.author-primary b{
+  display:block!important;
+  max-width:none!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+  font-family:var(--template-serif)!important;
+  font-size:29px!important;
+  font-weight:600!important;
+  line-height:1!important;
+  letter-spacing:.11em!important;
+  color:rgba(255,251,253,.96)!important;
+  text-shadow:0 1px 20px rgba(232,182,199,.09)!important;
+}
+.author-english{
+  grid-area:english!important;
+  min-width:0!important;
+  align-self:center!important;
+  padding:2px 0 0!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  overflow:hidden!important;
+}
+.author-english span{
+  display:block!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  color:rgba(225,218,228,.46)!important;
+  font-size:7px!important;
+  font-weight:650!important;
+  letter-spacing:.18em!important;
+}
+.author-english small{display:none!important}
+.archive-count{
+  grid-area:count!important;
+  align-self:center!important;
+  width:auto!important;
+  min-width:48px!important;
+  height:auto!important;
+  padding-left:10px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  gap:3px!important;
+  border-left:1px solid rgba(255,255,255,.055)!important;
+}
+
+/* Author/header entrance motion: current data renderer stays untouched. */
+.site-header.author-switch-in .author-avatar-shell{animation:authorAvatarPortIn 520ms var(--motion-ease-out) both}
+.site-header.author-switch-in .author-primary b{animation:authorNamePortIn 500ms 35ms var(--motion-ease-out) both}
+.site-header.author-switch-in .author-english span{animation:authorEnglishPortIn 540ms 70ms var(--motion-ease-out) both}
+.site-header.author-switch-in .archive-count b{animation:authorCountPortIn 520ms 55ms var(--motion-ease-out) both}
+@keyframes authorAvatarPortIn{0%{opacity:0;transform:translateX(18px) rotate(48deg) scale(.76)}58%{opacity:1;transform:translateX(-2px) rotate(-7deg) scale(1.04)}100%{opacity:1;transform:none}}
+@keyframes authorNamePortIn{0%{opacity:0;transform:translateX(24px) skewX(-6deg)}62%{opacity:1;transform:translateX(-2px) skewX(1deg)}100%{opacity:1;transform:none}}
+@keyframes authorEnglishPortIn{0%{opacity:0;transform:translateX(15px);letter-spacing:.24em}100%{opacity:1;transform:none}}
+@keyframes authorCountPortIn{0%{opacity:0;transform:translateY(18px) scale(.88)}58%{opacity:1;transform:translateY(-2px) scale(1.04)}100%{opacity:1;transform:none}}
+
+/* =========================================================
+   SCROLL FORCE — final V4 behavior from the supplied template.
+   The JS writes only transform/art-shift/glow for cards near the viewport.
+   ========================================================= */
+.archive-card .card-face{
+  --scroll-shift:0px;
+  --scroll-tilt:0deg;
+  --scroll-roll:0deg;
+  --scroll-scale-x:1;
+  --scroll-scale-y:1;
+  --scroll-art-shift:0px;
+  --scroll-glow:0;
+  --scroll-edge-y:50%;
+  --hover-lift:0px;
+  transform:
+    perspective(760px)
+    translate3d(0,var(--scroll-shift),0)
+    translateY(var(--hover-lift))
+    rotateX(var(--scroll-tilt))
+    rotateZ(var(--scroll-roll))
+    scale(var(--scroll-scale-x),var(--scroll-scale-y))!important;
+  transform-origin:50% 50%!important;
+  will-change:transform;
+  backface-visibility:hidden;
+}
+.archive-card .card-face::before{
+  content:"";
+  position:absolute;
+  z-index:18;
+  inset:0;
+  pointer-events:none;
+  border-radius:inherit;
+  opacity:var(--scroll-glow);
+  background:
+    radial-gradient(130% 38% at 50% var(--scroll-edge-y),rgba(255,255,255,.16),rgba(232,182,199,.06) 34%,transparent 68%),
+    linear-gradient(180deg,rgba(255,255,255,.045),transparent 22%,transparent 78%,rgba(169,187,217,.04));
+  transition:opacity 70ms linear;
+}
+.archive-card .loaded-art,
+.archive-card .ghost-frame,
+.archive-card .stripe-field{
+  translate:0 var(--scroll-art-shift);
+  will-change:translate;
+}
+body.is-scroll-forcing .archive-card .loaded-art,
+body.is-scroll-forcing .archive-card .ghost-frame,
+body.is-scroll-forcing .archive-card .stripe-field{transition-duration:0s!important}
+body:not(.is-scroll-forcing) .archive-card .loaded-art,
+body:not(.is-scroll-forcing) .archive-card .ghost-frame,
+body:not(.is-scroll-forcing) .archive-card .stripe-field{
+  transition:translate 180ms cubic-bezier(.2,.8,.2,1),opacity .36s ease!important;
+}
+body.scroll-force-down .archive-card .card-face::before{--scroll-edge-y:5%}
+body.scroll-force-up .archive-card .card-face::before{--scroll-edge-y:95%}
+@media(hover:hover) and (pointer:fine){
+  .archive-card.is-loaded:hover .card-face{
+    --hover-lift:-2px;
+  }
+}
+
+/* Only visible cards receive expensive entrance motion. */
+.archive-card.is-motion-visible.is-loaded .loaded-art{will-change:transform,opacity,translate}
+.archive-card:not(.is-motion-visible){will-change:auto!important}
+
+/* =========================================================
+   Detail tabs — content is replaced in one reader instead of stacking.
+   The app adds .is-refreshing; motion bridge supplies direction.
+   ========================================================= */
+.detail-options{position:relative;isolation:isolate}
+.detail-option{z-index:1;background:transparent!important;-webkit-tap-highlight-color:transparent}
+.detail-option span,.detail-option b{
+  transition:transform 330ms cubic-bezier(.2,.82,.2,1),opacity 260ms ease,color 260ms ease,letter-spacing 330ms ease!important;
+}
+.detail-option:not(.is-active) span{transform:scale(.92);opacity:.72}
+.detail-option.is-active span{transform:scale(1.08);opacity:1;color:rgba(232,182,199,.72)!important}
+.detail-option.is-active b{letter-spacing:.075em!important}
+.detail-option.is-tab-hit span{animation:detailIndexTickPort 420ms cubic-bezier(.2,.82,.2,1) both}
+.detail-option.is-tab-hit b{animation:detailLabelSettlePort 420ms cubic-bezier(.2,.82,.2,1) both}
+.detail-reading-panel{
+  --detail-motion-x:14px;
+  isolation:isolate;
+  perspective:900px;
+  transition:border-color 320ms ease,box-shadow 360ms ease,background 420ms ease!important;
+}
+.detail-reading-panel[data-motion-direction="backward"]{--detail-motion-x:-14px}
+.detail-reading-panel.is-refreshing::before{
+  content:"";
+  position:absolute;
+  z-index:6;
+  left:0;right:0;top:0;height:1px;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(232,182,199,.55),rgba(169,187,217,.34),transparent);
+  animation:detailScanPort 460ms ease both;
+}
+.detail-reading-panel.is-refreshing .detail-reading-head{animation:detailHeadPort 380ms var(--motion-ease-out) both}
+.detail-reading-panel.is-refreshing .detail-reading-body{animation:detailBodyPort 440ms var(--motion-ease-out) both}
+@keyframes detailIndexTickPort{0%{transform:scale(.86);opacity:.45}55%{transform:scale(1.18);opacity:1}100%{transform:scale(1.08)}}
+@keyframes detailLabelSettlePort{0%{transform:translateY(4px);opacity:.35}100%{transform:none;opacity:1}}
+@keyframes detailScanPort{0%{opacity:0;transform:translateX(-35%)}35%{opacity:1}100%{opacity:0;transform:translateX(35%)}}
+@keyframes detailHeadPort{0%{opacity:.35;transform:translateX(calc(var(--detail-motion-x) * .45))}100%{opacity:1;transform:none}}
+@keyframes detailBodyPort{0%{opacity:.12;transform:translateX(var(--detail-motion-x)) translateY(3px) rotateX(-1deg)}100%{opacity:1;transform:none}}
+
+/* Click acknowledgement without changing the button's visual design. */
+.detail-action.is-activating,.download-action.is-activating,.detail-save-btn.is-activating,.save-sheet-choice.is-activating{
+  animation:actionTapPort 420ms cubic-bezier(.2,.82,.2,1) both;
+}
+@keyframes actionTapPort{0%{transform:scale(1)}32%{transform:scale(.965)}68%{transform:scale(1.018)}100%{transform:scale(1)}}
+
+@media(max-width:620px){
+  .site-header .author-header-row{
+    grid-template-columns:42px max-content minmax(0,1fr) 45px!important;
+    column-gap:8px!important;
+  }
+  .author-avatar-shell{width:42px!important;height:42px!important;border-radius:13px!important}
+  .author-primary b{font-size:21px!important;letter-spacing:.075em!important}
+  .author-english span{font-size:5.8px!important;letter-spacing:.13em!important}
+  .archive-count{min-width:45px!important;padding-left:7px!important}
+  .archive-count b{font-size:17px!important}
+}
+@media(max-width:380px){
+  .site-header .author-header-row{grid-template-columns:40px max-content minmax(0,1fr) 42px!important;column-gap:6px!important}
+  .author-primary b{font-size:19px!important}
+  .author-english span{font-size:5.2px!important;letter-spacing:.10em!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .site-header.author-switch-in *,
+  .archive-card .card-face,
+  .detail-reading-panel.is-refreshing *,
+  .detail-option.is-tab-hit *,
+  .is-activating{animation:none!important;transition:none!important}
+  .archive-card .card-face{transform:none!important}
+  .archive-card .loaded-art,.archive-card .ghost-frame,.archive-card .stripe-field{translate:none!important}
+}
