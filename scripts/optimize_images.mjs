@@ -50,23 +50,6 @@ for (const p of previews) {
   }
 }
 
-const avIn = "assets/authors/fanhuafenluo-avatar.jpg";
-const avOut = "assets/authors/fanhuafenluo-avatar.webp";
-let avInfo = {};
-if (fs.existsSync(avIn)) {
-  const avInput = fs.readFileSync(avIn);
-  const avBuf = await sharp(avInput)
-    .rotate()
-    .resize({ width: 128, height: 128, fit: "cover" })
-    .webp({ quality: 78, effort: 4 })
-    .toBuffer();
-  fs.writeFileSync(avOut, avBuf);
-  avInfo = {
-    beforeKB: +(avInput.length / 1024).toFixed(1),
-    afterKB: +(avBuf.length / 1024).toFixed(1),
-  };
-}
-
 console.log(
   JSON.stringify(
     {
@@ -76,7 +59,6 @@ console.log(
       beforeMB: +(before / 1e6).toFixed(2),
       afterMB: +(after / 1e6).toFixed(2),
       ratio: before ? +(after / before).toFixed(3) : null,
-      avInfo,
       errorCount: errors.length,
       errors: errors.slice(0, 8),
     },
@@ -93,3 +75,4 @@ for (const p of previews.slice(0, 5)) {
     console.log("sample fail", path.basename(p), e.message);
   }
 }
+
