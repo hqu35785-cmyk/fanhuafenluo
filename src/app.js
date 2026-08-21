@@ -195,22 +195,9 @@ const authorSwitchHint=document.getElementById("authorSwitchHint");
 const footerAuthor=document.getElementById("footerAuthor");
 const workCountEl=document.getElementById("workCount");
 const workTotalEl=document.getElementById("workTotal");
-let placeholderNodes=[];
 let previewObserver=null;
 const phonePortraitQuery=window.matchMedia("(max-width:620px) and (orientation:portrait)");
 let layoutFrame=0;
-
-function buildPlaceholders(count){
-  return Array.from({length:count},(_,slot)=>`
-  <div class="card-item placeholder-item" aria-hidden="true">
-    <div class="placeholder-card">
-      <span class="slot-number">${String(works.length+slot+1).padStart(2,"0")}</span>
-      <span class="slot-cross"></span>
-      <span class="slot-label">姓名 / 设定待补充</span>
-    </div>
-  </div>
-`).join("");
-}
 
 function authorEmptyHTML(author){
   return `<div class="author-empty" role="status">
@@ -270,14 +257,12 @@ function stashMountedAuthorDom(){
   while(gallery.firstChild) children.push(gallery.removeChild(gallery.firstChild));
   authorDomCache.set(mountedAuthorId,{
     children,
-    placeholders:placeholderNodes,
     cardNodes:new Map(cardNodeCache),
     cardParts:new Map(cardPartsCache),
     scrollTop:gallery.scrollTop||0,
     empty:gallery.classList.contains("is-empty")
   });
   clearCardCaches();
-  placeholderNodes=[];
   mountedAuthorId=null;
 }
 
@@ -286,7 +271,6 @@ function restoreAuthorDom(authorId){
   if(!cached) return false;
   gallery.textContent="";
   cached.children.forEach(node=>gallery.appendChild(node));
-  placeholderNodes=cached.placeholders || [];
   cardNodeCache.clear();
   cardPartsCache.clear();
   cached.cardNodes.forEach((node,index)=>cardNodeCache.set(index,node));
@@ -302,12 +286,10 @@ function buildAuthorGalleryDom(author){
   if(!list.length){
     gallery.classList.add("is-empty");
     gallery.innerHTML=authorEmptyHTML(author);
-    placeholderNodes=[];
     clearCardCaches();
   }else{
     gallery.classList.remove("is-empty");
     gallery.innerHTML=list.map(cardHTML).join("");
-    placeholderNodes=[];
     indexCardNodes();
   }
   mountedAuthorId=author.id;
@@ -419,12 +401,6 @@ let previewLoadStates=getActiveRuntime().previewLoadStates;
 let previewLoadQueue=getActiveRuntime().previewLoadQueue;
 let queuedPreviewIndexes=getActiveRuntime().queuedPreviewIndexes;
 
-function currentColumnCount(){
-  const tracks=getComputedStyle(gallery).gridTemplateColumns.trim();
-  if(!tracks || tracks==="none") return 1;
-  return Math.max(1,tracks.split(/\s+/).filter(Boolean).length);
-}
-
 function fitTextToWidth(el,{minPx=9}={}){
   if(!el) return;
   el.style.fontSize="";
@@ -517,8 +493,6 @@ function observeTitleFits(){
 function fitGalleryToViewport(){
   layoutFrame=0;
   if(works.length===0){
-    gallery.style.removeProperty("--gallery-row-height");
-    document.documentElement.style.removeProperty("--portrait-card-height");
     document.documentElement.classList.remove("gallery-fit","compact-landscape");
     return;
   }
@@ -527,12 +501,6 @@ function fitGalleryToViewport(){
   const compactLandscape=window.innerWidth>viewportHeight && viewportHeight<=520;
 
   if(phonePortrait){
-    placeholderNodes.forEach(node=>{
-      node.hidden=true;
-    });
-
-    gallery.style.removeProperty("--gallery-row-height");
-    layoutRoot.style.removeProperty("--portrait-card-height");
     layoutRoot.classList.remove("gallery-fit","compact-landscape");
 
     fitCardFaceTitles();
@@ -540,22 +508,17 @@ function fitGalleryToViewport(){
   }
 
   if(compactLandscape){
-    placeholderNodes.forEach(node=>{node.hidden=true});
-    gallery.style.removeProperty("--gallery-row-height");
-    layoutRoot.style.removeProperty("--portrait-card-height");
     layoutRoot.classList.remove("gallery-fit");
     layoutRoot.classList.add("compact-landscape");
     fitCardFaceTitles();
     return;
   }
 
-  // Desktop: never force equal row heights. First card's first-hint would
-  // otherwise overflow a fixed --gallery-row-height and stack into the next row.
-  placeholderNodes.forEach(node=>{node.hidden=true});
-  gallery.style.removeProperty("--gallery-row-height");
-  layoutRoot.style.removeProperty("--portrait-card-height");
+  // Desktop: let the cards keep their aspect-ratio-driven height so the
+  // first card's first hint stays below its card instead of entering the next row.
   layoutRoot.classList.remove("compact-landscape");
-  // Keep gallery-fit only for styling hooks; row height comes from aspect-ratio CSS.
+  // Keep gallery-fit for the explicit desktop card sizing hook; row height
+  // comes from aspect-ratio CSS rather than a JS-computed value.
   layoutRoot.classList.add("gallery-fit");
   fitCardFaceTitles();
 }
