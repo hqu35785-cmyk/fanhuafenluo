@@ -1,11 +1,10 @@
 __pycache__/
 *.pyc
 node_modules/
+_site/
+artifacts/
 test-artifacts/
-measure-*.png
-
 test-results/
 playwright-report/
-.refactor-backup/
-.refactor-invariants.json
 .pw-browsers/
+measure-*.png

@@ -1,5 +1,3 @@
-# Official GitHub Pages deploy (actions/upload-pages-artifact + actions/deploy-pages).
-# https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow
 name: Deploy GitHub Pages
 
 on:
@@ -13,32 +11,21 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Prepare site
-        run: |
-          set -euo pipefail
-          mkdir -p _site/assets
-          cp index.html _site/
-          touch _site/.nojekyll
-          cp -a src _site/src
-          cp -a assets/previews assets/authors _site/assets/
-          du -sh _site
-          find _site -type f | wc -l
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/configure-pages@v5
+      - name: Build site
+        run: npm run build:pages
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
 
@@ -49,6 +36,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
