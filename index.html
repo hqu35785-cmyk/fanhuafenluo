@@ -37,25 +37,6 @@ body::before{
 }
 button{font:inherit}
 
-.preview-tools{
-  position:sticky;top:0;z-index:50;
-  display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
-  min-height:50px;padding:8px 12px;
-  border-bottom:1px solid rgba(255,255,255,.07);
-  background:rgba(7,8,12,.95);backdrop-filter:blur(14px);
-}
-.tool-group{display:flex;align-items:center;gap:6px}
-.device-btn{
-  min-height:32px;padding:0 12px;border:1px solid rgba(255,255,255,.09);
-  border-radius:999px;color:rgba(247,243,246,.6);background:rgba(255,255,255,.025);
-  font-size:10px;letter-spacing:.04em;cursor:pointer;
-}
-.device-btn[aria-pressed="true"]{
-  color:#fff;border-color:rgba(232,182,199,.26);
-  background:linear-gradient(135deg,rgba(232,182,199,.11),rgba(169,187,217,.06));
-}
-.device-size{color:rgba(206,199,209,.34);font-size:8px;letter-spacing:.1em}
-
 .device-stage{padding:18px}
 .site{
   width:min(1460px,100%);margin:0 auto;overflow:hidden;
@@ -318,43 +299,10 @@ footer{
 }
 footer .wrap{display:flex;justify-content:space-between;gap:12px}
 
-body.mobile .site{width:390px;max-width:100%;border-radius:26px}
-body.mobile .device-stage{padding:12px}
-body.mobile .site-header{height:84px}
-body.mobile .wrap{width:calc(100% - 24px)}
-body.mobile .site-header .wrap{grid-template-columns:minmax(0,1fr) 52px;gap:10px}
-body.mobile .avatar{width:40px;height:40px;border-radius:13px;font-size:16px}
-body.mobile .brand{gap:10px}
-body.mobile .brand-copy{display:grid;gap:5px}
-body.mobile .brand-line{gap:7px}
-body.mobile .brand-line b{font-size:15px}
-body.mobile .brand-line em{font-size:5.8px;letter-spacing:.11em}
-body.mobile .brand-copy small{margin-top:0;font-size:5.6px}
-body.mobile .archive-count{width:52px}
-body.mobile .archive-count span{font-size:5.7px}
-body.mobile .archive-count b{font-size:19px}
-body.mobile .toolbar{min-height:43px}
-body.mobile .filters{gap:17px}
-body.mobile .filter{padding:14px 0 12px;font-size:6.2px}
-body.mobile .filter.active::after{bottom:7px}
-body.mobile .toolbar-status{font-size:5.8px;gap:5px}
-body.mobile .gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 8px;padding:9px 0 26px}
-body.mobile .card-face{border-radius:14px}
-body.mobile .ghost-frame{inset:8px;border-radius:10px}
-body.mobile .corner-code{top:8px;left:8px;height:23px;padding:0 7px;font-size:5.8px}
-body.mobile .corner-index{top:13px;right:9px;font-size:5.8px}
-body.mobile .loading-core{left:10px;right:10px;bottom:55px}
-body.mobile .loading-title{font-size:5.6px}
-body.mobile .loading-sub{font-size:5px}
-body.mobile .bottom-frame{left:7px;right:7px;bottom:7px;min-height:39px}
-body.mobile .art-mark{font-size:58px}
-body.mobile footer{display:none}
-
 @media(max-width:980px){
   .gallery{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 @media(max-width:620px){
-  .preview-tools{justify-content:flex-start;overflow:auto;flex-wrap:nowrap}
   .device-stage{padding:10px}
   .site{border-radius:18px}
   .gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 8px}
@@ -2578,8 +2526,7 @@ html{scrollbar-gutter:stable}
 button,
 a.save-sheet-choice,
 .detail-option,
-.author-filter,
-.device-btn{
+.author-filter{
   -webkit-tap-highlight-color:transparent;
   transform-origin:center;
 }
@@ -2599,24 +2546,9 @@ a.save-sheet-choice:active{
   transition-duration:90ms;
 }
 
-/* Device mode switching: the frame breathes instead of snapping. */
+/* The stage stays fluid and follows the browser window. */
 .device-stage{
   transition:opacity var(--motion-ui) ease,transform var(--motion-ui) var(--ease-out);
-}
-body.is-mode-switching .device-stage{
-  opacity:.58;
-  transform:scale(.993) translateY(2px);
-}
-.device-btn[aria-pressed="true"]{
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 5px 18px rgba(0,0,0,.14);
-}
-.device-btn[aria-pressed="true"]::after{
-  content:"";
-  display:inline-block;
-  width:4px;height:4px;margin-left:6px;border-radius:50%;
-  vertical-align:middle;
-  background:rgba(232,182,199,.75);
-  animation:motionDotIn 420ms var(--ease-out) both;
 }
 
 /* Author switching: header + gallery move as one transition. */
@@ -2714,7 +2646,6 @@ body.is-mode-switching .device-stage{
     border-color:rgba(232,182,199,.13);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 18px 42px rgba(0,0,0,.24);
   }
-  .device-btn:hover,
   .author-filter:hover,
   .detail-option:hover,
   .save-sheet-choice:hover{
@@ -3531,14 +3462,6 @@ body:not(.is-scroll-forcing) .archive-card .stripe-field{
    PERFORMANCE PASS · perceptible motion kept, invisible work removed
    ========================================================= */
 
-/* The preview bar is already ~95% opaque. Live backdrop blur forces a full-width
-   re-sample on every scroll frame; a slightly denser fill looks effectively the same. */
-.preview-tools{
-  background:rgba(7,8,12,.985)!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
-}
-
 /* Per-card glass blur is extremely expensive when several cards are visible.
    Their surfaces already have dark translucent fills, so keep the look and drop
    only the live background sampling. */
@@ -3782,15 +3705,7 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
 
 </style>
 </head>
-<body class="mobile motion-rich">
-<div class="preview-tools">
-  <div class="tool-group">
-    <button class="device-btn" id="desktopBtn" type="button" aria-pressed="false">桌面版</button>
-    <button class="device-btn" id="mobileBtn" type="button" aria-pressed="true">手机竖屏</button>
-  </div>
-  <span class="device-size" id="deviceSize">390 × 844 竖屏</span>
-</div>
-
+<body class="motion-rich">
 <div class="device-stage">
   <div class="site" id="site">
     <header class="site-header">
@@ -6975,9 +6890,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
 
 <script>
 const body=document.body;
-const desktop=document.getElementById('desktopBtn');
-const mobile=document.getElementById('mobileBtn');
-const size=document.getElementById('deviceSize');
 const status=document.getElementById('status').querySelector('span');
 const cards=[...document.querySelectorAll('.archive-card')];
 
@@ -7202,23 +7114,6 @@ function showToast(title,message,mark='✓'){
 }
 
 
-function setMode(mode){
-  const isMobile=mode==='mobile';
-  if(body.classList.contains('mobile')===isMobile) return;
-  body.classList.add('is-mode-switching');
-  motionDelay(115,()=>{
-    body.classList.toggle('mobile',isMobile);
-    queuePhysicsMetricsRefresh();
-    desktop.setAttribute('aria-pressed',String(!isMobile));
-    mobile.setAttribute('aria-pressed',String(isMobile));
-    size.textContent=isMobile?'390 × 844 竖屏':'自适应桌面';
-    window.scrollTo({top:0,behavior:prefersReducedMotion.matches?'auto':'smooth'});
-    motionDelay(60,()=>body.classList.remove('is-mode-switching'));
-  });
-}
-desktop.addEventListener('click',()=>setMode('desktop'));
-mobile.addEventListener('click',()=>setMode('mobile'));
-
 function updateStatus(){
   const meta=authorSections[activeAuthorId] || authorSections.fanhuafenluo;
   const visibleCards=cards.slice(0,meta.count);
@@ -7278,7 +7173,7 @@ function clampMotion(value,min,max){
 }
 
 function currentGalleryColumns(){
-  if(body.classList.contains('mobile') || window.innerWidth<=620) return 2;
+  if(window.innerWidth<=620) return 2;
   if(window.innerWidth<=980) return 4;
   return 6;
 }
@@ -7893,3 +7788,4 @@ syncPageVisibilityMotion();
 </script>
 </body>
 </html>
+
