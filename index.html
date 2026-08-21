@@ -12,23 +12,21 @@
 <link rel="preload" href="src/data/works.js?v=49902ffceff5" as="script">
 <link rel="preload" href="src/app.js?v=ceb11adfb0bd" as="script">
 <link rel="stylesheet" href="src/styles/main.css?v=45791a5dd9dc">
-<link rel="stylesheet" href="src/styles/template-merge.css?v=20260822b">
-<link rel="stylesheet" href="src/styles/motion-port.css?v=20260822a">
 </head>
-<body class="motion-rich">
+<body>
 <div class="site-stage">
   <div class="site-shell" id="siteShell">
     <header class="site-header">
       <div class="site-wrap author-header-row">
-        <div class="author-avatar-shell">
-          <img id="authorAvatar" class="author-avatar-img" src="assets/authors/fanhuafenluo-avatar.webp" alt="繁花·纷落头像" width="48" height="48" decoding="async" fetchpriority="high">
-        </div>
-        <div class="author-primary">
-          <b id="authorName">繁花·纷落</b>
-        </div>
-        <div class="author-english">
-          <span id="authorEnglish">FANHUA · FENLUO</span>
-          <small id="authorSwitchHint">CHARACTER CARD ARCHIVE</small>
+        <div class="author-brand">
+          <div class="author-avatar-shell">
+            <img id="authorAvatar" src="assets/authors/fanhuafenluo-avatar.webp" alt="繁花·纷落头像" width="48" height="48" decoding="async" fetchpriority="high">
+          </div>
+          <div class="author-primary">
+            <b id="authorName">繁花·纷落</b>
+            <span id="authorEnglish">FANHUA · FENLUO</span>
+            <small id="authorSwitchHint">公开浏览 · 选择下方分区</small>
+          </div>
         </div>
         <div class="archive-count" aria-label="当前分区作品数量">
           <span>ARCHIVE</span>
@@ -47,7 +45,7 @@
         <div class="toolbar-status" id="status" role="status" aria-live="polite"><i aria-hidden="true"></i><span>LOADING · 0/70</span></div>
       </div>
 
-      <section class="archive-gallery gallery" id="gallery" aria-label="角色卡资源"></section>
+      <section class="archive-gallery" id="gallery" aria-label="角色卡资源"></section>
     </main>
 
     <footer class="site-footer">
@@ -104,6 +102,5 @@
 <script src="src/data/works.js?v=49902ffceff5" defer></script>
 <script src="src/data/details-fanhua.js?v=8c09ae3e64f5" data-lazy-src="src/data/details-fanhua.js" data-loaded="1" defer></script>
 <script src="src/app.js?v=ceb11adfb0bd" defer></script>
-<script src="src/motion.js?v=20260822a" defer></script>
 </body>
 </html>
