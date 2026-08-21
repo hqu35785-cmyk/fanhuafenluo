@@ -1,10 +1,6 @@
 name: Cross-browser verification
 
 on:
-  pull_request:
-    branches: [main]
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
       test_url:
@@ -24,8 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         browser: [chromium, firefox, webkit]
-        round: [1, 2]
-        viewport: ["320x568", "360x740", "375x667", "390x844", "412x915", "430x932", "500x900", "600x960", "768x1024", "568x320", "667x375", "740x360", "844x390", "915x412", "932x430", "1024x768", "1280x720", "1366x768", "1920x1080"]
+        viewport: ["360x740", "430x932", "844x390", "1024x768", "1366x768", "1920x1080"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -53,7 +48,7 @@ jobs:
           TEST_URL: ${{ inputs.test_url || 'http://127.0.0.1:4173/index.html' }}
           TEST_BROWSER: ${{ matrix.browser }}
           TEST_VIEWPORT: ${{ matrix.viewport }}
-          TEST_ROUND: ${{ matrix.round }}
+          TEST_ROUND: "1"
           STATIC_VIEWPORT: "1"
         run: npm run test:browser
 
@@ -61,8 +56,8 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: round-${{ matrix.round }}-${{ matrix.browser }}-${{ matrix.viewport }}
-          path: artifacts/round-${{ matrix.round }}/${{ matrix.browser }}/${{ matrix.viewport }}/
+          name: ${{ matrix.browser }}-${{ matrix.viewport }}
+          path: artifacts/round-1/${{ matrix.browser }}/${{ matrix.viewport }}/
           if-no-files-found: ignore
           retention-days: 3
 

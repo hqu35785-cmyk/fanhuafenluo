@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import base64
+import re
 from pathlib import Path
 
 from PIL import Image, ImageFile, ImageOps
@@ -14,14 +16,32 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 ROOT = Path(__file__).resolve().parents[1]
+INDEX = ROOT / "index.html"
+INLINE_IMAGE = re.compile(
+    br'const IMAGE="data:image/png;base64,([A-Za-z0-9+/=]+)";'
+)
 SOURCE_DIR = ROOT / "assets" / "source"
 PREVIEW_DIR = ROOT / "assets" / "previews"
 WANWAN_SOURCE = SOURCE_DIR / "wanwan.png"
 
 
-def ensure_wanwan_source() -> None:
-    if not WANWAN_SOURCE.exists():
-        raise RuntimeError("assets/source/wanwan.png is missing")
+def externalize_inline_image() -> None:
+    data = INDEX.read_bytes()
+    match = INLINE_IMAGE.search(data)
+    if match:
+        source_bytes = base64.b64decode(match.group(1), validate=True)
+        SOURCE_DIR.mkdir(parents=True, exist_ok=True)
+        if not WANWAN_SOURCE.exists() or WANWAN_SOURCE.read_bytes() != source_bytes:
+            WANWAN_SOURCE.write_bytes(source_bytes)
+        newline = b"\r\n" if b"\r\n" in data else b"\n"
+        replacement = (
+            b'const IMAGE_SOURCE="assets/source/wanwan.png";'
+            + newline
+            + b'const IMAGE_PREVIEW="assets/previews/wanwan.webp";'
+        )
+        INDEX.write_bytes(data[: match.start()] + replacement + data[match.end() :])
+    elif not WANWAN_SOURCE.exists():
+        raise RuntimeError("Inline source image is absent and assets/source/wanwan.png is missing")
 
 
 def preview_path(source: Path) -> Path:
@@ -49,7 +69,7 @@ def generate_preview(source: Path, destination: Path) -> None:
 
 
 def main() -> None:
-    ensure_wanwan_source()
+    externalize_inline_image()
     sources = [WANWAN_SOURCE, *sorted((ROOT / "assets" / "tavo").rglob("*.png"))]
     destinations = []
     for source in sources:
