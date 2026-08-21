@@ -490,6 +490,7 @@
       if(!work) return;
       state.activeWork=work;state.activeIndex=index;state.lastFocus=trigger || document.activeElement;
       const image=document.getElementById('modalImage');
+      image.dataset.fallbackIndex='0';
       image.src=sourceUrl(work.preview || work.image);image.alt=`${work.name}角色卡卡面预览`;
       document.getElementById('modalTitle').textContent=work.name;
       document.getElementById('modalAlias').textContent=`${work.alias || 'ORIGINAL CHARACTER'} · ${work.collectionLabel || 'CHARACTER CARD'}`;
@@ -524,6 +525,16 @@
     function originalPngCandidates(path){
       const relative=String(path || '').replace(/^\.\//,'').replace(/^\//,'');
       return [...new Set([sourceUrl(relative),PNG_CDN_BASE+relative,PNG_RAW_BASE+relative])];
+    }
+    function fallbackPreview(image,work){
+      const candidates=originalPngCandidates(work?.image).slice(1);
+      const index=Number(image.dataset.fallbackIndex || 0);
+      if(work && index<candidates.length){
+        image.dataset.fallbackIndex=String(index+1);
+        image.src=candidates[index];
+        return;
+      }
+      image.closest('.card-frame')?.classList.add('image-error');
     }
     async function fetchOriginalPng(path){
       let lastError=null;
@@ -590,9 +601,9 @@
       const image=event.target;
       if(!image.classList?.contains('card-image')) return;
       const {work}=activeWorkFromCard(image.closest('.card'));
-      if(work && image.dataset.fallback!=='1'){image.dataset.fallback='1';image.src=sourceUrl(work.image)}
-      else image.closest('.card-frame')?.classList.add('image-error');
+      fallbackPreview(image,work);
     },true);
+    document.getElementById('modalImage').addEventListener('error',event=>fallbackPreview(event.target,state.activeWork));
     document.querySelector('.detail-tabs').addEventListener('click',event=>{
       const button=event.target.closest('[data-detail]');
       if(button) setDetailTab(button.dataset.detail);
