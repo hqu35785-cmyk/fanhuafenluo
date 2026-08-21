@@ -370,10 +370,6 @@ main{flex:1 0 auto;min-width:0;padding:20px 0 12px}
   contain-intrinsic-size:auto 260px;
   contain:layout style;
 }
-.placeholder-item[hidden]{display:none!important}
-html.gallery-fit .gallery{grid-auto-rows:var(--gallery-row-height)}
-html.gallery-fit .card,
-html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
 .card{
   position:relative;
   aspect-ratio:.72;
@@ -547,69 +543,6 @@ html.gallery-fit .placeholder-card{height:100%;aspect-ratio:auto}
   background:linear-gradient(135deg,var(--pink),var(--blue));
   box-shadow:0 0 10px rgba(243,170,194,.55);
 }
-.placeholder-card{
-  aspect-ratio:.72;
-  position:relative;
-  overflow:hidden;
-  border:1px solid rgba(255,255,255,.058);
-  border-radius:18px;
-  background:
-    linear-gradient(135deg,rgba(255,255,255,.035),transparent 35%),
-    radial-gradient(circle at 85% 8%,rgba(157,185,255,.045),transparent 32%),
-    radial-gradient(circle at 15% 92%,rgba(243,170,194,.035),transparent 30%),
-    rgba(15,15,25,.44);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 18px 45px rgba(0,0,0,.14);
-}
-.placeholder-card::before{
-  content:"";
-  position:absolute;
-  inset:12px;
-  border:1px solid rgba(255,255,255,.026);
-  border-radius:13px;
-  pointer-events:none;
-}
-.placeholder-card::after{
-  content:"";
-  position:absolute;
-  top:-42%;
-  left:-70%;
-  width:90%;
-  height:190%;
-  transform:rotate(18deg);
-  pointer-events:none;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.018),transparent);
-}
-.slot-number,
-.slot-label{
-  position:absolute;
-  z-index:1;
-  color:rgba(220,213,229,.24);
-  font-size:8px;
-  font-weight:650;
-  letter-spacing:.18em;
-}
-.slot-number{top:15px;left:16px}
-.slot-label{display:none}
-.slot-cross{
-  position:absolute;
-  left:50%;
-  top:50%;
-  width:28px;
-  height:28px;
-  transform:translate(-50%,-50%);
-  opacity:.22;
-}
-.slot-cross::before,
-.slot-cross::after{
-  content:"";
-  position:absolute;
-  left:50%;
-  top:50%;
-  background:linear-gradient(90deg,transparent,rgba(243,170,194,.6),rgba(157,185,255,.42),transparent);
-  transform:translate(-50%,-50%);
-}
-.slot-cross::before{width:28px;height:1px}
-.slot-cross::after{width:1px;height:28px;background:linear-gradient(transparent,rgba(243,170,194,.6),rgba(157,185,255,.42),transparent)}
 .face{
   position:absolute;
   inset:0;
@@ -1588,9 +1521,7 @@ footer::before{
   .setting-unlock:hover,.archive-setting-unlock:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.38);background:linear-gradient(135deg,rgba(243,170,194,.19),rgba(157,185,255,.09))}
   .archive-unlock:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.4)}
   .archive-action:hover{transform:translateY(-1px);border-color:rgba(243,170,194,.48)}
-  .placeholder-card:hover::after{animation:slotShine 1.35s ease}
 }
-@keyframes slotShine{to{left:115%}}
 
 @media(max-width:1550px){
   .gallery{grid-template-columns:repeat(6,1fr)}
@@ -1690,7 +1621,6 @@ footer::before{
   .archive-status span{display:none}
   .card-name b{font-size:20px}
   .card-meta span:first-child{display:none}
-  .slot-cross{opacity:.12}
   .archive-modal{
     width:calc(100vw - 8px - env(safe-area-inset-left) - env(safe-area-inset-right));
     height:calc(100vh - 8px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
@@ -1752,7 +1682,7 @@ footer::before{
   main{padding-top:14px}
   .side-title{font-size:10px;margin-bottom:9px}
   .gallery{gap:10px}
-  .face,.placeholder-card{border-radius:16px}
+  .face{border-radius:16px}
   .card-name{left:12px;right:12px;bottom:12px}
   .card-name b{font-size:19px}
   .back{padding:14px}
@@ -1779,7 +1709,6 @@ footer::before{
   .card-code{height:24px;padding:0 7px;font-size:7px;letter-spacing:.04em;gap:5px}
   .card-open{font-size:11px}
   .card-meta{display:none}
-  .slot-cross{display:none}
 }
 
 /* Phone portrait: 2-column grid; card size from aspect-ratio (no JS height). */
@@ -1800,15 +1729,12 @@ footer::before{
     column-gap:10px;
     row-gap:10px;
   }
-  .placeholder-item{display:none!important}
-  html.gallery-fit .gallery{grid-auto-rows:auto}
   .card-item,
   .card-item.has-hint{
     min-width:0;
     min-height:0;
   }
-  .card,
-  html.gallery-fit .card{
+  .card{
     width:100%;
     height:auto;
     aspect-ratio:18 / 25;
@@ -1996,7 +1922,6 @@ footer::before{
   .gallery::-webkit-scrollbar{display:none}
   .gallery .card-item{scroll-snap-align:center}
   .first-hint{margin:3px 2px 0;font-size:8px;line-height:1.2}
-  .placeholder-item{display:none!important}
   .card{height:auto;aspect-ratio:.72}
   .back{padding:11px}
   .back-toolbar{margin-bottom:8px}
@@ -2189,7 +2114,6 @@ footer::before{
     transition:none;
     -webkit-transition:none;
   }
-  .placeholder-card:hover::after{animation:none}
   .gallery{transition:none}
   .gallery.is-author-switching{opacity:1;transform:none}
 }
@@ -2216,13 +2140,8 @@ footer::before{
   .gallery{
     align-items:start;
   }
-  html.gallery-fit .gallery{
-    grid-auto-rows:auto !important;
-    align-items:start !important;
-  }
-  /* 覆盖 gallery-fit 的 height:100% / aspect-ratio:auto */
-  html.gallery-fit .card,
-  html.gallery-fit .placeholder-card{
+  /* Keep the explicit desktop card ratio stable across browsers. */
+  html.gallery-fit .card{
     width:100%;
     height:auto !important;
     max-height:none !important;

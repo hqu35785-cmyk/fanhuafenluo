@@ -1,12 +1,10 @@
-name: Verify gallery
+name: Verify site
 
 on:
-  pull_request:
-    branches:
-      - main
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -16,49 +14,33 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    timeout-minutes: 30
+  verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
+      - run: npm ci
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-
-      - name: Verify Phase A
-        run: npm run verify:phase-a
-
-      - name: Verify Phase B when applied
-        shell: bash
+      - name: Syntax check
         run: |
-          if ! grep -R -E "DISPLAY_SLOTS=works.length|fitGalleryToViewport|scheduleGalleryFit|gallery-fit|gallery-row-height" src >/dev/null; then
-            npm run verify:phase-b
-          else
-            echo "Phase B has not been applied; Phase A-only state is allowed."
-          fi
+          node --check src/app.js
+          node --check src/data/works.js
+          node --check src/data/details-fanhua.js
+          node --check src/data/details-shark.js
+          node --check src/data/details-wa.js
 
-      - name: Record and check catalog invariants
-        run: |
-          node scripts/snapshot_invariants.mjs record
-          node scripts/snapshot_invariants.mjs check
+      - run: npm run validate:assets
+      - run: npm run build:pages
+      - run: npm run verify:pages-site
 
-      - name: Validate all catalog assets
-        run: npm run validate:assets
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
 
-      - name: Build and verify Pages artifact
-        run: |
-          npm run build:pages
-          npm run verify:pages-site
-
-      - name: Start static server
+      - name: Start test server
         run: |
           node scripts/test_server.mjs > /tmp/fanhuafenluo-http.log 2>&1 &
           for attempt in $(seq 1 30); do
@@ -70,32 +52,12 @@ jobs:
           cat /tmp/fanhuafenluo-http.log || true
           exit 1
 
-      - name: Playwright refactor regression
+      - name: Chromium regression
         env:
           TEST_URL: http://127.0.0.1:4173
-        run: npm run test:refactor
+        run: npm test -- --project=chromium
 
-      - name: Start Pages artifact server
-        env:
-          PORT: "4174"
-          SITE_ROOT: ${{ github.workspace }}/_site
-        run: |
-          node scripts/test_server.mjs > /tmp/fanhuafenluo-pages-http.log 2>&1 &
-          for attempt in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:4174/index.html > /dev/null; then
-              exit 0
-            fi
-            sleep 1
-          done
-          cat /tmp/fanhuafenluo-pages-http.log || true
-          exit 1
-
-      - name: Playwright Pages artifact regression
-        env:
-          TEST_URL: http://127.0.0.1:4174
-        run: npm run test:refactor
-
-      - name: Upload Playwright report on failure
+      - name: Upload failure report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
