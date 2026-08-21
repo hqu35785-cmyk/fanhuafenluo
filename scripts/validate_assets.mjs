@@ -98,7 +98,7 @@ async function main() {
   const images = works.map((work) => work.image);
   if (new Set(pairs).size !== pairs.length) fail("duplicate name/alias combination");
   if (new Set(images).size !== images.length) fail("duplicate source image path");
-  if (!fs.readFileSync(APP, "utf8").includes("const PREVIEW_LOAD_CONCURRENCY=3;")) fail("preview concurrency is not 3");
+  if (!/const\s+PREVIEW_LOAD_CONCURRENCY\s*=\s*3\s*;/.test(fs.readFileSync(APP, "utf8"))) fail("preview concurrency is not 3");
 
   const newNames = new Set(["刻律德菈", "云璃", "雾矢葵"]);
   const expectedPreviews = new Set();

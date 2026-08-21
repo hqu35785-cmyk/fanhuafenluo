@@ -5,128 +5,102 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
 <meta name="description" content="繁花·纷落角色卡作品档案">
-<meta name="theme-color" content="#070811">
+<meta name="theme-color" content="#08090d">
 <title>繁花·纷落｜角色档案</title>
-<link rel="preload" href="src/styles/main.css?v=e061a5771cf8" as="style">
+<link rel="preload" href="src/styles/main.css?v=45791a5dd9dc" as="style">
 <link rel="preload" href="assets/authors/fanhuafenluo-avatar.webp" as="image" type="image/webp" fetchpriority="high">
 <link rel="preload" href="src/data/works.js?v=49902ffceff5" as="script">
-<link rel="preload" href="src/app.js?v=e43ae30d41ed" as="script">
-<link rel="stylesheet" href="src/styles/main.css?v=e061a5771cf8">
+<link rel="preload" href="src/app.js?v=ceb11adfb0bd" as="script">
+<link rel="stylesheet" href="src/styles/main.css?v=45791a5dd9dc">
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <nav>
-      <div class="brand">
-        <button class="author-switch" id="authorSwitch" type="button" aria-describedby="authorSwitchHint" aria-label="切换分区，当前分区为繁花·纷落">
-          <span class="author-avatar-frame">
-            <img id="authorAvatar" src="assets/authors/fanhuafenluo-avatar.webp" alt="繁花·纷落的分区头像" width="38" height="38" decoding="async" fetchpriority="high">
-            <span class="author-switch-mark" aria-hidden="true">↔</span>
-          </span>
-        </button>
-        <div class="brand-text"><span id="authorName" aria-live="polite">繁花·纷落</span><small class="build-state" id="authorSwitchHint">公开浏览 · 点头像切换不同分区</small></div>
-      </div>
-      <button class="unlock-all" id="unlockAll" type="button" aria-live="polite" hidden inert>一键解锁</button>
-      <div class="archive-status"><b id="workCount">70</b><span>CHARACTER ARCHIVE</span><em id="workTotal">/ 70</em></div>
-    </nav>
-  </div>
-</header>
-
-<main class="wrap">
-  <div class="catalog">
-    <h1 class="side-title sr-only">角色档案</h1>
-    <section class="gallery" id="gallery"></section>
-  </div>
-</main>
-
-<footer class="wrap">
-  <span>© 2026 <span id="footerAuthor">繁花·纷落</span></span>
-  <span>ALL RIGHTS RESERVED</span>
-</footer>
-
-<dialog class="archive-modal" id="archiveModal" aria-labelledby="archiveName">
-  <button class="archive-close" id="archiveClose" type="button" aria-label="关闭角色档案">×</button>
-  <div class="archive-shell">
-    <div class="archive-visual" id="archiveVisual">
-      <img id="archiveImage" alt="" decoding="async">
-      <div class="archive-privacy" id="archivePrivacy" hidden>
-        <span class="archive-privacy-mark" aria-hidden="true"></span>
-        <b id="archivePrivacyTitle" role="status" aria-live="polite">敏感图片已隐藏</b>
-        <p id="archivePrivacyMessage">确认周围环境合适后，再解锁查看本次内容。</p>
-        <button class="archive-unlock" id="archiveUnlock" type="button">解锁查看</button>
-      </div>
-      <div class="archive-file">
-        <span id="archiveFile">角色标签</span>
-        <button class="archive-action" id="downloadCard" type="button">保存角色卡 PNG</button>
-      </div>
-    </div>
-    <section class="archive-content">
-      <div class="archive-eyebrow"><span>CHARACTER PROFILE</span><span id="archiveAlias"></span></div>
-      <h2 class="archive-title" id="archiveName"></h2>
-      <p class="archive-role" id="archiveRole"></p>
-      <div class="archive-tags" id="archiveTags"></div>
-      <div class="archive-profile">
-        <section><b>01 · 开场</b><p id="archiveOpening"></p></section>
-        <section><b>02 · 性格简介</b><p id="archivePersonality"></p></section>
-        <section>
-          <b>03 · 设定 · 剧情</b>
-          <p id="archiveSetting" tabindex="-1"></p>
-          <div class="archive-setting-privacy" id="archiveSettingPrivacy" aria-hidden="true" hidden>
-            <span class="archive-setting-mark" aria-hidden="true"></span>
-            <div class="archive-setting-copy"><b>卡面解锁后显示设定</b><p>解锁卡面后即可查看完整角色设定。</p></div>
+<div class="site-stage">
+  <div class="site-shell" id="siteShell">
+    <header class="site-header">
+      <div class="site-wrap author-header-row">
+        <div class="author-brand">
+          <div class="author-avatar-shell">
+            <img id="authorAvatar" src="assets/authors/fanhuafenluo-avatar.webp" alt="繁花·纷落头像" width="48" height="48" decoding="async" fetchpriority="high">
           </div>
-        </section>
+          <div class="author-primary">
+            <b id="authorName">繁花·纷落</b>
+            <span id="authorEnglish">FANHUA · FENLUO</span>
+            <small id="authorSwitchHint">公开浏览 · 选择下方分区</small>
+          </div>
+        </div>
+        <div class="archive-count" aria-label="当前分区作品数量">
+          <span>ARCHIVE</span>
+          <b id="workCount">70</b>
+        </div>
       </div>
-    </section>
+    </header>
+
+    <main class="site-wrap">
+      <div class="archive-toolbar">
+        <nav class="author-filters" aria-label="作者分区" role="tablist">
+          <button class="author-filter is-active" type="button" role="tab" data-author="fanhuafenluo" aria-selected="true">繁花·纷落</button>
+          <button class="author-filter" type="button" role="tab" data-author="shark" aria-selected="false">鲨鱼</button>
+          <button class="author-filter" type="button" role="tab" data-author="wa" aria-selected="false">咓</button>
+        </nav>
+        <div class="toolbar-status" id="status" role="status" aria-live="polite"><i aria-hidden="true"></i><span>LOADING · 0/70</span></div>
+      </div>
+
+      <section class="archive-gallery" id="gallery" aria-label="角色卡资源"></section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-wrap"><span>© 2026 <span id="footerAuthor">繁花·纷落</span></span><span>CHARACTER CARD ARCHIVE</span></div>
+    </footer>
   </div>
-  <div class="toast archive-toast" id="archiveToast" role="status" aria-live="polite" aria-atomic="true"></div>
-</dialog>
+</div>
 
 <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-<div class="save-sheet" id="saveSheet" hidden>
-  <div class="save-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="saveSheetTitle">
-    <div class="save-sheet-inner">
-      <div class="save-sheet-head">
-        <div>
-          <b id="saveSheetTitle">保存角色卡</b>
-          <p id="saveSheetHint">请按下方提示保存原图 PNG。</p>
+<dialog class="archive-modal" id="archiveModal" aria-labelledby="detailName">
+  <div class="archive-modal-backdrop" data-close-archive></div>
+  <section class="archive-modal-panel">
+    <button class="archive-modal-close" id="archiveClose" type="button" aria-label="关闭角色档案">×</button>
+    <div class="archive-detail-visual" id="archiveVisual">
+      <img id="archiveImage" alt="" decoding="async">
+      <div class="detail-visual-wash" aria-hidden="true"></div>
+      <div class="detail-visual-top"><span id="archiveFile">角色标签</span><small id="archiveAlias">TAVO · CARD</small></div>
+      <div class="detail-visual-bottom"><span>TAVO CHARACTER CARD</span><button class="detail-save-btn" id="downloadCard" type="button">保存角色卡 PNG</button></div>
+    </div>
+    <div class="archive-detail-content">
+      <div class="detail-kicker"><span>CHARACTER PROFILE</span><span id="archiveCreator">繁花·纷落</span></div>
+      <div class="detail-heading"><div><h2 id="detailName">角色名</h2><p id="archiveRole"></p></div><span class="detail-badge">TAVO</span></div>
+      <div class="detail-tags" id="archiveTags"></div>
+      <div class="detail-reader">
+        <div class="detail-options" role="tablist" aria-label="角色档案内容">
+          <button class="detail-option is-active" type="button" role="tab" aria-selected="true" aria-controls="detailPanel" data-detail-tab="intro"><span>01</span><b>简介</b></button>
+          <button class="detail-option" type="button" role="tab" aria-selected="false" aria-controls="detailPanel" data-detail-tab="opening"><span>02</span><b>开场白</b></button>
+          <button class="detail-option" type="button" role="tab" aria-selected="false" aria-controls="detailPanel" data-detail-tab="personality"><span>03</span><b>性格</b></button>
+          <button class="detail-option" type="button" role="tab" aria-selected="false" aria-controls="detailPanel" data-detail-tab="setting"><span>04</span><b>人物设定</b></button>
         </div>
-        <button class="save-sheet-close" id="saveSheetClose" type="button" aria-label="关闭保存面板">×</button>
-      </div>
-      <div class="save-sheet-preview">
-        <img id="saveSheetImage" alt="角色卡原图" decoding="async">
-      </div>
-      <div class="save-sheet-actions">
-        <button class="save-sheet-link save-sheet-photo" id="saveSheetPhoto" type="button" aria-describedby="saveSheetNote" disabled>正在准备相册保存…</button>
-        <a class="save-sheet-link" id="saveSheetLink" href="#" download>下载 PNG 原图</a>
-        <p class="save-sheet-note" id="saveSheetNote" aria-live="polite">手机端若无反应，请长按上方图片保存。</p>
+        <section class="detail-reading-panel" id="detailPanel" role="tabpanel" tabindex="0" aria-live="polite">
+          <div class="detail-reading-head"><div><small id="detailPanelIndex">01 · CHARACTER DATA</small><h3 id="detailPanelTitle">简介</h3></div><span id="detailPanelType">INTRO</span></div>
+          <div class="detail-reading-body" id="detailPanelBody"></div>
+        </section>
       </div>
     </div>
-  </div>
-</div>
+  </section>
+</dialog>
 
-<div class="unlock-choice" id="unlockChoice" hidden>
-  <div class="unlock-choice-panel" role="dialog" aria-modal="true" aria-labelledby="unlockChoiceTitle" aria-describedby="unlockChoiceMessage unlockChoiceNote">
-    <div class="unlock-choice-inner">
-      <div class="unlock-choice-head">
-        <div>
-          <b id="unlockChoiceTitle">是否要一键解锁？</b>
-          <p id="unlockChoiceMessage">是否一键解锁全部敏感角色卡？也可以仅解锁当前这一张。</p>
-        </div>
-        <button class="unlock-choice-close" id="unlockChoiceClose" type="button" aria-label="关闭解锁选项">×</button>
-      </div>
-      <div class="unlock-choice-actions">
-        <button class="unlock-choice-btn" id="unlockChoiceAll" type="button" data-action="all">一键解锁全部</button>
-        <button class="unlock-choice-btn" id="unlockChoiceSingle" type="button" data-action="single">仅这张</button>
-      </div>
-      <p class="unlock-choice-note" id="unlockChoiceNote">仅本次页面有效，刷新后会重新锁定。</p>
+<dialog class="save-sheet" id="saveSheet" aria-labelledby="saveSheetTitle">
+  <div class="save-sheet-backdrop" data-close-save></div>
+  <section class="save-sheet-panel">
+    <div class="save-sheet-head"><div><small>CHARACTER CARD EXPORT</small><h2 id="saveSheetTitle">保存角色卡</h2><p id="saveSheetHint">保留 PNG 原图中的角色卡数据，请使用文件下载。</p></div><button class="save-sheet-close" id="saveSheetClose" type="button" aria-label="关闭保存面板">×</button></div>
+    <div class="save-sheet-preview"><img id="saveSheetImage" alt="角色卡原图预览" decoding="async"><div class="save-preview-meta"><b id="savePreviewName">角色名</b><span id="savePreviewAlias">TAVO · CARD</span></div></div>
+    <div class="save-sheet-actions">
+      <button class="save-sheet-choice save-sheet-photo" id="saveSheetPhoto" type="button" aria-describedby="saveSheetNote" disabled><span class="save-choice-mark">▣</span><span class="save-choice-copy"><b>正在准备相册保存…</b><small>PHOTO LIBRARY · SYSTEM MENU</small></span><i>↗</i></button>
+      <a class="save-sheet-choice save-sheet-file" id="saveSheetLink" href="#" download aria-disabled="true" aria-busy="true" tabindex="-1"><span class="save-choice-mark">↓</span><span class="save-choice-copy"><b>正在准备 PNG 原图…</b><small>FILE · KEEP CHARACTER CARD DATA</small></span><i>⇩</i></a>
+      <p class="save-sheet-note" id="saveSheetNote" aria-live="polite">正在读取当前角色卡的原始 PNG 文件。</p>
     </div>
-  </div>
-</div>
+  </section>
+</dialog>
 
 <script src="src/data/works.js?v=49902ffceff5" defer></script>
-<script src="src/data/details-fanhua.js?v=da80d31cbb75" data-lazy-src="src/data/details-fanhua.js" data-loaded="1" defer></script>
-<script src="src/app.js?v=e43ae30d41ed" defer></script>
+<script src="src/data/details-fanhua.js?v=8c09ae3e64f5" data-lazy-src="src/data/details-fanhua.js" data-loaded="1" defer></script>
+<script src="src/app.js?v=ceb11adfb0bd" defer></script>
 </body>
 </html>
