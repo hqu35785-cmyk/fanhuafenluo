@@ -1,193 +1,241 @@
-# 繁花·纷落角色卡档案：AI 维护规范
+# 繁花·纷落｜TAVO 角色卡档案
 
-这是本仓库的维护说明。任何 AI 在新增角色卡、替换图片、修改角色数据或重新部署之前，都必须先完整阅读本文件。
+三位创作者、98 张角色卡、完整的角色资料与原始 PNG。你可以在一个自适应的档案页面里浏览每张卡的 AI 导览简介、开场白、人物设定、世界书和预设，也可以保存角色卡原始 PNG。
 
-```text
-index.html  网站本体，不要用另一套页面重写它。
-README.md   本文件，规范来源。
-```
+[在线浏览角色卡档案](https://hqu35785-cmyk.github.io/fanhuafenluo-pages/)
 
-## 0. 数据不在本仓库
+`98 张卡`　`繁花·纷落 70 / 鲨鱼 14 / 咓 14`　`响应式浏览`　`原始 PNG`　`五栏真实资料`
 
-本仓库只有 `index.html` 和 `README.md`。角色卡数据和图片全部在**另一个仓库**：
+## 你可以看到什么
 
-```text
-仓库：hqu35785-cmyk/fanhuafenluo
+- 由 AI 阅读每张卡全部原始资料后写成的 120–180 字简介：既概括角色，也保留值得继续探索的冲突与互动悬念。
+- PNG 内嵌的真实开场白，不用人工占位文本代替。
+- PNG 内嵌的性格与场景设定，按原文分段显示。
+- 完整世界书：包含原始名称、条目顺序、启用状态、位置、关键词和内容。
+- 完整预设：按原文显示系统提示词和历史后指令。
+- 原始角色卡 PNG 下载；网页预览使用单独的轻量 WebP，不用原始 PNG 拖慢首页。
 
-作品列表：src/data/works.js
-          数组名：latestFanhuaWorks / fanhuaWorks / sharkWorks / waWorks
-角色详情：src/data/details-fanhua.js
-          src/data/details-shark.js
-          src/data/details-wa.js
-原始 PNG：assets/tavo/new/
-网页预览：assets/previews/tavo/new/
-```
+## 仓库边界
 
-新增角色卡需要**同时改两个仓库**，缺一个都不完整。
-
-本仓库的 `index.html` 使用 `<template id="archiveCardTemplate">` 按源数据数量生成卡片。新增卡片时不要复制 70 份 HTML，不要增加固定数量常量，也不要手动制造第二套卡片或弹窗结构；如果修改了页面模板、数据解析、图片加载或部署版本，才修改本仓库的 `index.html`。
-
-## 1. 最重要的图片规则：眼睛和头部优先
-
-角色卡原始 PNG 可以保留完整立绘，但网页预览必须优先显示人物的头部和眼睛。
-
-每一张卡都必须满足：
-
-- 预览框内能看到眼睛，或至少能看到完整的眼睛所在面部区域。
-- 头顶、眉毛和眼睛不能被预览框上边缘裁掉。
-- 不允许出现「只看到胸口、身体、手部或下半张脸，看不到眼睛」的预览。
-- 脸部应位于预览区域上半部，眼睛线建议落在预览高度的 15%–35% 范围内。
-- 可以保留肩膀和上半身，但头部优先级高于胸口、服装、手部和背景。
-- 不要为了展示全身而把人物头部缩得过小。
-
-当前页面默认展示焦点：
+这个展示仓库公开的文件只有两个：
 
 ```text
-previewPosition: "50% 8%"
+index.html  页面本体
+README.md   本维护契约
 ```
 
-- 第一个百分比是水平位置，`50%` 表示水平居中。
-- 第二个百分比是垂直位置，数值越小越向上，越优先显示头部。
-- 人脸偏低时用 `"50% 4%"`。
-- 头顶已贴近上边缘时才允许 `"50% 12%"`。
-- **禁止** `"50% 50%"`，那会恢复容易裁掉眼睛的居中裁切。
-
-`previewPosition` 会同时作用于列表卡面、详情弹窗顶图和保存面板预览，三处一起验证。
-
-## 2. preview 和 image 是两个不同的文件
-
-**这一条最容易搞错，搞错会直接毁掉页面性能。**
+角色卡源仓库是 [hqu35785-cmyk/fanhuafenluo](https://github.com/hqu35785-cmyk/fanhuafenluo)：
 
 ```text
-preview  必须是单独生成的小图
-         格式 webp，长边约 640，单文件控制在 100 KB 以内
-         示例：assets/previews/tavo/new/Tavo_角色名_XXXX.webp（约 37 KB）
-
-image    完整原始 PNG，供「保存角色卡 PNG」下载
-         示例：assets/tavo/new/Tavo_角色名_XXXX.png（1.2–1.7 MB）
+src/data/works.js
+src/data/card-intros.json
+src/data/details-fanhua.js
+src/data/details-shark.js
+src/data/details-wa.js
+scripts/sync-card-details.mjs
+assets/**/*.png
+assets/**/*.webp
 ```
 
-**禁止把 `preview` 写成原始 PNG 的路径。** 首页要同时渲染最多几十张卡，preview 指向原图会让首页去下几十上百 MB 的 PNG。
+不要把 `work/original-index.html`、聊天附件、临时 JSON、截图或本地测试文件上传到展示仓库。
 
-原始 PNG 只出现在 `image` 字段和下载链路里，不参与列表渲染。
+## 给未来 AI 的唯一维护契约
 
-## 3. 新角色卡数据格式
+任何 AI 在新增角色卡、修改角色卡、修改详情映射或重新部署前，必须先完整阅读本 README，然后再检查仓库中实际存在的 `index.html`。禁止根据聊天记录重写页面，禁止把当前页面改成另一套卡片、标题栏、弹窗或保存面板。
 
-### 3.1 `src/data/works.js`
+### 新增角色卡时必须改源仓库
 
-```js
+在源仓库完成以下内容：
+
+1. 把完整原始 PNG 放入正确的 `assets/` 路径。
+2. 生成单独的 WebP 预览图，放入 `assets/previews/`；预览图只用于页面展示，不能把 `preview` 指向 PNG。
+3. 在 `src/data/works.js` 的正确数组中添加作品记录。
+4. `image` 和 `_detailKey` 必须逐字符一致；中文路径沿用现有百分号编码写法。
+5. `preview` 必须是真实存在的 WebP，`image` 必须是真实存在的 PNG。
+6. 真实日期才写入 `createdAt`，没有可靠日期时留空或省略，不得用当前日期、作者或 alias 猜测。
+7. 预览焦点必须优先放在眼睛和头部附近。默认值为 `50% 8%`；除非实际卡面需要，不得改回 `50% 50%`。
+
+### AI 简介不是 description 原文
+
+详情里的“简介”不是 PNG 的 `description` 原文，也不是 `role + personality` 的拼接。
+
+AI 必须先阅读该卡的全部原始字段：
+
+```text
+description
+first_mes
+personality
+scenario
+character_book
+system_prompt
+post_history_instructions
+name / role / tags / creator / cardLabel
+```
+
+然后写一段 120–180 个可见字符的中文导览简介。简介必须同时做到：
+
+- 让访客知道角色是谁、与用户是什么关系、故事从什么前提开始。
+- 提炼最鲜明的性格、世界设定、关系矛盾或互动方式。
+- 在结尾留下真实存在的选择、冲突或悬念，让人愿意继续打开资料。
+- 只写源资料能够证明的内容，不补写不存在的人物、能力、关系和结局。
+- 不能把系统指令、字数限制或格式规则原样当成宣传文案。
+- 不能批量只替换角色名，98 条简介必须分别根据对应 `_detailKey` 的全部资料审核。
+
+简介仍然只有一个 `intro` 字段，不增加 `hook`、`teaser` 或第六个标签。成人主题可以在明确成年角色的简介中直接说明，但简介应保持档案导览形式；明确未满 18 岁或年龄无法确认的角色，只能非露骨地概括人物、关系、冲突和世界背景。
+
+### 简介定稿文件与源哈希
+
+AI 简介定稿写入源仓库：
+
+```text
+src/data/card-intros.json
+```
+
+每个 key 必须是完整 `_detailKey`：
+
+```json
 {
-  name: "角色名称",
-  image: "assets/tavo/new/Tavo_%E8%A7%92%E8%89%B2%E5%90%8D_1234.png",
-  preview: "assets/previews/tavo/new/Tavo_%E8%A7%92%E8%89%B2%E5%90%8D_1234.webp",
-  createdAt: "2026-08-06",
-  previewPosition: "50% 8%",
-  _detailKey: "assets/tavo/new/Tavo_%E8%A7%92%E8%89%B2%E5%90%8D_1234.png",
-  alias: "TAVO · 1234",
-  collectionLabel: "TAVO ROLE CARD",
-  cardLabel: "角色身份",
-  role: "一句话角色定位",
-  tags: ["标签一", "标签二"],
-  creator: "繁花·纷落"
+  "assets/tavo/new/Tavo_%E8%A7%92%E8%89%B2_1234.png": {
+    "intro": "这里是根据该卡全部原始资料写成的 120–180 字简介。",
+    "sourceHash": "小写 64 位 SHA256"
+  }
 }
 ```
 
-字段要求：
+`sourceHash` 对 PNG 元数据中的以下字段按工具规定的稳定顺序计算：
 
-- `name`：角色名称。
-- `image` / `preview`：相对路径，必须真实存在。**中文文件名在数据里是百分号编码的**，照抄现有条目的写法。
-- `createdAt`：PNG 首次入库的真实日期，必须使用 ISO `YYYY-MM-DD`；卡面和详情弹窗会格式化成 `YYYY.MM.DD`。没有真实记录时留空或省略，不得用 alias、creator 或当前日期代替。
-- `_detailKey`：必须和 `image` **逐字符完全一致**，页面靠它去 details 文件里取详情。
-- `previewPosition`：两个百分比，空格分隔。
-- `alias` / `collectionLabel` / `cardLabel` / `role` / `tags` / `creator`：有真实资料才填，不要编造。
-
-没有 `previewPosition` 时页面自动用 `"50% 8%"`，不会回到居中裁切。
-
-### 3.2 `src/data/details-{fanhua|shark|wa}.js`
-
-必须同时补一条详情，key 就是 `_detailKey`：
-
-```js
-window.__LAZY_DETAILS__.fanhuafenluo["assets/tavo/new/Tavo_%E8%A7%92%E8%89%B2%E5%90%8D_1234.png"] = {
-  intro: "角色卡 description / 简介原文",
-  opening: "开场白全文",
-  personality: "性格简介全文",
-  setting: "人物设定 / 剧情全文",
-  worldbook: "角色卡 character_book / Lorebook 条目全文"
-};
+```text
+description
+first_mes
+personality
+scenario
+character_book
+system_prompt
+post_history_instructions
 ```
 
-`intro` 来源于原始 PNG 内嵌 TAVO 数据的 `description` / 简介字段；没有真实 `intro` 时，页面才回退到 `role + personality`。`opening`、`personality`、`setting` 三个字段缺任何一个，详情弹窗对应栏会显示缺省文案。缺少资料时不要编造内容。
+PNG 内容变化后必须重新阅读全部资料并重写简介，不能继续使用旧简介。
 
-`worldbook` 来源于原始 PNG 内嵌 TAVO 数据的 `character_book` / Lorebook 条目。确实没有世界书时，必须省略整个字段，不要写空字符串；页面在第 4 个「世界书」模块中显示 `该角色卡未附带世界书。`。
+### 使用同步工具
 
-## 4. 改了数据必须同步换 `?v=` 版本号
+在源仓库根目录运行：
 
-页面不再使用 `cache:'no-cache'`，数据文件的失效完全靠 URL 上的版本参数。当前 `index.html` 中的形式是：
-
-```js
-const SOURCE_URLS={
-  works:'src/data/works.js?v=c87417531269',
-  details:{
-    fanhuafenluo:'src/data/details-fanhua.js?v=aeaa10896606',
-    shark:'src/data/details-shark.js?v=aeaa10896606',
-    wa:'src/data/details-wa.js?v=aeaa10896606'
-  }
-};
+```bash
+node scripts/sync-card-details.mjs --intro-brief --all
 ```
 
-**每次修改源站 `src/data/*.js`，都必须把 `index.html` 里对应的 `?v=` 换成新值**（用新的 commit SHA 前 12 位即可）。不换 = 浏览器吃缓存 = 线上看不到任何变化。
+该命令输出供 AI 阅读的完整资料包、作品元数据和 sourceHash；输出只用于本地写简介，不要把资料包作为临时文件提交。
 
-## 5. 给 AI 的机械执行步骤
+写入 `src/data/card-intros.json` 后运行：
 
-1. 先读完本 `README.md`。
-2. 检查当前 `index.html`，不要根据聊天记录重写页面。
-3. 在源站仓库 `hqu35785-cmyk/fanhuafenluo` 中准备完整 PNG：`assets/tavo/new/`。
-4. 在同一源站准备单独的网页预览 WebP：`assets/previews/tavo/new/`；长边约 640，单文件不超过 100 KB。
-5. 确认路径、文件名、大小写、百分号编码完全正确。
-6. 在 `works.js` 对应数组（`latestFanhuaWorks` / `fanhuaWorks` / `sharkWorks` / `waWorks`）里加条目，字段按 §3.1。
-7. 为这张 PNG 填 `createdAt`：优先使用该文件首次入库的 Git 日期；如果没有记录，留空或省略，绝对不要编造。
-8. 在对应的 `details-*.js` 里加同 key 的条目，字段按 §3.2。
-9. 按 §4 更新本仓库 `index.html` 里对应的 `?v=`。
-10. 打开卡片列表，确认第一眼能看到眼睛或头部，而不是只显示胸口、手部或下半张脸。
-11. 打开详情弹窗，确认顶图能看到眼睛或头部，且简介、开场白、人物设定都有内容。
-12. 打开保存面板，确认预览不只显示胸口；下载的仍是完整原始 PNG。
-13. 确认失败时按源站 → jsDelivr → GitHub Raw 顺序回退，三源全失败时保持斜线态并显示 `CARD FACE UNAVAILABLE`。
-14. 控制台无 404、无未处理 Promise rejection；页面无横向溢出。
-15. 三位作者的数量、首张卡、末张卡和已有卡片都没被破坏。
-16. 本地验证通过后再提交并等待 Pages 部署成功。
+```bash
+node scripts/sync-card-details.mjs --write
+node scripts/sync-card-details.mjs --check
+```
 
-## 6. 禁止事项
+`--write` 会从 PNG 重新提取真实的 `first_mes`、`personality`、`scenario`、`character_book`、`system_prompt` 和 `post_history_instructions`，再合并 AI 简介，生成：
 
-- 禁止把 `preview` 写成原始 PNG 路径。
-- 禁止把默认位置改回 `object-position: center` 或 `"50% 50%"`。
-- 禁止只调整截图而不在数据里记录 `previewPosition`。
-- 禁止用 Canvas 生成假的角色卡 PNG。
-- 禁止删除「源站 → jsDelivr → GitHub Raw」三级图片备用来源。
-- 禁止重新设计标题栏、卡片结构、详情弹窗、保存面板或原始动画；本次唯一明确例外是：允许移除卡面下载按钮 `.download-action` 的常驻全息动效。
-- `.detail-action` 的全息效果、详情弹窗的 `detailButtonSheen`、下载按钮按下时的 `detailMiniDownload` 必须保留；不要因为下载按钮收敛而连带修改查看档案按钮。
-- 禁止破坏 `content-visibility` / `.is-near` / `--card-ih` / 滚动物理这套渲染优化。
-- 禁止把三源全失败时的 `CARD FACE UNAVAILABLE` 斜线兜底改成几何占位图形。
-- 禁止加入敏感内容锁定 / 解锁机制。本站已明确决定不要这一套，数据里的 `sensitive*` 字段一律忽略。
-- 禁止上传聊天附件、本地基准文件或 `original-index.html`。
-- 禁止把规范写进临时聊天内容；本 README 才是唯一规范来源。
+```text
+src/data/details-fanhua.js
+src/data/details-shark.js
+src/data/details-wa.js
+```
 
-## 7. 最终验收标准
+`--check` 必须通过以下检查才允许提交：
 
-- 列表卡片能看到眼睛或头部。
-- 卡面和详情弹窗的 `CREATE TIME` 使用真实 `createdAt`，显示为 `YYYY.MM.DD`，不是 alias，也不是 creator；缺少日期时卡面线和日期行一起隐藏，角色名仍正常显示。
-- 详情弹窗顶图能看到眼睛或头部。
-- 保存面板预览不只显示胸口。
-- 详情四栏（简介 / 开场白 / 人物设定 / 世界书）始终存在；简介优先使用真实 `intro`。
-- 无 `worldbook` / `lorebook` 数据时，第 4 个「世界书」标签仍显示，并在阅读区显示 `该角色卡未附带世界书。`。
-- `tags` 数组的真实内容会显示在详情标签中。
-- 原始 PNG 下载有效，文件大小不为零。
-- 源站失败时按 jsDelivr、GitHub Raw 顺序回退。
-- 桌面、平板、手机宽度下无横向溢出。
-- 新增卡片后站点不报 `SOURCE ERROR`，卡片数量自动跟随数据。
-- 卡面下载按钮静止时没有流动全息效果；悬停时只出现一次 `detailButtonSheen` 扫光，按下图标仍有回弹。
-- 页面静态基线为 `@keyframes = 68`、`transition = 49`，且 `holoRibbonDownload`、`downloadHoloPulse` 不再存在；除下载按钮例外外，不得删除其他动画。
-- 页面没有出现第二套卡片 CSS 或另一套 modal 结构。
-- 页面有 `h1`、description、canonical、Open Graph、Twitter card、theme-color、favicon。
-- 无障碍检查不出现 `aria-hidden` 包裹可用按钮；弹窗打开后 Tab 留在当前浮层内。
+```text
+70 / 14 / 14 / 98 数量正确
+AI 简介数量 = 98
+简介长度全部为 120–180
+简介不是 description 原文
+简介没有重复、占位文案或失联 key
+sourceHash 全部最新
+开场白逐字段等于 first_mes
+人物设定逐字段等于 personality / scenario
+世界书包含所有原始条目，含停用条目
+预设等于两个原始提示字段的确定性分段
+PNG 签名、chunk 边界和 chara 元数据全部有效
+```
+
+同样的 PNG 输入必须得到逐字节相同的详情文件。连续运行两次 `--write`，第二次 Git diff 必须为空。
+
+### 展示页的五栏契约
+
+展示页永远保留以下顺序：
+
+```text
+01 简介
+02 开场白
+03 人物设定
+04 世界书
+05 预设
+```
+
+字段映射固定为：
+
+```text
+简介     work.intro
+开场白   work.opening
+人物设定 work.personality + work.setting
+世界书   work.worldbook
+预设     work.preset
+```
+
+没有世界书或预设时，标签不能隐藏，阅读区显示固定缺省文案：
+
+```text
+该角色卡暂未提供简介。
+该角色卡未提供开场白。
+该角色卡未提供人物设定。
+该角色卡未附带世界书。
+该角色卡未附带预设。
+```
+
+角色资料必须使用 `textContent` 写入，不能用 `innerHTML` 执行卡片原文中的标签或脚本。
+
+### 发布前的页面检查
+
+源仓库发布后，先记录源仓库合并后的完整 SHA，再把展示页四个 `SOURCE_URLS` 的 `?v=` 更新为该 SHA 前 12 位：
+
+```text
+works.js
+details-fanhua.js
+details-shark.js
+details-wa.js
+```
+
+展示仓库只提交：
+
+```text
+index.html
+README.md
+```
+
+必须检查：
+
+- 卡片数量为 70 / 14 / 14。
+- 眼睛和头部在列表卡面、详情顶图、保存面板中都没有被裁掉。
+- 预览链保持源站 WebP → jsDelivr → GitHub Raw。
+- 下载链保持源站 PNG → jsDelivr → GitHub Raw。
+- 五个标签在桌面端等宽，在手机端可横向滚动。
+- 第五个“预设”能够完整滚入并点击。
+- 详情内容只在阅读区滚动，页面没有横向溢出。
+- `Escape`、焦点恢复、`prefers-reduced-motion` 都正常。
+- 控制台没有 404、错误、警告或未处理 Promise rejection。
+- `@keyframes = 68`、`transition = 49` 基线保持不变。
+- 原始卡片、作者切换、滚动物理、详情弹窗和保存面板动画没有被删除。
+
+## 禁止事项
+
+- 不要把 PNG 当作首页 preview。
+- 不要把预览焦点改回 `50% 50%`。
+- 不要使用 Canvas 生成假的角色卡 PNG。
+- 不要删除源站、jsDelivr、GitHub Raw 三级备用链。
+- 不要把简介回退到 `role + personality`。
+- 不要把 `work.lorebook` 当作世界书别名。
+- 不要把“资料整理中”作为正式数据提交。
+- 不要删除第五个预设标签。
+- 不要重构原始卡片、弹窗、保存面板、滚动物理或动画体系。
+- 不要上传 `original-index.html`、聊天附件、临时资料包或测试截图。
+- 展示仓库不得增加第三个公开文件。
 
