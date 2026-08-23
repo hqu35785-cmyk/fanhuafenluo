@@ -3292,6 +3292,12 @@ body:not(.is-scroll-forcing) .archive-card .stripe-field{
   animation-play-state:running!important;
 }
 
+/* Keep distant cards in the grid with a measured intrinsic placeholder, while
+   the near-viewport observer removes the paint cost before they are needed. */
+.archive-card:not(.is-near){
+  content-visibility:auto;
+  contain-intrinsic-size:var(--card-ih,420px);
+}
 
 /* The flowing ribbon already supplies obvious motion. Avoid repainting animated
    box-shadow forever; use a strong static glow and reserve pulse for direct hover. */
@@ -7466,6 +7472,15 @@ cards.forEach(card=>{
   observer.observe(card);
 });
 
+const nearObserver=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    entry.target.classList.toggle('is-near',entry.isIntersecting);
+  });
+  window.requestAnimationFrame(syncCardIntrinsicHeight);
+},{rootMargin:'1200px 0px 1200px',threshold:0});
+
+cards.forEach(card=>nearObserver.observe(card));
+
 /* Scroll physics V4: same visible weight, much less layout/style work.
    - one IntersectionObserver also gates continuous card motion
    - card centers/faces/indexes are cached (no per-frame getBoundingClientRect)
@@ -7486,6 +7501,15 @@ function currentGalleryColumns(){
   return 6;
 }
 
+function syncCardIntrinsicHeight(){
+  const probe=cards.find(card=>!card.hidden);
+  if(!probe) return;
+  const height=probe.getBoundingClientRect().height;
+  if(height>0){
+    galleryEl.style.setProperty('--card-ih',`${Math.round(height)}px`);
+  }
+}
+
 function scrollForceFace(card){
   return physicsMeta.get(card)?.face || card?.querySelector('.card-face') || null;
 }
@@ -7493,6 +7517,7 @@ function scrollForceFace(card){
 function refreshPhysicsMetrics(){
   metricsRefreshRaf=0;
   physicsColumns=currentGalleryColumns();
+  syncCardIntrinsicHeight();
   /* Only re-measure cards that can currently react. Offscreen cards get their
      document center from IntersectionObserver when they approach the viewport. */
   physicsVisibleCards.forEach(card=>{
@@ -7539,6 +7564,7 @@ cards.forEach((card,index)=>{
   physicsObserver.observe(card);
 });
 refreshPhysicsMetrics();
+window.requestAnimationFrame(syncCardIntrinsicHeight);
 
 let lastPhysicsScrollY=window.scrollY;
 let lastPhysicsTime=performance.now();
