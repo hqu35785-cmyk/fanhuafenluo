@@ -2850,7 +2850,6 @@ body.is-scroll-forcing .archive-card.is-loaded .card-face{
   --scroll-scale-x:1;
   --scroll-scale-y:1;
   --scroll-art-shift:0px;
-  --scroll-glow:0;
   --scroll-edge-y:50%;
   transform:
     perspective(760px)
@@ -2864,9 +2863,9 @@ body.is-scroll-forcing .archive-card.is-loaded .card-face{
   backface-visibility:hidden;
 }
 
-/* Force highlight: the leading edge gets a brief pressure sheen. */
-.archive-card .card-face::before{
-  content:"";
+/* Force highlight: the leading edge gets a brief pressure sheen. The glow is a
+   real child so physics can update opacity without invalidating the face style. */
+.archive-card .face-glow{
   position:absolute;
   z-index:18;
   inset:0;
@@ -2884,7 +2883,6 @@ body.is-scroll-forcing .archive-card.is-loaded .card-face{
 .archive-card .ghost-frame,
 .archive-card .stripe-field{
   translate:0 var(--scroll-art-shift);
-  will-change:translate;
 }
 
 body.is-scroll-forcing .archive-card .loaded-art,
@@ -3228,28 +3226,12 @@ body:not(.is-scroll-forcing) .archive-card .stripe-field{
   transition:opacity 620ms ease,transform 880ms var(--ease-out)!important;
 }
 
-/* Never keep every card promoted to its own GPU layer. Promote only cards that
-   are actually close enough to the viewport to animate. */
-.archive-card .card-face,
-.archive-card .loaded-art,
-.archive-card .ghost-frame,
-.archive-card .stripe-field,
-.detail-action::before,
-.detail-action::after,
-.download-action::before,
-.download-action::after,
-.archive-modal-panel,
-.save-sheet-panel{
+/* Never keep every card promoted to its own GPU layer. Promote only the active
+   card shell; art, stripes, ghosts and foil buttons stay ordinary paint layers. */
+.archive-card .card-face{
   will-change:auto!important;
 }
 .archive-card.is-motion-visible .card-face{will-change:transform!important}
-.archive-card.is-motion-visible .loaded-art,
-.archive-card.is-motion-visible .ghost-frame,
-.archive-card.is-motion-visible .stripe-field{will-change:translate!important}
-.archive-card.is-motion-visible.is-loaded .detail-action::before,
-.archive-card.is-motion-visible.is-loaded .detail-action::after,
-.archive-card.is-motion-visible.is-loaded .download-action::before,
-.archive-card.is-motion-visible.is-loaded .download-action::after{will-change:transform,opacity!important}
 .archive-modal.is-open .archive-modal-panel,
 .save-sheet.is-open .save-sheet-panel{will-change:transform,opacity!important}
 
@@ -3345,8 +3327,8 @@ body.has-overlay .archive-card .download-action{
 }
 
 /* Direction class replaces a per-card CSS variable write every physics frame. */
-body.scroll-force-down .archive-card .card-face::before{--scroll-edge-y:5%}
-body.scroll-force-up .archive-card .card-face::before{--scroll-edge-y:95%}
+body.scroll-force-down .archive-card .face-glow{--scroll-edge-y:5%}
+body.scroll-force-up .archive-card .face-glow{--scroll-edge-y:95%}
 
 /* Photo save remains visibly holographic even while PNG/share capability is preparing.
    Disabled still blocks clicks; only the visual opacity is kept strong. */
@@ -7514,6 +7496,21 @@ function scrollForceFace(card){
   return physicsMeta.get(card)?.face || card?.querySelector('.card-face') || null;
 }
 
+function ensureFaceGlow(card){
+  const face=card.querySelector('.card-face');
+  if(!face) return null;
+
+  let glow=face.querySelector('.face-glow');
+  if(!glow){
+    glow=document.createElement('div');
+    glow.className='face-glow';
+    glow.setAttribute('aria-hidden','true');
+    face.prepend(glow);
+  }
+
+  return glow;
+}
+
 function refreshPhysicsMetrics(){
   metricsRefreshRaf=0;
   physicsColumns=currentGalleryColumns();
@@ -7534,11 +7531,25 @@ function queuePhysicsMetricsRefresh(){
 }
 
 function resetScrollForce(card){
-  const face=scrollForceFace(card);
+  const meta=physicsMeta.get(card);
+  const face=meta?.face || scrollForceFace(card);
   if(!face) return;
-  face.style.setProperty('transform','perspective(760px) translate3d(0,0,0) translateY(var(--hover-lift,0px)) rotateX(0deg) rotateZ(0deg) scale(1,1)','important');
-  face.style.setProperty('--scroll-art-shift','0px');
-  face.style.setProperty('--scroll-glow','0');
+
+  face.style.removeProperty('transform');
+  meta?.glow?.style.removeProperty('opacity');
+  [meta?.art,meta?.ghost,meta?.stripe].forEach(layer=>{
+    layer?.style.removeProperty('translate');
+  });
+
+  if(meta){
+    meta.lastShift=null;
+    meta.lastTilt=null;
+    meta.lastRoll=null;
+    meta.lastScaleX=null;
+    meta.lastScaleY=null;
+    meta.lastArtShift=null;
+    meta.lastGlow=null;
+  }
 }
 
 const physicsObserver=new IntersectionObserver(entries=>{
@@ -7557,10 +7568,25 @@ const physicsObserver=new IntersectionObserver(entries=>{
       resetScrollForce(card);
     }
   });
-},{rootMargin:'90px 0px 110px',threshold:0});
+},{rootMargin:'300px 0px 300px',threshold:0});
 
 cards.forEach((card,index)=>{
-  physicsMeta.set(card,{index,face:card.querySelector('.card-face'),centerY:0});
+  physicsMeta.set(card,{
+    index,
+    face:card.querySelector('.card-face'),
+    glow:ensureFaceGlow(card),
+    art:card.querySelector('.loaded-art'),
+    ghost:card.querySelector('.ghost-frame'),
+    stripe:card.querySelector('.stripe-field'),
+    centerY:0,
+    lastShift:null,
+    lastTilt:null,
+    lastRoll:null,
+    lastScaleX:null,
+    lastScaleY:null,
+    lastArtShift:null,
+    lastGlow:null
+  });
   physicsObserver.observe(card);
 });
 refreshPhysicsMetrics();
@@ -7603,13 +7629,63 @@ function paintScrollPhysics(force){
     const artShift=clampMotion(-force*.31,-9.5,9.5);
     const glow=clampMotion(absForce/30,0,.56);
 
-    meta.face.style.setProperty(
-      'transform',
-      `perspective(760px) translate3d(0,${shift.toFixed(2)}px,0) translateY(var(--hover-lift,0px)) rotateX(${tilt.toFixed(3)}deg) rotateZ(${roll.toFixed(3)}deg) scale(${scaleX.toFixed(4)},${scaleY.toFixed(4)})`,
-      'important'
-    );
-    meta.face.style.setProperty('--scroll-art-shift',`${artShift.toFixed(2)}px`);
-    meta.face.style.setProperty('--scroll-glow',glow.toFixed(3));
+    const shiftOut=Math.round(shift*100)/100;
+    const tiltOut=Math.round(tilt*1000)/1000;
+    const rollOut=Math.round(roll*1000)/1000;
+    const scaleXOut=Math.round(scaleX*10000)/10000;
+    const scaleYOut=Math.round(scaleY*10000)/10000;
+    const artShiftOut=Math.round(artShift*100)/100;
+    const glowOut=Math.round(glow*1000)/1000;
+    const forceReset=Math.abs(force)<.001;
+
+    const transformChanged=
+      forceReset ||
+      meta.lastShift===null ||
+      Math.abs(meta.lastShift-shiftOut)>=.35 ||
+      Math.abs(meta.lastTilt-tiltOut)>=.05 ||
+      Math.abs(meta.lastRoll-rollOut)>=.03 ||
+      Math.abs(meta.lastScaleX-scaleXOut)>=.002 ||
+      Math.abs(meta.lastScaleY-scaleYOut)>=.002;
+
+    if(transformChanged){
+      meta.lastShift=shiftOut;
+      meta.lastTilt=tiltOut;
+      meta.lastRoll=rollOut;
+      meta.lastScaleX=scaleXOut;
+      meta.lastScaleY=scaleYOut;
+      meta.face.style.setProperty(
+        'transform',
+        `perspective(760px) translate3d(0,${shiftOut}px,0) translateY(var(--hover-lift,0px)) rotateX(${tiltOut}deg) rotateZ(${rollOut}deg) scale(${scaleXOut},${scaleYOut})`,
+        'important'
+      );
+    }
+
+    if(
+      meta.art &&
+      (
+        forceReset ||
+        meta.lastArtShift===null ||
+        Math.abs(meta.lastArtShift-artShiftOut)>=.45
+      )
+    ){
+      meta.lastArtShift=artShiftOut;
+      const translate=`0 ${artShiftOut}px`;
+      meta.art.style.translate=translate;
+      meta.ghost?.style && (meta.ghost.style.translate=translate);
+      meta.stripe?.style && (meta.stripe.style.translate=translate);
+    }
+
+    if(
+      meta.glow &&
+      (
+        forceReset ||
+        meta.lastGlow===null ||
+        Math.abs(meta.lastGlow-glowOut)>=.02
+      )
+    ){
+      meta.lastGlow=glowOut;
+      meta.glow.style.opacity=String(glowOut);
+    }
   });
 }
 
