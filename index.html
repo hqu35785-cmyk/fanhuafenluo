@@ -4,6 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>繁花·纷落｜角色卡档案</title>
+<meta name="description" content="繁花·纷落、鲨鱼、咓 三位作者的 TAVO 角色卡档案，共 98 张，可在线浏览设定并保存原始 PNG。">
+<meta name="theme-color" content="#08090d">
+<meta name="referrer" content="no-referrer">
+<link rel="canonical" href="https://hqu35785-cmyk.github.io/fanhuafenluo-pages/">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="繁花·纷落｜角色卡档案">
+<meta property="og:description" content="TAVO 角色卡档案，共 98 张，可在线浏览设定并保存原始 PNG。">
+<meta property="og:url" content="https://hqu35785-cmyk.github.io/fanhuafenluo-pages/">
+<meta property="og:image" content="https://hqu35785-cmyk.github.io/fanhuafenluo/assets/authors/fanhuafenluo-avatar.webp">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='8'%20fill='%2308090d'/%3E%3Ctext%20x='16'%20y='23'%20font-size='17'%20text-anchor='middle'%20fill='%23e8b6c7'%20font-family='serif'%3EF%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <style>
 :root{
   --bg:#08090d;
@@ -38,6 +53,7 @@ body::before{
   background-size:100% 100%,78px 78px,78px 78px;
 }
 button{font:inherit}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 
 .site-header{
   height:76px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.065);
@@ -88,6 +104,11 @@ button{font:inherit}
 }
 .toolbar-status{display:flex;align-items:center;gap:7px;color:rgba(206,199,209,.32);font-size:7px;letter-spacing:.12em;white-space:nowrap}
 .toolbar-status i{width:5px;height:5px;border-radius:50%;border:1px solid rgba(232,182,199,.55)}
+.toolbar-status.is-error span{font-size:11px;letter-spacing:.06em;color:#f1b4bd}
+.status-retry{
+  min-height:26px;padding:0 10px;border:1px solid rgba(241,180,189,.42);border-radius:999px;
+  color:#f1b4bd;background:rgba(241,180,189,.08);font-size:10px;cursor:pointer;
+}
 
 .gallery{
   padding:16px 0 34px;display:grid;
@@ -1068,8 +1089,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   margin-top:26px;
 }
 .detail-options{
+  --detail-count:4;
   display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-columns:repeat(var(--detail-count),minmax(0,1fr));
   gap:6px;
   padding:5px;
   border:1px solid rgba(255,255,255,.065);
@@ -2758,7 +2780,7 @@ a.save-sheet-choice:active{
   left:5px;
   top:5px;
   bottom:5px;
-  width:calc((100% - 28px) / 4);
+  width:calc((100% - 10px - (var(--detail-count) - 1) * 6px) / var(--detail-count));
   border:1px solid rgba(232,182,199,.14);
   border-radius:9px;
   background:
@@ -2880,6 +2902,7 @@ a.save-sheet-choice:active{
 .archive-modal.is-open .detail-tags span:nth-child(1){animation-delay:210ms}
 .archive-modal.is-open .detail-tags span:nth-child(2){animation-delay:250ms}
 .archive-modal.is-open .detail-tags span:nth-child(3){animation-delay:290ms}
+.archive-modal.is-open .detail-tags span:nth-child(n+4){animation-delay:330ms}
 .detail-tags span{
   transition:transform 240ms cubic-bezier(.2,.82,.2,1),border-color 240ms ease,color 240ms ease,background 240ms ease;
 }
@@ -2956,7 +2979,7 @@ a.save-sheet-choice:active{
 @keyframes detailSaveDrop{0%{transform:translateY(0)}38%{transform:translateY(4px) scale(.9)}72%{transform:translateY(-1px) scale(1.04)}100%{transform:none}}
 
 @media(max-width:720px){
-  .detail-options::before{width:calc((100% - 28px) / 4)}
+  .detail-options::before{width:calc((100% - 10px - (var(--detail-count) - 1) * 6px) / var(--detail-count))}
   .detail-reading-panel.enter-setting .detail-reading-body{animation-duration:520ms}
   .detail-reading-panel.enter-worldbook .detail-reading-body{animation-duration:520ms}
 }
@@ -3391,7 +3414,7 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
 
         <div class="archive-count">
           <span>ARCHIVE</span>
-          <b id="headerArchiveCount">70</b>
+          <b id="headerArchiveCount">—</b>
         </div>
       </div>
     </header>
@@ -3403,2752 +3426,72 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
           <button class="filter author-filter" type="button" data-author="shark" aria-pressed="false">鲨鱼</button>
           <button class="filter author-filter" type="button" data-author="wa" aria-pressed="false">咓</button>
         </div>
-        <div class="toolbar-status" id="status"><i></i><span>WAITING · 70</span></div>
+        <div class="toolbar-status" id="status" aria-live="polite">
+          <i></i><span>WAITING</span>
+          <button class="status-retry" id="statusRetry" type="button" hidden>重新加载</button>
+        </div>
       </div>
+
+      <h1 class="sr-only">繁花·纷落角色卡档案</h1>
+      <template id="archiveCardTemplate">
+    <article class="archive-card">
+      <div class="card-face">
+        <div class="loaded-art" aria-hidden="true">
+        </div>
+
+        <div class="stripe-field" aria-hidden="true"></div>
+        <div class="ghost-frame" aria-hidden="true"></div>
+
+        <div class="corner-code"><span></span> </div>
+        <div class="corner-index"></div>
+
+        <div class="loading-core" aria-hidden="true">
+          <div class="state-label state-label-loading">
+            <div class="loading-title">ARCHIVE MATERIALIZING</div>
+            <div class="loading-line"></div>
+            <div class="loading-sub">WAITING FOR CARD FACE</div>
+          </div>
+          <div class="state-label state-label-ready">
+            <div class="loading-title ready-name"></div>
+            <div class="loading-line"></div>
+            <div class="loading-sub ready-meta"></div>
+          </div>
+        </div>
+
+        <div class="bottom-frame">
+          <button class="detail-action" type="button" tabindex="-1" disabled>
+            <span class="action-copy">
+              <b>查看档案</b>
+              <small>PROFILE · SETTING · OPENING</small>
+            </span>
+            <span class="action-arrow">↗</span>
+          </button>
+          <button class="download-action" type="button" tabindex="-1" disabled aria-label="下载角色卡">
+            <span class="download-icon">⇩</span>
+          </button>
+        </div>
+      </div>
+    </article>
+      </template>
 
       <section
         class="gallery"
         id="archiveGallery"
         aria-label="角色卡档案"
         aria-busy="true"
-      >
-        
-    <article class="archive-card pattern-1 theme-0">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 01</div>
-        <div class="corner-index">01</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">许知予</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.07.18</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-1">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 02</div>
-        <div class="corner-index">02</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">八尺大姐姐</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.07.16</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-2">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 03</div>
-        <div class="corner-index">03</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">康娜</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.07.14</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-3">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 04</div>
-        <div class="corner-index">04</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">吕令仪</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.07.12</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-4">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 05</div>
-        <div class="corner-index">05</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">云韵</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.07.10</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-5">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 06</div>
-        <div class="corner-index">06</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">丸丸</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.07.08</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-0">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 07</div>
-        <div class="corner-index">07</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">夜兰</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.07.06</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-1">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 08</div>
-        <div class="corner-index">08</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">申鹤</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.07.04</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-2">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 09</div>
-        <div class="corner-index">09</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">调月莉音</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.07.02</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-3">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 10</div>
-        <div class="corner-index">10</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">小维</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.30</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-4">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 11</div>
-        <div class="corner-index">11</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">中野二乃</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.28</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-5">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 12</div>
-        <div class="corner-index">12</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">阮梅</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.26</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-0">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 13</div>
-        <div class="corner-index">13</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">琳妮特</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.24</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-1">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 14</div>
-        <div class="corner-index">14</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 14</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.22</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-2">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 15</div>
-        <div class="corner-index">15</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 15</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.20</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-3">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 16</div>
-        <div class="corner-index">16</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 16</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.18</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-4">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 17</div>
-        <div class="corner-index">17</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 17</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.16</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-5">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 18</div>
-        <div class="corner-index">18</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 18</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.14</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-0">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 19</div>
-        <div class="corner-index">19</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 19</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.12</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-1">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 20</div>
-        <div class="corner-index">20</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 20</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.10</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-2">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 21</div>
-        <div class="corner-index">21</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 21</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.08</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-3">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 22</div>
-        <div class="corner-index">22</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 22</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.06</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-4">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 23</div>
-        <div class="corner-index">23</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 23</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.04</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-5">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 24</div>
-        <div class="corner-index">24</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 24</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.06.02</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-0">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 25</div>
-        <div class="corner-index">25</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 25</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.31</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-1">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 26</div>
-        <div class="corner-index">26</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 26</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.29</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-2">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 27</div>
-        <div class="corner-index">27</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 27</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.27</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-3">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 28</div>
-        <div class="corner-index">28</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 28</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.25</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-4">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 29</div>
-        <div class="corner-index">29</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 29</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.23</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-5">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 30</div>
-        <div class="corner-index">30</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 30</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.21</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-0">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 31</div>
-        <div class="corner-index">31</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 31</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.19</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-1">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 32</div>
-        <div class="corner-index">32</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 32</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.17</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-2">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 33</div>
-        <div class="corner-index">33</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 33</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.15</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-3">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 34</div>
-        <div class="corner-index">34</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 34</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.13</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-4">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 35</div>
-        <div class="corner-index">35</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 35</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.11</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-5">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 36</div>
-        <div class="corner-index">36</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 36</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.09</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-0">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 37</div>
-        <div class="corner-index">37</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 37</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.07</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-1">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 38</div>
-        <div class="corner-index">38</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 38</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.05</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-2">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 39</div>
-        <div class="corner-index">39</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 39</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.03</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-3">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 40</div>
-        <div class="corner-index">40</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 40</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.05.01</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-4">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 41</div>
-        <div class="corner-index">41</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 41</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.29</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-5">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 42</div>
-        <div class="corner-index">42</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 42</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.27</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-0">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 43</div>
-        <div class="corner-index">43</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 43</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.25</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-1">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 44</div>
-        <div class="corner-index">44</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 44</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.23</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-2">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 45</div>
-        <div class="corner-index">45</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 45</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.21</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-3">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 46</div>
-        <div class="corner-index">46</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 46</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.19</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-4">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 47</div>
-        <div class="corner-index">47</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 47</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.17</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-5">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 48</div>
-        <div class="corner-index">48</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 48</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.15</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-0">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 49</div>
-        <div class="corner-index">49</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 49</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.13</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-1">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 50</div>
-        <div class="corner-index">50</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 50</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.11</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-2">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 51</div>
-        <div class="corner-index">51</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 51</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.09</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-3">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 52</div>
-        <div class="corner-index">52</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 52</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.07</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-4">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 53</div>
-        <div class="corner-index">53</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 53</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.05</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-5">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 54</div>
-        <div class="corner-index">54</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 54</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.03</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-0">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 55</div>
-        <div class="corner-index">55</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 55</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.04.01</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-1">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 56</div>
-        <div class="corner-index">56</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 56</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.30</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-2">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 57</div>
-        <div class="corner-index">57</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 57</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.28</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-3">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 58</div>
-        <div class="corner-index">58</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 58</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.26</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-4">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 59</div>
-        <div class="corner-index">59</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 59</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.24</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-5">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 60</div>
-        <div class="corner-index">60</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 60</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.22</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-0">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 61</div>
-        <div class="corner-index">61</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 61</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.20</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-1">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 62</div>
-        <div class="corner-index">62</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 62</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.18</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-2">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 63</div>
-        <div class="corner-index">63</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 63</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.16</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-3">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 64</div>
-        <div class="corner-index">64</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 64</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.14</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-4">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 65</div>
-        <div class="corner-index">65</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 65</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.12</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-5">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 66</div>
-        <div class="corner-index">66</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 66</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.10</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-3 theme-0">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 67</div>
-        <div class="corner-index">67</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 67</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.08</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-4 theme-1">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 68</div>
-        <div class="corner-index">68</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 68</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.06</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-1 theme-2">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 69</div>
-        <div class="corner-index">69</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 69</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.04</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-
-    <article class="archive-card pattern-2 theme-3">
-      <div class="card-face">
-        <div class="loaded-art" aria-hidden="true">
-        </div>
-
-        <div class="stripe-field" aria-hidden="true"></div>
-        <div class="ghost-frame" aria-hidden="true"></div>
-
-        <div class="corner-code"><span></span>ARCHIVE · 70</div>
-        <div class="corner-index">70</div>
-
-        <div class="loading-core" aria-hidden="true">
-          <div class="state-label state-label-loading">
-            <div class="loading-title">ARCHIVE MATERIALIZING</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
-          </div>
-          <div class="state-label state-label-ready">
-            <div class="loading-title ready-name">档案角色 70</div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta">2026.03.02</div>
-          </div>
-        </div>
-
-        <div class="bottom-frame" aria-hidden="true">
-          <button class="detail-action" type="button" tabindex="-1">
-            <span class="action-copy">
-              <b>查看档案</b>
-              <small>PROFILE · SETTING · OPENING</small>
-            </span>
-            <span class="action-arrow">↗</span>
-          </button>
-          <button class="download-action" type="button" tabindex="-1" aria-label="下载角色卡">
-            <span class="download-icon">⇩</span>
-          </button>
-        </div>
-      </div>
-    </article>
-      </section>
+      ></section>
+
+      <noscript>
+        <p style="padding:40px 20px;text-align:center;color:#cec7d1;font-size:13px">
+          本页需要 JavaScript 才能加载角色卡档案。
+        </p>
+      </noscript>
     </main>
 
     <footer>
       <div class="wrap"><span>© 2026 繁花·纷落</span><span>UNIFIED CARD LAYOUT</span></div>
     </footer>
-<div class="archive-modal" id="archiveModal" aria-hidden="true">
+<div class="archive-modal" id="archiveModal" aria-hidden="true" inert>
   <div class="archive-modal-backdrop" data-close-archive></div>
   <section class="archive-modal-panel" role="dialog" aria-modal="true" aria-labelledby="detailName">
     <button class="archive-modal-close" id="archiveModalClose" type="button" aria-label="关闭档案">×</button>
@@ -6187,7 +3530,7 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
       </div>
 
       <div class="detail-tags">
-        <span id="detailTagIdentity">角色身份</span>
+        <span>角色身份</span>
         <span>PNG CHARACTER CARD</span>
         <span>ARCHIVE RECORD</span>
       </div>
@@ -6225,7 +3568,7 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
   </section>
 </div>
 
-<div class="save-sheet" id="saveSheet" aria-hidden="true">
+<div class="save-sheet" id="saveSheet" aria-hidden="true" inert>
   <div class="save-sheet-backdrop" data-close-save></div>
   <section class="save-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="saveSheetTitle">
     <div class="save-sheet-head">
@@ -6273,8 +3616,11 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
 
 <script>
 const body=document.body;
-const status=document.getElementById('status').querySelector('span');
-const cards=[...document.querySelectorAll('.archive-card')];
+const statusContainer=document.getElementById('status');
+const status=statusContainer.querySelector('span');
+const statusRetry=document.getElementById('statusRetry');
+const cardTemplate=document.getElementById('archiveCardTemplate');
+const cards=[];
 
 const authorSections={
   fanhuafenluo:{
@@ -6306,7 +3652,6 @@ const authorFilterButtons=[...document.querySelectorAll('.author-filter')];
 const galleryEl=document.querySelector('.gallery');
 const authorOrder=['fanhuafenluo','shark','wa'];
 const archiveGallery=document.getElementById('archiveGallery');
-const statusContainer=document.getElementById('status');
 const headerAuthorCycle=document.getElementById('headerAuthorCycle');
 
 const SOURCE_BASE='https://hqu35785-cmyk.github.io/fanhuafenluo/';
@@ -6322,17 +3667,12 @@ const SOURCE_URLS={
   }
 };
 
-const EXPECTED_AUTHOR_COUNTS={
-  fanhuafenluo:70,
-  shark:14,
-  wa:14
-};
-
 const catalogState={
   catalog:null,
   activeWork:null,
   loadToken:0,
-  detailPromises:Object.create(null)
+  detailPromises:Object.create(null),
+  detailsReady:Object.create(null)
 };
 
 function sourceUrl(path){
@@ -6460,32 +3800,15 @@ async function buildCatalog(){
 
   const catalog={};
 
-  Object.keys(EXPECTED_AUTHOR_COUNTS).forEach(authorId=>{
-    catalog[authorId]=rawCatalog[authorId].map(work=>({
+  Object.keys(rawCatalog).forEach(authorId=>{
+    catalog[authorId]=(rawCatalog[authorId] || []).map(work=>({
       ...work,
       _authorId:authorId
     }));
-  });
-
-  Object.entries(EXPECTED_AUTHOR_COUNTS).forEach(
-    ([authorId,expected])=>{
-      const actual=catalog[authorId].length;
-      if(actual!==expected){
-        throw new Error(
-          `${authorId} 数量不正确：应为 ${expected}，实际为 ${actual}`
-        );
-      }
+    if(!catalog[authorId].length){
+      console.warn(`[archive] 作者 ${authorId} 没有读到任何角色卡`);
     }
-  );
-
-  const total=Object.values(catalog).reduce(
-    (sum,works)=>sum+works.length,
-    0
-  );
-
-  if(total!==98){
-    throw new Error(`角色卡总数不正确：实际为 ${total}`);
-  }
+  });
 
   return catalog;
 }
@@ -6509,6 +3832,8 @@ async function loadAuthorDetails(authorId){
         details[work._detailKey || work.image] || {}
       );
     });
+
+    catalogState.detailsReady[authorId]=true;
 
     return details;
   })();
@@ -6607,6 +3932,7 @@ function ensureCardPreview(card){
 
 function applyAuthorCardContent(authorId,meta){
   const works=catalogState.catalog?.[authorId] || [];
+  growCardPool(works.length);
   const firstScreenCount=Math.max(currentGalleryColumns()*2,6);
 
   cards.forEach((card,index)=>{
@@ -6631,6 +3957,8 @@ function applyAuthorCardContent(authorId,meta){
     if(!show){
       delete card.dataset.author;
       delete card.dataset.workIndex;
+      card.removeAttribute('role');
+      card.removeAttribute('aria-label');
       const oldImage=card.querySelector('.loaded-card-image');
       if(oldImage){
         oldImage.onload=null;
@@ -6648,6 +3976,11 @@ function applyAuthorCardContent(authorId,meta){
 
     card.dataset.author=authorId;
     card.dataset.workIndex=String(index);
+    card.setAttribute('role','group');
+    card.setAttribute(
+      'aria-label',
+      `${work.name} · ${work.cardLabel || work.tags?.[0] || '角色卡'}`
+    );
 
     const number=String(index+1).padStart(2,'0');
     const name=card.querySelector('.ready-name');
@@ -6664,15 +3997,24 @@ function applyAuthorCardContent(authorId,meta){
     }
     if(code?.lastChild){
       code.lastChild.textContent=
-        ` ${work.cardLabel || work.tags?.[0] || '角色卡'}`;
+        ` ARCHIVE · ${work.cardLabel || work.tags?.[0] || '角色卡'}`;
     }
     if(cornerIndex) cornerIndex.textContent=number;
+
+    card.querySelector('.detail-action')?.setAttribute(
+      'aria-label',
+      `查看 ${work.name} 的档案`
+    );
+    card.querySelector('.download-action')?.setAttribute(
+      'aria-label',
+      `保存 ${work.name} 的角色卡 PNG`
+    );
 
     const image=ensureCardPreview(card);
 
     image.alt=`${work.name}角色卡卡面`;
     applyPreviewPosition(image,work);
-    image.sizes='(max-width:620px) 46vw, (max-width:1080px) 30vw, 15vw';
+    /* Keep sizes off until the source repository publishes matching 320w/480w variants. */
     image.width=640;
     image.height=935;
     image.loading=index<firstScreenCount?'eager':'lazy';
@@ -6706,6 +4048,7 @@ function applyAuthorCardContent(authorId,meta){
   });
 
   archiveGallery?.setAttribute('aria-busy','false');
+  cardHeightMeasured=false;
   queuePhysicsMetricsRefresh();
 }
 
@@ -6732,7 +4075,8 @@ async function loadCatalog(){
 
   setAuthorControlsDisabled(true);
   statusContainer.classList.remove('is-error');
-  status.textContent='LOADING SOURCE · 0/98';
+  statusRetry.hidden=true;
+  status.textContent='LOADING SOURCE';
   archiveGallery?.setAttribute('aria-busy','true');
 
   try{
@@ -6742,15 +4086,24 @@ async function loadCatalog(){
 
     catalogState.catalog=catalog;
     catalogState.detailPromises=Object.create(null);
+    catalogState.detailsReady=Object.create(null);
 
-    Object.keys(EXPECTED_AUTHOR_COUNTS).forEach(
-      authorId=>{
-        authorSections[authorId].count=
-          catalog[authorId].length;
+    Object.keys(catalog).forEach(authorId=>{
+      if(authorSections[authorId]){
+        authorSections[authorId].count=catalog[authorId].length;
       }
-    );
+    });
 
-    activeAuthorId='fanhuafenluo';
+    authorFilterButtons.forEach(button=>{
+      const available=Object.prototype.hasOwnProperty.call(
+        catalog,
+        button.dataset.author
+      );
+      button.hidden=!available;
+    });
+
+    activeAuthorId=authorOrder.find(id=>catalog[id]) || Object.keys(catalog)[0];
+    if(!activeAuthorId) throw new Error('没有可用的作者数据');
 
     authorFilterButtons.forEach(button=>{
       const active=
@@ -6778,15 +4131,12 @@ async function loadCatalog(){
 
     status.textContent='SOURCE ERROR · 点击重试';
     statusContainer.classList.add('is-error');
+    statusRetry.hidden=false;
     archiveGallery?.setAttribute('aria-busy','false');
   }
 }
 
-statusContainer.addEventListener('click',()=>{
-  if(statusContainer.classList.contains('is-error')){
-    loadCatalog();
-  }
-});
+statusRetry.addEventListener('click',loadCatalog);
 
 headerAuthorCycle.addEventListener('click',()=>{
   if(!catalogState.catalog) return;
@@ -6867,7 +4217,7 @@ function setAuthor(authorId){
     const visibleLoaded=cards.slice(0,meta.count).filter(c=>c.classList.contains('is-loaded')).length;
     status.textContent=visibleLoaded===meta.count
       ? `READY · ${meta.count}`
-      : `LOADING · ${visibleLoaded}/${meta.count}`;
+      : `已显示 ${visibleLoaded} / ${meta.count}`;
 
     siteHeader?.classList.remove('author-switch-out');
     galleryEl.classList.remove('author-switch-out');
@@ -6960,14 +4310,45 @@ function showToast(title,message,mark='✓'){
   toastTimer=window.setTimeout(()=>toast.classList.remove('is-show'),2600);
 }
 
+function setShellInert(on){
+  ['.site-header','.archive-main','footer'].forEach(selector=>{
+    const element=document.querySelector(selector);
+    if(!element) return;
+    if(on) element.setAttribute('inert','');
+    else element.removeAttribute('inert');
+  });
+}
+
+function trapTab(container,event){
+  if(event.key!=='Tab') return;
+  const focusable=[...container.querySelectorAll(
+    'button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'
+  )].filter(element=>
+    !element.disabled &&
+    element.offsetParent!==null &&
+    !element.hidden
+  );
+  if(!focusable.length) return;
+
+  const first=focusable[0];
+  const last=focusable[focusable.length-1];
+  if(event.shiftKey && document.activeElement===first){
+    event.preventDefault();
+    last.focus();
+  }else if(!event.shiftKey && document.activeElement===last){
+    event.preventDefault();
+    first.focus();
+  }
+}
+
 
 function updateStatus(){
   const meta=authorSections[activeAuthorId] || authorSections.fanhuafenluo;
-  const visibleCards=cards.slice(0,meta.count);
+  const visibleCards=cards.filter(card=>!card.hidden);
   const loaded=visibleCards.filter(c=>c.classList.contains('is-loaded')).length;
   const next=loaded===visibleCards.length
     ? `READY · ${visibleCards.length}`
-    : `LOADING · ${loaded}/${visibleCards.length}`;
+    : `已显示 ${loaded} / ${visibleCards.length}`;
   if(status.textContent!==next){
     status.textContent=next;
     pulseStatus();
@@ -7044,22 +4425,12 @@ const observer=new IntersectionObserver(entries=>{
   });
 },{rootMargin:'140px 0px 220px',threshold:.035});
 
-cards.forEach(card=>{
-  card.querySelectorAll('.detail-action,.download-action').forEach(btn=>{
-    btn.disabled=true;
-    btn.tabIndex=-1;
-  });
-  observer.observe(card);
-});
-
 const nearObserver=new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
     entry.target.classList.toggle('is-near',entry.isIntersecting);
   });
   window.requestAnimationFrame(syncCardIntrinsicHeight);
 },{rootMargin:'1200px 0px 1200px',threshold:0});
-
-cards.forEach(card=>nearObserver.observe(card));
 
 /* Scroll physics V4: same visible weight, much less layout/style work.
    - one IntersectionObserver also gates continuous card motion
@@ -7070,6 +4441,7 @@ const physicsVisibleCards=new Set();
 const physicsMeta=new WeakMap();
 let physicsColumns=6;
 let metricsRefreshRaf=0;
+let cardHeightMeasured=false;
 
 function clampMotion(value,min,max){
   return Math.max(min,Math.min(max,value));
@@ -7081,12 +4453,15 @@ function currentGalleryColumns(){
   return columns || 1;
 }
 
-function syncCardIntrinsicHeight(){
-  const probe=cards.find(card=>!card.hidden);
+function syncCardIntrinsicHeight(force=false){
+  if(cardHeightMeasured && !force) return;
+  const probe=cards.find(card=>!card.hidden && card.classList.contains('is-near'))
+    || cards.find(card=>!card.hidden);
   if(!probe) return;
   const height=probe.getBoundingClientRect().height;
   if(height>0){
     galleryEl.style.setProperty('--card-ih',`${Math.round(height)}px`);
+    cardHeightMeasured=true;
   }
 }
 
@@ -7112,7 +4487,7 @@ function ensureFaceGlow(card){
 function refreshPhysicsMetrics(){
   metricsRefreshRaf=0;
   physicsColumns=currentGalleryColumns();
-  syncCardIntrinsicHeight();
+  syncCardIntrinsicHeight(true);
   /* Only re-measure cards that can currently react. Offscreen cards get their
      document center from IntersectionObserver when they approach the viewport. */
   physicsVisibleCards.forEach(card=>{
@@ -7168,7 +4543,46 @@ const physicsObserver=new IntersectionObserver(entries=>{
   });
 },{rootMargin:'300px 0px 300px',threshold:0});
 
-cards.forEach((card,index)=>{
+function bindCardButtonMotion(el){
+  let rect=null;
+  let fxRaf=0;
+  let lastX=0;
+  let lastY=0;
+
+  el.addEventListener('pointerenter',e=>{
+    if(e.pointerType && e.pointerType!=='mouse' && e.pointerType!=='pen') return;
+    rect=el.getBoundingClientRect();
+  },{passive:true});
+  el.addEventListener('pointermove',e=>{
+    if(e.pointerType && e.pointerType!=='mouse' && e.pointerType!=='pen') return;
+    lastX=e.clientX;
+    lastY=e.clientY;
+    if(fxRaf) return;
+    fxRaf=requestAnimationFrame(()=>{
+      fxRaf=0;
+      if(!rect) rect=el.getBoundingClientRect();
+      const x=((lastX-rect.left)/Math.max(1,rect.width))*100;
+      const y=((lastY-rect.top)/Math.max(1,rect.height))*100;
+      el.style.setProperty('--fx-x',`${Math.max(0,Math.min(100,x)).toFixed(1)}%`);
+      el.style.setProperty('--fx-y',`${Math.max(0,Math.min(100,y)).toFixed(1)}%`);
+    });
+  },{passive:true});
+  el.addEventListener('pointerleave',()=>{
+    rect=null;
+    el.style.setProperty('--fx-x','50%');
+    el.style.setProperty('--fx-y','50%');
+  },{passive:true});
+}
+
+function registerCard(card,index){
+  card._work=null;
+  card._revealToken=0;
+  card.querySelectorAll('.detail-action,.download-action').forEach(button=>{
+    button.disabled=true;
+    button.tabIndex=-1;
+    bindCardButtonMotion(button);
+  });
+
   physicsMeta.set(card,{
     index,
     face:card.querySelector('.card-face'),
@@ -7185,8 +4599,38 @@ cards.forEach((card,index)=>{
     lastArtShift:null,
     lastGlow:null
   });
+  nearObserver.observe(card);
   physicsObserver.observe(card);
-});
+}
+
+function buildCard(index){
+  if(!cardTemplate?.content.firstElementChild){
+    throw new Error('角色卡模板不存在');
+  }
+  const card=cardTemplate.content.firstElementChild.cloneNode(true);
+  card.classList.add(`pattern-${(index%4)+1}`,`theme-${index%6}`);
+  return card;
+}
+
+function growCardPool(target){
+  if(target<=cards.length) return;
+  const start=cards.length;
+  const fragment=document.createDocumentFragment();
+  const added=[];
+
+  for(let index=start;index<target;index++){
+    const card=buildCard(index);
+    cards.push(card);
+    added.push(card);
+    fragment.appendChild(card);
+  }
+
+  archiveGallery.appendChild(fragment);
+  added.forEach((card,index)=>registerCard(card,start+index));
+  cardHeightMeasured=false;
+  queuePhysicsMetricsRefresh();
+}
+
 refreshPhysicsMetrics();
 window.requestAnimationFrame(syncCardIntrinsicHeight);
 
@@ -7288,6 +4732,7 @@ function runScrollPhysics(now){
   scrollPhysicsRaf=0;
 
   if(document.hidden || physicsVisibleCards.size===0){
+    galleryEl.classList.remove('is-scroll-forcing','scroll-force-down','scroll-force-up');
     return;
   }
 
@@ -7401,6 +4846,18 @@ function detailCopyForWork(work){
   };
 }
 
+const PENDING_COPY={
+  intro:'正在读取角色资料…',
+  opening:'正在读取角色资料…',
+  setting:'正在读取角色资料…',
+  worldbook:'正在读取角色资料…'
+};
+const FAILED_COPY={
+  intro:'角色资料读取失败，请关闭后重新打开重试。',
+  opening:'角色资料读取失败。',
+  setting:'角色资料读取失败。',
+  worldbook:'角色资料读取失败。'
+};
 
 const detailTabMeta={
   intro:{index:'01 · CHARACTER DATA',title:'简介',type:'INTRO'},
@@ -7414,6 +4871,28 @@ let detailTabSwitchToken=0;
 const detailTabOrder=['intro','opening','setting','worldbook'];
 const detailOptions=document.querySelector('.detail-options');
 const detailReadingPanel=document.querySelector('.detail-reading-panel');
+
+function visibleDetailTabs(work=catalogState.activeWork){
+  return detailTabOrder.filter(key=>
+    key!=='worldbook' || Boolean(work?.worldbook || work?.lorebook)
+  );
+}
+
+function renderDetailTabs(work){
+  const visible=visibleDetailTabs(work);
+
+  document.querySelectorAll('[data-detail-tab]').forEach(button=>{
+    const isVisible=visible.includes(button.dataset.detailTab);
+    button.hidden=!isVisible;
+    button.tabIndex=isVisible?0:-1;
+    button.setAttribute('aria-hidden',String(!isVisible));
+  });
+
+  detailOptions?.style.setProperty('--detail-count',String(visible.length || 1));
+  if(!visible.includes(currentDetailTab)){
+    currentDetailTab=visible[0] || 'intro';
+  }
+}
 
 function clearDetailMotionClasses(panel){
   if(!panel) return;
@@ -7434,10 +4913,12 @@ function paintDetailContent(key){
 
 function setDetailTab(key,options={}){
   if(!detailTabMeta[key]) key='intro';
+  const visible=visibleDetailTabs(catalogState.activeWork);
+  if(!visible.includes(key)) key=visible[0] || 'intro';
   const instant=Boolean(options.instant) || prefersReducedMotion.matches;
   const fromKey=currentDetailTab;
-  const fromIndex=Math.max(0,detailTabOrder.indexOf(fromKey));
-  const nextIndex=Math.max(0,detailTabOrder.indexOf(key));
+  const fromIndex=Math.max(0,visible.indexOf(fromKey));
+  const nextIndex=Math.max(0,visible.indexOf(key));
   const dir=nextIndex>=fromIndex ? 1 : -1;
   const panel=detailReadingPanel;
   const token=++detailTabSwitchToken;
@@ -7503,6 +4984,21 @@ document.querySelectorAll('[data-detail-tab]').forEach(btn=>{
   btn.addEventListener('click',()=>setDetailTab(btn.dataset.detailTab));
 });
 
+function renderDetailTags(work,identity){
+  const tagWrap=document.querySelector('.detail-tags');
+  if(!tagWrap) return;
+
+  tagWrap.textContent='';
+  [identity,...(work?.tags || []),'TAVO CHARACTER CARD']
+    .filter((value,index,values)=>value && values.indexOf(value)===index)
+    .slice(0,8)
+    .forEach(value=>{
+      const tag=document.createElement('span');
+      tag.textContent=value;
+      tagWrap.appendChild(tag);
+    });
+}
+
 if(detailReadingPanel){
   let detailScrollRaf=0;
   detailReadingPanel.addEventListener('scroll',()=>{
@@ -7524,22 +5020,26 @@ async function openArchive(card){
   catalogState.activeWork=work;
   lastArchiveTrigger=document.activeElement;
 
-  const copy=detailCopyForWork(work);
+  const authorId=work._authorId || activeAuthorId;
+  const detailsReady=Boolean(catalogState.detailsReady?.[authorId]);
   const detailImage=document.getElementById('detailImage');
   const detailArt=detailImage.closest('.detail-art');
 
   document.getElementById('detailName').textContent=work.name;
   document.getElementById('detailIdentity').textContent=data.identity;
-  document.getElementById('detailTagIdentity').textContent=data.identity;
   document.getElementById('detailIndex').textContent=`ARCHIVE · ${data.index}`;
   document.getElementById('detailCreated').textContent=
-    `CREATOR · ${work.creator || authorSections[activeAuthorId].name}`;
+    `CREATOR · ${work.creator || authorSections[authorId]?.name || authorId}`;
   document.getElementById('detailAlias').textContent=[
     work.alias,
     work.collectionLabel
   ].filter(Boolean).join(' · ') || 'TAVO CHARACTER CARD';
 
-  archiveModal._detailCopy=copy;
+  renderDetailTags(work,data.identity);
+  renderDetailTabs(work);
+  archiveModal._detailCopy=detailsReady
+    ? detailCopyForWork(work)
+    : PENDING_COPY;
   currentDetailTab='intro';
   setDetailTab('intro',{instant:true});
 
@@ -7582,7 +5082,9 @@ async function openArchive(card){
 
   archiveModal.classList.add('is-open');
   archiveModal.setAttribute('aria-hidden','false');
+  archiveModal.removeAttribute('inert');
   body.classList.add('has-overlay');
+  setShellInert(true);
   body.style.overflow='hidden';
   motionDelay(180,()=>archiveModalClose.focus({preventScroll:true}));
 
@@ -7596,10 +5098,18 @@ async function openArchive(card){
       return;
     }
 
+    renderDetailTabs(work);
     archiveModal._detailCopy=detailCopyForWork(work);
     setDetailTab(currentDetailTab,{instant:true});
   }catch(error){
     console.error(error);
+    if(
+      catalogState.activeWork===work &&
+      archiveModal.classList.contains('is-open')
+    ){
+      archiveModal._detailCopy=FAILED_COPY;
+      setDetailTab(currentDetailTab,{instant:true});
+    }
   }
 }
 
@@ -7607,6 +5117,8 @@ function closeArchive(){
   if(!archiveModal.classList.contains('is-open')) return;
   archiveModal.classList.remove('is-open');
   archiveModal.setAttribute('aria-hidden','true');
+  archiveModal.setAttribute('inert','');
+  if(!saveSheet.classList.contains('is-open')) setShellInert(false);
   motionDelay(430,()=>{
     if(!saveSheet.classList.contains('is-open')) body.style.overflow='';
     if(!archiveModal.classList.contains('is-open') && !saveSheet.classList.contains('is-open')) body.classList.remove('has-overlay');
@@ -7719,6 +5231,9 @@ function openSaveSheet(card=activeCard){
 
   saveSheet.classList.add('is-open');
   saveSheet.setAttribute('aria-hidden','false');
+  saveSheet.removeAttribute('inert');
+  archiveModal.setAttribute('inert','');
+  setShellInert(true);
   body.classList.add('has-overlay');
   body.style.overflow='hidden';
   motionDelay(170,()=>saveSheetClose.focus({preventScroll:true}));
@@ -7807,6 +5322,10 @@ function closeSaveSheet(){
   saveSheetShareFile=null;
   saveSheet.classList.remove('is-open','is-preparing','is-ready');
   saveSheet.setAttribute('aria-hidden','true');
+  saveSheet.setAttribute('inert','');
+  if(archiveModal.classList.contains('is-open')) archiveModal.removeAttribute('inert');
+  else archiveModal.setAttribute('inert','');
+  setShellInert(archiveModal.classList.contains('is-open'));
   motionDelay(430,()=>{
     if(!archiveModal.classList.contains('is-open')) body.style.overflow='';
     if(!archiveModal.classList.contains('is-open') && !saveSheet.classList.contains('is-open')) body.classList.remove('has-overlay');
@@ -7814,18 +5333,18 @@ function closeSaveSheet(){
   });
 }
 
-document.querySelectorAll('.detail-action').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    if(btn.disabled) return;
-    openArchive(btn.closest('.archive-card'));
-  });
-});
-document.querySelectorAll('.download-action').forEach(btn=>{
-  btn.addEventListener('click',e=>{
+archiveGallery.addEventListener('click',e=>{
+  const detailButton=e.target.closest('.detail-action');
+  if(detailButton && archiveGallery.contains(detailButton)){
+    if(!detailButton.disabled) openArchive(detailButton.closest('.archive-card'));
+    return;
+  }
+
+  const downloadButton=e.target.closest('.download-action');
+  if(downloadButton && archiveGallery.contains(downloadButton)){
     e.stopPropagation();
-    if(btn.disabled) return;
-    openSaveSheet(btn.closest('.archive-card'));
-  });
+    if(!downloadButton.disabled) openSaveSheet(downloadButton.closest('.archive-card'));
+  }
 });
 
 archiveModalClose.addEventListener('click',closeArchive);
@@ -7875,43 +5394,18 @@ document.querySelectorAll('.save-sheet-choice').forEach(el=>{
 });
 
 document.addEventListener('keydown',e=>{
+  if(saveSheet.classList.contains('is-open')){
+    trapTab(saveSheet,e);
+  }else if(archiveModal.classList.contains('is-open')){
+    trapTab(archiveModal,e);
+  }
+
   if(e.key!=='Escape') return;
   if(saveSheet.classList.contains('is-open')) closeSaveSheet();
   else if(archiveModal.classList.contains('is-open')) closeArchive();
 });
 
 loadCatalog();
-
-/* Pointer-aware holo highlights, RAF-throttled and layout-read once per hover. */
-document.querySelectorAll('.detail-action,.download-action').forEach(el=>{
-  let rect=null;
-  let fxRaf=0;
-  let lastX=0;
-  let lastY=0;
-  el.addEventListener('pointerenter',e=>{
-    if(e.pointerType && e.pointerType!=='mouse' && e.pointerType!=='pen') return;
-    rect=el.getBoundingClientRect();
-  },{passive:true});
-  el.addEventListener('pointermove',e=>{
-    if(e.pointerType && e.pointerType!=='mouse' && e.pointerType!=='pen') return;
-    lastX=e.clientX;
-    lastY=e.clientY;
-    if(fxRaf) return;
-    fxRaf=requestAnimationFrame(()=>{
-      fxRaf=0;
-      if(!rect) rect=el.getBoundingClientRect();
-      const x=((lastX-rect.left)/Math.max(1,rect.width))*100;
-      const y=((lastY-rect.top)/Math.max(1,rect.height))*100;
-      el.style.setProperty('--fx-x',`${Math.max(0,Math.min(100,x)).toFixed(1)}%`);
-      el.style.setProperty('--fx-y',`${Math.max(0,Math.min(100,y)).toFixed(1)}%`);
-    });
-  },{passive:true});
-  el.addEventListener('pointerleave',()=>{
-    rect=null;
-    el.style.setProperty('--fx-x','50%');
-    el.style.setProperty('--fx-y','50%');
-  },{passive:true});
-});
 
 
 function syncPageVisibilityMotion(){
@@ -7937,4 +5431,3 @@ window.addEventListener('beforeunload',()=>{
 </script>
 </body>
 </html>
-
