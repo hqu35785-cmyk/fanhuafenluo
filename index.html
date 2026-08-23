@@ -32,10 +32,10 @@ body{
 body::before{
   content:"";position:fixed;inset:0;pointer-events:none;opacity:.17;
   background-image:
+    linear-gradient(to bottom,rgba(8,9,13,0) 0%,rgba(8,9,13,0) 70%,rgba(8,9,13,1) 88%),
     linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),
     linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px);
-  background-size:78px 78px;
-  mask-image:linear-gradient(to bottom,black,transparent 88%);
+  background-size:100% 100%,78px 78px,78px 78px;
 }
 button{font:inherit}
 
@@ -6798,7 +6798,8 @@ const EXPECTED_AUTHOR_COUNTS={
 const catalogState={
   catalog:null,
   activeWork:null,
-  loadToken:0
+  loadToken:0,
+  detailPromises:Object.create(null)
 };
 
 function sourceUrl(path){
@@ -6902,7 +6903,6 @@ function parseDetailsData(source,authorId){
 
 async function fetchText(path){
   const response=await fetch(sourceUrl(path),{
-    cache:'no-cache',
     credentials:'omit'
   });
 
@@ -6914,17 +6914,7 @@ async function fetchText(path){
 }
 
 async function buildCatalog(){
-  const [
-    worksSource,
-    fanhuaDetailsSource,
-    sharkDetailsSource,
-    waDetailsSource
-  ]=await Promise.all([
-    fetchText(SOURCE_URLS.works),
-    fetchText(SOURCE_URLS.details.fanhuafenluo),
-    fetchText(SOURCE_URLS.details.shark),
-    fetchText(SOURCE_URLS.details.wa)
-  ]);
+  const worksSource=await fetchText(SOURCE_URLS.works);
 
   const rawCatalog={
     fanhuafenluo:[
@@ -6935,31 +6925,12 @@ async function buildCatalog(){
     wa:extractConstArray(worksSource,'waWorks')
   };
 
-  const detailCatalog={
-    fanhuafenluo:parseDetailsData(
-      fanhuaDetailsSource,
-      'fanhuafenluo'
-    ),
-    shark:parseDetailsData(
-      sharkDetailsSource,
-      'shark'
-    ),
-    wa:parseDetailsData(
-      waDetailsSource,
-      'wa'
-    )
-  };
-
   const catalog={};
 
   Object.keys(EXPECTED_AUTHOR_COUNTS).forEach(authorId=>{
     catalog[authorId]=rawCatalog[authorId].map(work=>({
       ...work,
-      ...(
-        detailCatalog[authorId][
-          work._detailKey || work.image
-        ] || {}
-      )
+      _authorId:authorId
     }));
   });
 
@@ -6983,17 +6954,44 @@ async function buildCatalog(){
     throw new Error(`角色卡总数不正确：实际为 ${total}`);
   }
 
-  const detailsComplete=Object.values(catalog).every(
-    works=>works.every(
-      work=>work.opening && work.personality && work.setting
-    )
-  );
+  return catalog;
+}
 
-  if(!detailsComplete){
-    throw new Error('至少一张角色卡缺少详情资料');
+async function loadAuthorDetails(authorId){
+  if(catalogState.detailPromises[authorId]){
+    return catalogState.detailPromises[authorId];
   }
 
-  return catalog;
+  const path=SOURCE_URLS.details[authorId];
+  if(!path) throw new Error(`未找到 ${authorId} 的详情数据源`);
+
+  const promise=(async()=>{
+    const source=await fetchText(path);
+    const details=parseDetailsData(source,authorId);
+    const works=catalogState.catalog?.[authorId] || [];
+
+    works.forEach(work=>{
+      Object.assign(
+        work,
+        details[work._detailKey || work.image] || {}
+      );
+    });
+
+    return details;
+  })();
+
+  catalogState.detailPromises[authorId]=promise;
+
+  try{
+    return await promise;
+  }catch(error){
+    delete catalogState.detailPromises[authorId];
+    throw error;
+  }
+}
+
+function ensureWorkDetails(work){
+  return loadAuthorDetails(work?._authorId || activeAuthorId);
 }
 
 let authorSwitchLocked=false;
@@ -7190,6 +7188,7 @@ async function loadCatalog(){
     if(token!==catalogState.loadToken) return;
 
     catalogState.catalog=catalog;
+    catalogState.detailPromises=Object.create(null);
 
     Object.keys(EXPECTED_AUTHOR_COUNTS).forEach(
       authorId=>{
@@ -7689,6 +7688,10 @@ function paintScrollPhysics(force){
 function runScrollPhysics(now){
   scrollPhysicsRaf=0;
 
+  if(document.hidden || physicsVisibleCards.size===0){
+    return;
+  }
+
   /* On 120/144 Hz screens, do not double/triple the JS/style cost. */
   if(now-lastPhysicsPaintAt<14){
     scrollPhysicsRaf=requestAnimationFrame(runScrollPhysics);
@@ -7912,7 +7915,7 @@ if(detailReadingPanel){
   },{passive:true});
 }
 
-function openArchive(card){
+async function openArchive(card){
   const data=cardData(card);
   const work=data.work;
 
@@ -7979,6 +7982,22 @@ function openArchive(card){
   body.classList.add('has-overlay');
   body.style.overflow='hidden';
   motionDelay(180,()=>archiveModalClose.focus({preventScroll:true}));
+
+  try{
+    await ensureWorkDetails(work);
+
+    if(
+      catalogState.activeWork!==work ||
+      !archiveModal.classList.contains('is-open')
+    ){
+      return;
+    }
+
+    archiveModal._detailCopy=detailCopyForWork(work);
+    setDetailTab(currentDetailTab,{instant:true});
+  }catch(error){
+    console.error(error);
+  }
 }
 
 function closeArchive(){
@@ -8294,6 +8313,14 @@ document.querySelectorAll('.detail-action,.download-action').forEach(el=>{
 
 function syncPageVisibilityMotion(){
   body.classList.toggle('is-page-hidden',document.hidden);
+  if(
+    !document.hidden &&
+    forceTarget!==0 &&
+    physicsVisibleCards.size &&
+    !scrollPhysicsRaf
+  ){
+    scrollPhysicsRaf=requestAnimationFrame(runScrollPhysics);
+  }
 }
 document.addEventListener('visibilitychange',syncPageVisibilityMotion,{passive:true});
 syncPageVisibilityMotion();
