@@ -32,10 +32,10 @@ body{
 body::before{
   content:"";position:fixed;inset:0;pointer-events:none;opacity:.17;
   background-image:
+    linear-gradient(to bottom,rgba(8,9,13,0) 0%,rgba(8,9,13,0) 70%,rgba(8,9,13,1) 88%),
     linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),
     linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px);
-  background-size:78px 78px;
-  mask-image:linear-gradient(to bottom,black,transparent 88%);
+  background-size:100% 100%,78px 78px,78px 78px;
 }
 button{font:inherit}
 
@@ -105,7 +105,7 @@ body.is-loaded .toolbar-status i{background:rgba(169,187,217,.58);border-color:r
   column-gap:clamp(10px,.72vw,14px);
   row-gap:clamp(18px,2vh,26px);
 }
-.archive-card{min-width:0}
+.archive-card{min-width:0;perspective:760px}
 .card-face{
   position:relative;aspect-ratio:.72;overflow:hidden;
   border:1px solid rgba(255,255,255,.072);border-radius:16px;
@@ -166,7 +166,7 @@ body.is-loaded .loaded-art{opacity:1;transform:scale(1)}
 
 /* Same diagonal texture in both states; it becomes a subtle overlay after load. */
 .stripe-field{
-  position:absolute;inset:-25%;z-index:4;
+  position:absolute;inset:-18%;z-index:4;
   transform:rotate(-17deg);transform-origin:center;opacity:.80;
   transition:opacity .36s ease;
 }
@@ -319,7 +319,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
 @media(max-width:1080px){
   .gallery{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
-@media(max-width:820px){
+@media(max-width:760px){
   .gallery{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:620px){
@@ -1961,24 +1961,23 @@ body.is-loaded .download-action:focus-visible{
   pointer-events:none;
   opacity:0;
   transform:translate3d(0,0,0) rotate(-8deg);
-  mix-blend-mode:screen;
   background:
     radial-gradient(
       circle at var(--fx-x) var(--fx-y),
-      rgba(255,255,255,.34) 0%,
-      rgba(255,198,226,.15) 18%,
-      rgba(151,224,255,.10) 34%,
+      rgba(255,255,255,.435) 0%,
+      rgba(255,198,226,.192) 18%,
+      rgba(151,224,255,.128) 34%,
       transparent 58%
     ),
     linear-gradient(
       112deg,
-      rgba(255,92,166,.15) 0%,
-      rgba(151,116,255,.13) 18%,
-      rgba(89,219,255,.16) 36%,
-      rgba(122,255,202,.10) 52%,
-      rgba(255,222,107,.16) 68%,
-      rgba(255,138,205,.14) 84%,
-      rgba(255,92,166,.15) 100%
+      rgba(255,92,166,.192) 0%,
+      rgba(151,116,255,.166) 18%,
+      rgba(89,219,255,.205) 36%,
+      rgba(122,255,202,.128) 52%,
+      rgba(255,222,107,.205) 68%,
+      rgba(255,138,205,.179) 84%,
+      rgba(255,92,166,.192) 100%
     );
   background-size:100% 100%, 260% 100%;
   background-position:center, 0% 50%;
@@ -2000,15 +1999,14 @@ body.is-loaded .download-action:focus-visible{
   pointer-events:none;
   opacity:0;
   transform:skewX(-17deg) translateX(-40%);
-  mix-blend-mode:screen;
   background:linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255,255,255,.02) 20%,
-    rgba(135,221,255,.14) 39%,
-    rgba(255,203,236,.22) 50%,
-    rgba(255,230,138,.13) 61%,
-    rgba(255,255,255,.02) 80%,
+    rgba(255,255,255,.024) 20%,
+    rgba(135,221,255,.168) 39%,
+    rgba(255,203,236,.264) 50%,
+    rgba(255,230,138,.156) 61%,
+    rgba(255,255,255,.024) 80%,
     transparent 100%
   );
   filter:blur(.25px);
@@ -2078,20 +2076,20 @@ body.is-loaded .download-action:focus-visible{
   background:
     radial-gradient(
       circle at var(--fx-x) var(--fx-y),
-      rgba(255,255,255,.72) 0%,
-      rgba(255,180,225,.34) 16%,
-      rgba(112,224,255,.27) 34%,
+      rgba(255,255,255,.828) 0%,
+      rgba(255,180,225,.391) 16%,
+      rgba(112,224,255,.311) 34%,
       transparent 56%
     ),
     linear-gradient(
       110deg,
-      rgba(255,70,160,.27) 0%,
-      rgba(149,93,255,.25) 16%,
-      rgba(72,225,255,.34) 34%,
-      rgba(107,255,203,.20) 50%,
-      rgba(255,225,94,.31) 67%,
-      rgba(255,126,207,.29) 83%,
-      rgba(255,70,160,.27) 100%
+      rgba(255,70,160,.311) 0%,
+      rgba(149,93,255,.288) 16%,
+      rgba(72,225,255,.391) 34%,
+      rgba(107,255,203,.230) 50%,
+      rgba(255,225,94,.357) 67%,
+      rgba(255,126,207,.334) 83%,
+      rgba(255,70,160,.311) 100%
     );
   background-size:100% 100%, 230% 100%;
   animation-duration:1.75s;
@@ -2103,11 +2101,11 @@ body.is-loaded .download-action:focus-visible{
   background:linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255,255,255,.04) 18%,
-    rgba(95,224,255,.34) 36%,
-    rgba(255,255,255,.58) 48%,
-    rgba(255,180,228,.44) 56%,
-    rgba(255,229,112,.27) 67%,
+    rgba(255,255,255,.048) 18%,
+    rgba(95,224,255,.408) 36%,
+    rgba(255,255,255,.696) 48%,
+    rgba(255,180,228,.528) 56%,
+    rgba(255,229,112,.324) 67%,
     transparent 100%
   );
   filter:blur(.15px);
@@ -2710,7 +2708,6 @@ a.save-sheet-choice:active{
   --scroll-scale:1;
   --hover-lift:0px;
   transform:
-    perspective(900px)
     translate3d(0,var(--scroll-shift),0)
     translateY(var(--hover-lift))
     rotateX(var(--scroll-tilt))
@@ -2719,13 +2716,13 @@ a.save-sheet-choice:active{
   transform-origin:50% 52%;
   will-change:transform;
 }
-body.is-scroll-forcing .archive-card .card-face{
+.gallery.is-scroll-forcing .archive-card .card-face{
   transition:
     border-color var(--motion-load) ease,
     box-shadow var(--motion-load) var(--ease-out),
     transform 0s linear!important;
 }
-body.is-scroll-forcing .archive-card.is-loaded .card-face{
+.gallery.is-scroll-forcing .archive-card.is-loaded .card-face{
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.042),
     0 18px 40px rgba(0,0,0,.20);
@@ -2734,7 +2731,6 @@ body.is-scroll-forcing .archive-card.is-loaded .card-face{
   .archive-card.is-loaded:hover .card-face{
     --hover-lift:-2px;
     transform:
-      perspective(900px)
       translate3d(0,var(--scroll-shift),0)
       translateY(var(--hover-lift))
       rotateX(var(--scroll-tilt))
@@ -2852,29 +2848,27 @@ body.is-scroll-forcing .archive-card.is-loaded .card-face{
   --scroll-scale-x:1;
   --scroll-scale-y:1;
   --scroll-art-shift:0px;
-  --scroll-glow:0;
   --scroll-edge-y:50%;
   transform:
-    perspective(760px)
     translate3d(0,var(--scroll-shift),0)
     translateY(var(--hover-lift,0px))
     rotateX(var(--scroll-tilt))
     rotateZ(var(--scroll-roll))
-    scale(var(--scroll-scale-x),var(--scroll-scale-y))!important;
+    scale(var(--scroll-scale-x),var(--scroll-scale-y));
   transform-origin:50% 50%;
   will-change:transform;
   backface-visibility:hidden;
 }
 
-/* Force highlight: the leading edge gets a brief pressure sheen. */
-.archive-card .card-face::before{
-  content:"";
+/* Force highlight: the leading edge gets a brief pressure sheen. The glow is a
+   real child so physics can update opacity without invalidating the face style. */
+.archive-card .face-glow{
   position:absolute;
   z-index:18;
   inset:0;
   pointer-events:none;
   border-radius:inherit;
-  opacity:var(--scroll-glow);
+  opacity:0;
   background:
     radial-gradient(130% 38% at 50% var(--scroll-edge-y),rgba(255,255,255,.16),rgba(232,182,199,.06) 34%,transparent 68%),
     linear-gradient(180deg,rgba(255,255,255,.045),transparent 22%,transparent 78%,rgba(169,187,217,.04));
@@ -2886,19 +2880,18 @@ body.is-scroll-forcing .archive-card.is-loaded .card-face{
 .archive-card .ghost-frame,
 .archive-card .stripe-field{
   translate:0 var(--scroll-art-shift);
-  will-change:translate;
 }
 
-body.is-scroll-forcing .archive-card .loaded-art,
-body.is-scroll-forcing .archive-card .ghost-frame,
-body.is-scroll-forcing .archive-card .stripe-field{
+.gallery.is-scroll-forcing .archive-card .loaded-art,
+.gallery.is-scroll-forcing .archive-card .ghost-frame,
+.gallery.is-scroll-forcing .archive-card .stripe-field{
   transition-duration:0s!important;
 }
 
 /* When force ends, only the final tiny settling is eased by CSS; JS drives the spring itself. */
-body:not(.is-scroll-forcing) .archive-card .loaded-art,
-body:not(.is-scroll-forcing) .archive-card .ghost-frame,
-body:not(.is-scroll-forcing) .archive-card .stripe-field{
+.gallery:not(.is-scroll-forcing) .archive-card .loaded-art,
+.gallery:not(.is-scroll-forcing) .archive-card .ghost-frame,
+.gallery:not(.is-scroll-forcing) .archive-card .stripe-field{
   transition:translate 180ms cubic-bezier(.2,.8,.2,1),opacity .36s ease;
 }
 
@@ -2906,12 +2899,11 @@ body:not(.is-scroll-forcing) .archive-card .stripe-field{
   .archive-card.is-loaded:hover .card-face{
     --hover-lift:-2px;
     transform:
-      perspective(760px)
       translate3d(0,var(--scroll-shift),0)
       translateY(var(--hover-lift))
       rotateX(var(--scroll-tilt))
       rotateZ(var(--scroll-roll))
-      scale(var(--scroll-scale-x),var(--scroll-scale-y))!important;
+      scale(var(--scroll-scale-x),var(--scroll-scale-y));
   }
 }
 
@@ -3230,28 +3222,12 @@ body:not(.is-scroll-forcing) .archive-card .stripe-field{
   transition:opacity 620ms ease,transform 880ms var(--ease-out)!important;
 }
 
-/* Never keep every card promoted to its own GPU layer. Promote only cards that
-   are actually close enough to the viewport to animate. */
-.archive-card .card-face,
-.archive-card .loaded-art,
-.archive-card .ghost-frame,
-.archive-card .stripe-field,
-.detail-action::before,
-.detail-action::after,
-.download-action::before,
-.download-action::after,
-.archive-modal-panel,
-.save-sheet-panel{
+/* Never keep every card promoted to its own GPU layer. Promote only the active
+   card shell; art, stripes, ghosts and foil buttons stay ordinary paint layers. */
+.archive-card .card-face{
   will-change:auto!important;
 }
 .archive-card.is-motion-visible .card-face{will-change:transform!important}
-.archive-card.is-motion-visible .loaded-art,
-.archive-card.is-motion-visible .ghost-frame,
-.archive-card.is-motion-visible .stripe-field{will-change:translate!important}
-.archive-card.is-motion-visible.is-loaded .detail-action::before,
-.archive-card.is-motion-visible.is-loaded .detail-action::after,
-.archive-card.is-motion-visible.is-loaded .download-action::before,
-.archive-card.is-motion-visible.is-loaded .download-action::after{will-change:transform,opacity!important}
 .archive-modal.is-open .archive-modal-panel,
 .save-sheet.is-open .save-sheet-panel{will-change:transform,opacity!important}
 
@@ -3292,6 +3268,13 @@ body:not(.is-scroll-forcing) .archive-card .stripe-field{
 .archive-card.is-motion-visible.is-loaded .download-action::before,
 .archive-card.is-motion-visible.is-loaded .download-action::after{
   animation-play-state:running!important;
+}
+
+/* Keep distant cards in the grid with a measured intrinsic placeholder, while
+   the near-viewport observer removes the paint cost before they are needed. */
+.archive-card:not(.is-near){
+  content-visibility:auto;
+  contain-intrinsic-size:var(--card-ih,420px);
 }
 
 /* The flowing ribbon already supplies obvious motion. Avoid repainting animated
@@ -3340,8 +3323,8 @@ body.has-overlay .archive-card .download-action{
 }
 
 /* Direction class replaces a per-card CSS variable write every physics frame. */
-body.scroll-force-down .archive-card .card-face::before{--scroll-edge-y:5%}
-body.scroll-force-up .archive-card .card-face::before{--scroll-edge-y:95%}
+.gallery.scroll-force-down .archive-card .face-glow{--scroll-edge-y:5%}
+.gallery.scroll-force-up .archive-card .face-glow{--scroll-edge-y:95%}
 
 /* Photo save remains visibly holographic even while PNG/share capability is preparing.
    Disabled still blocks clicks; only the visual opacity is kept strong. */
@@ -6815,7 +6798,8 @@ const EXPECTED_AUTHOR_COUNTS={
 const catalogState={
   catalog:null,
   activeWork:null,
-  loadToken:0
+  loadToken:0,
+  detailPromises:Object.create(null)
 };
 
 function sourceUrl(path){
@@ -6919,7 +6903,6 @@ function parseDetailsData(source,authorId){
 
 async function fetchText(path){
   const response=await fetch(sourceUrl(path),{
-    cache:'no-cache',
     credentials:'omit'
   });
 
@@ -6931,17 +6914,7 @@ async function fetchText(path){
 }
 
 async function buildCatalog(){
-  const [
-    worksSource,
-    fanhuaDetailsSource,
-    sharkDetailsSource,
-    waDetailsSource
-  ]=await Promise.all([
-    fetchText(SOURCE_URLS.works),
-    fetchText(SOURCE_URLS.details.fanhuafenluo),
-    fetchText(SOURCE_URLS.details.shark),
-    fetchText(SOURCE_URLS.details.wa)
-  ]);
+  const worksSource=await fetchText(SOURCE_URLS.works);
 
   const rawCatalog={
     fanhuafenluo:[
@@ -6952,31 +6925,12 @@ async function buildCatalog(){
     wa:extractConstArray(worksSource,'waWorks')
   };
 
-  const detailCatalog={
-    fanhuafenluo:parseDetailsData(
-      fanhuaDetailsSource,
-      'fanhuafenluo'
-    ),
-    shark:parseDetailsData(
-      sharkDetailsSource,
-      'shark'
-    ),
-    wa:parseDetailsData(
-      waDetailsSource,
-      'wa'
-    )
-  };
-
   const catalog={};
 
   Object.keys(EXPECTED_AUTHOR_COUNTS).forEach(authorId=>{
     catalog[authorId]=rawCatalog[authorId].map(work=>({
       ...work,
-      ...(
-        detailCatalog[authorId][
-          work._detailKey || work.image
-        ] || {}
-      )
+      _authorId:authorId
     }));
   });
 
@@ -7000,17 +6954,44 @@ async function buildCatalog(){
     throw new Error(`角色卡总数不正确：实际为 ${total}`);
   }
 
-  const detailsComplete=Object.values(catalog).every(
-    works=>works.every(
-      work=>work.opening && work.personality && work.setting
-    )
-  );
+  return catalog;
+}
 
-  if(!detailsComplete){
-    throw new Error('至少一张角色卡缺少详情资料');
+async function loadAuthorDetails(authorId){
+  if(catalogState.detailPromises[authorId]){
+    return catalogState.detailPromises[authorId];
   }
 
-  return catalog;
+  const path=SOURCE_URLS.details[authorId];
+  if(!path) throw new Error(`未找到 ${authorId} 的详情数据源`);
+
+  const promise=(async()=>{
+    const source=await fetchText(path);
+    const details=parseDetailsData(source,authorId);
+    const works=catalogState.catalog?.[authorId] || [];
+
+    works.forEach(work=>{
+      Object.assign(
+        work,
+        details[work._detailKey || work.image] || {}
+      );
+    });
+
+    return details;
+  })();
+
+  catalogState.detailPromises[authorId]=promise;
+
+  try{
+    return await promise;
+  }catch(error){
+    delete catalogState.detailPromises[authorId];
+    throw error;
+  }
+}
+
+function ensureWorkDetails(work){
+  return loadAuthorDetails(work?._authorId || activeAuthorId);
 }
 
 let authorSwitchLocked=false;
@@ -7090,6 +7071,7 @@ function ensureCardPreview(card){
 
 function applyAuthorCardContent(authorId,meta){
   const works=catalogState.catalog?.[authorId] || [];
+  const firstScreenCount=Math.max(currentGalleryColumns()*2,6);
 
   cards.forEach((card,index)=>{
     const work=works[index];
@@ -7136,8 +7118,11 @@ function applyAuthorCardContent(authorId,meta){
 
     image.alt=`${work.name}角色卡卡面`;
     applyPreviewPosition(image,work);
-    image.loading=index<6?'eager':'lazy';
-    image.fetchPriority=index<2?'high':'low';
+    image.sizes='(max-width:620px) 46vw, (max-width:1080px) 30vw, 15vw';
+    image.width=640;
+    image.height=935;
+    image.loading=index<firstScreenCount?'eager':'lazy';
+    image.fetchPriority=index<Math.min(firstScreenCount,8)?'high':'low';
     image.dataset.fallbackIndex='0';
 
     card.classList.remove(
@@ -7203,6 +7188,7 @@ async function loadCatalog(){
     if(token!==catalogState.loadToken) return;
 
     catalogState.catalog=catalog;
+    catalogState.detailPromises=Object.create(null);
 
     Object.keys(EXPECTED_AUTHOR_COUNTS).forEach(
       authorId=>{
@@ -7467,6 +7453,15 @@ cards.forEach(card=>{
   observer.observe(card);
 });
 
+const nearObserver=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    entry.target.classList.toggle('is-near',entry.isIntersecting);
+  });
+  window.requestAnimationFrame(syncCardIntrinsicHeight);
+},{rootMargin:'1200px 0px 1200px',threshold:0});
+
+cards.forEach(card=>nearObserver.observe(card));
+
 /* Scroll physics V4: same visible weight, much less layout/style work.
    - one IntersectionObserver also gates continuous card motion
    - card centers/faces/indexes are cached (no per-frame getBoundingClientRect)
@@ -7482,18 +7477,43 @@ function clampMotion(value,min,max){
 }
 
 function currentGalleryColumns(){
-  if(window.innerWidth<=620) return 2;
-  if(window.innerWidth<=1100) return 4;
-  return 6;
+  const template=getComputedStyle(galleryEl).gridTemplateColumns;
+  const columns=template.split(/\s+/).filter(Boolean).length;
+  return columns || 1;
+}
+
+function syncCardIntrinsicHeight(){
+  const probe=cards.find(card=>!card.hidden);
+  if(!probe) return;
+  const height=probe.getBoundingClientRect().height;
+  if(height>0){
+    galleryEl.style.setProperty('--card-ih',`${Math.round(height)}px`);
+  }
 }
 
 function scrollForceFace(card){
   return physicsMeta.get(card)?.face || card?.querySelector('.card-face') || null;
 }
 
+function ensureFaceGlow(card){
+  const face=card.querySelector('.card-face');
+  if(!face) return null;
+
+  let glow=face.querySelector('.face-glow');
+  if(!glow){
+    glow=document.createElement('div');
+    glow.className='face-glow';
+    glow.setAttribute('aria-hidden','true');
+    face.prepend(glow);
+  }
+
+  return glow;
+}
+
 function refreshPhysicsMetrics(){
   metricsRefreshRaf=0;
   physicsColumns=currentGalleryColumns();
+  syncCardIntrinsicHeight();
   /* Only re-measure cards that can currently react. Offscreen cards get their
      document center from IntersectionObserver when they approach the viewport. */
   physicsVisibleCards.forEach(card=>{
@@ -7510,11 +7530,25 @@ function queuePhysicsMetricsRefresh(){
 }
 
 function resetScrollForce(card){
-  const face=scrollForceFace(card);
+  const meta=physicsMeta.get(card);
+  const face=meta?.face || scrollForceFace(card);
   if(!face) return;
-  face.style.setProperty('transform','perspective(760px) translate3d(0,0,0) translateY(var(--hover-lift,0px)) rotateX(0deg) rotateZ(0deg) scale(1,1)','important');
-  face.style.setProperty('--scroll-art-shift','0px');
-  face.style.setProperty('--scroll-glow','0');
+
+  face.style.removeProperty('transform');
+  meta?.glow?.style.removeProperty('opacity');
+  [meta?.art,meta?.ghost,meta?.stripe].forEach(layer=>{
+    layer?.style.removeProperty('translate');
+  });
+
+  if(meta){
+    meta.lastShift=null;
+    meta.lastTilt=null;
+    meta.lastRoll=null;
+    meta.lastScaleX=null;
+    meta.lastScaleY=null;
+    meta.lastArtShift=null;
+    meta.lastGlow=null;
+  }
 }
 
 const physicsObserver=new IntersectionObserver(entries=>{
@@ -7533,13 +7567,29 @@ const physicsObserver=new IntersectionObserver(entries=>{
       resetScrollForce(card);
     }
   });
-},{rootMargin:'90px 0px 110px',threshold:0});
+},{rootMargin:'300px 0px 300px',threshold:0});
 
 cards.forEach((card,index)=>{
-  physicsMeta.set(card,{index,face:card.querySelector('.card-face'),centerY:0});
+  physicsMeta.set(card,{
+    index,
+    face:card.querySelector('.card-face'),
+    glow:ensureFaceGlow(card),
+    art:card.querySelector('.loaded-art'),
+    ghost:card.querySelector('.ghost-frame'),
+    stripe:card.querySelector('.stripe-field'),
+    centerY:0,
+    lastShift:null,
+    lastTilt:null,
+    lastRoll:null,
+    lastScaleX:null,
+    lastScaleY:null,
+    lastArtShift:null,
+    lastGlow:null
+  });
   physicsObserver.observe(card);
 });
 refreshPhysicsMetrics();
+window.requestAnimationFrame(syncCardIntrinsicHeight);
 
 let lastPhysicsScrollY=window.scrollY;
 let lastPhysicsTime=performance.now();
@@ -7578,18 +7628,69 @@ function paintScrollPhysics(force){
     const artShift=clampMotion(-force*.31,-9.5,9.5);
     const glow=clampMotion(absForce/30,0,.56);
 
-    meta.face.style.setProperty(
-      'transform',
-      `perspective(760px) translate3d(0,${shift.toFixed(2)}px,0) translateY(var(--hover-lift,0px)) rotateX(${tilt.toFixed(3)}deg) rotateZ(${roll.toFixed(3)}deg) scale(${scaleX.toFixed(4)},${scaleY.toFixed(4)})`,
-      'important'
-    );
-    meta.face.style.setProperty('--scroll-art-shift',`${artShift.toFixed(2)}px`);
-    meta.face.style.setProperty('--scroll-glow',glow.toFixed(3));
+    const shiftOut=Math.round(shift*100)/100;
+    const tiltOut=Math.round(tilt*1000)/1000;
+    const rollOut=Math.round(roll*1000)/1000;
+    const scaleXOut=Math.round(scaleX*10000)/10000;
+    const scaleYOut=Math.round(scaleY*10000)/10000;
+    const artShiftOut=Math.round(artShift*100)/100;
+    const glowOut=Math.round(glow*1000)/1000;
+    const forceReset=Math.abs(force)<.001;
+
+    const transformChanged=
+      forceReset ||
+      meta.lastShift===null ||
+      Math.abs(meta.lastShift-shiftOut)>=.35 ||
+      Math.abs(meta.lastTilt-tiltOut)>=.05 ||
+      Math.abs(meta.lastRoll-rollOut)>=.03 ||
+      Math.abs(meta.lastScaleX-scaleXOut)>=.002 ||
+      Math.abs(meta.lastScaleY-scaleYOut)>=.002;
+
+    if(transformChanged){
+      meta.lastShift=shiftOut;
+      meta.lastTilt=tiltOut;
+      meta.lastRoll=rollOut;
+      meta.lastScaleX=scaleXOut;
+      meta.lastScaleY=scaleYOut;
+      meta.face.style.transform=
+        `translate3d(0,${shiftOut}px,0) translateY(var(--hover-lift,0px)) rotateX(${tiltOut}deg) rotateZ(${rollOut}deg) scale(${scaleXOut},${scaleYOut})`;
+    }
+
+    if(
+      meta.art &&
+      (
+        forceReset ||
+        meta.lastArtShift===null ||
+        Math.abs(meta.lastArtShift-artShiftOut)>=.45
+      )
+    ){
+      meta.lastArtShift=artShiftOut;
+      const translate=`0 ${artShiftOut}px`;
+      meta.art.style.translate=translate;
+      meta.ghost?.style && (meta.ghost.style.translate=translate);
+      meta.stripe?.style && (meta.stripe.style.translate=translate);
+    }
+
+    if(
+      meta.glow &&
+      (
+        forceReset ||
+        meta.lastGlow===null ||
+        Math.abs(meta.lastGlow-glowOut)>=.02
+      )
+    ){
+      meta.lastGlow=glowOut;
+      meta.glow.style.opacity=String(glowOut);
+    }
   });
 }
 
 function runScrollPhysics(now){
   scrollPhysicsRaf=0;
+
+  if(document.hidden || physicsVisibleCards.size===0){
+    return;
+  }
 
   /* On 120/144 Hz screens, do not double/triple the JS/style cost. */
   if(now-lastPhysicsPaintAt<14){
@@ -7617,7 +7718,7 @@ function runScrollPhysics(now){
     forcePosition=0;
     forceVelocity=0;
     paintScrollPhysics(0);
-    body.classList.remove('is-scroll-forcing','scroll-force-down','scroll-force-up');
+    galleryEl.classList.remove('is-scroll-forcing','scroll-force-down','scroll-force-up');
     return;
   }
   scrollPhysicsRaf=requestAnimationFrame(runScrollPhysics);
@@ -7639,9 +7740,9 @@ window.addEventListener('scroll',()=>{
 
   forceTarget=clampMotion(forceTarget*.28+impulse,-42,42);
   lastScrollEventAt=now;
-  body.classList.add('is-scroll-forcing');
-  body.classList.toggle('scroll-force-down',delta>0);
-  body.classList.toggle('scroll-force-up',delta<0);
+  galleryEl.classList.add('is-scroll-forcing');
+  galleryEl.classList.toggle('scroll-force-down',delta>0);
+  galleryEl.classList.toggle('scroll-force-up',delta<0);
   if(!scrollPhysicsRaf) scrollPhysicsRaf=requestAnimationFrame(runScrollPhysics);
 },{passive:true});
 
@@ -7814,7 +7915,7 @@ if(detailReadingPanel){
   },{passive:true});
 }
 
-function openArchive(card){
+async function openArchive(card){
   const data=cardData(card);
   const work=data.work;
 
@@ -7881,6 +7982,22 @@ function openArchive(card){
   body.classList.add('has-overlay');
   body.style.overflow='hidden';
   motionDelay(180,()=>archiveModalClose.focus({preventScroll:true}));
+
+  try{
+    await ensureWorkDetails(work);
+
+    if(
+      catalogState.activeWork!==work ||
+      !archiveModal.classList.contains('is-open')
+    ){
+      return;
+    }
+
+    archiveModal._detailCopy=detailCopyForWork(work);
+    setDetailTab(currentDetailTab,{instant:true});
+  }catch(error){
+    console.error(error);
+  }
 }
 
 function closeArchive(){
@@ -8196,6 +8313,14 @@ document.querySelectorAll('.detail-action,.download-action').forEach(el=>{
 
 function syncPageVisibilityMotion(){
   body.classList.toggle('is-page-hidden',document.hidden);
+  if(
+    !document.hidden &&
+    forceTarget!==0 &&
+    physicsVisibleCards.size &&
+    !scrollPhysicsRaf
+  ){
+    scrollPhysicsRaf=requestAnimationFrame(runScrollPhysics);
+  }
 }
 document.addEventListener('visibilitychange',syncPageVisibilityMotion,{passive:true});
 syncPageVisibilityMotion();
