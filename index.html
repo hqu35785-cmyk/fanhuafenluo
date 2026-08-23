@@ -4590,6 +4590,27 @@ let forceVelocity=0;
 let scrollPhysicsRaf=0;
 let lastScrollEventAt=0;
 let lastPhysicsPaintAt=0;
+let scrollForceClearTimer=0;
+
+function scheduleScrollForceClear(){
+  if(scrollForceClearTimer) window.clearTimeout(scrollForceClearTimer);
+  scrollForceClearTimer=window.setTimeout(()=>{
+    scrollForceClearTimer=0;
+    if(performance.now()-lastScrollEventAt<180){
+      scheduleScrollForceClear();
+      return;
+    }
+    forceTarget=0;
+    forcePosition=0;
+    forceVelocity=0;
+    paintScrollPhysics(0);
+    galleryEl.classList.remove(
+      'is-scroll-forcing',
+      'scroll-force-down',
+      'scroll-force-up'
+    );
+  },900);
+}
 
 function paintScrollPhysics(force){
   const cols=physicsColumns;
@@ -4735,6 +4756,7 @@ window.addEventListener('scroll',()=>{
   galleryEl.classList.add('is-scroll-forcing');
   galleryEl.classList.toggle('scroll-force-down',delta>0);
   galleryEl.classList.toggle('scroll-force-up',delta<0);
+  scheduleScrollForceClear();
   if(!scrollPhysicsRaf) scrollPhysicsRaf=requestAnimationFrame(runScrollPhysics);
 },{passive:true});
 
