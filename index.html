@@ -166,7 +166,7 @@ body.is-loaded .loaded-art{opacity:1;transform:scale(1)}
 
 /* Same diagonal texture in both states; it becomes a subtle overlay after load. */
 .stripe-field{
-  position:absolute;inset:-25%;z-index:4;
+  position:absolute;inset:-18%;z-index:4;
   transform:rotate(-17deg);transform-origin:center;opacity:.80;
   transition:opacity .36s ease;
 }
@@ -7073,6 +7073,7 @@ function ensureCardPreview(card){
 
 function applyAuthorCardContent(authorId,meta){
   const works=catalogState.catalog?.[authorId] || [];
+  const firstScreenCount=Math.max(currentGalleryColumns()*2,6);
 
   cards.forEach((card,index)=>{
     const work=works[index];
@@ -7119,8 +7120,11 @@ function applyAuthorCardContent(authorId,meta){
 
     image.alt=`${work.name}角色卡卡面`;
     applyPreviewPosition(image,work);
-    image.loading=index<6?'eager':'lazy';
-    image.fetchPriority=index<2?'high':'low';
+    image.sizes='(max-width:620px) 46vw, (max-width:1080px) 30vw, 15vw';
+    image.width=640;
+    image.height=935;
+    image.loading=index<firstScreenCount?'eager':'lazy';
+    image.fetchPriority=index<Math.min(firstScreenCount,8)?'high':'low';
     image.dataset.fallbackIndex='0';
 
     card.classList.remove(
