@@ -15,6 +15,8 @@
   --blue:#a9bbd9;
   --violet:#c8b9df;
   --line:rgba(255,255,255,.085);
+  --role-media-focus-x:50%;
+  --role-media-focus-y:8%;
   --serif:"Songti SC","STSong","Noto Serif CJK SC",serif;
   --sans:Inter,ui-sans-serif,system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
 }
@@ -1113,6 +1115,7 @@ body.is-loaded .download-action:focus-visible{
   height:100%;
   display:block;
   object-fit:cover;
+  object-position:var(--role-media-focus-x) var(--role-media-focus-y);
 }
 .save-preview-meta{
   position:absolute;
@@ -3457,7 +3460,7 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
   opacity:.55;
 }
 
-/* Real role-card media; original chrome and motion remain above it. */
+/* Real role-card media; keep the eye/head area in the display crop. */
 .loaded-art{
   isolation:isolate;
 }
@@ -3469,7 +3472,7 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
   width:100%;
   height:100%;
   object-fit:cover;
-  object-position:center;
+  object-position:var(--role-media-focus-x) var(--role-media-focus-y);
   opacity:0;
   transform:scale(1.025);
   transition:
@@ -3511,7 +3514,7 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
   width:100%;
   height:100%;
   object-fit:cover;
-  object-position:center;
+  object-position:var(--role-media-focus-x) var(--role-media-focus-y);
   opacity:0;
   transform:scale(1.025);
   transition:opacity .42s ease,transform .58s ease;
@@ -7013,6 +7016,38 @@ async function buildCatalog(){
 let authorSwitchLocked=false;
 let queuedAuthorId=null;
 
+const DEFAULT_PREVIEW_POSITION='50% 8%';
+
+function previewPositionForWork(work){
+  const raw=String(work?.previewPosition || '').trim();
+
+  if(raw){
+    const parts=raw.split(/\s+/);
+    if(parts.length===2){
+      const x=Number.parseFloat(parts[0]);
+      const y=Number.parseFloat(parts[1]);
+      if(
+        parts[0].endsWith('%') &&
+        parts[1].endsWith('%') &&
+        Number.isFinite(x) &&
+        Number.isFinite(y) &&
+        x>=0 && x<=100 &&
+        y>=0 && y<=100
+      ){
+        return `${x}% ${y}%`;
+      }
+    }
+  }
+
+  return DEFAULT_PREVIEW_POSITION;
+}
+
+function applyPreviewPosition(image,work){
+  const position=previewPositionForWork(work);
+  image.style.objectPosition=position;
+  image.dataset.previewPosition=position;
+}
+
 function previewFallbackCandidates(work){
   const relative=String(work?.image || '')
     .replace(/^\.\//,'')
@@ -7100,6 +7135,7 @@ function applyAuthorCardContent(authorId,meta){
     const image=ensureCardPreview(card);
 
     image.alt=`${work.name}角色卡卡面`;
+    applyPreviewPosition(image,work);
     image.loading=index<6?'eager':'lazy';
     image.fetchPriority=index<2?'high':'low';
     image.dataset.fallbackIndex='0';
@@ -7809,6 +7845,7 @@ function openArchive(card){
   detailImage.classList.remove('is-ready');
   detailImage.dataset.fallbackIndex='0';
   detailImage.alt=`${work.name}角色卡卡面`;
+  applyPreviewPosition(detailImage,work);
 
   detailImage.onload=()=>{
     if(catalogState.activeWork!==work) return;
@@ -7967,6 +8004,7 @@ function openSaveSheet(card=activeCard){
   motionDelay(170,()=>saveSheetClose.focus({preventScroll:true}));
 
   image.style.opacity='0';
+  applyPreviewPosition(image,work);
 
   fetchOriginalPng(work.image).then(blob=>{
     if(
