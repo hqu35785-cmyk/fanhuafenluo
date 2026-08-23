@@ -39,15 +39,6 @@ body::before{
 }
 button{font:inherit}
 
-.device-stage{
-  width:100%;
-}
-.site{
-  width:100%;margin:0 auto;overflow:hidden;
-  border:1px solid rgba(255,255,255,.075);border-radius:20px;
-  background:#090a0e;box-shadow:0 24px 70px rgba(0,0,0,.34);
-  transition:width .28s ease,border-radius .28s ease;
-}
 .site-header{
   height:76px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.065);
   background:
@@ -97,7 +88,6 @@ button{font:inherit}
 }
 .toolbar-status{display:flex;align-items:center;gap:7px;color:rgba(206,199,209,.32);font-size:7px;letter-spacing:.12em;white-space:nowrap}
 .toolbar-status i{width:5px;height:5px;border-radius:50%;border:1px solid rgba(232,182,199,.55)}
-body.is-loaded .toolbar-status i{background:rgba(169,187,217,.58);border-color:rgba(169,187,217,.58)}
 
 .gallery{
   padding:16px 0 34px;display:grid;
@@ -121,7 +111,6 @@ body.is-loaded .toolbar-status i{background:rgba(169,187,217,.58);border-color:r
   position:absolute;inset:0;opacity:0;transform:scale(1.015);
   transition:opacity .46s ease,transform .62s cubic-bezier(.2,.75,.2,1);
 }
-body.is-loaded .loaded-art{opacity:1;transform:scale(1)}
 
 .loaded-art::before{
   content:"";position:absolute;inset:0;
@@ -136,41 +125,12 @@ body.is-loaded .loaded-art{opacity:1;transform:scale(1)}
 .theme-4 .loaded-art{background:linear-gradient(155deg,#211b2b,#121820 54%,#090b10)}
 .theme-5 .loaded-art{background:linear-gradient(145deg,#241d22,#12151d 50%,#0b0c10)}
 
-.art-shape{position:absolute;border:1px solid rgba(255,255,255,.09);pointer-events:none}
-.art-a{
-  width:58%;aspect-ratio:.76;left:21%;top:15%;
-  border-radius:48% 52% 46% 54%/42% 48% 52% 58%;
-  background:radial-gradient(circle at 52% 30%,rgba(255,244,248,.13),transparent 22%);
-  box-shadow:0 0 50px rgba(232,182,199,.045);
-}
-.art-b{
-  width:72%;height:36%;left:14%;bottom:12%;border-radius:50%;
-  border-color:rgba(169,187,217,.08);transform:rotate(-8deg);
-}
-.art-c{
-  width:1px;height:60%;left:54%;top:18%;
-  border:0;background:linear-gradient(transparent,rgba(232,182,199,.20),rgba(169,187,217,.11),transparent);
-  transform:rotate(22deg);
-}
-.theme-1 .art-a{left:16%;top:19%;transform:rotate(-7deg)}
-.theme-2 .art-a{left:25%;top:13%;transform:rotate(9deg)}
-.theme-3 .art-a{left:18%;top:17%;transform:rotate(-3deg)}
-.theme-4 .art-a{left:23%;top:18%;transform:rotate(5deg)}
-.theme-5 .art-a{left:19%;top:14%;transform:rotate(-10deg)}
-
-.art-mark{
-  position:absolute;right:10px;bottom:-3px;
-  color:rgba(255,255,255,.045);font-family:var(--serif);
-  font-size:clamp(48px,6vw,96px);letter-spacing:.12em;white-space:nowrap;
-}
-
 /* Same diagonal texture in both states; it becomes a subtle overlay after load. */
 .stripe-field{
   position:absolute;inset:-18%;z-index:4;
   transform:rotate(-17deg);transform-origin:center;opacity:.80;
   transition:opacity .36s ease;
 }
-body.is-loaded .stripe-field{opacity:.22}
 .pattern-1 .stripe-field{
   background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22840%22%20height%3D%221%22%20viewBox%3D%220%200%20840%201%22%3E%3Cdefs%3E%3Cpattern%20id%3D%22f%22%20width%3D%2215%22%20height%3D%221%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Crect%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffffff%22%20fill-opacity%3D%22.035%22%2F%3E%3C%2Fpattern%3E%3Cpattern%20id%3D%22w%22%20width%3D%22168%22%20height%3D%221%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Crect%20x%3D%2272%22%20width%3D%2224%22%20height%3D%221%22%20fill%3D%22%23e8b6c7%22%20fill-opacity%3D%22.045%22%2F%3E%3C%2Fpattern%3E%3C%2Fdefs%3E%3Crect%20width%3D%22840%22%20height%3D%221%22%20fill%3D%22url(%23w)%22%2F%3E%3Crect%20width%3D%22840%22%20height%3D%221%22%20fill%3D%22url(%23f)%22%2F%3E%3C%2Fsvg%3E");
   background-repeat:repeat;
@@ -194,16 +154,11 @@ body.is-loaded .stripe-field{opacity:.22}
   background-repeat:repeat;
   background-size:1584px 100%;
 }
-body.is-loaded .pattern-2 .stripe-field,
-body.is-loaded .pattern-3 .stripe-field,
-body.is-loaded .pattern-4 .stripe-field{opacity:.18}
-
 .ghost-frame{
   position:absolute;z-index:6;inset:11px;
   border:1px solid rgba(255,255,255,.032);border-radius:12px;
   transition:border-color .36s ease;
 }
-body.is-loaded .ghost-frame{border-color:rgba(255,255,255,.05)}
 .ghost-frame::before{
   content:"";position:absolute;left:50%;top:14%;bottom:14%;width:1px;
   background:linear-gradient(transparent,rgba(255,255,255,.035),transparent);
@@ -214,9 +169,6 @@ body.is-loaded .ghost-frame{border-color:rgba(255,255,255,.05)}
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent);
   transition:opacity .36s ease;
 }
-body.is-loaded .ghost-frame::before,
-body.is-loaded .ghost-frame::after{opacity:.32}
-
 .corner-code{
   position:absolute;z-index:10;top:10px;left:10px;
   max-width:calc(100% - 52px);height:25px;
@@ -226,11 +178,6 @@ body.is-loaded .ghost-frame::after{opacity:.32}
   backdrop-filter:blur(6px);
   font-size:6.5px;font-weight:650;letter-spacing:.08em;
 }
-body.is-loaded .corner-code{
-  color:rgba(247,243,246,.78);
-  background:rgba(7,8,12,.38);
-  border-color:rgba(255,255,255,.12);
-}
 .corner-code span{
   width:4px;height:4px;border-radius:50%;
   background:rgba(232,182,199,.64);box-shadow:0 0 8px rgba(232,182,199,.22);
@@ -239,8 +186,6 @@ body.is-loaded .corner-code{
   position:absolute;z-index:10;top:15px;right:12px;
   color:rgba(247,243,246,.22);font-size:6.5px;letter-spacing:.12em;
 }
-body.is-loaded .corner-index{color:rgba(247,243,246,.46)}
-
 .loading-core{
   position:absolute;z-index:8;left:12px;right:12px;bottom:61px;
   display:grid;gap:4px;transition:opacity .34s ease,transform .34s ease;
@@ -263,33 +208,6 @@ body.is-loaded .corner-index{color:rgba(247,243,246,.46)}
   transform:translateY(3px);
   pointer-events:none;
 }
-body.is-loaded .state-label-loading{
-  opacity:0;
-  transform:translateY(-3px);
-  pointer-events:none;
-}
-body.is-loaded .state-label-ready{
-  opacity:1;
-  transform:none;
-}
-body.is-loaded .loading-core{
-  opacity:1;
-  transform:none;
-  pointer-events:none;
-}
-body.is-loaded .state-label-ready .loading-title{
-  color:rgba(247,243,246,.48);
-  letter-spacing:.18em;
-}
-body.is-loaded .state-label-ready .loading-line{
-  width:42%;
-  background:linear-gradient(90deg,rgba(232,182,199,.42),rgba(169,187,217,.18),transparent);
-}
-body.is-loaded .state-label-ready .loading-sub{
-  color:rgba(206,199,209,.27);
-  letter-spacing:.13em;
-}
-
 /* User-requested empty bottom frame: no text, both states. */
 .bottom-frame{
   position:absolute;z-index:10;left:9px;right:9px;bottom:9px;min-height:43px;
@@ -298,11 +216,6 @@ body.is-loaded .state-label-ready .loading-sub{
   backdrop-filter:blur(6px);
   transition:border-color .36s ease,background .36s ease;
 }
-body.is-loaded .bottom-frame{
-  border-color:rgba(255,255,255,.09);
-  background:linear-gradient(180deg,rgba(7,8,12,.24),rgba(7,8,12,.52));
-}
-
 footer{
   padding:18px 0 22px;border-top:1px solid rgba(255,255,255,.05);
   color:rgba(206,199,209,.26);font-size:7px;letter-spacing:.13em;
@@ -323,7 +236,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   .gallery{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:620px){
-  .site{border-radius:18px}
   .gallery{
     grid-template-columns:repeat(2,minmax(0,1fr));
     column-gap:10px;
@@ -351,14 +263,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   letter-spacing:.10em;
   color:rgba(206,199,209,.36);
 }
-body.is-loaded .state-label-ready .ready-name{
-  color:rgba(247,243,246,.84);
-  letter-spacing:.08em;
-}
-body.is-loaded .state-label-ready .ready-meta{
-  color:rgba(206,199,209,.42);
-  letter-spacing:.10em;
-}
 /* Information hierarchy:
    top-left = identity; lower label = character name + alias/id. */
 .identity-badge{
@@ -368,11 +272,6 @@ body.is-loaded .state-label-ready .ready-meta{
   border-color:rgba(255,255,255,.105);
   font-size:6.5px;
   letter-spacing:.055em;
-}
-body.is-loaded .identity-badge{
-  color:rgba(255,251,253,.90);
-  background:rgba(7,8,12,.48);
-  border-color:rgba(255,255,255,.14);
 }
 .state-label-ready .ready-name{
   font-family:var(--serif);
@@ -386,12 +285,6 @@ body.is-loaded .identity-badge{
   font-weight:600;
   letter-spacing:.12em;
   color:rgba(206,199,209,.35);
-}
-body.is-loaded .state-label-ready .ready-name{
-  color:rgba(255,251,253,.92);
-}
-body.is-loaded .state-label-ready .ready-meta{
-  color:rgba(206,199,209,.50);
 }
 /* Loaded-state metadata: creation time instead of duplicated identity/name. */
 .state-label-ready .ready-name{
@@ -409,12 +302,6 @@ body.is-loaded .state-label-ready .ready-meta{
   letter-spacing:.12em;
   color:rgba(206,199,209,.36);
   font-variant-numeric:tabular-nums;
-}
-body.is-loaded .state-label-ready .ready-name{
-  color:rgba(255,251,253,.84);
-}
-body.is-loaded .state-label-ready .ready-meta{
-  color:rgba(206,199,209,.48);
 }
 /* Bottom interaction area:
    unloaded = empty frame; loaded = primary details + secondary download. */
@@ -437,22 +324,7 @@ body.is-loaded .state-label-ready .ready-meta{
   font:inherit;
 }
 
-/* Unloaded: preserve one empty outer frame only. */
-body:not(.is-loaded) .bottom-frame{
-  display:block;
-  border:1px solid rgba(255,255,255,.06);
-  background:linear-gradient(180deg,rgba(7,8,12,.12),rgba(7,8,12,.20));
-}
-body:not(.is-loaded) .bottom-frame .detail-action,
-body:not(.is-loaded) .bottom-frame .download-action{
-  display:none;
-}
-
 /* Loaded: the former empty zone resolves into two controls. */
-body.is-loaded .bottom-frame{
-  border:0;
-  background:transparent;
-}
 .detail-action,
 .download-action{
   position:relative;
@@ -522,20 +394,6 @@ body.is-loaded .bottom-frame{
   color:rgba(247,243,246,.54);
   font-size:9px;
 }
-body.is-loaded .detail-action:hover{
-  border-color:rgba(232,182,199,.28)!important;
-  background:linear-gradient(180deg,rgba(232,182,199,.08),rgba(7,8,12,.72))!important;
-}
-body.is-loaded .download-action:hover{
-  border-color:rgba(169,187,217,.14)!important;
-  color:rgba(247,243,246,.72)!important;
-}
-body.is-loaded .detail-action:focus-visible,
-body.is-loaded .download-action:focus-visible{
-  outline:1px solid rgba(232,182,199,.52);
-  outline-offset:2px;
-}
-
 /* Keep create date useful but quiet. */
 .state-label-ready .ready-name{
   font-family:var(--sans);
@@ -835,34 +693,6 @@ body.is-loaded .download-action:focus-visible{
   background:
     repeating-linear-gradient(90deg,rgba(255,255,255,.026) 0 1px,transparent 1px 18px),
     repeating-linear-gradient(90deg,transparent 0 92px,rgba(232,182,199,.035) 92px 126px,transparent 126px 206px);
-}
-.detail-art-orbit{
-  position:absolute;
-  left:17%;
-  top:17%;
-  width:66%;
-  aspect-ratio:.78;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:50% 50% 45% 55%/44% 47% 53% 56%;
-  transform:rotate(-8deg);
-}
-.detail-art-line{
-  position:absolute;
-  left:54%;
-  top:14%;
-  width:1px;
-  height:67%;
-  transform:rotate(22deg);
-  background:linear-gradient(transparent,rgba(232,182,199,.28),rgba(169,187,217,.12),transparent);
-}
-.detail-art-mark{
-  position:absolute;
-  right:18px;
-  bottom:54px;
-  color:rgba(255,255,255,.055);
-  font-family:var(--serif);
-  font-size:88px;
-  letter-spacing:.12em;
 }
 .detail-visual-top{
   position:absolute;
@@ -2613,7 +2443,6 @@ a.save-sheet-choice:active{
   .save-sheet-panel,
   .save-sheet-backdrop,
   .motion-toast,
-  .device-stage,
   .gallery,
   .author-avatar-img,
   .author-primary b,
@@ -3154,9 +2983,6 @@ a.save-sheet-choice:active{
 
 
 /* Detail visual itself has a separate "evidence desk" entrance. */
-.archive-modal.is-open .detail-art-orbit{animation:detailOrbitSettle 760ms 90ms cubic-bezier(.2,.82,.2,1) both}
-.archive-modal.is-open .detail-art-line{animation:detailEvidenceLine 720ms 130ms cubic-bezier(.2,.82,.2,1) both}
-.archive-modal.is-open .detail-art-mark{animation:detailMarkRise 700ms 160ms cubic-bezier(.2,.82,.2,1) both}
 .archive-modal.is-open .detail-visual-top span{animation:detailBadgeFromLeft 470ms 130ms cubic-bezier(.2,.82,.2,1) both}
 .archive-modal.is-open .detail-visual-top small{animation:detailBadgeFromRight 470ms 170ms cubic-bezier(.2,.82,.2,1) both}
 .archive-modal.is-open .detail-visual-bottom{animation:detailVisualFooterIn 560ms 200ms cubic-bezier(.2,.82,.2,1) both}
@@ -3176,9 +3002,6 @@ a.save-sheet-choice:active{
 .save-sheet-file.is-activating i{animation:saveFileDrop 480ms cubic-bezier(.2,.82,.2,1) both}
 .save-sheet.is-ready .save-sheet-note{animation:saveNoteResolve 440ms 80ms ease both}
 
-@keyframes detailOrbitSettle{0%{opacity:0;transform:rotate(-17deg) scale(.94)}70%{opacity:1;transform:rotate(-6deg) scale(1.012)}100%{opacity:1;transform:rotate(-8deg) scale(1)}}
-@keyframes detailEvidenceLine{0%{opacity:0;transform:rotate(22deg) scaleY(.08);transform-origin:50% 0}100%{opacity:1;transform:rotate(22deg) scaleY(1);transform-origin:50% 0}}
-@keyframes detailMarkRise{from{opacity:0;transform:translateY(12px);letter-spacing:.2em}to{opacity:1;transform:none}}
 @keyframes detailBadgeFromLeft{from{opacity:0;transform:translateX(-9px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes detailBadgeFromRight{from{opacity:0;transform:translateX(9px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes detailVisualFooterIn{0%{opacity:0;transform:translateY(12px) scale(.98);filter:blur(3px)}100%{opacity:1;transform:none;filter:none}}
@@ -3474,17 +3297,19 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
 .archive-card.image-error .loaded-card-image{
   opacity:0;
 }
+.archive-card.is-face-missing .loaded-art{opacity:0!important}
+.archive-card.is-face-missing .state-label-loading{
+  opacity:1!important;
+  transform:none!important;
+}
+.archive-card.is-face-missing .state-label-ready{opacity:0!important}
+.archive-card.is-face-missing .card-face::after{display:none!important}
+.archive-card.is-face-missing .stripe-field{opacity:.80!important}
+.archive-card.is-face-missing.pattern-2 .stripe-field{opacity:.72!important}
+.archive-card.is-face-missing.pattern-3 .stripe-field{opacity:.75!important}
+.archive-card.is-face-missing.pattern-4 .stripe-field{opacity:.72!important}
 .loaded-art::before{
   z-index:2;
-}
-.loaded-art .art-shape,
-.loaded-art .art-mark{
-  z-index:1;
-  transition:opacity .32s ease;
-}
-.archive-card.has-source-image .art-shape,
-.archive-card.has-source-image .art-mark{
-  opacity:0;
 }
 .detail-art{
   isolation:isolate;
@@ -3508,12 +3333,9 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
 }
 .detail-art::before{
   z-index:2;
+  transition:opacity .32s ease;
 }
-.detail-art-orbit,
-.detail-art-line,
-.detail-art-mark{
-  z-index:3;
-}
+.detail-art.has-source::before{opacity:0}
 .toolbar-status.is-error{
   color:#f1b4bd;
   cursor:pointer;
@@ -3540,8 +3362,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
 </style>
 </head>
 <body class="motion-rich">
-<div class="device-stage">
-  <div class="site" id="site">
     <header class="site-header">
       <div class="wrap author-header-row">
         <button
@@ -3596,10 +3416,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-0">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -3639,10 +3455,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-1">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -3682,10 +3494,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-2">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -3725,10 +3533,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-3">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -3768,10 +3572,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-4">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -3811,10 +3611,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-5">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -3854,10 +3650,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-0">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -3897,10 +3689,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-1">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -3940,10 +3728,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-2">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -3983,10 +3767,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-3">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4026,10 +3806,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-4">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4069,10 +3845,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-5">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4112,10 +3884,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-0">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4155,10 +3923,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-1">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4198,10 +3962,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-2">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4241,10 +4001,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-3">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4284,10 +4040,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-4">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4327,10 +4079,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-5">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4370,10 +4118,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-0">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4413,10 +4157,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-1">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4456,10 +4196,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-2">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4499,10 +4235,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-3">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4542,10 +4274,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-4">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4585,10 +4313,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-5">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4628,10 +4352,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-0">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4671,10 +4391,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-1">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4714,10 +4430,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-2">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4757,10 +4469,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-3">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4800,10 +4508,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-4">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4843,10 +4547,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-5">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4886,10 +4586,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-0">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4929,10 +4625,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-1">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -4972,10 +4664,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-2">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5015,10 +4703,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-3">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5058,10 +4742,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-4">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5101,10 +4781,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-5">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5144,10 +4820,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-0">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5187,10 +4859,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-1">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5230,10 +4898,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-2">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5273,10 +4937,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-3">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5316,10 +4976,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-4">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5359,10 +5015,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-5">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5402,10 +5054,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-0">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5445,10 +5093,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-1">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5488,10 +5132,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-2">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5531,10 +5171,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-3">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5574,10 +5210,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-4">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5617,10 +5249,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-5">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5660,10 +5288,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-0">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5703,10 +5327,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-1">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5746,10 +5366,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-2">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5789,10 +5405,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-3">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5832,10 +5444,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-4">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5875,10 +5483,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-5">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5918,10 +5522,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-0">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -5961,10 +5561,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-1">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6004,10 +5600,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-2">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6047,10 +5639,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-3">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6090,10 +5678,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-4">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6133,10 +5717,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-5">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6176,10 +5756,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-0">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6219,10 +5795,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-1">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6262,10 +5834,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-2">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6305,10 +5873,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-3">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6348,10 +5912,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-4">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6391,10 +5951,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-5">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6434,10 +5990,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-3 theme-0">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6477,10 +6029,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-4 theme-1">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6520,10 +6068,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-1 theme-2">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6563,10 +6107,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <article class="archive-card pattern-2 theme-3">
       <div class="card-face">
         <div class="loaded-art" aria-hidden="true">
-          <div class="art-shape art-a"></div>
-          <div class="art-shape art-b"></div>
-          <div class="art-shape art-c"></div>
-          <div class="art-mark">F · F</div>
         </div>
 
         <div class="stripe-field" aria-hidden="true"></div>
@@ -6608,10 +6148,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <footer>
       <div class="wrap"><span>© 2026 繁花·纷落</span><span>UNIFIED CARD LAYOUT</span></div>
     </footer>
-  </div>
-</div>
-
-
 <div class="archive-modal" id="archiveModal" aria-hidden="true">
   <div class="archive-modal-backdrop" data-close-archive></div>
   <section class="archive-modal-panel" role="dialog" aria-modal="true" aria-labelledby="detailName">
@@ -6625,9 +6161,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
           alt=""
           decoding="async"
         >
-        <div class="detail-art-orbit"></div>
-        <div class="detail-art-line"></div>
-        <div class="detail-art-mark">F · F</div>
       </div>
       <div class="detail-visual-top">
         <span id="detailIdentity">角色身份</span>
@@ -7052,7 +6585,10 @@ function fallbackPreview(image,work,card){
 
   image.onerror=null;
   card?.classList.remove('is-image-loading');
-  card?.classList.add('image-error');
+  card?.classList.add('image-error','is-face-missing');
+  const sub=card?.querySelector('.state-label-loading .loading-sub');
+  if(sub) sub.textContent='CARD FACE UNAVAILABLE';
+  scheduleReveal(card);
 }
 
 function ensureCardPreview(card){
@@ -7077,12 +6613,30 @@ function applyAuthorCardContent(authorId,meta){
     const work=works[index];
     const show=Boolean(work);
 
+    observer.unobserve(card);
+    card._revealToken=(card._revealToken || 0)+1;
+    card._revealAt=null;
+    card.classList.remove(
+      'is-loaded',
+      'just-loaded',
+      'has-source-image',
+      'image-error',
+      'is-face-missing',
+      'is-loading-now',
+      'is-entered'
+    );
     card.hidden=!show;
     card._work=work || null;
 
     if(!show){
       delete card.dataset.author;
       delete card.dataset.workIndex;
+      const oldImage=card.querySelector('.loaded-card-image');
+      if(oldImage){
+        oldImage.onload=null;
+        oldImage.onerror=null;
+        oldImage.removeAttribute('src');
+      }
       card.querySelectorAll(
         '.detail-action,.download-action'
       ).forEach(button=>{
@@ -7125,16 +6679,13 @@ function applyAuthorCardContent(authorId,meta){
     image.fetchPriority=index<Math.min(firstScreenCount,8)?'high':'low';
     image.dataset.fallbackIndex='0';
 
-    card.classList.remove(
-      'image-error',
-      'has-source-image'
-    );
     card.classList.add('is-image-loading');
 
     image.onload=()=>{
       if(card._work!==work) return;
       card.classList.remove('is-image-loading');
       card.classList.add('has-source-image');
+      scheduleReveal(card);
     };
 
     image.onerror=()=>{
@@ -7147,9 +6698,11 @@ function applyAuthorCardContent(authorId,meta){
     card.querySelectorAll(
       '.detail-action,.download-action'
     ).forEach(button=>{
-      button.disabled=false;
-      button.tabIndex=0;
+      button.disabled=true;
+      button.tabIndex=-1;
     });
+
+    observer.observe(card);
   });
 
   archiveGallery?.setAttribute('aria-busy','false');
@@ -7421,6 +6974,50 @@ function updateStatus(){
   }
 }
 
+function revealCard(card){
+  if(
+    !card ||
+    !card._work ||
+    card.classList.contains('is-loaded') ||
+    (
+      !card.classList.contains('has-source-image') &&
+      !card.classList.contains('is-face-missing')
+    )
+  ) return;
+
+  card.classList.add('is-loaded','just-loaded');
+  card.classList.remove('is-loading-now');
+
+  const enabled=Boolean(card._work);
+  card.querySelectorAll('.detail-action,.download-action').forEach(btn=>{
+    btn.disabled=!enabled;
+    btn.tabIndex=enabled?0:-1;
+  });
+
+  updateStatus();
+  const token=card._revealToken;
+  window.setTimeout(()=>{
+    if(card._revealToken===token) card.classList.remove('just-loaded');
+  },900);
+}
+
+function scheduleReveal(card){
+  if(!card || card._revealAt==null) return;
+  const token=card._revealToken;
+  const wait=Math.max(0,card._revealAt-performance.now());
+  window.setTimeout(()=>{
+    if(
+      card._revealToken!==token ||
+      !card._work ||
+      (
+        !card.classList.contains('has-source-image') &&
+        !card.classList.contains('is-face-missing')
+      )
+    ) return;
+    revealCard(card);
+  },wait);
+}
+
 const observer=new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
     if(!entry.isIntersecting) return;
@@ -7428,20 +7025,22 @@ const observer=new IntersectionObserver(entries=>{
     observer.unobserve(card);
     const i=cards.indexOf(card);
     const rowDelay=(i%6)*58;
-    motionDelay(rowDelay,()=>card.classList.add('is-entered'));
+    const token=card._revealToken;
+    motionDelay(rowDelay,()=>{
+      if(card._revealToken===token) card.classList.add('is-entered');
+    });
     card.classList.add('is-loading-now');
-    const delay=210 + (i%6)*95 + Math.random()*180;
-    window.setTimeout(()=>{
-      card.classList.add('is-loaded','just-loaded');
-      card.classList.remove('is-loading-now');
-      card.querySelectorAll('.detail-action,.download-action').forEach(btn=>{
-        const enabled=Boolean(card._work);
-        btn.disabled=!enabled;
-        btn.tabIndex=enabled?0:-1;
-      });
-      updateStatus();
-      window.setTimeout(()=>card.classList.remove('just-loaded'),900);
-    },prefersReducedMotion.matches?0:delay);
+    const img=card.querySelector('.loaded-card-image');
+    if(img && img.loading==='lazy') img.loading='eager';
+    const minDelay=prefersReducedMotion.matches
+      ? 0
+      : 210+(i%6)*95+Math.random()*180;
+    card._revealAt=performance.now()+minDelay;
+
+    if(
+      card.classList.contains('has-source-image') ||
+      card.classList.contains('is-face-missing')
+    ) scheduleReveal(card);
   });
 },{rootMargin:'140px 0px 220px',threshold:.035});
 
@@ -7927,6 +7526,7 @@ async function openArchive(card){
 
   const copy=detailCopyForWork(work);
   const detailImage=document.getElementById('detailImage');
+  const detailArt=detailImage.closest('.detail-art');
 
   document.getElementById('detailName').textContent=work.name;
   document.getElementById('detailIdentity').textContent=data.identity;
@@ -7944,6 +7544,7 @@ async function openArchive(card){
   setDetailTab('intro',{instant:true});
 
   detailImage.classList.remove('is-ready');
+  detailArt?.classList.remove('has-source');
   detailImage.dataset.fallbackIndex='0';
   detailImage.alt=`${work.name}角色卡卡面`;
   applyPreviewPosition(detailImage,work);
@@ -7951,6 +7552,7 @@ async function openArchive(card){
   detailImage.onload=()=>{
     if(catalogState.activeWork!==work) return;
     detailImage.classList.add('is-ready');
+    detailArt?.classList.add('has-source');
   };
 
   detailImage.onerror=()=>{
@@ -7965,6 +7567,7 @@ async function openArchive(card){
     }else{
       detailImage.onerror=null;
       detailImage.classList.remove('is-ready');
+      detailArt?.classList.remove('has-source');
     }
   };
 
@@ -8334,3 +7937,4 @@ window.addEventListener('beforeunload',()=>{
 </script>
 </body>
 </html>
+
