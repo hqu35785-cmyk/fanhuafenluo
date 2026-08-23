@@ -1194,7 +1194,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   margin-top:26px;
 }
 .detail-options{
-  --detail-count:4;
+  --detail-count:5;
   display:grid;
   grid-template-columns:repeat(var(--detail-count),minmax(0,1fr));
   gap:6px;
@@ -2805,6 +2805,8 @@ a.save-sheet-choice:active{
 .detail-reading-panel.leave-setting .detail-reading-body{animation:detailSettingBodyOut 220ms cubic-bezier(.55,0,.8,.35) both}
 .detail-reading-panel.leave-worldbook .detail-reading-head{animation:detailWorldHeadOut 165ms ease both}
 .detail-reading-panel.leave-worldbook .detail-reading-body{animation:detailWorldBodyOut 205ms ease both}
+.detail-reading-panel.leave-preset .detail-reading-head{animation:detailWorldHeadOut 165ms ease both}
+.detail-reading-panel.leave-preset .detail-reading-body{animation:detailWorldBodyOut 205ms ease both}
 
 /* INTRO — camera focus / materialize. */
 .detail-reading-panel.enter-intro .detail-reading-head{animation:detailIntroHeadIn 430ms 35ms cubic-bezier(.2,.82,.2,1) both}
@@ -2825,6 +2827,9 @@ a.save-sheet-choice:active{
 .detail-reading-panel.enter-worldbook .detail-reading-head{animation:detailWorldHeadIn 390ms 20ms cubic-bezier(.2,.82,.2,1) both}
 .detail-reading-panel.enter-worldbook .detail-reading-body{animation:detailWorldBodyIn 600ms 55ms cubic-bezier(.2,.82,.2,1) both}
 .detail-reading-panel.enter-worldbook::before{height:2px;animation:detailScanLine 720ms 10ms cubic-bezier(.2,.75,.2,1) both}
+.detail-reading-panel.enter-preset .detail-reading-head{animation:detailWorldHeadIn 390ms 20ms cubic-bezier(.2,.82,.2,1) both}
+.detail-reading-panel.enter-preset .detail-reading-body{animation:detailWorldBodyIn 600ms 55ms cubic-bezier(.2,.82,.2,1) both}
+.detail-reading-panel.enter-preset::before{height:2px;animation:detailScanLine 720ms 10ms cubic-bezier(.2,.75,.2,1) both}
 
 /* Tiny internal motions: header metadata doesn't arrive all at once. */
 .detail-reading-panel[class*="enter-"] .detail-reading-head small{animation:detailMetaIn 420ms 95ms ease both}
@@ -2913,7 +2918,14 @@ a.save-sheet-choice:active{
 @keyframes detailSaveDrop{0%{transform:translateY(0)}38%{transform:translateY(4px) scale(.9)}72%{transform:translateY(-1px) scale(1.04)}100%{transform:none}}
 
 @media(max-width:720px){
-  .detail-options::before{width:calc((100% - 10px - (var(--detail-count) - 1) * 6px) / var(--detail-count))}
+  .detail-options{
+    overflow-x:auto;
+    overflow-y:hidden;
+  }
+  .detail-options::before{
+    width:84px;
+    transform:translateX(calc(var(--detail-index) * 90px));
+  }
   .detail-reading-panel.enter-setting .detail-reading-body{animation-duration:520ms}
   .detail-reading-panel.enter-worldbook .detail-reading-body{animation-duration:520ms}
 }
@@ -3475,6 +3487,9 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
           <button class="detail-option" type="button" role="tab" aria-selected="false" data-detail-tab="worldbook">
             <span>04</span><b>世界书</b>
           </button>
+          <button class="detail-option" type="button" role="tab" aria-selected="false" data-detail-tab="preset">
+            <span>05</span><b>预设</b>
+          </button>
         </div>
 
         <section class="detail-reading-panel" role="tabpanel" tabindex="0">
@@ -3585,11 +3600,11 @@ const PNG_CDN_BASE='https://cdn.jsdelivr.net/gh/hqu35785-cmyk/fanhuafenluo@main/
 const PNG_RAW_BASE='https://raw.githubusercontent.com/hqu35785-cmyk/fanhuafenluo/main/';
 
 const SOURCE_URLS={
-  works:'src/data/works.js?v=c87417531269',
+  works:'src/data/works.js?v=1150da2c2963',
   details:{
-    fanhuafenluo:'src/data/details-fanhua.js?v=aeaa10896606',
-    shark:'src/data/details-shark.js?v=aeaa10896606',
-    wa:'src/data/details-wa.js?v=aeaa10896606'
+    fanhuafenluo:'src/data/details-fanhua.js?v=1150da2c2963',
+    shark:'src/data/details-shark.js?v=1150da2c2963',
+    wa:'src/data/details-wa.js?v=1150da2c2963'
   }
 };
 
@@ -4749,25 +4764,24 @@ function cardData(card){
   };
 }
 
+function formatPersonalityAndScenario(work){
+  const sections=[];
+  if(work?.personality){
+    sections.push(`【性格设定】\n${work.personality}`);
+  }
+  if(work?.setting){
+    sections.push(`【场景设定】\n${work.setting}`);
+  }
+  return sections.join('\n\n') || '该角色卡未提供人物设定。';
+}
+
 function detailCopyForWork(work){
   return {
-    intro:
-      work.intro ||
-      [work.role,work.personality].filter(Boolean).join('\n\n') ||
-      '该角色卡未提供简介。',
-
-    opening:
-      work.opening ||
-      '该角色卡未提供开场白。',
-
-    setting:
-      work.setting ||
-      '该角色卡未提供人物设定。',
-
-    worldbook:
-      work.worldbook ||
-      work.lorebook ||
-      '该角色卡未附带世界书。'
+    intro:work.intro || '该角色卡暂未提供简介。',
+    opening:work.opening || '该角色卡未提供开场白。',
+    setting:formatPersonalityAndScenario(work),
+    worldbook:work.worldbook || '该角色卡未附带世界书。',
+    preset:work.preset || '该角色卡未附带预设。'
   };
 }
 
@@ -4775,25 +4789,28 @@ const PENDING_COPY={
   intro:'正在读取角色资料…',
   opening:'正在读取角色资料…',
   setting:'正在读取角色资料…',
-  worldbook:'正在读取角色资料…'
+  worldbook:'正在读取角色资料…',
+  preset:'正在读取角色资料…'
 };
 const FAILED_COPY={
   intro:'角色资料读取失败，请关闭后重新打开重试。',
   opening:'角色资料读取失败。',
   setting:'角色资料读取失败。',
-  worldbook:'角色资料读取失败。'
+  worldbook:'角色资料读取失败。',
+  preset:'角色资料读取失败。'
 };
 
 const detailTabMeta={
   intro:{index:'01 · CHARACTER DATA',title:'简介',type:'INTRO'},
   opening:{index:'02 · CHARACTER DATA',title:'开场白',type:'OPENING'},
   setting:{index:'03 · CHARACTER DATA',title:'人物设定',type:'SETTING'},
-  worldbook:{index:'04 · CHARACTER DATA',title:'世界书',type:'LOREBOOK'}
+  worldbook:{index:'04 · CHARACTER DATA',title:'世界书',type:'LOREBOOK'},
+  preset:{index:'05 · CHARACTER DATA',title:'预设',type:'PRESET'}
 };
 
 let currentDetailTab='intro';
 let detailTabSwitchToken=0;
-const detailTabOrder=['intro','opening','setting','worldbook'];
+const detailTabOrder=['intro','opening','setting','worldbook','preset'];
 const detailOptions=document.querySelector('.detail-options');
 const detailReadingPanel=document.querySelector('.detail-reading-panel');
 
@@ -4814,6 +4831,18 @@ function renderDetailTabs(){
   if(!visible.includes(currentDetailTab)){
     currentDetailTab=visible[0] || 'intro';
   }
+}
+
+function centerDetailTab(key,instant=false){
+  if(!detailOptions) return;
+  const button=detailOptions.querySelector(`[data-detail-tab="${key}"]`);
+  if(!button||detailOptions.scrollWidth<=detailOptions.clientWidth) return;
+  const target=button.offsetLeft+(button.offsetWidth/2)-(detailOptions.clientWidth/2);
+  const max=Math.max(0,detailOptions.scrollWidth-detailOptions.clientWidth);
+  detailOptions.scrollTo({
+    left:Math.max(0,Math.min(max,target)),
+    behavior:instant?'auto':'smooth'
+  });
 }
 
 function clearDetailMotionClasses(panel){
@@ -4865,6 +4894,7 @@ function setDetailTab(key,options={}){
     clearDetailMotionClasses(panel);
     paintDetailContent(key);
     currentDetailTab=key;
+    centerDetailTab(key,instant);
     if(panel){
       panel.scrollTop=0;
       panel.dataset.detailMode=key;
@@ -4889,6 +4919,7 @@ function setDetailTab(key,options={}){
     clearDetailMotionClasses(panel);
     paintDetailContent(key);
     currentDetailTab=key;
+    centerDetailTab(key,false);
     panel.scrollTop=0;
     panel.dataset.detailMode=key;
     panel.classList.remove('is-reading-scrolled');
