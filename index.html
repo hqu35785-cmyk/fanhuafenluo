@@ -638,6 +638,87 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   color:rgba(206,199,209,.43)!important;
   font-variant-numeric:tabular-nums!important;
 }
+/* Readable loaded metadata: stack both states in one grid cell so the
+   ready copy grows the loading core instead of covering the action frame. */
+.loading-core{
+  display:grid;
+  grid-template-areas:"stack";
+}
+.loading-core > .state-label{
+  grid-area:stack;
+  align-self:end;
+  align-content:end;
+}
+.state-label-ready{
+  position:static;
+  inset:auto;
+}
+.state-label{
+  gap:6px!important;
+}
+.state-label-ready .ready-name{
+  font-family:var(--serif)!important;
+  font-size:15px!important;
+  font-weight:600!important;
+  letter-spacing:.06em!important;
+  line-height:1.15!important;
+}
+.archive-card.is-loaded .state-label-ready .loading-line{
+  width:30%!important;
+  height:2px!important;
+  border-radius:2px!important;
+}
+.state-label-ready .ready-meta{
+  font-family:var(--sans)!important;
+  font-size:9px!important;
+  font-weight:650!important;
+  letter-spacing:.10em!important;
+  font-variant-numeric:tabular-nums!important;
+}
+.loading-title{
+  font-size:8px!important;
+}
+.loading-sub{
+  font-size:7px!important;
+}
+.loading-core::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:-12px;
+  right:-12px;
+  top:-16px;
+  bottom:-61px;
+  pointer-events:none;
+  background:linear-gradient(to top,
+    rgba(6,7,11,.80) 0%,
+    rgba(6,7,11,.64) 32%,
+    rgba(6,7,11,.30) 66%,
+    transparent 100%);
+}
+.archive-card.is-loaded .state-label-ready .ready-name{
+  color:#f7d9e4!important;
+  text-shadow:0 1px 3px rgba(4,5,9,.65)!important;
+}
+.archive-card.is-loaded .state-label-ready .loading-line{
+  background:linear-gradient(90deg,
+    var(--pink),
+    var(--violet) 55%,
+    transparent)!important;
+  box-shadow:0 0 6px rgba(232,182,199,.28)!important;
+}
+.archive-card.is-loaded .state-label-ready .ready-meta{
+  color:rgba(169,187,217,.92)!important;
+  text-shadow:0 1px 3px rgba(4,5,9,.6)!important;
+}
+.state-label-ready.no-created .loading-line,
+.state-label-ready.no-created .ready-meta{
+  display:none;
+}
+@media(max-width:620px){
+  .state-label-ready .ready-name{font-size:13px!important}
+  .state-label-ready .ready-meta{font-size:8px!important}
+}
 /* =========================
    Archive detail modal
    ========================= */
@@ -1804,8 +1885,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
 }
 
 /* Base moving rainbow film — invisible until hover/focus, but always moving underneath. */
-.detail-action::before,
-.download-action::before{
+.detail-action::before{
   content:"";
   position:absolute;
   z-index:1;
@@ -1839,8 +1919,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
 }
 
 /* A narrow specular ribbon makes the effect visibly "flow" instead of just appearing. */
-.detail-action::after,
-.download-action::after{
+.detail-action::after{
   content:"";
   position:absolute;
   z-index:2;
@@ -1878,26 +1957,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   100% { transform:skewX(-17deg) translateX(430%); }
 }
 
-@keyframes holoRibbonDownload{
-  0%   { transform:skewX(-18deg) translateX(-70%); }
-  100% { transform:skewX(-18deg) translateX(520%); }
-}
-
-@keyframes downloadHoloPulse{
-  0%,100%{
-    box-shadow:
-      0 6px 16px rgba(0,0,0,.22),
-      0 0 0 rgba(124,224,255,0),
-      0 0 0 rgba(255,157,213,0);
-  }
-  50%{
-    box-shadow:
-      0 8px 20px rgba(0,0,0,.28),
-      0 0 13px rgba(124,224,255,.15),
-      0 0 19px rgba(255,157,213,.11);
-  }
-}
-
 /* 查看档案：柔和、慢一点。 */
 .archive-card.is-loaded .detail-action:hover::before,
 .archive-card.is-loaded .detail-action:focus-visible::before{
@@ -1922,91 +1981,19 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   background:rgba(184,211,255,.055)!important;
 }
 
-/* 下载：同一种语言，但更亮、更快、更集中。 */
-.download-action::before{
-  inset:-75%;
-  background:
-    radial-gradient(
-      circle at var(--fx-x) var(--fx-y),
-      rgba(255,255,255,.828) 0%,
-      rgba(255,180,225,.391) 16%,
-      rgba(112,224,255,.311) 34%,
-      transparent 56%
-    ),
-    linear-gradient(
-      110deg,
-      rgba(255,70,160,.311) 0%,
-      rgba(149,93,255,.288) 16%,
-      rgba(72,225,255,.391) 34%,
-      rgba(107,255,203,.230) 50%,
-      rgba(255,225,94,.357) 67%,
-      rgba(255,126,207,.334) 83%,
-      rgba(255,70,160,.311) 100%
-    );
-  background-size:100% 100%, 230% 100%;
-  animation-duration:1.75s;
-  transition:opacity .38s ease;
-}
-.download-action::after{
-  left:-82%;
-  width:58%;
-  background:linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255,255,255,.048) 18%,
-    rgba(95,224,255,.408) 36%,
-    rgba(255,255,255,.696) 48%,
-    rgba(255,180,228,.528) 56%,
-    rgba(255,229,112,.324) 67%,
-    transparent 100%
-  );
-  filter:blur(.15px);
-  animation:holoRibbonDownload 1.48s cubic-bezier(.42,.05,.48,.95) infinite;
-  transition:opacity .34s ease;
-}
-
-.archive-card.is-loaded .download-action:hover::before,
-.archive-card.is-loaded .download-action:focus-visible::before{
-  opacity:.98;
-}
-.archive-card.is-loaded .download-action:hover::after,
-.archive-card.is-loaded .download-action:focus-visible::after{
-  opacity:.96;
-}
-.archive-card.is-loaded .download-action:hover,
-.archive-card.is-loaded .download-action:focus-visible{
-  border-color:rgba(171,226,255,.34)!important;
-  color:rgba(255,255,255,.95)!important;
-  background:linear-gradient(180deg,rgba(18,19,27,.82),rgba(8,9,14,.92))!important;
-  animation:downloadHoloPulse 1.55s ease-in-out infinite;
-}
-.archive-card.is-loaded .download-action:hover .download-icon,
-.archive-card.is-loaded .download-action:focus-visible .download-icon{
-  border-color:rgba(210,229,255,.23)!important;
-  color:#fff!important;
-  text-shadow:
-    0 0 7px rgba(130,225,255,.44),
-    0 0 10px rgba(255,166,217,.27);
-}
-
 /* Never flash holo while the card itself is still unloaded. */
 .archive-card:not(.is-loaded) .detail-action::before,
-.archive-card:not(.is-loaded) .detail-action::after,
-.archive-card:not(.is-loaded) .download-action::before,
-.archive-card:not(.is-loaded) .download-action::after{
+.archive-card:not(.is-loaded) .detail-action::after{
   display:none!important;
 }
 
 /* Respect reduced-motion: keep only a soft static tint. */
 @media(prefers-reduced-motion:reduce){
   .detail-action::before,
-  .download-action::before,
-  .detail-action::after,
-  .download-action::after{
+  .detail-action::after{
     animation:none!important;
   }
-  .archive-card.is-loaded .detail-action:hover::after,
-  .archive-card.is-loaded .download-action:hover::after{
+  .archive-card.is-loaded .detail-action:hover::after{
     opacity:.18!important;
   }
 }
@@ -2031,25 +2018,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
     0 0 12px rgba(153,218,255,.035)!important;
 }
 
-/* Download: always-on brighter, faster, more noticeable. */
-.archive-card.is-loaded .download-action::before{
-  opacity:.92!important;
-}
-.archive-card.is-loaded .download-action::after{
-  opacity:.88!important;
-}
-.archive-card.is-loaded .download-action{
-  border-color:rgba(171,226,255,.27)!important;
-  color:rgba(255,255,255,.94)!important;
-  animation:downloadHoloPulse 1.55s ease-in-out infinite!important;
-}
-.archive-card.is-loaded .download-action .download-icon{
-  color:#fff!important;
-  text-shadow:
-    0 0 7px rgba(130,225,255,.36),
-    0 0 10px rgba(255,166,217,.22);
-}
-
 /* Hover only adds a tiny emphasis; it no longer starts the effect. */
 .archive-card.is-loaded .detail-action:hover,
 .archive-card.is-loaded .detail-action:focus-visible{
@@ -2064,39 +2032,20 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   opacity:.70!important;
 }
 
-.archive-card.is-loaded .download-action:hover,
-.archive-card.is-loaded .download-action:focus-visible{
-  transform:translateY(-1px) scale(1.015)!important;
-}
-.archive-card.is-loaded .download-action:hover::before,
-.archive-card.is-loaded .download-action:focus-visible::before{
-  opacity:1!important;
-}
-.archive-card.is-loaded .download-action:hover::after,
-.archive-card.is-loaded .download-action:focus-visible::after{
-  opacity:1!important;
-}
-
-/* Touch screens: same continuous holo is visible with no hover support. */
+/* Touch screens retain the detail-action treatment; the download control is
+   intentionally static on touch devices because there is no hover state. */
 @media(hover:none){
   .archive-card.is-loaded .detail-action::before{opacity:.54!important}
   .archive-card.is-loaded .detail-action::after{opacity:.56!important}
-  .archive-card.is-loaded .download-action::before{opacity:.94!important}
-  .archive-card.is-loaded .download-action::after{opacity:.90!important}
 }
 
 /* Reduced motion gets static holo instead of animation. */
 @media(prefers-reduced-motion:reduce){
-  .archive-card.is-loaded .detail-action::before,
-  .archive-card.is-loaded .download-action::before{
+  .archive-card.is-loaded .detail-action::before{
     opacity:.32!important;
   }
-  .archive-card.is-loaded .detail-action::after,
-  .archive-card.is-loaded .download-action::after{
+  .archive-card.is-loaded .detail-action::after{
     opacity:.18!important;
-  }
-  .archive-card.is-loaded .download-action{
-    animation:none!important;
   }
 }
 
@@ -3091,28 +3040,22 @@ a.save-sheet-choice:active{
   0%,100%{transform:translate3d(-5%,0,0) rotate(-8deg) scale(1.03)}
   50%{transform:translate3d(5%,0,0) rotate(-8deg) scale(1.03)}
 }
-.detail-action::before,
-.download-action::before{
+.detail-action::before{
   background-position:center,50% 50%!important;
   animation-name:holoFilmDriftLite!important;
   will-change:auto!important;
 }
-.detail-action::after,
-.download-action::after{filter:none!important}
+.detail-action::after{filter:none!important}
 
 /* Continuous foil exists only while the card is on/near screen. Once a user has
    scrolled past 50+ loaded cards, those old cards stop consuming animation time. */
 .archive-card .detail-action::before,
 .archive-card .detail-action::after,
-.archive-card .download-action::before,
-.archive-card .download-action::after,
-.archive-card .download-action{
+.archive-card .detail-action{
   animation-play-state:paused!important;
 }
 .archive-card.is-motion-visible.is-loaded .detail-action::before,
-.archive-card.is-motion-visible.is-loaded .detail-action::after,
-.archive-card.is-motion-visible.is-loaded .download-action::before,
-.archive-card.is-motion-visible.is-loaded .download-action::after{
+.archive-card.is-motion-visible.is-loaded .detail-action::after{
   animation-play-state:running!important;
 }
 
@@ -3123,21 +3066,64 @@ a.save-sheet-choice:active{
   contain-intrinsic-size:var(--card-ih,420px);
 }
 
-/* The flowing ribbon already supplies obvious motion. Avoid repainting animated
-   box-shadow forever; use a strong static glow and reserve pulse for direct hover. */
+/* Download button: match the detail save control, stay matte at rest, and
+   use one existing sheen only while a fine pointer hovers. */
 .archive-card.is-loaded .download-action{
+  color:#fff!important;
+  border-color:rgba(245,210,226,.42)!important;
+  background:
+    linear-gradient(135deg,
+      rgba(232,182,199,.42) 0%,
+      rgba(200,185,223,.34) 52%,
+      rgba(169,187,217,.27) 100%)!important;
   animation:none!important;
   box-shadow:
-    0 7px 18px rgba(0,0,0,.24),
-    0 0 12px rgba(124,224,255,.10),
-    0 0 16px rgba(255,157,213,.07),
-    inset 0 1px 0 rgba(255,255,255,.045)!important;
+    0 6px 16px rgba(0,0,0,.18),
+    0 0 15px rgba(232,182,199,.10),
+    inset 0 1px 0 rgba(255,255,255,.15)!important;
+}
+.archive-card.is-loaded .download-action .download-icon{
+  color:#fff!important;
+  text-shadow:0 1px 0 rgba(0,0,0,.18)!important;
+}
+.download-action::after,
+.archive-card.is-loaded .download-action::after{
+  content:none!important;
+  transition:opacity .34s ease;
+  animation:none!important;
+}
+.archive-card.is-loaded .download-action::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:1!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  transform:translateX(-70%) skewX(-18deg)!important;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.045),transparent)!important;
+  transition:opacity .38s ease;
+  animation:none!important;
 }
 @media(hover:hover) and (pointer:fine){
-  .archive-card.is-motion-visible.is-loaded .download-action:hover,
-  .archive-card.is-motion-visible.is-loaded .download-action:focus-visible{
-    animation:downloadHoloPulse 1.55s ease-in-out infinite!important;
-    animation-play-state:running!important;
+  .archive-card.is-loaded .download-action:hover::before{
+    animation:detailButtonSheen 620ms ease both!important;
+    opacity:1!important;
+  }
+  .archive-card.is-loaded .download-action:hover,
+  .archive-card.is-loaded .download-action:focus-visible{
+    border-color:rgba(255,226,239,.58)!important;
+    background:
+      linear-gradient(135deg,
+        rgba(239,190,210,.54) 0%,
+        rgba(205,190,230,.44) 52%,
+        rgba(175,197,226,.36) 100%)!important;
+    box-shadow:
+      0 7px 18px rgba(0,0,0,.20),
+      0 0 18px rgba(232,182,199,.16),
+      0 0 22px rgba(169,187,217,.09),
+      inset 0 1px 0 rgba(255,255,255,.18)!important;
+    transform:translateY(-1px)!important;
+    animation:none!important;
   }
 }
 
@@ -3161,10 +3147,7 @@ a.save-sheet-choice:active{
 /* While an overlay covers the gallery, background card foil cannot be meaningfully
    seen through the dark backdrop. Freeze it until the overlay closes. */
 body.has-overlay .archive-card .detail-action::before,
-body.has-overlay .archive-card .detail-action::after,
-body.has-overlay .archive-card .download-action::before,
-body.has-overlay .archive-card .download-action::after,
-body.has-overlay .archive-card .download-action{
+body.has-overlay .archive-card .detail-action::after{
   animation-play-state:paused!important;
 }
 
@@ -3200,46 +3183,6 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
 }
 
 
-
-/* =========================================================
-   FINAL ACCENT CTA OVERRIDE
-   Card-face download + detail "保存角色卡 PNG" are primary actions.
-   Keep existing motion/holo behavior; only strengthen visual hierarchy.
-   ========================================================= */
-.archive-card.is-loaded .download-action{
-  border-color:rgba(245,210,226,.46)!important;
-  color:#fff!important;
-  background:
-    linear-gradient(135deg,
-      rgba(232,182,199,.56) 0%,
-      rgba(200,185,223,.46) 52%,
-      rgba(169,187,217,.38) 100%)!important;
-  box-shadow:
-    0 7px 18px rgba(0,0,0,.25),
-    0 0 16px rgba(232,182,199,.16),
-    0 0 22px rgba(169,187,217,.10),
-    inset 0 1px 0 rgba(255,255,255,.20)!important;
-}
-.archive-card.is-loaded .download-action .download-icon{
-  color:#fff!important;
-  text-shadow:0 0 8px rgba(255,255,255,.22)!important;
-}
-@media(hover:hover) and (pointer:fine){
-  .archive-card.is-loaded .download-action:hover,
-  .archive-card.is-loaded .download-action:focus-visible{
-    border-color:rgba(255,226,239,.64)!important;
-    background:
-      linear-gradient(135deg,
-        rgba(239,190,210,.68) 0%,
-        rgba(205,190,230,.56) 52%,
-        rgba(175,197,226,.48) 100%)!important;
-    box-shadow:
-      0 8px 20px rgba(0,0,0,.28),
-      0 0 19px rgba(232,182,199,.23),
-      0 0 26px rgba(169,187,217,.14),
-      inset 0 1px 0 rgba(255,255,255,.24)!important;
-  }
-}
 
 .detail-save-btn{
   color:#fff!important;
@@ -3518,7 +3461,7 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     <div class="archive-detail-content">
       <div class="detail-kicker">
         <span>CHARACTER PROFILE</span>
-        <span id="detailCreated">CREATE TIME · 2026.07.18</span>
+        <span id="detailCreated">CREATE TIME · —</span>
       </div>
 
       <div class="detail-heading">
@@ -3659,7 +3602,7 @@ const PNG_CDN_BASE='https://cdn.jsdelivr.net/gh/hqu35785-cmyk/fanhuafenluo@main/
 const PNG_RAW_BASE='https://raw.githubusercontent.com/hqu35785-cmyk/fanhuafenluo/main/';
 
 const SOURCE_URLS={
-  works:'src/data/works.js?v=49902ffceff5',
+  works:'src/data/works.js?v=c87417531269',
   details:{
     fanhuafenluo:'src/data/details-fanhua.js?v=da80d31cbb75',
     shark:'src/data/details-shark.js?v=v3lazy',
@@ -3930,6 +3873,15 @@ function ensureCardPreview(card){
   return image;
 }
 
+function formatCreatedAt(work){
+  const raw=String(work?.createdAt || work?.created || '').trim();
+  const match=raw.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
+  if(!match) return '';
+  return match[1]+'.'+
+    match[2].padStart(2,'0')+'.'+
+    match[3].padStart(2,'0');
+}
+
 function applyAuthorCardContent(authorId,meta){
   const works=catalogState.catalog?.[authorId] || [];
   growCardPool(works.length);
@@ -3989,12 +3941,10 @@ function applyAuthorCardContent(authorId,meta){
     const cornerIndex=card.querySelector('.corner-index');
 
     if(name) name.textContent=work.name;
-    if(metaText){
-      metaText.textContent=
-        work.alias ||
-        work.collectionLabel ||
-        meta.name;
-    }
+    const created=formatCreatedAt(work);
+    const readyLabel=card.querySelector('.state-label-ready');
+    if(metaText) metaText.textContent=created;
+    readyLabel?.classList.toggle('no-created',!created);
     if(code?.lastChild){
       code.lastChild.textContent=
         ` ARCHIVE · ${work.cardLabel || work.tags?.[0] || '角色卡'}`;
@@ -4811,10 +4761,7 @@ function cardData(card){
   return {
     work,
     name:work.name,
-    created:
-      work.alias ||
-      work.collectionLabel ||
-      'TAVO CHARACTER CARD',
+    created:formatCreatedAt(work) || '—',
     identity:
       work.cardLabel ||
       work.tags?.[0] ||
@@ -4989,7 +4936,7 @@ function renderDetailTags(work,identity){
   if(!tagWrap) return;
 
   tagWrap.textContent='';
-  [identity,...(work?.tags || []),'TAVO CHARACTER CARD']
+  [identity,...(work?.tags || []),work?.creator,'TAVO CHARACTER CARD']
     .filter((value,index,values)=>value && values.indexOf(value)===index)
     .slice(0,8)
     .forEach(value=>{
@@ -5028,8 +4975,9 @@ async function openArchive(card){
   document.getElementById('detailName').textContent=work.name;
   document.getElementById('detailIdentity').textContent=data.identity;
   document.getElementById('detailIndex').textContent=`ARCHIVE · ${data.index}`;
+  const created=formatCreatedAt(work);
   document.getElementById('detailCreated').textContent=
-    `CREATOR · ${work.creator || authorSections[authorId]?.name || authorId}`;
+    created ? 'CREATE TIME · '+created : 'CREATE TIME · —';
   document.getElementById('detailAlias').textContent=[
     work.alias,
     work.collectionLabel
@@ -5431,3 +5379,4 @@ window.addEventListener('beforeunload',()=>{
 </script>
 </body>
 </html>
+

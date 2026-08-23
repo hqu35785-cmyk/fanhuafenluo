@@ -80,6 +80,7 @@ image    完整原始 PNG，供「保存角色卡 PNG」下载
   name: "角色名称",
   image: "assets/tavo/new/Tavo_%E8%A7%92%E8%89%B2%E5%90%8D_1234.png",
   preview: "assets/previews/tavo/new/Tavo_%E8%A7%92%E8%89%B2%E5%90%8D_1234.webp",
+  createdAt: "2026-08-06",
   previewPosition: "50% 8%",
   _detailKey: "assets/tavo/new/Tavo_%E8%A7%92%E8%89%B2%E5%90%8D_1234.png",
   alias: "TAVO · 1234",
@@ -95,6 +96,7 @@ image    完整原始 PNG，供「保存角色卡 PNG」下载
 
 - `name`：角色名称。
 - `image` / `preview`：相对路径，必须真实存在。**中文文件名在数据里是百分号编码的**，照抄现有条目的写法。
+- `createdAt`：PNG 首次入库的真实日期，必须使用 ISO `YYYY-MM-DD`；卡面和详情弹窗会格式化成 `YYYY.MM.DD`。没有真实记录时留空或省略，不得用 alias、creator 或当前日期代替。
 - `_detailKey`：必须和 `image` **逐字符完全一致**，页面靠它去 details 文件里取详情。
 - `previewPosition`：两个百分比，空格分隔。
 - `alias` / `collectionLabel` / `cardLabel` / `role` / `tags` / `creator`：有真实资料才填，不要编造。
@@ -123,7 +125,7 @@ window.__LAZY_DETAILS__.fanhuafenluo["assets/tavo/new/Tavo_%E8%A7%92%E8%89%B2%E5
 
 ```js
 const SOURCE_URLS={
-  works:'src/data/works.js?v=49902ffceff5',
+  works:'src/data/works.js?v=c87417531269',
   details:{
     fanhuafenluo:'src/data/details-fanhua.js?v=da80d31cbb75',
     shark:'src/data/details-shark.js?v=v3lazy',
@@ -142,15 +144,16 @@ const SOURCE_URLS={
 4. 在同一源站准备单独的网页预览 WebP：`assets/previews/tavo/new/`；长边约 640，单文件不超过 100 KB。
 5. 确认路径、文件名、大小写、百分号编码完全正确。
 6. 在 `works.js` 对应数组（`latestFanhuaWorks` / `fanhuaWorks` / `sharkWorks` / `waWorks`）里加条目，字段按 §3.1。
-7. 在对应的 `details-*.js` 里加同 key 的条目，字段按 §3.2。
-8. 按 §4 更新本仓库 `index.html` 里对应的 `?v=`。
-9. 打开卡片列表，确认第一眼能看到眼睛或头部，而不是只显示胸口、手部或下半张脸。
-10. 打开详情弹窗，确认顶图能看到眼睛或头部，且简介、开场白、人物设定都有内容。
-11. 打开保存面板，确认预览不只显示胸口；下载的仍是完整原始 PNG。
-12. 确认失败时按源站 → jsDelivr → GitHub Raw 顺序回退，三源全失败时保持斜线态并显示 `CARD FACE UNAVAILABLE`。
-13. 控制台无 404、无未处理 Promise rejection；页面无横向溢出。
-14. 三位作者的数量、首张卡、末张卡和已有卡片都没被破坏。
-15. 本地验证通过后再提交并等待 Pages 部署成功。
+7. 为这张 PNG 填 `createdAt`：优先使用该文件首次入库的 Git 日期；如果没有记录，留空或省略，绝对不要编造。
+8. 在对应的 `details-*.js` 里加同 key 的条目，字段按 §3.2。
+9. 按 §4 更新本仓库 `index.html` 里对应的 `?v=`。
+10. 打开卡片列表，确认第一眼能看到眼睛或头部，而不是只显示胸口、手部或下半张脸。
+11. 打开详情弹窗，确认顶图能看到眼睛或头部，且简介、开场白、人物设定都有内容。
+12. 打开保存面板，确认预览不只显示胸口；下载的仍是完整原始 PNG。
+13. 确认失败时按源站 → jsDelivr → GitHub Raw 顺序回退，三源全失败时保持斜线态并显示 `CARD FACE UNAVAILABLE`。
+14. 控制台无 404、无未处理 Promise rejection；页面无横向溢出。
+15. 三位作者的数量、首张卡、末张卡和已有卡片都没被破坏。
+16. 本地验证通过后再提交并等待 Pages 部署成功。
 
 ## 6. 禁止事项
 
@@ -159,7 +162,8 @@ const SOURCE_URLS={
 - 禁止只调整截图而不在数据里记录 `previewPosition`。
 - 禁止用 Canvas 生成假的角色卡 PNG。
 - 禁止删除「源站 → jsDelivr → GitHub Raw」三级图片备用来源。
-- 禁止重新设计标题栏、卡片结构、详情弹窗、保存面板或任何原始动画。
+- 禁止重新设计标题栏、卡片结构、详情弹窗、保存面板或原始动画；本次唯一明确例外是：允许移除卡面下载按钮 `.download-action` 的常驻全息动效。
+- `.detail-action` 的全息效果、详情弹窗的 `detailButtonSheen`、下载按钮按下时的 `detailMiniDownload` 必须保留；不要因为下载按钮收敛而连带修改查看档案按钮。
 - 禁止破坏 `content-visibility` / `.is-near` / `--card-ih` / 滚动物理这套渲染优化。
 - 禁止把三源全失败时的 `CARD FACE UNAVAILABLE` 斜线兜底改成几何占位图形。
 - 禁止加入敏感内容锁定 / 解锁机制。本站已明确决定不要这一套，数据里的 `sensitive*` 字段一律忽略。
@@ -169,6 +173,7 @@ const SOURCE_URLS={
 ## 7. 最终验收标准
 
 - 列表卡片能看到眼睛或头部。
+- 卡面和详情弹窗的 `CREATE TIME` 使用真实 `createdAt`，显示为 `YYYY.MM.DD`，不是 alias，也不是 creator；缺少日期时卡面线和日期行一起隐藏，角色名仍正常显示。
 - 详情弹窗顶图能看到眼睛或头部。
 - 保存面板预览不只显示胸口。
 - 详情三栏（简介 / 开场白 / 人物设定）都有真实内容。
@@ -178,6 +183,9 @@ const SOURCE_URLS={
 - 源站失败时按 jsDelivr、GitHub Raw 顺序回退。
 - 桌面、平板、手机宽度下无横向溢出。
 - 新增卡片后站点不报 `SOURCE ERROR`，卡片数量自动跟随数据。
+- 卡面下载按钮静止时没有流动全息效果；悬停时只出现一次 `detailButtonSheen` 扫光，按下图标仍有回弹。
+- 页面静态基线为 `@keyframes = 68`、`transition = 49`，且 `holoRibbonDownload`、`downloadHoloPulse` 不再存在；除下载按钮例外外，不得删除其他动画。
 - 页面没有出现第二套卡片 CSS 或另一套 modal 结构。
 - 页面有 `h1`、description、canonical、Open Graph、Twitter card、theme-color、favicon。
 - 无障碍检查不出现 `aria-hidden` 包裹可用按钮；弹窗打开后 Tab 留在当前浮层内。
+
