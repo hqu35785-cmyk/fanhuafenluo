@@ -105,7 +105,7 @@ body.is-loaded .toolbar-status i{background:rgba(169,187,217,.58);border-color:r
   column-gap:clamp(10px,.72vw,14px);
   row-gap:clamp(18px,2vh,26px);
 }
-.archive-card{min-width:0}
+.archive-card{min-width:0;perspective:760px}
 .card-face{
   position:relative;aspect-ratio:.72;overflow:hidden;
   border:1px solid rgba(255,255,255,.072);border-radius:16px;
@@ -319,7 +319,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
 @media(max-width:1080px){
   .gallery{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
-@media(max-width:820px){
+@media(max-width:760px){
   .gallery{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:620px){
@@ -2708,7 +2708,6 @@ a.save-sheet-choice:active{
   --scroll-scale:1;
   --hover-lift:0px;
   transform:
-    perspective(900px)
     translate3d(0,var(--scroll-shift),0)
     translateY(var(--hover-lift))
     rotateX(var(--scroll-tilt))
@@ -2717,13 +2716,13 @@ a.save-sheet-choice:active{
   transform-origin:50% 52%;
   will-change:transform;
 }
-body.is-scroll-forcing .archive-card .card-face{
+.gallery.is-scroll-forcing .archive-card .card-face{
   transition:
     border-color var(--motion-load) ease,
     box-shadow var(--motion-load) var(--ease-out),
     transform 0s linear!important;
 }
-body.is-scroll-forcing .archive-card.is-loaded .card-face{
+.gallery.is-scroll-forcing .archive-card.is-loaded .card-face{
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.042),
     0 18px 40px rgba(0,0,0,.20);
@@ -2732,7 +2731,6 @@ body.is-scroll-forcing .archive-card.is-loaded .card-face{
   .archive-card.is-loaded:hover .card-face{
     --hover-lift:-2px;
     transform:
-      perspective(900px)
       translate3d(0,var(--scroll-shift),0)
       translateY(var(--hover-lift))
       rotateX(var(--scroll-tilt))
@@ -2852,12 +2850,11 @@ body.is-scroll-forcing .archive-card.is-loaded .card-face{
   --scroll-art-shift:0px;
   --scroll-edge-y:50%;
   transform:
-    perspective(760px)
     translate3d(0,var(--scroll-shift),0)
     translateY(var(--hover-lift,0px))
     rotateX(var(--scroll-tilt))
     rotateZ(var(--scroll-roll))
-    scale(var(--scroll-scale-x),var(--scroll-scale-y))!important;
+    scale(var(--scroll-scale-x),var(--scroll-scale-y));
   transform-origin:50% 50%;
   will-change:transform;
   backface-visibility:hidden;
@@ -2871,7 +2868,7 @@ body.is-scroll-forcing .archive-card.is-loaded .card-face{
   inset:0;
   pointer-events:none;
   border-radius:inherit;
-  opacity:var(--scroll-glow);
+  opacity:0;
   background:
     radial-gradient(130% 38% at 50% var(--scroll-edge-y),rgba(255,255,255,.16),rgba(232,182,199,.06) 34%,transparent 68%),
     linear-gradient(180deg,rgba(255,255,255,.045),transparent 22%,transparent 78%,rgba(169,187,217,.04));
@@ -2885,16 +2882,16 @@ body.is-scroll-forcing .archive-card.is-loaded .card-face{
   translate:0 var(--scroll-art-shift);
 }
 
-body.is-scroll-forcing .archive-card .loaded-art,
-body.is-scroll-forcing .archive-card .ghost-frame,
-body.is-scroll-forcing .archive-card .stripe-field{
+.gallery.is-scroll-forcing .archive-card .loaded-art,
+.gallery.is-scroll-forcing .archive-card .ghost-frame,
+.gallery.is-scroll-forcing .archive-card .stripe-field{
   transition-duration:0s!important;
 }
 
 /* When force ends, only the final tiny settling is eased by CSS; JS drives the spring itself. */
-body:not(.is-scroll-forcing) .archive-card .loaded-art,
-body:not(.is-scroll-forcing) .archive-card .ghost-frame,
-body:not(.is-scroll-forcing) .archive-card .stripe-field{
+.gallery:not(.is-scroll-forcing) .archive-card .loaded-art,
+.gallery:not(.is-scroll-forcing) .archive-card .ghost-frame,
+.gallery:not(.is-scroll-forcing) .archive-card .stripe-field{
   transition:translate 180ms cubic-bezier(.2,.8,.2,1),opacity .36s ease;
 }
 
@@ -2902,12 +2899,11 @@ body:not(.is-scroll-forcing) .archive-card .stripe-field{
   .archive-card.is-loaded:hover .card-face{
     --hover-lift:-2px;
     transform:
-      perspective(760px)
       translate3d(0,var(--scroll-shift),0)
       translateY(var(--hover-lift))
       rotateX(var(--scroll-tilt))
       rotateZ(var(--scroll-roll))
-      scale(var(--scroll-scale-x),var(--scroll-scale-y))!important;
+      scale(var(--scroll-scale-x),var(--scroll-scale-y));
   }
 }
 
@@ -3327,8 +3323,8 @@ body.has-overlay .archive-card .download-action{
 }
 
 /* Direction class replaces a per-card CSS variable write every physics frame. */
-body.scroll-force-down .archive-card .face-glow{--scroll-edge-y:5%}
-body.scroll-force-up .archive-card .face-glow{--scroll-edge-y:95%}
+.gallery.scroll-force-down .archive-card .face-glow{--scroll-edge-y:5%}
+.gallery.scroll-force-up .archive-card .face-glow{--scroll-edge-y:95%}
 
 /* Photo save remains visibly holographic even while PNG/share capability is preparing.
    Disabled still blocks clicks; only the visual opacity is kept strong. */
@@ -7478,9 +7474,9 @@ function clampMotion(value,min,max){
 }
 
 function currentGalleryColumns(){
-  if(window.innerWidth<=620) return 2;
-  if(window.innerWidth<=1100) return 4;
-  return 6;
+  const template=getComputedStyle(galleryEl).gridTemplateColumns;
+  const columns=template.split(/\s+/).filter(Boolean).length;
+  return columns || 1;
 }
 
 function syncCardIntrinsicHeight(){
@@ -7653,11 +7649,8 @@ function paintScrollPhysics(force){
       meta.lastRoll=rollOut;
       meta.lastScaleX=scaleXOut;
       meta.lastScaleY=scaleYOut;
-      meta.face.style.setProperty(
-        'transform',
-        `perspective(760px) translate3d(0,${shiftOut}px,0) translateY(var(--hover-lift,0px)) rotateX(${tiltOut}deg) rotateZ(${rollOut}deg) scale(${scaleXOut},${scaleYOut})`,
-        'important'
-      );
+      meta.face.style.transform=
+        `translate3d(0,${shiftOut}px,0) translateY(var(--hover-lift,0px)) rotateX(${tiltOut}deg) rotateZ(${rollOut}deg) scale(${scaleXOut},${scaleYOut})`;
     }
 
     if(
@@ -7718,7 +7711,7 @@ function runScrollPhysics(now){
     forcePosition=0;
     forceVelocity=0;
     paintScrollPhysics(0);
-    body.classList.remove('is-scroll-forcing','scroll-force-down','scroll-force-up');
+    galleryEl.classList.remove('is-scroll-forcing','scroll-force-down','scroll-force-up');
     return;
   }
   scrollPhysicsRaf=requestAnimationFrame(runScrollPhysics);
@@ -7740,9 +7733,9 @@ window.addEventListener('scroll',()=>{
 
   forceTarget=clampMotion(forceTarget*.28+impulse,-42,42);
   lastScrollEventAt=now;
-  body.classList.add('is-scroll-forcing');
-  body.classList.toggle('scroll-force-down',delta>0);
-  body.classList.toggle('scroll-force-up',delta<0);
+  galleryEl.classList.add('is-scroll-forcing');
+  galleryEl.classList.toggle('scroll-force-down',delta>0);
+  galleryEl.classList.toggle('scroll-force-up',delta<0);
   if(!scrollPhysicsRaf) scrollPhysicsRaf=requestAnimationFrame(runScrollPhysics);
 },{passive:true});
 
