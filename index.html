@@ -148,7 +148,7 @@ button{font:inherit}
 
 /* Same diagonal texture in both states; it becomes a subtle overlay after load. */
 .stripe-field{
-  position:absolute;inset:-18%;z-index:4;
+  position:absolute;inset:-25%;z-index:4;
   transform:rotate(-17deg);transform-origin:center;opacity:.80;
   transition:opacity .36s ease;
 }
@@ -199,9 +199,15 @@ button{font:inherit}
   backdrop-filter:blur(6px);
   font-size:6.5px;font-weight:650;letter-spacing:.08em;
 }
-.corner-code span{
+.corner-dot{
   width:4px;height:4px;border-radius:50%;
   background:rgba(232,182,199,.64);box-shadow:0 0 8px rgba(232,182,199,.22);
+}
+.corner-label{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 .corner-index{
   position:absolute;z-index:10;top:15px;right:12px;
@@ -529,11 +535,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   border-color:rgba(169,187,217,.16)!important;
   color:rgba(247,243,246,.78)!important;
 }
-.archive-card.is-loaded .detail-action:hover .action-arrow{
-  border-color:rgba(232,182,199,.25);
-  color:rgba(255,251,253,.82);
-}
-
 /* Loading/loaded visuals now belong to each card, not body-global state. */
 .archive-card .loaded-art{
   opacity:0;
@@ -559,9 +560,15 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   opacity:.32;
 }
 .archive-card.is-loaded .corner-code{
-  color:rgba(255,251,253,.90);
-  background:rgba(7,8,12,.48);
-  border-color:rgba(255,255,255,.14);
+  color:#f7d9e4!important;
+  border-color:rgba(245,210,226,.42)!important;
+  background:
+    linear-gradient(135deg,
+      rgba(232,182,199,.20) 0%,
+      rgba(200,185,223,.16) 52%,
+      rgba(169,187,217,.13) 100%),
+    rgba(7,8,12,.52)!important;
+  text-shadow:0 1px 3px rgba(4,5,9,.6)!important;
 }
 .archive-card.is-loaded .corner-index{
   color:rgba(247,243,246,.46);
@@ -675,13 +682,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   letter-spacing:.10em!important;
   font-variant-numeric:tabular-nums!important;
 }
-.loading-title{
-  font-size:8px!important;
-}
-.loading-sub{
-  font-size:7px!important;
-}
-.loading-core::before{
+.archive-card.is-loaded .loading-core::before{
   content:"";
   position:absolute;
   z-index:-1;
@@ -718,6 +719,29 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
 @media(max-width:620px){
   .state-label-ready .ready-name{font-size:13px!important}
   .state-label-ready .ready-meta{font-size:8px!important}
+}
+@media(max-width:620px){
+  .card-face{border-radius:14px}
+  .ghost-frame{inset:8px;border-radius:10px}
+
+  .corner-code{
+    top:8px;left:8px;
+    height:23px;padding:0 7px;
+    font-size:5.8px;
+  }
+  .corner-index{
+    top:13px;right:9px;
+    font-size:5.8px;
+  }
+  .loading-core{
+    left:10px;right:10px;bottom:55px;
+  }
+  .loading-title{font-size:5.6px}
+  .loading-sub{font-size:5px}
+  .bottom-frame{
+    left:7px;right:7px;bottom:7px;
+    min-height:39px;
+  }
 }
 /* =========================
    Archive detail modal
@@ -1865,8 +1889,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
 
 .detail-action,
 .download-action{
-  --fx-x:50%;
-  --fx-y:50%;
   isolation:isolate!important;
   overflow:hidden!important;
   transition:
@@ -1893,26 +1915,18 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   pointer-events:none;
   opacity:0;
   transform:translate3d(0,0,0) rotate(-8deg);
-  background:
-    radial-gradient(
-      circle at var(--fx-x) var(--fx-y),
-      rgba(255,255,255,.435) 0%,
-      rgba(255,198,226,.192) 18%,
-      rgba(151,224,255,.128) 34%,
-      transparent 58%
-    ),
-    linear-gradient(
-      112deg,
-      rgba(255,92,166,.192) 0%,
-      rgba(151,116,255,.166) 18%,
-      rgba(89,219,255,.205) 36%,
-      rgba(122,255,202,.128) 52%,
-      rgba(255,222,107,.205) 68%,
-      rgba(255,138,205,.179) 84%,
-      rgba(255,92,166,.192) 100%
-    );
-  background-size:100% 100%, 260% 100%;
-  background-position:center, 0% 50%;
+  background:linear-gradient(
+    112deg,
+    rgba(255,92,166,.15) 0%,
+    rgba(151,116,255,.13) 18%,
+    rgba(89,219,255,.16) 36%,
+    rgba(122,255,202,.10) 52%,
+    rgba(255,222,107,.16) 68%,
+    rgba(255,138,205,.14) 84%,
+    rgba(255,92,166,.15) 100%
+  )!important;
+  background-size:260% 100%!important;
+  background-position:0% 50%!important;
   transition:opacity .48s ease;
   animation:holoActionDrift 3.1s linear infinite;
   will-change:background-position,opacity,transform;
@@ -1957,25 +1971,17 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   100% { transform:skewX(-17deg) translateX(430%); }
 }
 
-/* 查看档案：柔和、慢一点。 */
-.archive-card.is-loaded .detail-action:hover::before,
-.archive-card.is-loaded .detail-action:focus-visible::before{
-  opacity:.68;
-}
-.archive-card.is-loaded .detail-action:hover::after,
-.archive-card.is-loaded .detail-action:focus-visible::after{
-  opacity:.72;
-}
-.archive-card.is-loaded .detail-action:hover,
-.archive-card.is-loaded .detail-action:focus-visible{
+/* 查看档案：常态直接使用原悬停态的柔和亮度。 */
+.archive-card.is-loaded .detail-action{
   border-color:rgba(209,198,255,.26)!important;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.045),
     0 0 15px rgba(153,218,255,.055)!important;
   background:linear-gradient(180deg,rgba(13,14,20,.58),rgba(7,8,12,.72))!important;
 }
-.archive-card.is-loaded .detail-action:hover .action-arrow,
-.archive-card.is-loaded .detail-action:focus-visible .action-arrow{
+.archive-card.is-loaded .detail-action::before{opacity:.68!important}
+.archive-card.is-loaded .detail-action::after{opacity:.70!important}
+.archive-card.is-loaded .detail-action .action-arrow{
   border-color:rgba(199,214,255,.26)!important;
   color:rgba(255,255,255,.87)!important;
   background:rgba(184,211,255,.055)!important;
@@ -1993,9 +1999,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   .detail-action::after{
     animation:none!important;
   }
-  .archive-card.is-loaded .detail-action:hover::after{
-    opacity:.18!important;
-  }
 }
 
 
@@ -2004,39 +2007,22 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
    Loaded actions continuously flow without requiring hover.
    ========================================================= */
 
-/* Detail: always-on restrained holo motion. */
-.archive-card.is-loaded .detail-action::before{
-  opacity:.56!important;
-}
-.archive-card.is-loaded .detail-action::after{
-  opacity:.58!important;
-}
-.archive-card.is-loaded .detail-action{
-  border-color:rgba(209,198,255,.18)!important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.035),
-    0 0 12px rgba(153,218,255,.035)!important;
-}
-
-/* Hover only adds a tiny emphasis; it no longer starts the effect. */
-.archive-card.is-loaded .detail-action:hover,
-.archive-card.is-loaded .detail-action:focus-visible{
-  transform:translateY(-1px)!important;
-}
-.archive-card.is-loaded .detail-action:hover::before,
-.archive-card.is-loaded .detail-action:focus-visible::before{
-  opacity:.68!important;
-}
-.archive-card.is-loaded .detail-action:hover::after,
-.archive-card.is-loaded .detail-action:focus-visible::after{
-  opacity:.70!important;
+/* Hover only adds a tiny physical emphasis. */
+@media(hover:hover) and (pointer:fine){
+  .archive-card.is-loaded .detail-action:hover,
+  .archive-card.is-loaded .detail-action:focus-visible{
+    transform:translateY(-1px)!important;
+  }
+  .archive-card.is-loaded .detail-action:hover .action-arrow{
+    transform:translateX(2px);
+  }
 }
 
 /* Touch screens retain the detail-action treatment; the download control is
    intentionally static on touch devices because there is no hover state. */
 @media(hover:none){
-  .archive-card.is-loaded .detail-action::before{opacity:.54!important}
-  .archive-card.is-loaded .detail-action::after{opacity:.56!important}
+  .archive-card.is-loaded .detail-action::before{opacity:.68!important}
+  .archive-card.is-loaded .detail-action::after{opacity:.70!important}
 }
 
 /* Reduced motion gets static holo instead of animation. */
@@ -3041,7 +3027,7 @@ a.save-sheet-choice:active{
   50%{transform:translate3d(5%,0,0) rotate(-8deg) scale(1.03)}
 }
 .detail-action::before{
-  background-position:center,50% 50%!important;
+  background-position:0% 50%!important;
   animation-name:holoFilmDriftLite!important;
   will-change:auto!important;
 }
@@ -3383,14 +3369,14 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
         <div class="stripe-field" aria-hidden="true"></div>
         <div class="ghost-frame" aria-hidden="true"></div>
 
-        <div class="corner-code"><span></span> </div>
+        <div class="corner-code"><span class="corner-dot"></span><span class="corner-label"></span></div>
         <div class="corner-index"></div>
 
         <div class="loading-core" aria-hidden="true">
           <div class="state-label state-label-loading">
             <div class="loading-title">ARCHIVE MATERIALIZING</div>
             <div class="loading-line"></div>
-            <div class="loading-sub">WAITING FOR CARD FACE</div>
+            <div class="loading-sub">等待卡面</div>
           </div>
           <div class="state-label state-label-ready">
             <div class="loading-title ready-name"></div>
@@ -3602,9 +3588,9 @@ const PNG_RAW_BASE='https://raw.githubusercontent.com/hqu35785-cmyk/fanhuafenluo
 const SOURCE_URLS={
   works:'src/data/works.js?v=c87417531269',
   details:{
-    fanhuafenluo:'src/data/details-fanhua.js?v=da80d31cbb75',
-    shark:'src/data/details-shark.js?v=v3lazy',
-    wa:'src/data/details-wa.js?v=v3lazy'
+    fanhuafenluo:'src/data/details-fanhua.js?v=aeaa10896606',
+    shark:'src/data/details-shark.js?v=aeaa10896606',
+    wa:'src/data/details-wa.js?v=aeaa10896606'
   }
 };
 
@@ -3935,7 +3921,7 @@ function applyAuthorCardContent(authorId,meta){
     const number=String(index+1).padStart(2,'0');
     const name=card.querySelector('.ready-name');
     const metaText=card.querySelector('.ready-meta');
-    const code=card.querySelector('.corner-code');
+    const label=card.querySelector('.corner-label');
     const cornerIndex=card.querySelector('.corner-index');
 
     if(name) name.textContent=work.name;
@@ -3943,10 +3929,7 @@ function applyAuthorCardContent(authorId,meta){
     const readyLabel=card.querySelector('.state-label-ready');
     if(metaText) metaText.textContent=created;
     readyLabel?.classList.toggle('no-created',!created);
-    if(code?.lastChild){
-      code.lastChild.textContent=
-        ` ARCHIVE · ${work.cardLabel || work.tags?.[0] || '角色卡'}`;
-    }
+    if(label) label.textContent=`ARCHIVE · ${number}`;
     if(cornerIndex) cornerIndex.textContent=number;
 
     card.querySelector('.detail-action')?.setAttribute(
@@ -4317,6 +4300,13 @@ function revealCard(card){
   card.classList.add('is-loaded','just-loaded');
   card.classList.remove('is-loading-now');
 
+  const label=card.querySelector('.corner-label');
+  if(label) label.textContent=
+    card._work.cardLabel ||
+    card._work.tags?.[0] ||
+    card._work.role ||
+    '角色卡';
+
   const enabled=Boolean(card._work);
   card.querySelectorAll('.detail-action,.download-action').forEach(btn=>{
     btn.disabled=!enabled;
@@ -4491,44 +4481,12 @@ const physicsObserver=new IntersectionObserver(entries=>{
   });
 },{rootMargin:'300px 0px 300px',threshold:0});
 
-function bindCardButtonMotion(el){
-  let rect=null;
-  let fxRaf=0;
-  let lastX=0;
-  let lastY=0;
-
-  el.addEventListener('pointerenter',e=>{
-    if(e.pointerType && e.pointerType!=='mouse' && e.pointerType!=='pen') return;
-    rect=el.getBoundingClientRect();
-  },{passive:true});
-  el.addEventListener('pointermove',e=>{
-    if(e.pointerType && e.pointerType!=='mouse' && e.pointerType!=='pen') return;
-    lastX=e.clientX;
-    lastY=e.clientY;
-    if(fxRaf) return;
-    fxRaf=requestAnimationFrame(()=>{
-      fxRaf=0;
-      if(!rect) rect=el.getBoundingClientRect();
-      const x=((lastX-rect.left)/Math.max(1,rect.width))*100;
-      const y=((lastY-rect.top)/Math.max(1,rect.height))*100;
-      el.style.setProperty('--fx-x',`${Math.max(0,Math.min(100,x)).toFixed(1)}%`);
-      el.style.setProperty('--fx-y',`${Math.max(0,Math.min(100,y)).toFixed(1)}%`);
-    });
-  },{passive:true});
-  el.addEventListener('pointerleave',()=>{
-    rect=null;
-    el.style.setProperty('--fx-x','50%');
-    el.style.setProperty('--fx-y','50%');
-  },{passive:true});
-}
-
 function registerCard(card,index){
   card._work=null;
   card._revealToken=0;
   card.querySelectorAll('.detail-action,.download-action').forEach(button=>{
     button.disabled=true;
     button.tabIndex=-1;
-    bindCardButtonMotion(button);
   });
 
   physicsMeta.set(card,{
@@ -4557,6 +4515,8 @@ function buildCard(index){
   }
   const card=cardTemplate.content.firstElementChild.cloneNode(true);
   card.classList.add(`pattern-${(index%4)+1}`,`theme-${index%6}`);
+  card.querySelector('.corner-label').textContent=
+    `ARCHIVE · ${String(index+1).padStart(2,'0')}`;
   return card;
 }
 
@@ -4792,10 +4752,9 @@ function cardData(card){
 
 function detailCopyForWork(work){
   return {
-    intro:[
-      work.role,
-      work.personality
-    ].filter(Boolean).join('\n\n') ||
+    intro:
+      work.intro ||
+      [work.role,work.personality].filter(Boolean).join('\n\n') ||
       '该角色卡未提供简介。',
 
     opening:
@@ -4809,7 +4768,7 @@ function detailCopyForWork(work){
     worldbook:
       work.worldbook ||
       work.lorebook ||
-      '该角色卡未包含世界书。'
+      '该角色卡未附带世界书。'
   };
 }
 
@@ -4839,20 +4798,17 @@ const detailTabOrder=['intro','opening','setting','worldbook'];
 const detailOptions=document.querySelector('.detail-options');
 const detailReadingPanel=document.querySelector('.detail-reading-panel');
 
-function visibleDetailTabs(work=catalogState.activeWork){
-  return detailTabOrder.filter(key=>
-    key!=='worldbook' || Boolean(work?.worldbook || work?.lorebook)
-  );
+function visibleDetailTabs(){
+  return detailTabOrder;
 }
 
-function renderDetailTabs(work){
-  const visible=visibleDetailTabs(work);
+function renderDetailTabs(){
+  const visible=visibleDetailTabs();
 
   document.querySelectorAll('[data-detail-tab]').forEach(button=>{
-    const isVisible=visible.includes(button.dataset.detailTab);
-    button.hidden=!isVisible;
-    button.tabIndex=isVisible?0:-1;
-    button.setAttribute('aria-hidden',String(!isVisible));
+    button.hidden=false;
+    button.tabIndex=0;
+    button.removeAttribute('aria-hidden');
   });
 
   detailOptions?.style.setProperty('--detail-count',String(visible.length || 1));
@@ -4880,7 +4836,7 @@ function paintDetailContent(key){
 
 function setDetailTab(key,options={}){
   if(!detailTabMeta[key]) key='intro';
-  const visible=visibleDetailTabs(catalogState.activeWork);
+  const visible=visibleDetailTabs();
   if(!visible.includes(key)) key=visible[0] || 'intro';
   const instant=Boolean(options.instant) || prefersReducedMotion.matches;
   const fromKey=currentDetailTab;

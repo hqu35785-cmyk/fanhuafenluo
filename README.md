@@ -109,15 +109,17 @@ image    完整原始 PNG，供「保存角色卡 PNG」下载
 
 ```js
 window.__LAZY_DETAILS__.fanhuafenluo["assets/tavo/new/Tavo_%E8%A7%92%E8%89%B2%E5%90%8D_1234.png"] = {
+  intro: "角色卡 description / 简介原文",
   opening: "开场白全文",
   personality: "性格简介全文",
-  setting: "人物设定 / 剧情全文"
+  setting: "人物设定 / 剧情全文",
+  worldbook: "角色卡 character_book / Lorebook 条目全文"
 };
 ```
 
-`opening`、`personality`、`setting` 三个字段缺任何一个，详情弹窗对应栏会显示缺省文案。缺少资料时不要编造内容。
+`intro` 来源于原始 PNG 内嵌 TAVO 数据的 `description` / 简介字段；没有真实 `intro` 时，页面才回退到 `role + personality`。`opening`、`personality`、`setting` 三个字段缺任何一个，详情弹窗对应栏会显示缺省文案。缺少资料时不要编造内容。
 
-`worldbook` / `lorebook` 字段目前全站为空；有真实内容时可以加，没有就不要加空字符串。
+`worldbook` 来源于原始 PNG 内嵌 TAVO 数据的 `character_book` / Lorebook 条目。确实没有世界书时，必须省略整个字段，不要写空字符串；页面在第 4 个「世界书」模块中显示 `该角色卡未附带世界书。`。
 
 ## 4. 改了数据必须同步换 `?v=` 版本号
 
@@ -127,9 +129,9 @@ window.__LAZY_DETAILS__.fanhuafenluo["assets/tavo/new/Tavo_%E8%A7%92%E8%89%B2%E5
 const SOURCE_URLS={
   works:'src/data/works.js?v=c87417531269',
   details:{
-    fanhuafenluo:'src/data/details-fanhua.js?v=da80d31cbb75',
-    shark:'src/data/details-shark.js?v=v3lazy',
-    wa:'src/data/details-wa.js?v=v3lazy'
+    fanhuafenluo:'src/data/details-fanhua.js?v=aeaa10896606',
+    shark:'src/data/details-shark.js?v=aeaa10896606',
+    wa:'src/data/details-wa.js?v=aeaa10896606'
   }
 };
 ```
@@ -176,8 +178,8 @@ const SOURCE_URLS={
 - 卡面和详情弹窗的 `CREATE TIME` 使用真实 `createdAt`，显示为 `YYYY.MM.DD`，不是 alias，也不是 creator；缺少日期时卡面线和日期行一起隐藏，角色名仍正常显示。
 - 详情弹窗顶图能看到眼睛或头部。
 - 保存面板预览不只显示胸口。
-- 详情三栏（简介 / 开场白 / 人物设定）都有真实内容。
-- 无 `worldbook` / `lorebook` 数据时，第 4 个标签隐藏并且滑块宽度正确对齐 3 等分。
+- 详情四栏（简介 / 开场白 / 人物设定 / 世界书）始终存在；简介优先使用真实 `intro`。
+- 无 `worldbook` / `lorebook` 数据时，第 4 个「世界书」标签仍显示，并在阅读区显示 `该角色卡未附带世界书。`。
 - `tags` 数组的真实内容会显示在详情标签中。
 - 原始 PNG 下载有效，文件大小不为零。
 - 源站失败时按 jsDelivr、GitHub Raw 顺序回退。
