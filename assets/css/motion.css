@@ -77,11 +77,6 @@
   from { opacity: 1; scale: 1; }
   to   { opacity: 0; scale: .98; }
 }
-@keyframes mo-float-y {              /* 箭头常驻浮动 */
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(6px); }
-}
-
 /* ---------- 3. 滚动入场基础 ---------- */
 /* 只有 JS 就绪后才隐藏，脚本失败时页面仍然可读 */
 html.mo-ready [data-motion] { opacity: 0; }
@@ -109,8 +104,11 @@ html.mo-ready [data-motion] { opacity: 0; }
 .mo-card     { --mo-dur: var(--dur-md); --mo-ease: var(--ease-expo); }
 .mo-section  { --mo-dur: var(--dur-md); }
 
-/* ---------- 5. 首屏箭头 ---------- */
-.mo-arrow { animation: mo-float-y 2.4s ease-in-out infinite; }
+/* ---------- 5. 下载箭头：固定显示，不参与循环或点击位移动画 ---------- */
+.mo-arrow {
+  animation: none !important;
+  transform: none !important;
+}
 
 /* ---------- 6. 卡片 hover：从下往上扫过的高光 ---------- */
 .mo-card { position: relative; }
@@ -177,7 +175,6 @@ html.mo-ready [data-motion] { opacity: 0; }
   }
   .mo-backdrop.is-closing,
   .mo-panel.is-closing { animation-name: mo-fade-in !important; animation-direction: reverse !important; }
-  .mo-arrow { animation: none !important; }
   .mo-card::after { transition-duration: 1ms !important; }
   .mo-sheet { transition-duration: 120ms !important; }
 }

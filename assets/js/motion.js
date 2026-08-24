@@ -85,7 +85,7 @@
       mark(el, 'settle', { cls: 'mo-cta' });
     });
 
-    // ⇩ 箭头：与按钮解耦，常驻浮动
+    // ⇩ 箭头：与按钮解耦，但保持静态
     $$(SEL.heroArrow).forEach(function (el) { el.classList.add('mo-arrow'); });
 
     // 其它区块：常规上浮
