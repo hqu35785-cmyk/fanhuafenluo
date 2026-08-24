@@ -891,7 +891,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   letter-spacing:.15em;
 }
 .detail-heading{
-  margin-top:24px;
+  margin-top:0;
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
@@ -1253,8 +1253,11 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   margin-top:9px;
   min-height:250px;
   max-height:330px;
-  overflow:auto;
-  overscroll-behavior:contain;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior-y:contain;
+  overscroll-behavior-x:none;
+  touch-action:pan-y;
   padding:18px 17px 28px;
   border:1px solid rgba(255,255,255,.07);
   border-radius:13px;
@@ -1311,6 +1314,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   font-size:11px;
   line-height:1.88;
   white-space:pre-wrap;
+  overflow-wrap:anywhere;
   word-break:break-word;
 }
 .detail-reading-body::selection{
@@ -3454,23 +3458,12 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
     </div>
 
     <div class="archive-detail-content">
-      <div class="detail-kicker">
-        <span>CHARACTER PROFILE</span>
-        <span id="detailCreated">CREATE TIME · —</span>
-      </div>
-
       <div class="detail-heading">
         <div>
           <h2 id="detailName">角色名</h2>
           <p id="detailAlias">TAVO CHARACTER CARD · SPEC V1 / V2 / V3</p>
         </div>
         <span class="detail-tavo-badge">TAVO</span>
-      </div>
-
-      <div class="detail-tags">
-        <span>角色身份</span>
-        <span>PNG CHARACTER CARD</span>
-        <span>ARCHIVE RECORD</span>
       </div>
 
       <div class="detail-reader">
@@ -4937,21 +4930,6 @@ document.querySelectorAll('[data-detail-tab]').forEach(btn=>{
   btn.addEventListener('click',()=>setDetailTab(btn.dataset.detailTab));
 });
 
-function renderDetailTags(work,identity){
-  const tagWrap=document.querySelector('.detail-tags');
-  if(!tagWrap) return;
-
-  tagWrap.textContent='';
-  [identity,...(work?.tags || []),work?.creator,'TAVO CHARACTER CARD']
-    .filter((value,index,values)=>value && values.indexOf(value)===index)
-    .slice(0,8)
-    .forEach(value=>{
-      const tag=document.createElement('span');
-      tag.textContent=value;
-      tagWrap.appendChild(tag);
-    });
-}
-
 if(detailReadingPanel){
   let detailScrollRaf=0;
   detailReadingPanel.addEventListener('scroll',()=>{
@@ -4981,15 +4959,11 @@ async function openArchive(card){
   document.getElementById('detailName').textContent=work.name;
   document.getElementById('detailIdentity').textContent=data.identity;
   document.getElementById('detailIndex').textContent=`ARCHIVE · ${data.index}`;
-  const created=formatCreatedAt(work);
-  document.getElementById('detailCreated').textContent=
-    created ? 'CREATE TIME · '+created : 'CREATE TIME · —';
   document.getElementById('detailAlias').textContent=[
     work.alias,
     work.collectionLabel
   ].filter(Boolean).join(' · ') || 'TAVO CHARACTER CARD';
 
-  renderDetailTags(work,data.identity);
   renderDetailTabs(work);
   archiveModal._detailCopy=detailsReady
     ? detailCopyForWork(work)
