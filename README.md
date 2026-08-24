@@ -6,11 +6,11 @@
 
 默认推荐使用无卡片滚动惯性的版本：
 
-[打开无惯性版](https://hqu35785-cmyk.github.io/fanhuafenluo-pages/)
+[打开无惯性版](https://hqu35785-cmyk.github.io/fanhuafenluo/)
 
 如果想查看当前旧版的卡片滚动惯性效果：
 
-[打开有惯性版](https://hqu35785-cmyk.github.io/fanhuafenluo-pages/index-inertia.html)
+[打开有惯性版](https://hqu35785-cmyk.github.io/fanhuafenluo/index-inertia.html)
 
 `98 张卡`　`繁花·纷落 70 / 鲨鱼 14 / 咓 14`　`响应式浏览`　`原始 PNG`　`五栏真实资料`
 
@@ -65,7 +65,7 @@ assets/css/motion.css
 assets/js/motion.js
 ```
 
-角色卡源仓库是 [hqu35785-cmyk/fanhuafenluo](https://github.com/hqu35785-cmyk/fanhuafenluo)：
+角色卡源仓库是 [hqu35785-cmyk/fanhuafenluo-pages](https://github.com/hqu35785-cmyk/fanhuafenluo-pages)：
 
 ```text
 src/data/works.js
