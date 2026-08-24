@@ -2103,21 +2103,7 @@ a.save-sheet-choice:active{
   animation:motionUnderline 360ms var(--ease-out) both;
 }
 
-/* Scroll reveal + unloaded -> loaded choreography. */
-.archive-card{
-  opacity:.72;
-  transform:translateY(12px) scale(.994);
-  filter:saturate(.88);
-  transition:
-    opacity 520ms var(--ease-out),
-    transform 620ms var(--ease-out),
-    filter 620ms ease;
-}
-.archive-card.is-entered{
-  opacity:1;
-  transform:none;
-  filter:none;
-}
+/* Unloaded -> loaded choreography. */
 .archive-card .card-face{
   transition:
     border-color var(--motion-load) ease,
@@ -2138,15 +2124,6 @@ a.save-sheet-choice:active{
 .archive-card.is-loaded .card-face{
   border-color:rgba(255,255,255,.095);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 15px 34px rgba(0,0,0,.19);
-}
-.archive-card.just-loaded .card-face{
-  animation:motionCardResolve 780ms var(--ease-out) both;
-}
-.archive-card.just-loaded .corner-code{
-  animation:motionBadgeResolve 620ms 80ms var(--ease-out) both;
-}
-.archive-card.just-loaded .bottom-frame{
-  animation:motionBottomResolve 620ms 120ms var(--ease-out) both;
 }
 .archive-card.is-loaded .loaded-art{
   transition:opacity 620ms ease,transform 880ms var(--ease-out),filter 780ms ease!important;
@@ -2201,29 +2178,6 @@ a.save-sheet-choice:active{
 .archive-modal.is-open .archive-modal-backdrop,
 .save-sheet.is-open .save-sheet-backdrop{opacity:1}
 
-.archive-modal-panel{
-  opacity:0;
-  transform:translate(-50%,-47%) scale(.965);
-  filter:blur(6px);
-  transition:
-    opacity 300ms ease,
-    transform 480ms var(--ease-out),
-    filter 420ms ease;
-  will-change:transform,opacity,filter;
-}
-.archive-modal.is-open .archive-modal-panel{
-  opacity:1;
-  transform:translate(-50%,-50%) scale(1);
-  filter:none;
-}
-.archive-modal.is-open .archive-detail-visual{
-  animation:motionVisualIn 620ms 70ms var(--ease-out) both;
-}
-.archive-modal.is-open .detail-kicker{animation:motionSectionIn 440ms 90ms var(--ease-out) both}
-.archive-modal.is-open .detail-heading{animation:motionSectionIn 480ms 130ms var(--ease-out) both}
-.archive-modal.is-open .detail-tags{animation:motionSectionIn 500ms 170ms var(--ease-out) both}
-.archive-modal.is-open .detail-reader{animation:motionSectionIn 520ms 210ms var(--ease-out) both}
-.archive-modal.is-open .detail-actions{animation:motionSectionIn 540ms 250ms var(--ease-out) both}
 .archive-modal-close,
 .save-sheet-close{
   transition:transform 260ms var(--ease-out),background 220ms ease,border-color 220ms ease!important;
@@ -2233,26 +2187,6 @@ a.save-sheet-choice:active{
   .save-sheet-close:hover{transform:rotate(8deg) scale(1.04)}
 }
 
-.save-sheet-panel{
-  opacity:0;
-  transform:translate(-50%,-46%) scale(.97);
-  filter:blur(5px);
-  transition:
-    opacity 300ms ease,
-    transform 460ms var(--ease-out),
-    filter 400ms ease;
-  will-change:transform,opacity,filter;
-}
-.save-sheet.is-open .save-sheet-panel{
-  opacity:1;
-  transform:translate(-50%,-50%) scale(1);
-  filter:none;
-}
-.save-sheet.is-open .save-sheet-head{animation:motionSectionIn 420ms 60ms var(--ease-out) both}
-.save-sheet.is-open .save-sheet-preview{animation:motionPreviewIn 520ms 100ms var(--ease-out) both}
-.save-sheet.is-open .save-sheet-choice:nth-child(1){animation:motionSectionIn 440ms 150ms var(--ease-out) both}
-.save-sheet.is-open .save-sheet-choice:nth-child(2){animation:motionSectionIn 460ms 190ms var(--ease-out) both}
-.save-sheet.is-open .save-sheet-note{animation:motionSectionIn 480ms 230ms var(--ease-out) both}
 .save-sheet-preview img{
   transition:opacity 280ms ease,transform 520ms var(--ease-out),filter 340ms ease;
 }
@@ -2261,10 +2195,6 @@ a.save-sheet-choice:active{
   transform:scale(1.018);
   filter:blur(2px);
 }
-.save-sheet.is-ready .save-sheet-preview img{
-  animation:motionImageReady 540ms var(--ease-out) both;
-}
-
 /* Tab selection + reading content. */
 .detail-option{
   position:relative;
@@ -2281,11 +2211,6 @@ a.save-sheet-choice:active{
   transition:opacity 240ms ease,transform 320ms var(--ease-out);
 }
 .detail-option.is-active::after{opacity:1;transform:scaleX(1)}
-.detail-reading-panel.is-tab-changing .detail-reading-head,
-.detail-reading-panel.is-tab-changing .detail-reading-body{
-  animation:motionTabContent 340ms var(--ease-out) both;
-}
-
 /* Save/download controls visibly acknowledge action. */
 .save-sheet-choice.is-activating,
 .detail-primary-download.is-activating,
@@ -2357,37 +2282,10 @@ a.save-sheet-choice:active{
 @keyframes motionUnderline{from{opacity:0;transform:scaleX(.15)}to{opacity:1;transform:scaleX(1)}}
 @keyframes motionLoadingSweep{0%{transform:translateX(-35%) rotate(-14deg)}100%{transform:translateX(35%) rotate(-14deg)}}
 @keyframes motionLoadingBreathe{0%,100%{opacity:.72;transform:translateY(0)}50%{opacity:1;transform:translateY(-1px)}}
-@keyframes motionCardResolve{0%{transform:translateY(1px) scale(.994);filter:brightness(.92)}45%{transform:translateY(-2px) scale(1.006);filter:brightness(1.07)}100%{transform:none;filter:none}}
-@keyframes motionBadgeResolve{from{opacity:.28;transform:translateY(-4px)}to{opacity:1;transform:none}}
-@keyframes motionBottomResolve{from{opacity:.1;transform:translateY(6px)}to{opacity:1;transform:none}}
 @keyframes motionReadyCopy{from{opacity:0;transform:translateY(7px);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
 @keyframes motionStatusPulse{0%{opacity:.38;transform:translateY(2px)}100%{opacity:1;transform:none}}
-@keyframes motionVisualIn{from{opacity:.34;transform:scale(1.018);filter:blur(4px)}to{opacity:1;transform:none;filter:none}}
-@keyframes motionSectionIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
-@keyframes motionPreviewIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
-@keyframes motionImageReady{0%{opacity:.52;transform:scale(1.018);filter:blur(2px)}100%{opacity:1;transform:none;filter:none}}
-@keyframes motionTabContent{0%{opacity:.25;transform:translateY(6px)}100%{opacity:1;transform:none}}
 @keyframes motionActionConfirm{0%{transform:scale(1)}42%{transform:scale(.975)}100%{transform:scale(1)}}
 @keyframes motionToastMark{0%{opacity:0;transform:scale(.45) rotate(-10deg)}65%{transform:scale(1.08) rotate(2deg)}100%{opacity:1;transform:none}}
-
-@media(max-width:720px){
-  .archive-modal-panel{
-    transform:translate(-50%,28px) scale(.99)!important;
-    filter:blur(4px);
-  }
-  .archive-modal.is-open .archive-modal-panel{
-    transform:translate(-50%,0) scale(1)!important;
-    filter:none;
-  }
-  .save-sheet-panel{
-    transform:translate(-50%,26px) scale(.99)!important;
-    filter:blur(4px);
-  }
-  .save-sheet.is-open .save-sheet-panel{
-    transform:translate(-50%,0) scale(1)!important;
-    filter:none;
-  }
-}
 
 @media(prefers-reduced-motion:reduce){
   .archive-card,
@@ -2654,7 +2552,6 @@ a.save-sheet-choice:active{
   background:radial-gradient(280px 120px at var(--detail-accent-x) 0%,rgba(232,182,199,.055),transparent 70%);
   transition:opacity 420ms ease;
 }
-.detail-reading-panel.is-transitioning::after{opacity:1}
 .detail-reading-head,.detail-reading-body,.detail-reading-fade{position:relative}
 .detail-reading-head{z-index:3}
 .detail-reading-body{z-index:2;transform-origin:50% 0}
@@ -2671,50 +2568,6 @@ a.save-sheet-choice:active{
   border-color:rgba(169,187,217,.12);
   color:rgba(185,203,231,.62);
 }
-
-/* Outgoing content: direction-aware and deliberately short. */
-.detail-reading-panel.is-leaving .detail-reading-head,
-.detail-reading-panel.is-leaving .detail-reading-body{
-  pointer-events:none;
-}
-.detail-reading-panel.leave-intro .detail-reading-head{animation:detailIntroHeadOut 170ms ease both}
-.detail-reading-panel.leave-intro .detail-reading-body{animation:detailIntroBodyOut 190ms ease both}
-.detail-reading-panel.leave-opening .detail-reading-head{animation:detailOpeningHeadOut 165ms ease both}
-.detail-reading-panel.leave-opening .detail-reading-body{animation:detailOpeningBodyOut 210ms cubic-bezier(.55,0,.8,.35) both}
-.detail-reading-panel.leave-setting .detail-reading-head{animation:detailSettingHeadOut 175ms ease both}
-.detail-reading-panel.leave-setting .detail-reading-body{animation:detailSettingBodyOut 220ms cubic-bezier(.55,0,.8,.35) both}
-.detail-reading-panel.leave-worldbook .detail-reading-head{animation:detailWorldHeadOut 165ms ease both}
-.detail-reading-panel.leave-worldbook .detail-reading-body{animation:detailWorldBodyOut 205ms ease both}
-.detail-reading-panel.leave-preset .detail-reading-head{animation:detailWorldHeadOut 165ms ease both}
-.detail-reading-panel.leave-preset .detail-reading-body{animation:detailWorldBodyOut 205ms ease both}
-
-/* INTRO — camera focus / materialize. */
-.detail-reading-panel.enter-intro .detail-reading-head{animation:detailIntroHeadIn 430ms 35ms cubic-bezier(.2,.82,.2,1) both}
-.detail-reading-panel.enter-intro .detail-reading-body{animation:detailIntroBodyIn 520ms 75ms cubic-bezier(.2,.82,.2,1) both}
-.detail-reading-panel.enter-intro::before{animation:detailFocusLine 520ms 20ms ease both}
-
-/* OPENING — stage curtain / horizontal reveal. */
-.detail-reading-panel.enter-opening .detail-reading-head{animation:detailOpeningHeadIn 420ms 20ms cubic-bezier(.2,.82,.2,1) both}
-.detail-reading-panel.enter-opening .detail-reading-body{animation:detailOpeningBodyIn 560ms 55ms cubic-bezier(.16,.84,.2,1) both}
-.detail-reading-panel.enter-opening::before{animation:detailCurtainLine 620ms cubic-bezier(.2,.82,.2,1) both}
-
-/* SETTING — a sheet being lifted into the dossier. */
-.detail-reading-panel.enter-setting .detail-reading-head{animation:detailSettingHeadIn 430ms 25ms cubic-bezier(.2,.82,.2,1) both}
-.detail-reading-panel.enter-setting .detail-reading-body{animation:detailSettingBodyIn 600ms 60ms cubic-bezier(.16,.86,.18,1) both}
-.detail-reading-panel.enter-setting::before{animation:detailPaperEdge 520ms 50ms ease both}
-
-/* WORLDBOOK — scanner unlock. */
-.detail-reading-panel.enter-worldbook .detail-reading-head{animation:detailWorldHeadIn 390ms 20ms cubic-bezier(.2,.82,.2,1) both}
-.detail-reading-panel.enter-worldbook .detail-reading-body{animation:detailWorldBodyIn 600ms 55ms cubic-bezier(.2,.82,.2,1) both}
-.detail-reading-panel.enter-worldbook::before{height:2px;animation:detailScanLine 720ms 10ms cubic-bezier(.2,.75,.2,1) both}
-.detail-reading-panel.enter-preset .detail-reading-head{animation:detailWorldHeadIn 390ms 20ms cubic-bezier(.2,.82,.2,1) both}
-.detail-reading-panel.enter-preset .detail-reading-body{animation:detailWorldBodyIn 600ms 55ms cubic-bezier(.2,.82,.2,1) both}
-.detail-reading-panel.enter-preset::before{height:2px;animation:detailScanLine 720ms 10ms cubic-bezier(.2,.75,.2,1) both}
-
-/* Tiny internal motions: header metadata doesn't arrive all at once. */
-.detail-reading-panel[class*="enter-"] .detail-reading-head small{animation:detailMetaIn 420ms 95ms ease both}
-.detail-reading-panel[class*="enter-"] .detail-reading-head h3{animation:detailTitleIn 470ms 70ms cubic-bezier(.2,.82,.2,1) both}
-.detail-reading-panel[class*="enter-"] .detail-reading-head>span{animation:detailTypeIn 460ms 120ms cubic-bezier(.2,.82,.2,1) both}
 
 /* Modal tags resolve one-by-one. */
 .archive-modal.is-open .detail-tags span{opacity:0;animation:detailTagResolve 430ms cubic-bezier(.2,.82,.2,1) both}
@@ -2766,33 +2619,6 @@ a.save-sheet-choice:active{
 @keyframes detailIndexTick{0%{transform:scale(1.08)}38%{transform:scale(.82) rotate(-7deg)}72%{transform:scale(1.16) rotate(2deg)}100%{transform:scale(1.08)}}
 @keyframes detailLabelSettle{0%{transform:translateY(0)}42%{transform:translateY(2px);opacity:.62}100%{transform:none;opacity:1}}
 
-@keyframes detailIntroHeadOut{to{opacity:0;transform:translateY(-3px);filter:blur(2px)}}
-@keyframes detailIntroBodyOut{to{opacity:0;transform:scale(.985);filter:blur(3px)}}
-@keyframes detailIntroHeadIn{from{opacity:0;transform:translateY(-6px);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
-@keyframes detailIntroBodyIn{0%{opacity:0;transform:scale(.965);filter:blur(8px)}58%{opacity:.86;filter:blur(1px)}100%{opacity:1;transform:none;filter:none}}
-@keyframes detailFocusLine{0%{opacity:0;transform:translateY(20px) scaleX(.18)}45%{opacity:.7}100%{opacity:0;transform:translateY(82px) scaleX(.92)}}
-
-@keyframes detailOpeningHeadOut{to{opacity:0;transform:translateX(calc(var(--detail-dir) * -7px))}}
-@keyframes detailOpeningBodyOut{to{opacity:0;transform:translateX(calc(var(--detail-dir) * -16px));clip-path:inset(0 0 0 16%)}}
-@keyframes detailOpeningHeadIn{from{opacity:0;transform:translateX(calc(var(--detail-dir) * 12px))}to{opacity:1;transform:none}}
-@keyframes detailOpeningBodyIn{0%{opacity:0;transform:translateX(calc(var(--detail-dir) * 18px));clip-path:inset(0 100% 0 0)}35%{opacity:.8}100%{opacity:1;transform:none;clip-path:inset(0 0 0 0)}}
-@keyframes detailCurtainLine{0%{opacity:0;transform:translateX(-100%)}30%{opacity:.85}100%{opacity:0;transform:translateX(100%)}}
-
-@keyframes detailSettingHeadOut{to{opacity:0;transform:translateY(-4px)}}
-@keyframes detailSettingBodyOut{to{opacity:0;transform:rotateX(5deg) translateY(-10px);filter:blur(1px)}}
-@keyframes detailSettingHeadIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
-@keyframes detailSettingBodyIn{0%{opacity:0;transform:rotateX(-8deg) translateY(15px) scale(.985);filter:blur(2px)}62%{opacity:1;transform:rotateX(1.2deg) translateY(-2px)}100%{opacity:1;transform:none;filter:none}}
-@keyframes detailPaperEdge{0%{opacity:0;transform:translateY(122px) scaleX(.25)}48%{opacity:.68}100%{opacity:0;transform:translateY(210px) scaleX(.85)}}
-
-@keyframes detailWorldHeadOut{to{opacity:0;transform:scale(.985);filter:blur(2px)}}
-@keyframes detailWorldBodyOut{to{opacity:0;clip-path:inset(45% 0 45% 0);filter:blur(2px)}}
-@keyframes detailWorldHeadIn{from{opacity:0;transform:scale(.975);filter:blur(4px)}to{opacity:1;transform:none;filter:none}}
-@keyframes detailWorldBodyIn{0%{opacity:0;clip-path:inset(48% 0 48% 0);filter:blur(4px)}42%{opacity:.68}100%{opacity:1;clip-path:inset(0 0 0 0);filter:none}}
-@keyframes detailScanLine{0%{opacity:0;transform:translateY(34px) scaleX(.5)}18%{opacity:.9}82%{opacity:.72}100%{opacity:0;transform:translateY(238px) scaleX(1)}}
-
-@keyframes detailMetaIn{from{opacity:0;letter-spacing:.22em}to{opacity:1}}
-@keyframes detailTitleIn{0%{opacity:0;transform:translateY(5px);letter-spacing:.16em}100%{opacity:1;transform:none}}
-@keyframes detailTypeIn{0%{opacity:0;transform:translateX(7px) scale(.92)}70%{transform:translateX(-1px) scale(1.02)}100%{opacity:1;transform:none}}
 @keyframes detailTagResolve{0%{opacity:0;transform:translateY(5px) scale(.94)}70%{opacity:1;transform:translateY(-1px) scale(1.015)}100%{opacity:1;transform:none}}
 @keyframes detailButtonSheen{0%{opacity:0;transform:translateX(-75%) skewX(-18deg)}30%{opacity:.8}100%{opacity:0;transform:translateX(80%) skewX(-18deg)}}
 @keyframes detailSaveDrop{0%{transform:translateY(0)}38%{transform:translateY(4px) scale(.9)}72%{transform:translateY(-1px) scale(1.04)}100%{transform:none}}
@@ -2806,8 +2632,6 @@ a.save-sheet-choice:active{
     width:84px;
     transform:translateX(calc(var(--detail-index) * 90px));
   }
-  .detail-reading-panel.enter-setting .detail-reading-body{animation-duration:520ms}
-  .detail-reading-panel.enter-worldbook .detail-reading-body{animation-duration:520ms}
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -2877,11 +2701,9 @@ a.save-sheet-choice:active{
   backdrop-filter:none!important;
 }
 
-/* Reveal/load still visibly moves and fades; tiny saturation/blur work on whole
-   cards is removed because it is costly and barely perceptible. */
+/* Reveal/load keeps the compositor-only filter optimization. */
 .archive-card{
   filter:none!important;
-  transition:opacity 520ms var(--ease-out),transform 620ms var(--ease-out)!important;
 }
 .gallery,
 .gallery.is-author-switching,
@@ -3015,7 +2837,6 @@ a.save-sheet-choice:active{
 .archive-modal-panel,
 .save-sheet-panel{
   filter:none!important;
-  transition:opacity 300ms ease,transform 470ms var(--ease-out)!important;
 }
 .save-sheet.is-preparing .save-sheet-preview img{filter:none!important}
 
@@ -3197,6 +3018,7 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
 }
 
 </style>
+<link rel="stylesheet" href="assets/css/motion.css">
 </head>
 <body class="motion-rich">
     <header class="site-header">
@@ -3730,7 +3552,7 @@ function fallbackPreview(image,work,card){
   card?.classList.add('image-error','is-face-missing');
   const sub=card?.querySelector('.state-label-loading .loading-sub');
   if(sub) sub.textContent='CARD FACE UNAVAILABLE';
-  scheduleReveal(card);
+  revealCard(card);
 }
 
 function ensureCardPreview(card){
@@ -3765,17 +3587,12 @@ function applyAuthorCardContent(authorId,meta){
     const work=works[index];
     const show=Boolean(work);
 
-    observer.unobserve(card);
-    card._revealToken=(card._revealToken || 0)+1;
-    card._revealAt=null;
     card.classList.remove(
       'is-loaded',
-      'just-loaded',
       'has-source-image',
       'image-error',
       'is-face-missing',
-      'is-loading-now',
-      'is-entered'
+      'is-loading-now'
     );
     card.hidden=!show;
     card._work=work || null;
@@ -3848,7 +3665,7 @@ function applyAuthorCardContent(authorId,meta){
       if(card._work!==work) return;
       card.classList.remove('is-image-loading');
       card.classList.add('has-source-image');
-      scheduleReveal(card);
+      revealCard(card);
     };
 
     image.onerror=()=>{
@@ -3865,7 +3682,6 @@ function applyAuthorCardContent(authorId,meta){
       button.tabIndex=-1;
     });
 
-    observer.observe(card);
   });
 
   archiveGallery?.setAttribute('aria-busy','false');
@@ -4185,7 +4001,7 @@ function revealCard(card){
     )
   ) return;
 
-  card.classList.add('is-loaded','just-loaded');
+  card.classList.add('is-loaded');
   card.classList.remove('is-loading-now');
 
   const label=card.querySelector('.corner-label');
@@ -4202,54 +4018,7 @@ function revealCard(card){
   });
 
   updateStatus();
-  const token=card._revealToken;
-  window.setTimeout(()=>{
-    if(card._revealToken===token) card.classList.remove('just-loaded');
-  },900);
 }
-
-function scheduleReveal(card){
-  if(!card || card._revealAt==null) return;
-  const token=card._revealToken;
-  const wait=Math.max(0,card._revealAt-performance.now());
-  window.setTimeout(()=>{
-    if(
-      card._revealToken!==token ||
-      !card._work ||
-      (
-        !card.classList.contains('has-source-image') &&
-        !card.classList.contains('is-face-missing')
-      )
-    ) return;
-    revealCard(card);
-  },wait);
-}
-
-const observer=new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(!entry.isIntersecting) return;
-    const card=entry.target;
-    observer.unobserve(card);
-    const i=cards.indexOf(card);
-    const rowDelay=(i%6)*58;
-    const token=card._revealToken;
-    motionDelay(rowDelay,()=>{
-      if(card._revealToken===token) card.classList.add('is-entered');
-    });
-    card.classList.add('is-loading-now');
-    const img=card.querySelector('.loaded-card-image');
-    if(img && img.loading==='lazy') img.loading='eager';
-    const minDelay=prefersReducedMotion.matches
-      ? 0
-      : 210+(i%6)*95+Math.random()*180;
-    card._revealAt=performance.now()+minDelay;
-
-    if(
-      card.classList.contains('has-source-image') ||
-      card.classList.contains('is-face-missing')
-    ) scheduleReveal(card);
-  });
-},{rootMargin:'140px 0px 220px',threshold:.035});
 
 const nearObserver=new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
@@ -4299,7 +4068,6 @@ const motionVisibilityObserver=new IntersectionObserver(entries=>{
 
 function registerCard(card,index){
   card._work=null;
-  card._revealToken=0;
   card.querySelectorAll('.detail-action,.download-action').forEach(button=>{
     button.disabled=true;
     button.tabIndex=-1;
@@ -4417,7 +4185,6 @@ const detailTabMeta={
 };
 
 let currentDetailTab='intro';
-let detailTabSwitchToken=0;
 const detailTabOrder=['intro','opening','setting','worldbook','preset'];
 const detailOptions=document.querySelector('.detail-options');
 const detailReadingPanel=document.querySelector('.detail-reading-panel');
@@ -4453,14 +4220,6 @@ function centerDetailTab(key,instant=false){
   });
 }
 
-function clearDetailMotionClasses(panel){
-  if(!panel) return;
-  [...panel.classList].forEach(name=>{
-    if(name.startsWith('leave-') || name.startsWith('enter-')) panel.classList.remove(name);
-  });
-  panel.classList.remove('is-leaving','is-entering','is-transitioning');
-}
-
 function paintDetailContent(key){
   const copy=archiveModal._detailCopy || {};
   const meta=detailTabMeta[key] || detailTabMeta.intro;
@@ -4475,20 +4234,12 @@ function setDetailTab(key,options={}){
   const visible=visibleDetailTabs();
   if(!visible.includes(key)) key=visible[0] || 'intro';
   const instant=Boolean(options.instant) || prefersReducedMotion.matches;
-  const fromKey=currentDetailTab;
-  const fromIndex=Math.max(0,visible.indexOf(fromKey));
   const nextIndex=Math.max(0,visible.indexOf(key));
-  const dir=nextIndex>=fromIndex ? 1 : -1;
   const panel=detailReadingPanel;
-  const token=++detailTabSwitchToken;
 
   if(detailOptions){
     detailOptions.style.setProperty('--detail-index',String(nextIndex));
     detailOptions.style.setProperty('--detail-shift',`calc(${nextIndex*100}% + ${nextIndex*6}px)`);
-  }
-  if(panel){
-    panel.style.setProperty('--detail-dir',String(dir));
-    panel.style.setProperty('--detail-accent-x',`${18 + nextIndex*21}%`);
   }
 
   document.querySelectorAll('[data-detail-tab]').forEach(btn=>{
@@ -4498,47 +4249,15 @@ function setDetailTab(key,options={}){
     if(active && !instant) restartClass(btn,'is-tab-hit',430);
   });
 
-  if(!panel || instant){
-    clearDetailMotionClasses(panel);
-    paintDetailContent(key);
-    currentDetailTab=key;
-    centerDetailTab(key,instant);
-    if(panel){
-      panel.scrollTop=0;
-      panel.dataset.detailMode=key;
-      panel.classList.toggle('is-reading-scrolled',false);
-    }
-    return;
-  }
-
-  /* Clicking the current section still gives a tiny tactile acknowledgement,
-     but avoids replaying the full page transition. */
-  if(key===fromKey && !panel.classList.contains('is-transitioning')){
-    restartClass(panel,'is-tab-changing',330);
-    return;
-  }
-
-  clearDetailMotionClasses(panel);
-  panel.classList.add('is-transitioning','is-leaving',`leave-${fromKey}`);
-  panel.setAttribute('aria-busy','true');
-
-  window.setTimeout(()=>{
-    if(token!==detailTabSwitchToken) return;
-    clearDetailMotionClasses(panel);
-    paintDetailContent(key);
-    currentDetailTab=key;
-    centerDetailTab(key,false);
+  paintDetailContent(key);
+  currentDetailTab=key;
+  centerDetailTab(key,instant);
+  if(panel){
     panel.scrollTop=0;
     panel.dataset.detailMode=key;
     panel.classList.remove('is-reading-scrolled');
-    panel.classList.add('is-transitioning','is-entering',`enter-${key}`);
-
-    window.setTimeout(()=>{
-      if(token!==detailTabSwitchToken) return;
-      clearDetailMotionClasses(panel);
-      panel.removeAttribute('aria-busy');
-    },680);
-  },215);
+    panel.removeAttribute('aria-busy');
+  }
 }
 
 document.querySelectorAll('[data-detail-tab]').forEach(btn=>{
@@ -4983,6 +4702,7 @@ window.addEventListener('beforeunload',()=>{
 });
 
 </script>
+<script src="assets/js/motion.js" defer></script>
 </body>
 </html>
 
