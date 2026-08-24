@@ -8,9 +8,7 @@
 
 [打开无惯性版](https://hqu35785-cmyk.github.io/fanhuafenluo-pages/)
 
-如果想查看当前旧版的卡片滚动惯性效果：
-
-[打开有惯性版](https://hqu35785-cmyk.github.io/fanhuafenluo-pages/index-inertia.html)
+对外只保留这一个在线入口。`index-inertia.html` 仍作为仓库内的历史保留副本保存，但不再作为公开网站地址展示。
 
 `98 张卡`　`繁花·纷落 70 / 鲨鱼 14 / 咓 14`　`响应式浏览`　`原始 PNG`　`五栏真实资料`
 
