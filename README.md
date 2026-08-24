@@ -16,7 +16,7 @@
 
 ## 两个页面版本
 
-展示仓库根目录固定为三个条目：
+展示仓库保留三个主要条目；`assets/` 目录中的两个文件是默认页面必需的动效支持资源，不是第三个页面：
 
 ```text
 index.html          默认无惯性版
@@ -24,12 +24,19 @@ index-inertia.html  当前有惯性版的完整保留副本
 README.md           访客说明与 AI 维护契约
 ```
 
-两个 HTML 页面必须拥有相同的角色数据、卡片、作者切换、详情资料、预览图片、原始 PNG 下载、响应式布局和视觉结构。两个版本唯一允许的行为差异是：
+默认无惯性版使用以下固定资源，路径和文件名不能改动：
+
+```text
+assets/css/motion.css
+assets/js/motion.js
+```
+
+两个 HTML 页面必须拥有相同的角色数据、卡片、作者切换、详情资料、预览图片、原始 PNG 下载、响应式布局和主要视觉结构。当前默认页额外接入 `assets/css/motion.css` 与 `assets/js/motion.js` 作为新的入场、弹窗、标签和保存面板动效；`index-inertia.html` 保持原有的完整有惯性版本，不得在没有明确要求时覆盖或同步改写它。两个版本的滚动行为差异是：
 
 - `index.html`：页面滚动时卡片不产生位移、倾斜、拉伸、图片反向位移、压力高光或弹簧回弹；正常浏览器滚动保持不变。
 - `index-inertia.html`：保留当前卡片随页面滚动产生的位移、倾斜、轻微拉伸、压力高光和回弹效果。
 
-无惯性版是 GitHub Pages 根地址的默认入口；有惯性版通过 `index-inertia.html` 独立访问。两个页面都必须能够单独打开运行，不依赖额外的脚本文件。
+无惯性版是 GitHub Pages 根地址的默认入口；有惯性版通过 `index-inertia.html` 独立访问。`index.html` 必须与上述两个动效资源一起部署；`index-inertia.html` 继续保持单文件独立运行。
 
 ## 你可以看到什么
 
@@ -43,12 +50,19 @@ README.md           访客说明与 AI 维护契约
 
 ## 仓库边界
 
-这个展示仓库公开的根目录只能有以下三个文件：
+这个展示仓库公开的主要页面与说明文件只能有以下三个：
 
 ```text
 index.html
 index-inertia.html
 README.md
+```
+
+除上述三个主要条目外，只允许存在默认 `index.html` 必需的两个动效支持文件：
+
+```text
+assets/css/motion.css
+assets/js/motion.js
 ```
 
 角色卡源仓库是 [hqu35785-cmyk/fanhuafenluo](https://github.com/hqu35785-cmyk/fanhuafenluo)：
@@ -64,11 +78,11 @@ assets/**/*.png
 assets/**/*.webp
 ```
 
-不要把 `work/original-index.html`、聊天附件、临时 JSON、截图或本地测试文件上传到展示仓库。
+不要把 `work/original-index.html`、聊天附件、临时 JSON、截图、未列出的脚本/样式或本地测试文件上传到展示仓库。
 
 ## 给未来 AI 的唯一维护契约
 
-任何 AI 在新增角色卡、修改角色卡、修改详情映射、修改共同视觉或重新部署前，必须先完整阅读本 README，再检查仓库中实际存在的三个文件。禁止根据聊天记录重写页面，禁止把当前页面改成另一套卡片、标题栏、弹窗或保存面板。
+任何 AI 在新增角色卡、修改角色卡、修改详情映射、修改共同视觉或重新部署前，必须先完整阅读本 README，再检查仓库中实际存在的三个主要条目和两个动效支持文件。禁止根据聊天记录重写页面，禁止把当前页面改成另一套卡片、标题栏、弹窗或保存面板。
 
 修改展示页时必须同时检查 `index.html` 和 `index-inertia.html`：
 
@@ -77,7 +91,7 @@ assets/**/*.webp
 3. 不得把滚动物理重新加回默认 `index.html`。
 4. 不得从 `index-inertia.html` 删除滚动物理，除非用户明确要求同时取消有惯性版本。
 5. 不得只改其中一个页面后直接提交。
-6. 不得增加第四个公开文件、共享脚本、样式文件或临时数据文件。
+6. 不得增加第四个主要页面/说明文件、未登记的共享脚本、未登记的样式文件或临时数据文件；`assets/css/motion.css` 与 `assets/js/motion.js` 是当前唯一登记的展示动效支持资源。
 
 ### 新增角色卡时必须改源仓库
 
@@ -272,7 +286,7 @@ details-wa.js
 
 展示仓库提交前必须检查：
 
-- 根目录恰好只有 `index.html`、`index-inertia.html`、`README.md`。
+- 主要条目恰好为 `index.html`、`index-inertia.html`、`README.md`，并且只有 `assets/css/motion.css`、`assets/js/motion.js` 两个登记的动效支持文件。
 - `index-inertia.html` 与实施前的正式有惯性版本逐字节一致。
 - 两个页面的卡片数量均为 70 / 14 / 14，总计 98。
 - 眼睛和头部在列表卡面、详情顶图、保存面板中都没有被裁掉。
@@ -300,4 +314,4 @@ details-wa.js
 - 不要把无惯性版的修改复制回有惯性版，或把有惯性代码重新加回默认版。
 - 不要把 `index-inertia.html` 重命名、删除或覆盖成其他版本。
 - 不要上传 `original-index.html`、聊天附件、临时资料包或测试截图。
-- 展示仓库不得增加第四个公开文件。
+- 展示仓库不得增加第四个主要页面/说明文件或任何未登记的公开文件。
