@@ -149,9 +149,12 @@ html.mo-ready [data-motion] { opacity: 0; }
   animation: mo-exit var(--dur-xs) var(--ease-out) both;
 }
 
-/* ---------- 8. 弹窗内 tab 切换：方向跟随 tab 相对位置 ---------- */
-.mo-tabpanel.is-enter-right { animation: mo-sweep-right var(--dur-sm) var(--ease-expo) both; }
-.mo-tabpanel.is-enter-left  { animation: mo-sweep-left  var(--dur-sm) var(--ease-expo) both; }
+/* ---------- 8. 弹窗内 tab 切换：五栏各用一种语义动效 ---------- */
+.mo-tabpanel.is-enter-intro     { animation: mo-focus-in   var(--dur-md) var(--ease-expo) both; }
+.mo-tabpanel.is-enter-opening   { animation: mo-sweep-left var(--dur-md) var(--ease-expo) both; }
+.mo-tabpanel.is-enter-setting   { animation: mo-settle     var(--dur-md) var(--ease-back) both; }
+.mo-tabpanel.is-enter-worldbook { animation: mo-sweep-down var(--dur-lg) var(--ease-expo) both; }
+.mo-tabpanel.is-enter-preset    { animation: mo-sweep-up   var(--dur-lg) var(--ease-expo) both; }
 
 /* ---------- 9. 保存 PNG：底部上滑 ---------- */
 .mo-sheet {
@@ -167,8 +170,11 @@ html.mo-ready [data-motion] { opacity: 0; }
   [data-motion].is-in,
   .mo-backdrop,
   .mo-panel,
-  .mo-tabpanel.is-enter-right,
-  .mo-tabpanel.is-enter-left {
+  .mo-tabpanel.is-enter-intro,
+  .mo-tabpanel.is-enter-opening,
+  .mo-tabpanel.is-enter-setting,
+  .mo-tabpanel.is-enter-worldbook,
+  .mo-tabpanel.is-enter-preset {
     animation-name: mo-fade-in !important;
     animation-duration: 150ms !important;
     animation-delay: 0ms !important;

@@ -192,32 +192,34 @@
     });
   }
 
-  /* ====================== ⑦ 弹窗内 tab：左右方向跟随相对位置 ====================== */
+  /* ====================== ⑦ 弹窗内 tab：五栏各自的语义动效 ====================== */
   function initTabs() {
     const tabs = $$(SEL.tabButtons);
     if (tabs.length < 2) return;
 
-    let active = tabs.findIndex(function (t) {
-      return t.getAttribute('aria-selected') === 'true' ||
-             t.classList.contains('is-active') ||
-             t.classList.contains('active');
-    });
-    if (active < 0) active = 0;
+    const motionClasses = [
+      'is-enter-intro',
+      'is-enter-opening',
+      'is-enter-setting',
+      'is-enter-worldbook',
+      'is-enter-preset'
+    ];
 
-    tabs.forEach(function (tab, i) {
+    tabs.forEach(function (tab) {
       tab.addEventListener('click', function () {
-        if (i === active) return;
-        const dir = i > active ? 'right' : 'left';
-        active = i;
+        const key = tab.getAttribute('data-detail-tab');
+        const motionClass = 'is-enter-' + key;
+        if (motionClasses.indexOf(motionClass) < 0) return;
+
         // 等站点自己切完 DOM 再补动画
         requestAnimationFrame(function () {
           requestAnimationFrame(function () {
             const panel = $$(SEL.tabPanels).filter(isVisible)[0];
             if (!panel) return;
             panel.classList.add('mo-tabpanel');
-            panel.classList.remove('is-enter-left', 'is-enter-right');
+            panel.classList.remove.apply(panel.classList, motionClasses);
             void panel.offsetWidth;
-            panel.classList.add('is-enter-' + dir);
+            panel.classList.add(motionClass);
           });
         });
       });
