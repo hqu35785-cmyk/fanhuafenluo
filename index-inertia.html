@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>繁花·纷落｜角色卡档案</title>
-<meta name="description" content="繁花·纷落、鲨鱼、咓 三位作者的 TAVO 角色卡档案，共 98 张，可在线浏览设定并保存原始 PNG。">
+<meta name="description" content="繁花·纷落、鲨鱼、咓与公开四个分区的 TAVO 角色卡档案，共 101 张，可在线浏览设定并保存原始 PNG。">
 <meta name="theme-color" content="#08090d">
 <meta name="referrer" content="no-referrer">
 <link rel="canonical" href="https://hqu35785-cmyk.github.io/fanhuafenluo/">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="繁花·纷落｜角色卡档案">
-<meta property="og:description" content="TAVO 角色卡档案，共 98 张，可在线浏览设定并保存原始 PNG。">
+<meta property="og:description" content="TAVO 角色卡档案，共 101 张，可在线浏览设定并保存原始 PNG。">
 <meta property="og:url" content="https://hqu35785-cmyk.github.io/fanhuafenluo/">
 <meta property="og:image" content="https://hqu35785-cmyk.github.io/fanhuafenluo-pages/assets/authors/fanhuafenluo-avatar.webp">
 <meta name="twitter:card" content="summary_large_image">
@@ -3367,6 +3367,7 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
           <button class="filter author-filter active" type="button" data-author="fanhuafenluo" aria-pressed="true">繁花·纷落</button>
           <button class="filter author-filter" type="button" data-author="shark" aria-pressed="false">鲨鱼</button>
           <button class="filter author-filter" type="button" data-author="wa" aria-pressed="false">咓</button>
+          <button class="filter author-filter" type="button" data-author="public" aria-pressed="false">公开</button>
         </div>
         <div class="toolbar-status" id="status" aria-live="polite">
           <i></i><span>WAITING</span>
@@ -3574,6 +3575,12 @@ const authorSections={
     english:'WA · CHARACTER ARCHIVE',
     count:14,
     avatar:'https://hqu35785-cmyk.github.io/fanhuafenluo-pages/assets/authors/wa.webp'
+  },
+  public:{
+    name:'公开',
+    english:'PUBLIC · CHARACTER ARCHIVE',
+    count:3,
+    avatar:'https://hqu35785-cmyk.github.io/fanhuafenluo-pages/assets/authors/public.webp'
   }
 };
 let activeAuthorId='fanhuafenluo';
@@ -3584,7 +3591,7 @@ const headerAuthorEnglish=document.getElementById('headerAuthorEnglish');
 const headerArchiveCount=document.getElementById('headerArchiveCount');
 const authorFilterButtons=[...document.querySelectorAll('.author-filter')];
 const galleryEl=document.querySelector('.gallery');
-const authorOrder=['fanhuafenluo','shark','wa'];
+const authorOrder=['fanhuafenluo','shark','wa','public'];
 const archiveGallery=document.getElementById('archiveGallery');
 const headerAuthorCycle=document.getElementById('headerAuthorCycle');
 
@@ -3593,11 +3600,12 @@ const PNG_CDN_BASE='https://cdn.jsdelivr.net/gh/hqu35785-cmyk/fanhuafenluo-pages
 const PNG_RAW_BASE='https://raw.githubusercontent.com/hqu35785-cmyk/fanhuafenluo-pages/main/';
 
 const SOURCE_URLS={
-  works:'src/data/works.js?v=fdb528fb7905',
+  works:'src/data/works.js?v=1d1685ac5e0b',
   details:{
-    fanhuafenluo:'src/data/details-fanhua.js?v=fdb528fb7905',
-    shark:'src/data/details-shark.js?v=fdb528fb7905',
-    wa:'src/data/details-wa.js?v=fdb528fb7905'
+    fanhuafenluo:'src/data/details-fanhua.js?v=1d1685ac5e0b',
+    shark:'src/data/details-shark.js?v=1d1685ac5e0b',
+    wa:'src/data/details-wa.js?v=1d1685ac5e0b',
+    public:'src/data/details-public.js?v=1d1685ac5e0b'
   }
 };
 
@@ -3729,7 +3737,8 @@ async function buildCatalog(){
       ...extractConstArray(worksSource,'fanhuaWorks')
     ],
     shark:extractConstArray(worksSource,'sharkWorks'),
-    wa:extractConstArray(worksSource,'waWorks')
+    wa:extractConstArray(worksSource,'waWorks'),
+    public:extractConstArray(worksSource,'publicWorks')
   };
 
   const catalog={};
