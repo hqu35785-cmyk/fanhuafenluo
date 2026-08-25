@@ -1,6 +1,6 @@
 # 繁花·纷落｜TAVO 角色卡档案
 
-三位创作者、98 张角色卡、完整的角色资料与原始 PNG。你可以在自适应的档案页面里浏览每张卡的 AI 导览简介、开场白、人物设定、世界书和预设，也可以保存角色卡原始 PNG。
+四个作者分区、101 张角色卡、完整的角色资料与原始 PNG。你可以在自适应的档案页面里浏览每张卡的 AI 导览简介、开场白、人物设定、世界书和预设，也可以保存角色卡原始 PNG。
 
 ## 在线浏览
 
@@ -12,7 +12,7 @@
 
 [打开有惯性版](https://hqu35785-cmyk.github.io/fanhuafenluo/index-inertia.html)
 
-`98 张卡`　`繁花·纷落 70 / 鲨鱼 14 / 咓 14`　`响应式浏览`　`原始 PNG`　`五栏真实资料`
+`101 张卡`　`繁花·纷落 70 / 鲨鱼 14 / 咓 14 / 公开 3`　`响应式浏览`　`原始 PNG`　`五栏真实资料`
 
 ## 两个页面版本
 
@@ -46,6 +46,7 @@ assets/js/motion.js
 - 完整世界书：包含原始名称、条目顺序、启用状态、位置、关键词和内容。
 - 完整预设：按原文显示系统提示词和历史后指令。
 - 原始角色卡 PNG 下载；网页预览使用单独的轻量 WebP，不用原始 PNG 拖慢首页。
+- 所有卡面直接显示；数据中的 `sensitive` 只保留为元数据，页面不渲染敏感卡面遮罩、解锁标记或二次确认层。
 - 桌面、平板和手机自适应布局；手机端详情标签可以横向滚动，详情正文阅读区只能纵向滚动。
 
 ## 仓库边界
@@ -73,6 +74,7 @@ src/data/card-intros.json
 src/data/details-fanhua.js
 src/data/details-shark.js
 src/data/details-wa.js
+src/data/details-public.js
 scripts/sync-card-details.mjs
 assets/**/*.png
 assets/**/*.webp
@@ -93,6 +95,7 @@ assets/**/*.webp
 5. 不得只改其中一个页面后直接提交。
 6. 不得增加第四个主要页面/说明文件、未登记的共享脚本、未登记的样式文件或临时数据文件；`assets/css/motion.css` 与 `assets/js/motion.js` 是当前唯一登记的展示动效支持资源。
 7. 详情弹窗不得重新加入 `CHARACTER PROFILE / CREATE TIME` 信息行或角色名下方的标签胶囊；详情正文阅读区必须保持 `overflow-x:hidden` 与 `touch-action:pan-y`，只允许纵向浏览。
+8. 不得把 `sensitive` 元数据重新做成卡面遮罩、模糊层、解锁标记或点击确认流程；列表、详情与保存面板继续直接显示对应卡面。
 
 ### 新增角色卡时必须改源仓库
 
@@ -130,7 +133,7 @@ name / role / tags / creator / cardLabel
 - 在结尾留下真实存在的选择、冲突或悬念，让人愿意继续打开资料。
 - 只写源资料能够证明的内容，不补写不存在的人物、能力、关系和结局。
 - 不能把系统指令、字数限制或格式规则原样当成宣传文案。
-- 不能批量只替换角色名，98 条简介必须分别根据对应 `_detailKey` 的全部资料审核。
+- 不能批量只替换角色名，101 条简介必须分别根据对应 `_detailKey` 的全部资料审核。
 
 简介仍然只有一个 `intro` 字段，不增加 `hook`、`teaser` 或第六个标签。成人主题可以在明确成年角色的简介中直接说明，但简介应保持档案导览形式；明确未满 18 岁或年龄无法确认的角色，只能非露骨地概括人物、关系、冲突和世界背景。
 
@@ -190,13 +193,14 @@ node scripts/sync-card-details.mjs --check
 src/data/details-fanhua.js
 src/data/details-shark.js
 src/data/details-wa.js
+src/data/details-public.js
 ```
 
 `--check` 必须通过以下检查才允许提交：
 
 ```text
-70 / 14 / 14 / 98 数量正确
-AI 简介数量 = 98
+70 / 14 / 14 / 3 / 101 数量正确
+AI 简介数量 = 101
 简介长度全部为 120–180
 简介不是 description 原文
 简介没有重复、占位文案或失联 key
@@ -276,20 +280,21 @@ prefers-reduced-motion 支持
 
 ## 发布前检查
 
-源仓库发布后，先记录源仓库合并后的完整 SHA，再把两个展示页四个 `SOURCE_URLS` 的 `?v=` 更新为该 SHA 前 12 位：
+源仓库发布后，先记录源仓库合并后的完整 SHA，再把两个展示页五个 `SOURCE_URLS` 的 `?v=` 更新为该 SHA 前 12 位：
 
 ```text
 works.js
 details-fanhua.js
 details-shark.js
 details-wa.js
+details-public.js
 ```
 
 展示仓库提交前必须检查：
 
 - 主要条目恰好为 `index.html`、`index-inertia.html`、`README.md`，并且只有 `assets/css/motion.css`、`assets/js/motion.js` 两个登记的动效支持文件。
 - `index-inertia.html` 仍保留完整滚动物理，并且与 `index.html` 同步本次共同详情界面修改。
-- 两个页面的卡片数量均为 70 / 14 / 14，总计 98。
+- 两个页面的卡片数量均为 70 / 14 / 14 / 3，总计 101。
 - 眼睛和头部在列表卡面、详情顶图、保存面板中都没有被裁掉。
 - 预览链保持源站 WebP → jsDelivr → GitHub Raw。
 - 下载链保持源站 PNG → jsDelivr → GitHub Raw。
