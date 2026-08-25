@@ -1,6 +1,6 @@
 # 繁花·纷落｜TAVO 角色卡档案
 
-四个作者分区、101 张角色卡、完整的角色资料与原始 PNG。你可以在自适应的档案页面里浏览每张卡的 AI 导览简介、开场白、人物设定、世界书和预设，也可以保存角色卡原始 PNG。
+两个作者分区、101 张角色卡、完整的角色资料与原始 PNG。你可以在自适应的档案页面里浏览每张卡的 AI 导览简介、开场白、人物设定、世界书和预设，也可以保存角色卡原始 PNG。
 
 ## 在线浏览
 
@@ -12,7 +12,11 @@
 
 [打开有惯性版](https://hqu35785-cmyk.github.io/fanhuafenluo/index-inertia.html)
 
-`101 张卡`　`繁花·纷落 70 / 鲨鱼 14 / 咓 14 / 公开 3`　`响应式浏览`　`原始 PNG`　`五栏真实资料`
+`101 张卡`　`繁花·纷落 70 / 公开 31`　`响应式浏览`　`原始 PNG`　`五栏真实资料`
+
+站点只保留“繁花·纷落”和“公开”两个可切换条目。“公开”的前三张固定为“调月莉音 / 认知修改·后宫性生活 / 星野”，随后接入原鲨鱼分区 14 张与原咓分区 14 张；卡片仍保留各自原始 `creator`、别名和素材路径，但不再提供“鲨鱼”或“咓”的独立作者条目。
+
+两个展示页中的“公开”数据必须按 `publicWorks → legacySharkWorks → legacyWaWorks` 顺序合并。`legacySharkWorks` 与 `legacyWaWorks` 只是保留旧素材路径与详情 key 的历史数据桶，不是可切换作者分区。
 
 ## 两个页面版本
 
@@ -72,8 +76,6 @@ assets/js/motion.js
 src/data/works.js
 src/data/card-intros.json
 src/data/details-fanhua.js
-src/data/details-shark.js
-src/data/details-wa.js
 src/data/details-public.js
 scripts/sync-card-details.mjs
 assets/**/*.png
@@ -103,7 +105,7 @@ assets/**/*.webp
 
 1. 把完整原始 PNG 放入正确的 `assets/` 路径。
 2. 生成单独的 WebP 预览图，放入 `assets/previews/`；预览图只用于页面展示，不能把 `preview` 指向 PNG。
-3. 在 `src/data/works.js` 的正确数组中添加作品记录。
+3. 在 `src/data/works.js` 中添加作品记录：“繁花·纷落”卡片加入其现有数组，其他所有新卡只加入 `publicWorks`；不得恢复“鲨鱼”或“咓”的独立作者条目。
 4. `image` 和 `_detailKey` 必须逐字符一致；中文路径沿用现有百分号编码写法。
 5. `preview` 必须是真实存在的 WebP，`image` 必须是真实存在的 PNG。
 6. 真实日期才写入 `createdAt`，没有可靠日期时留空或省略，不得用当前日期、作者或 alias 猜测。
@@ -191,15 +193,14 @@ node scripts/sync-card-details.mjs --check
 
 ```text
 src/data/details-fanhua.js
-src/data/details-shark.js
-src/data/details-wa.js
 src/data/details-public.js
 ```
 
 `--check` 必须通过以下检查才允许提交：
 
 ```text
-70 / 14 / 14 / 3 / 101 数量正确
+繁花·纷落 70 / 公开 31 / 总计 101 数量正确
+公开前三张依次为调月莉音 / 认知修改·后宫性生活 / 星野
 AI 简介数量 = 101
 简介长度全部为 120–180
 简介不是 description 原文
@@ -280,13 +281,11 @@ prefers-reduced-motion 支持
 
 ## 发布前检查
 
-源仓库发布后，先记录源仓库合并后的完整 SHA，再把两个展示页五个 `SOURCE_URLS` 的 `?v=` 更新为该 SHA 前 12 位：
+源仓库发布后，先记录源仓库合并后的完整 SHA，再把两个展示页三个 `SOURCE_URLS` 的 `?v=` 更新为该 SHA 前 12 位：
 
 ```text
 works.js
 details-fanhua.js
-details-shark.js
-details-wa.js
 details-public.js
 ```
 
@@ -294,7 +293,7 @@ details-public.js
 
 - 主要条目恰好为 `index.html`、`index-inertia.html`、`README.md`，并且只有 `assets/css/motion.css`、`assets/js/motion.js` 两个登记的动效支持文件。
 - `index-inertia.html` 仍保留完整滚动物理，并且与 `index.html` 同步本次共同详情界面修改。
-- 两个页面的卡片数量均为 70 / 14 / 14 / 3，总计 101。
+- 两个页面的卡片数量均为“繁花·纷落 70 / 公开 31”，总计 101；“公开”前三张必须是调月莉音、认知修改·后宫性生活、星野。
 - 眼睛和头部在列表卡面、详情顶图、保存面板中都没有被裁掉。
 - 预览链保持源站 WebP → jsDelivr → GitHub Raw。
 - 下载链保持源站 PNG → jsDelivr → GitHub Raw。
