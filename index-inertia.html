@@ -67,8 +67,6 @@ button{font:inherit}
   margin-inline:auto;
 }
 .site-header .wrap{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center}
-
-.brand{display:flex;align-items:center;gap:12px;min-width:0}
 .avatar{
   width:42px;height:42px;flex:0 0 auto;display:grid;place-items:center;border-radius:14px;
   border:1px solid rgba(255,255,255,.14);
@@ -76,14 +74,6 @@ button{font:inherit}
   box-shadow:inset 0 1px 0 rgba(255,255,255,.065);
   font-family:var(--serif);font-size:17px;
 }
-.brand-copy{min-width:0}
-.brand-line{display:flex;align-items:baseline;gap:10px;min-width:0}
-.brand-line b{font-family:var(--serif);font-size:17px;font-weight:600;letter-spacing:.07em;white-space:nowrap}
-.brand-line em{
-  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  color:rgba(206,199,209,.44);font-size:7px;font-style:normal;letter-spacing:.14em;
-}
-.brand-copy small{display:block;margin-top:5px;color:rgba(206,199,209,.29);font-size:6.5px;letter-spacing:.14em}
 .archive-count{display:grid;justify-items:end;gap:3px}
 .archive-count span{color:rgba(206,199,209,.34);font-size:6.5px;letter-spacing:.16em}
 .archive-count b{font-family:var(--serif);font-size:20px;font-weight:500;line-height:1}
@@ -289,16 +279,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   font-size:5.5px;
   letter-spacing:.10em;
   color:rgba(206,199,209,.36);
-}
-/* Information hierarchy:
-   top-left = identity; lower label = character name + alias/id. */
-.identity-badge{
-  max-width:calc(100% - 48px);
-  color:rgba(247,243,246,.74);
-  background:rgba(7,8,12,.34);
-  border-color:rgba(255,255,255,.105);
-  font-size:6.5px;
-  letter-spacing:.055em;
 }
 .state-label-ready .ready-name{
   font-family:var(--serif);
@@ -882,14 +862,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   overflow:auto;
   padding:54px 34px 30px;
 }
-.detail-kicker{
-  display:flex;
-  justify-content:space-between;
-  gap:14px;
-  color:rgba(206,199,209,.38);
-  font-size:7px;
-  letter-spacing:.15em;
-}
 .detail-heading{
   margin-top:0;
   display:flex;
@@ -919,87 +891,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   background:rgba(169,187,217,.045);
   font-size:7px;
   letter-spacing:.14em;
-}
-.detail-tags{
-  margin-top:18px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-}
-.detail-tags span{
-  padding:7px 9px;
-  border:1px solid rgba(255,255,255,.075);
-  border-radius:999px;
-  color:rgba(232,226,235,.52);
-  background:rgba(255,255,255,.025);
-  font-size:7px;
-  letter-spacing:.08em;
-}
-.detail-sections{
-  margin-top:26px;
-  display:grid;
-  gap:10px;
-}
-.detail-sections section{
-  padding:15px 15px 16px;
-  border:1px solid rgba(255,255,255,.065);
-  border-radius:12px;
-  background:rgba(255,255,255,.018);
-}
-.detail-sections b{
-  display:block;
-  margin-bottom:8px;
-  color:rgba(255,255,255,.72);
-  font-size:8px;
-  letter-spacing:.10em;
-}
-.detail-sections p{
-  margin:0;
-  color:rgba(224,218,228,.58);
-  font-size:11px;
-  line-height:1.75;
-}
-.detail-actions{
-  margin-top:18px;
-}
-.detail-primary-download{
-  width:100%;
-  min-height:52px;
-  padding:9px 12px 9px 14px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  border:1px solid rgba(232,182,199,.16);
-  border-radius:12px;
-  color:#fff;
-  background:linear-gradient(135deg,rgba(232,182,199,.10),rgba(169,187,217,.055));
-  cursor:pointer;
-}
-.detail-primary-download span{
-  display:grid;
-  gap:4px;
-  text-align:left;
-}
-.detail-primary-download b{
-  font-family:var(--serif);
-  font-size:12px;
-  letter-spacing:.07em;
-}
-.detail-primary-download small{
-  color:rgba(206,199,209,.42);
-  font-size:6px;
-  letter-spacing:.13em;
-}
-.detail-primary-download i{
-  width:28px;
-  height:28px;
-  display:grid;
-  place-items:center;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:50%;
-  font-style:normal;
-  color:rgba(255,255,255,.68);
 }
 
 /* =========================
@@ -1100,42 +991,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
 }
 .save-sheet-actions{
   margin-top:12px;
-}
-.save-sheet-download{
-  min-height:52px;
-  padding:8px 12px 8px 14px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  border:1px solid rgba(232,182,199,.16);
-  border-radius:12px;
-  color:#fff;
-  background:linear-gradient(135deg,rgba(232,182,199,.11),rgba(169,187,217,.055));
-  text-decoration:none;
-}
-.save-sheet-download span{
-  display:grid;
-  gap:4px;
-}
-.save-sheet-download b{
-  font-family:var(--serif);
-  font-size:11px;
-  letter-spacing:.07em;
-}
-.save-sheet-download small{
-  color:rgba(206,199,209,.42);
-  font-size:6px;
-  letter-spacing:.13em;
-}
-.save-sheet-download i{
-  width:27px;
-  height:27px;
-  display:grid;
-  place-items:center;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:50%;
-  font-style:normal;
 }
 .save-sheet-actions p{
   margin:9px 2px 0;
@@ -2223,11 +2078,8 @@ a.save-sheet-choice:active{
 .archive-modal.is-open .archive-detail-visual{
   animation:motionVisualIn 620ms 70ms var(--ease-out) both;
 }
-.archive-modal.is-open .detail-kicker{animation:motionSectionIn 440ms 90ms var(--ease-out) both}
 .archive-modal.is-open .detail-heading{animation:motionSectionIn 480ms 130ms var(--ease-out) both}
-.archive-modal.is-open .detail-tags{animation:motionSectionIn 500ms 170ms var(--ease-out) both}
 .archive-modal.is-open .detail-reader{animation:motionSectionIn 520ms 210ms var(--ease-out) both}
-.archive-modal.is-open .detail-actions{animation:motionSectionIn 540ms 250ms var(--ease-out) both}
 .archive-modal-close,
 .save-sheet-close{
   transition:transform 260ms var(--ease-out),background 220ms ease,border-color 220ms ease!important;
@@ -2292,13 +2144,11 @@ a.save-sheet-choice:active{
 
 /* Save/download controls visibly acknowledge action. */
 .save-sheet-choice.is-activating,
-.detail-primary-download.is-activating,
 .detail-save-btn.is-activating{
   animation:motionActionConfirm 440ms var(--ease-out) both;
 }
 .save-choice-mark,
 .save-sheet-choice i,
-.detail-primary-download i,
 .action-arrow,
 .download-icon{
   transition:transform 240ms var(--ease-out),border-color 240ms ease,color 240ms ease,background 240ms ease;
@@ -2839,16 +2689,6 @@ a.save-sheet-choice:active{
 .detail-reading-panel[class*="enter-"] .detail-reading-head small{animation:detailMetaIn 420ms 95ms ease both}
 .detail-reading-panel[class*="enter-"] .detail-reading-head h3{animation:detailTitleIn 470ms 70ms cubic-bezier(.2,.82,.2,1) both}
 .detail-reading-panel[class*="enter-"] .detail-reading-head>span{animation:detailTypeIn 460ms 120ms cubic-bezier(.2,.82,.2,1) both}
-
-/* Modal tags resolve one-by-one. */
-.archive-modal.is-open .detail-tags span{opacity:0;animation:detailTagResolve 430ms cubic-bezier(.2,.82,.2,1) both}
-.archive-modal.is-open .detail-tags span:nth-child(1){animation-delay:210ms}
-.archive-modal.is-open .detail-tags span:nth-child(2){animation-delay:250ms}
-.archive-modal.is-open .detail-tags span:nth-child(3){animation-delay:290ms}
-.archive-modal.is-open .detail-tags span:nth-child(n+4){animation-delay:330ms}
-.detail-tags span{
-  transition:transform 240ms cubic-bezier(.2,.82,.2,1),border-color 240ms ease,color 240ms ease,background 240ms ease;
-}
 @media(hover:hover) and (pointer:fine){
   .detail-tags span:hover{
     transform:translateY(-2px);
@@ -2857,15 +2697,11 @@ a.save-sheet-choice:active{
     background:rgba(232,182,199,.035);
   }
 }
-
-/* Details CTA has its own downward "save" gesture. */
-.detail-primary-download,
 .detail-save-btn{
   overflow:hidden;
   isolation:isolate;
   transition:transform 200ms cubic-bezier(.2,.82,.2,1),border-color 260ms ease,background 300ms ease!important;
 }
-.detail-primary-download::before,
 .detail-save-btn::before{
   content:"";
   position:absolute;
@@ -2875,11 +2711,8 @@ a.save-sheet-choice:active{
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.045),transparent);
   pointer-events:none;
 }
-.detail-primary-download:hover::before,
 .detail-save-btn:hover::before{animation:detailButtonSheen 620ms ease both}
-.detail-primary-download.is-activating i,
 .detail-save-btn.is-activating{animation:detailSaveDrop 460ms cubic-bezier(.2,.82,.2,1) both}
-.detail-primary-download:active{transform:scale(.988)}
 
 /* Close control gets a distinct mechanical snap rather than ordinary hover. */
 .archive-modal-close:active,.save-sheet-close:active{transform:rotate(-11deg) scale(.9)!important}
@@ -3734,6 +3567,11 @@ async function buildCatalog(){
       ...work,
       _authorId:authorId
     }));
+    // The header total and the "READY" threshold both read meta.count, so it
+    // tracks the loaded catalog instead of a literal that goes stale on edits.
+    if(authorSections[authorId]){
+      authorSections[authorId].count=catalog[authorId].length;
+    }
     if(!catalog[authorId].length){
       console.warn(`[archive] 作者 ${authorId} 没有读到任何角色卡`);
     }
