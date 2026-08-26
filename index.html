@@ -2857,7 +2857,7 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
 }
 
 </style>
-<link rel="stylesheet" href="assets/css/motion.css?v=motion-failsafe-v2">
+<link rel="stylesheet" href="assets/css/motion.css?v=motion-firstscreen-v3">
 </head>
 <body class="motion-rich">
     <header class="site-header">
@@ -3409,7 +3409,7 @@ function formatCreatedAt(work){
 function applyAuthorCardContent(authorId,meta){
   const works=catalogState.catalog?.[authorId] || [];
   growCardPool(works.length);
-  const firstScreenCount=Math.max(currentGalleryColumns()*2,6);
+  const firstScreen=firstScreenCount();
 
   cards.forEach((card,index)=>{
     const work=works[index];
@@ -3483,8 +3483,8 @@ function applyAuthorCardContent(authorId,meta){
     /* Keep sizes off until the source repository publishes matching 320w/480w variants. */
     image.width=640;
     image.height=935;
-    image.loading=index<firstScreenCount?'eager':'lazy';
-    image.fetchPriority=index<Math.min(firstScreenCount,8)?'high':'low';
+    image.loading=index<firstScreen?'eager':'lazy';
+    image.fetchPriority=index<Math.min(firstScreen,8)?'high':'low';
     image.dataset.fallbackIndex='0';
 
     card.classList.add('is-image-loading');
@@ -3544,6 +3544,11 @@ async function loadCatalog(){
   status.textContent='LOADING SOURCE';
   archiveGallery?.setAttribute('aria-busy','true');
 
+  // 目录要先走一次网络请求才回来，在那之前画廊是空的：整屏只有背景色，
+  // 卡面模板里的「等待卡面」占位根本还没进 DOM。先按首屏容量铺一批占位卡，
+  // 让加载过程有东西可看；真数据到了 growCardPool 只会补足数量，不会重建。
+  growCardPool(firstScreenCount());
+
   try{
     const catalog=await buildCatalog();
 
@@ -3598,6 +3603,9 @@ async function loadCatalog(){
     statusContainer.classList.add('is-error');
     statusRetry.hidden=false;
     archiveGallery?.setAttribute('aria-busy','false');
+    // 占位卡只是加载期间的铺垫。取数据失败就把还没绑上作品的收掉，
+    // 否则「SOURCE ERROR」旁边会一直挂着一屏「等待卡面」。
+    cards.forEach(card=>{if(!card._work) card.hidden=true;});
   }
 }
 
@@ -3863,6 +3871,11 @@ function currentGalleryColumns(){
   const template=getComputedStyle(galleryEl).gridTemplateColumns;
   const columns=template.split(/\s+/).filter(Boolean).length;
   return columns || 1;
+}
+
+// 首屏大致装得下的卡片数：预铺占位卡、以及决定哪些卡面用 eager 加载都按它来。
+function firstScreenCount(){
+  return Math.max(currentGalleryColumns()*2,6);
 }
 
 function syncCardIntrinsicHeight(force=false){
@@ -4511,7 +4524,7 @@ window.addEventListener('beforeunload',()=>{
 });
 
 </script>
-<script src="assets/js/motion.js?v=motion-failsafe-v2" defer></script>
+<script src="assets/js/motion.js?v=motion-firstscreen-v3" defer></script>
 </body>
 </html>
 

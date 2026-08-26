@@ -40,17 +40,30 @@
     if (opts.delay && !REDUCED) el.style.setProperty('--mo-delay', opts.delay + 'ms');
     io.observe(el);
     watch(el);
+    // 首屏元素不等 IntersectionObserver。回调是排队派发的，移动端首帧本来就忙，
+    // 卡片又是异步插入的，回调迟到一秒以上很常见——而等待期间元素就停在
+    // opacity:0 上，整屏纯黑。已经在视口里的东西直接开始入场，IO 只留给滚动。
+    if (inView(el)) enter(el);
   }
 
   /* ====================== ③ 滚动入场 ====================== */
+  function inView(el) {
+    const box = el.getBoundingClientRect();
+    return box.bottom > 0 && box.top < innerHeight;
+  }
+
+  function enter(el) {
+    if (el.classList.contains('is-in')) return;
+    el.classList.add('is-in');
+    io.unobserve(el);                               // 只播一次，不重播
+    el.addEventListener('animationend', function () {
+      el.style.willChange = '';
+    }, { once: true });
+  }
+
   const io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
-      if (!e.isIntersecting) return;
-      e.target.classList.add('is-in');
-      io.unobserve(e.target);                       // 只播一次，不重播
-      e.target.addEventListener('animationend', function () {
-        e.target.style.willChange = '';
-      }, { once: true });
+      if (e.isIntersecting) enter(e.target);
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
 
@@ -74,8 +87,7 @@
      起来，两种情况的表象都是 opacity 停在 0，这里要一起兜住。 */
   function sweep() {
     seen.forEach(function (rounds, el) {
-      const box = el.getBoundingClientRect();
-      if (box.bottom <= 0 || box.top >= innerHeight) { seen.set(el, 0); return; }  // 还没滚到
+      if (!inView(el)) { seen.set(el, 0); return; }   // 还没滚到
       // 这一轮看得见就跳过，但计数不清零：动画播一半又被打回 opacity:0 的元素
       // 会在可见与不可见之间反复横跳，清零的话永远攒不够轮数，也就永远兜不住。
       if (+getComputedStyle(el).opacity > 0) return;
