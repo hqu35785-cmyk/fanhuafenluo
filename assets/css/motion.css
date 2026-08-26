@@ -78,14 +78,19 @@
   to   { opacity: 0; scale: .98; }
 }
 /* ---------- 3. 滚动入场基础 ---------- */
-/* 只有 JS 就绪后才隐藏，脚本失败时页面仍然可读 */
-html.mo-ready [data-motion] { opacity: 0; }
+/* 隐藏状态只加在「在屏幕外、还没入场」的元素上，mo-hide 全部由 motion.js 挂。
+   屏幕上的元素永远不会是透明的，所以「整屏纯黑」在结构上就发生不了。 */
+[data-motion].mo-hide { opacity: 0; }
 
+/* 这里刻意不写 animation-fill-mode，也不写 animation-delay。
+   带 fill-mode 的话，动画只要没真正跑起来——后台标签页、被节流的合成器、
+   低电量模式——元素就会永久停在首帧的 opacity:0 上；不带的话它保持静态样式，
+   也就是可见。出错的方向必须永远是「看得见」。
+   交错改由 JS 推迟挂 is-in 实现：等待期间元素还是 mo-hide，
+   不会出现「先显示出来、又被动画打回透明」的闪烁。 */
 [data-motion].is-in {
   animation-duration: var(--mo-dur, var(--dur-md));
   animation-timing-function: var(--mo-ease, var(--ease-expo));
-  animation-delay: var(--mo-delay, 0ms);
-  animation-fill-mode: both;
 }
 
 [data-motion="sweep-down"].is-in  { animation-name: mo-sweep-down; }
@@ -177,7 +182,6 @@ html.mo-ready [data-motion] { opacity: 0; }
   .mo-tabpanel.is-enter-preset {
     animation-name: mo-fade-in !important;
     animation-duration: 150ms !important;
-    animation-delay: 0ms !important;
   }
   .mo-backdrop.is-closing,
   .mo-panel.is-closing { animation-name: mo-fade-in !important; animation-direction: reverse !important; }

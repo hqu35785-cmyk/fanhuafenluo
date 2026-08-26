@@ -3,6 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- motion.css 阻塞渲染，但它的 <link> 在文档 63% 处：手机上要等几十 KB
+     的 HTML 先到才能开始下载，首帧就一直拖着。这里预加载，不动原来那个
+     <link> —— 移动它会改变和后面内联样式表的层叠顺序。 -->
+<link rel="preload" as="style" href="assets/css/motion.css?v=motion-visible-first-v4">
+<link rel="preload" as="script" href="assets/js/motion.js?v=motion-visible-first-v4">
 <title>繁花·纷落｜角色卡档案</title>
 <meta name="description" content="繁花·纷落与公开两个分区的 TAVO 角色卡档案，共 101 张，可在线浏览设定并保存原始 PNG。">
 <meta name="theme-color" content="#08090d">
@@ -2857,7 +2862,7 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
 }
 
 </style>
-<link rel="stylesheet" href="assets/css/motion.css?v=motion-firstscreen-v3">
+<link rel="stylesheet" href="assets/css/motion.css?v=motion-visible-first-v4">
 </head>
 <body class="motion-rich">
     <header class="site-header">
@@ -4524,7 +4529,7 @@ window.addEventListener('beforeunload',()=>{
 });
 
 </script>
-<script src="assets/js/motion.js?v=motion-firstscreen-v3" defer></script>
+<script src="assets/js/motion.js?v=motion-visible-first-v4" defer></script>
 </body>
 </html>
 

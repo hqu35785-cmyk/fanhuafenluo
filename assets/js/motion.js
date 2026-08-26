@@ -37,25 +37,44 @@
     opts = opts || {};
     el.dataset.motion = motion;
     if (opts.cls) el.classList.add(opts.cls);
-    if (opts.delay && !REDUCED) el.style.setProperty('--mo-delay', opts.delay + 'ms');
+
+    // 已经在屏幕上的，就地入场，一帧都不隐藏。
+    if (inView(el)) { enter(el, !SKIP_ENTRANCE); return; }
+
+    // 只有屏幕外的才藏起来等滚动，藏的时候用户本来也看不见它。
+    if (opts.delay && !REDUCED) el.dataset.moDelay = opts.delay;
+    el.classList.add('mo-hide');
     io.observe(el);
-    watch(el);
-    // 首屏元素不等 IntersectionObserver。回调是排队派发的，移动端首帧本来就忙，
-    // 卡片又是异步插入的，回调迟到一秒以上很常见——而等待期间元素就停在
-    // opacity:0 上，整屏纯黑。已经在视口里的东西直接开始入场，IO 只留给滚动。
-    if (inView(el)) enter(el);
   }
 
-  /* ====================== ③ 滚动入场 ====================== */
+  /* ====================== ③ 入场 ====================== */
+  /* 整套机制只有一条规则：屏幕上的元素永远不隐藏。
+     隐藏状态（mo-hide）只加在视口之外的元素上，所以无论 IntersectionObserver
+     迟到、不来，还是动画根本没跑起来，用户看到的都不可能是一片黑。
+     正因为如此，这里不需要任何轮询兜底。 */
+
+  /* 首屏要不要补入场动画。以下两种情况一律不补，直接落到最终状态：
+     1) 页面已经画出来了。文档是边解析边画的，deferred 脚本执行时首屏往往
+        已经在屏幕上了；这时再补一段从 opacity:0 起步的动画，等于把用户已经
+        看见的内容重新抹黑再淡入——手机上「从黑的加载出来」正是这么来的。
+     2) 文档当前不可见（后台标签页、被节流的合成器）。动画不会推进，元素会
+        卡在首帧的透明上；而且本来也没人在看，补了没有意义。
+     动画只是锦上添花，任何拿不准的情况都按「直接显示」处理。 */
+  const SKIP_ENTRANCE =
+    performance.getEntriesByType('paint').length > 0 || document.hidden;
+
   function inView(el) {
     const box = el.getBoundingClientRect();
     return box.bottom > 0 && box.top < innerHeight;
   }
 
-  function enter(el) {
-    if (el.classList.contains('is-in')) return;
+  function enter(el, animate) {
+    if (el.dataset.moIn) return;                    // 只播一次，不重播
+    el.dataset.moIn = '1';
+    el.classList.remove('mo-hide');
+    io.unobserve(el);
+    if (animate === false) return;
     el.classList.add('is-in');
-    io.unobserve(el);                               // 只播一次，不重播
     el.addEventListener('animationend', function () {
       el.style.willChange = '';
     }, { once: true });
@@ -63,59 +82,36 @@
 
   const io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
-      if (e.isIntersecting) enter(e.target);
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const delay = REDUCED ? 0 : +el.dataset.moDelay || 0;
+      // 交错期间元素仍然是 mo-hide，推迟挂 is-in 不会闪
+      if (delay) setTimeout(function () { enter(el); }, delay);
+      else enter(el);
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
 
-  /* 入场完全依赖上面的回调。回调迟到——或在某些移动端浏览器里因为卡片是异步
-     插入、布局尚未稳定而始终不来——元素就会一直停在
-     `html.mo-ready [data-motion]` 的 opacity:0 上：整屏纯黑，连"等待卡面"的
-     占位都看不见。所以连续两轮都已经在视口里却仍未入场的元素，直接写行内样式
-     显示出来。
-     这里刻意不走 class + CSS：补 is-in 只是挂上一段 fill-mode:both 的动画，
-     动画本身没跑起来时元素依然停在首帧的 opacity:0；而新加一条 class 规则又要
-     跟页面自己那 431 条内联样式抢层叠。行内样式没有这两个问题。 */
-  const SWEEP_MS = 400;
-  const SWEEP_ROUNDS = 3;                           // 连续 1.2s 还是不可见才动手
-  const SWEEP_LIMIT = 20;                           // 定时器最多跑 8s
-  const seen = new Map();                           // 元素 -> 连续「在视口内且不可见」的轮数
-  let sweeps = 0;
-  let timer = 0;
-  let raf = 0;
-
-  /* 判据是「真的看不见」而不是「没有 is-in」：io 没回调、和 io 回调了但动画没跑
-     起来，两种情况的表象都是 opacity 停在 0，这里要一起兜住。 */
-  function sweep() {
-    seen.forEach(function (rounds, el) {
-      if (!inView(el)) { seen.set(el, 0); return; }   // 还没滚到
-      // 这一轮看得见就跳过，但计数不清零：动画播一半又被打回 opacity:0 的元素
-      // 会在可见与不可见之间反复横跳，清零的话永远攒不够轮数，也就永远兜不住。
-      if (+getComputedStyle(el).opacity > 0) return;
-      if (rounds + 1 < SWEEP_ROUNDS) { seen.set(el, rounds + 1); return; }         // 再等等，别抢动画
-      el.style.setProperty('opacity', '1', 'important');
-      el.style.setProperty('animation', 'none', 'important');
-      el.style.transform = 'none';
-      el.style.filter = 'none';
-      el.classList.add('is-in');
-      io.unobserve(el);
-      seen.delete(el);
+  /* mo-hide 的前提是「这东西在屏幕外」。IO 的回调跟着渲染步骤派发，被节流时
+     可能迟到甚至不来；切换作者之类的布局变化也可能把屏幕外的元素直接挪到屏幕上，
+     期间一个 scroll 事件都没有。所以凡是已经露出一半却还挂着 mo-hide 的，
+     一律直接显示——判据比 IO 宽松得多，正常情况下轮不到它出手。 */
+  function revealVisible() {
+    $$('[data-motion].mo-hide').forEach(function (el) {
+      const box = el.getBoundingClientRect();
+      const shown = Math.min(box.bottom, innerHeight) - Math.max(box.top, 0);
+      // 走到这一步说明 IO 没能及时接手，直接显示，不再补动画
+      if (shown > Math.min(box.height, innerHeight) / 2) enter(el, false);
     });
   }
 
-  function watch(el) {
-    seen.set(el, 0);
-    if (timer) return;
-    timer = setInterval(function () {
-      sweep();
-      if (++sweeps >= SWEEP_LIMIT || !seen.size) { clearInterval(timer); timer = 0; }
-    }, SWEEP_MS);
-  }
-
-  // 定时器停了以后，滚动到下面的卡片同样不能停在纯黑上。
-  ['scroll', 'resize'].forEach(function (type) {
+  // 不用 requestAnimationFrame —— 页面被节流时它同样不触发。
+  let lastReveal = 0;
+  ['scroll', 'resize', 'orientationchange'].forEach(function (type) {
     addEventListener(type, function () {
-      if (raf || !seen.size) return;
-      raf = requestAnimationFrame(function () { raf = 0; sweep(); });
+      const now = Date.now();
+      if (now - lastReveal < 120) return;
+      lastReveal = now;
+      revealVisible();
     }, { passive: true });
   });
 
@@ -189,12 +185,18 @@
     const grid = $(SEL.cardGrid) || document.body;
     layoutCards(grid);
 
-    // 98 张卡是异步渲染的，监听后续插入
+    // 卡片是异步插入的；显示/隐藏又是靠 hidden 属性切的。两者都会改变布局，
+    // 也就都可能把原本在屏幕外、正挂着 mo-hide 的元素挪到屏幕上。
     let t;
     new MutationObserver(function () {
       clearTimeout(t);
-      t = setTimeout(function () { layoutCards(grid); }, 80);
-    }).observe(grid, { childList: true, subtree: true });
+      t = setTimeout(function () { layoutCards(grid); revealVisible(); }, 80);
+    }).observe(grid, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['hidden']
+    });
   }
 
   /* ====================== ⑥ 详情弹窗：以被点击的卡片为展开原点 ====================== */
@@ -305,7 +307,6 @@
 
   /* ====================== ⑨ 启动 ====================== */
   function boot() {
-    document.documentElement.classList.add('mo-ready');
     initHero();
     initCards();
     initModal();
