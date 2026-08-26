@@ -39,6 +39,7 @@
     if (opts.cls) el.classList.add(opts.cls);
     if (opts.delay && !REDUCED) el.style.setProperty('--mo-delay', opts.delay + 'ms');
     io.observe(el);
+    watch(el);
   }
 
   /* ====================== ③ 滚动入场 ====================== */
@@ -52,6 +53,59 @@
       }, { once: true });
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+  /* 入场完全依赖上面的回调。回调迟到——或在某些移动端浏览器里因为卡片是异步
+     插入、布局尚未稳定而始终不来——元素就会一直停在
+     `html.mo-ready [data-motion]` 的 opacity:0 上：整屏纯黑，连"等待卡面"的
+     占位都看不见。所以连续两轮都已经在视口里却仍未入场的元素，直接写行内样式
+     显示出来。
+     这里刻意不走 class + CSS：补 is-in 只是挂上一段 fill-mode:both 的动画，
+     动画本身没跑起来时元素依然停在首帧的 opacity:0；而新加一条 class 规则又要
+     跟页面自己那 431 条内联样式抢层叠。行内样式没有这两个问题。 */
+  const SWEEP_MS = 400;
+  const SWEEP_ROUNDS = 3;                           // 连续 1.2s 还是不可见才动手
+  const SWEEP_LIMIT = 20;                           // 定时器最多跑 8s
+  const seen = new Map();                           // 元素 -> 连续「在视口内且不可见」的轮数
+  let sweeps = 0;
+  let timer = 0;
+  let raf = 0;
+
+  /* 判据是「真的看不见」而不是「没有 is-in」：io 没回调、和 io 回调了但动画没跑
+     起来，两种情况的表象都是 opacity 停在 0，这里要一起兜住。 */
+  function sweep() {
+    seen.forEach(function (rounds, el) {
+      const box = el.getBoundingClientRect();
+      if (box.bottom <= 0 || box.top >= innerHeight) { seen.set(el, 0); return; }  // 还没滚到
+      // 这一轮看得见就跳过，但计数不清零：动画播一半又被打回 opacity:0 的元素
+      // 会在可见与不可见之间反复横跳，清零的话永远攒不够轮数，也就永远兜不住。
+      if (+getComputedStyle(el).opacity > 0) return;
+      if (rounds + 1 < SWEEP_ROUNDS) { seen.set(el, rounds + 1); return; }         // 再等等，别抢动画
+      el.style.setProperty('opacity', '1', 'important');
+      el.style.setProperty('animation', 'none', 'important');
+      el.style.transform = 'none';
+      el.style.filter = 'none';
+      el.classList.add('is-in');
+      io.unobserve(el);
+      seen.delete(el);
+    });
+  }
+
+  function watch(el) {
+    seen.set(el, 0);
+    if (timer) return;
+    timer = setInterval(function () {
+      sweep();
+      if (++sweeps >= SWEEP_LIMIT || !seen.size) { clearInterval(timer); timer = 0; }
+    }, SWEEP_MS);
+  }
+
+  // 定时器停了以后，滚动到下面的卡片同样不能停在纯黑上。
+  ['scroll', 'resize'].forEach(function (type) {
+    addEventListener(type, function () {
+      if (raf || !seen.size) return;
+      raf = requestAnimationFrame(function () { raf = 0; sweep(); });
+    }, { passive: true });
+  });
 
   /* ====================== ④ 首屏 ====================== */
   function initHero() {
