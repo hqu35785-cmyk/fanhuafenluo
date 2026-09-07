@@ -3085,6 +3085,7 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
   </section>
 </div>
 
+<script data-fanhua-publisher="cards" src="assets/publisher/cards.js?v=6f42c78d26f793f355cda0edaf9fce3711c9c8b92149ff65a81baf75913a3d3c"></script>
 <script>
 const body=document.body;
 const statusContainer=document.getElementById('status');
@@ -3138,6 +3139,31 @@ const catalogState={
   detailPromises:Object.create(null),
   detailsReady:Object.create(null)
 };
+
+/* fanhua-publisher:asset-resolver:start */
+function isPublisherCardAsset(path){
+  return Boolean(
+    window.__FANHUA_PUBLISHER__?.isLocalAsset &&
+    window.__FANHUA_PUBLISHER__.isLocalAsset(path)
+  );
+}
+
+function publisherCardAssetUrl(path){
+  if(!isPublisherCardAsset(path)) return '';
+  try{
+    const url=new URL(path,window.location.href);
+    return url.origin===window.location.origin?url.href:'';
+  }catch{
+    return '';
+  }
+}
+
+function publisherCardImageUrl(work){
+  const path=work?.preview || work?.image;
+  if(isPublisherCardAsset(path)) return publisherCardAssetUrl(path);
+  return sourceUrl(path);
+}
+/* fanhua-publisher:asset-resolver:end */
 
 function sourceUrl(path){
   if(!path) return '';
@@ -3253,7 +3279,7 @@ async function fetchText(path){
 async function buildCatalog(){
   const worksSource=await fetchText(SOURCE_URLS.works);
 
-  const rawCatalog={
+  let rawCatalog={
     fanhuafenluo:[
       ...extractConstArray(worksSource,'latestFanhuaWorks'),
       ...extractConstArray(worksSource,'fanhuaWorks')
@@ -3264,6 +3290,15 @@ async function buildCatalog(){
       ...extractConstArray(worksSource,'legacyWaWorks')
     ]
   };
+
+  /* fanhua-publisher:catalog:start */
+  if(window.__FANHUA_PUBLISHER__?.mergeCatalog){
+    rawCatalog=window.__FANHUA_PUBLISHER__.mergeCatalog(
+      rawCatalog,
+      {fanhuafenluo:0,public:0}
+    );
+  }
+  /* fanhua-publisher:catalog:end */
 
   const catalog={};
 
@@ -3295,7 +3330,12 @@ async function loadAuthorDetails(authorId){
 
   const promise=(async()=>{
     const source=await fetchText(path);
-    const details=parseDetailsData(source,authorId);
+    let details=parseDetailsData(source,authorId);
+    /* fanhua-publisher:details:start */
+    if(window.__FANHUA_PUBLISHER__?.mergeDetails){
+      details=window.__FANHUA_PUBLISHER__.mergeDetails(details,authorId);
+    }
+    /* fanhua-publisher:details:end */
     const works=catalogState.catalog?.[authorId] || [];
 
     works.forEach(work=>{
@@ -3360,6 +3400,13 @@ function applyPreviewPosition(image,work){
 }
 
 function previewFallbackCandidates(work){
+  /* fanhua-publisher:preview-fallback:start */
+  if(isPublisherCardAsset(work?.image)){
+    const local=publisherCardAssetUrl(work.image);
+    return local?[local]:[];
+  }
+  /* fanhua-publisher:preview-fallback:end */
+
   const relative=String(work?.image || '')
     .replace(/^\.\//,'')
     .replace(/^\//,'');
@@ -3506,7 +3553,7 @@ function applyAuthorCardContent(authorId,meta){
       fallbackPreview(image,work,card);
     };
 
-    image.src=sourceUrl(work.preview || work.image);
+    image.src=publisherCardImageUrl(work);
 
     card.querySelectorAll(
       '.detail-action,.download-action'
@@ -4179,7 +4226,7 @@ async function openArchive(card){
     }
   };
 
-  detailImage.src=sourceUrl(work.preview || work.image);
+  detailImage.src=publisherCardImageUrl(work);
 
   /* Scale the dossier from the approximate position of the card that opened it. */
   const sourceRect=card.getBoundingClientRect();
@@ -4242,6 +4289,13 @@ function safeFilename(name){
 }
 
 function originalPngCandidates(path){
+  /* fanhua-publisher:download:start */
+  if(isPublisherCardAsset(path)){
+    const local=publisherCardAssetUrl(path);
+    return local?[local]:[];
+  }
+  /* fanhua-publisher:download:end */
+
   const relative=String(path || '')
     .replace(/^\.\//,'')
     .replace(/^\//,'');
