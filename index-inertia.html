@@ -1049,7 +1049,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px}
   margin-top:26px;
 }
 .detail-options{
-  --detail-count:5;
+  --detail-count:4;
   display:grid;
   grid-template-columns:repeat(var(--detail-count),minmax(0,1fr));
   gap:6px;
@@ -3300,20 +3300,17 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
 
       <div class="detail-reader">
         <div class="detail-options" role="tablist" aria-label="角色档案内容">
-          <button class="detail-option is-active" type="button" role="tab" aria-selected="true" data-detail-tab="intro">
-            <span>01</span><b>简介</b>
-          </button>
-          <button class="detail-option" type="button" role="tab" aria-selected="false" data-detail-tab="opening">
-            <span>02</span><b>开场白</b>
+          <button class="detail-option is-active" type="button" role="tab" aria-selected="true" data-detail-tab="opening">
+            <span>01</span><b>开场白</b>
           </button>
           <button class="detail-option" type="button" role="tab" aria-selected="false" data-detail-tab="setting">
-            <span>03</span><b>人物设定</b>
+            <span>02</span><b>人物设定</b>
           </button>
           <button class="detail-option" type="button" role="tab" aria-selected="false" data-detail-tab="worldbook">
-            <span>04</span><b>世界书</b>
+            <span>03</span><b>世界书</b>
           </button>
           <button class="detail-option" type="button" role="tab" aria-selected="false" data-detail-tab="preset">
-            <span>05</span><b>预设</b>
+            <span>04</span><b>预设</b>
           </button>
         </div>
 
@@ -3321,9 +3318,9 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
           <div class="detail-reading-head">
             <div>
               <small id="detailPanelIndex">01 · CHARACTER DATA</small>
-              <h3 id="detailPanelTitle">简介</h3>
+              <h3 id="detailPanelTitle">开场白</h3>
             </div>
-            <span id="detailPanelType">INTRO</span>
+            <span id="detailPanelType">OPENING</span>
           </div>
           <div class="detail-reading-body" id="detailPanelBody"></div>
           <div class="detail-reading-fade" aria-hidden="true"></div>
@@ -4616,7 +4613,6 @@ function formatPersonalityAndScenario(work){
 
 function detailCopyForWork(work){
   return {
-    intro:work.intro || '该角色卡暂未提供简介。',
     opening:work.opening || '该角色卡未提供开场白。',
     setting:formatPersonalityAndScenario(work),
     worldbook:work.worldbook || '该角色卡未附带世界书。',
@@ -4625,14 +4621,12 @@ function detailCopyForWork(work){
 }
 
 const PENDING_COPY={
-  intro:'正在读取角色资料…',
   opening:'正在读取角色资料…',
   setting:'正在读取角色资料…',
   worldbook:'正在读取角色资料…',
   preset:'正在读取角色资料…'
 };
 const FAILED_COPY={
-  intro:'角色资料读取失败，请关闭后重新打开重试。',
   opening:'角色资料读取失败。',
   setting:'角色资料读取失败。',
   worldbook:'角色资料读取失败。',
@@ -4640,16 +4634,15 @@ const FAILED_COPY={
 };
 
 const detailTabMeta={
-  intro:{index:'01 · CHARACTER DATA',title:'简介',type:'INTRO'},
-  opening:{index:'02 · CHARACTER DATA',title:'开场白',type:'OPENING'},
-  setting:{index:'03 · CHARACTER DATA',title:'人物设定',type:'SETTING'},
-  worldbook:{index:'04 · CHARACTER DATA',title:'世界书',type:'LOREBOOK'},
-  preset:{index:'05 · CHARACTER DATA',title:'预设',type:'PRESET'}
+  opening:{index:'01 · CHARACTER DATA',title:'开场白',type:'OPENING'},
+  setting:{index:'02 · CHARACTER DATA',title:'人物设定',type:'SETTING'},
+  worldbook:{index:'03 · CHARACTER DATA',title:'世界书',type:'LOREBOOK'},
+  preset:{index:'04 · CHARACTER DATA',title:'预设',type:'PRESET'}
 };
 
-let currentDetailTab='intro';
+let currentDetailTab='opening';
 let detailTabSwitchToken=0;
-const detailTabOrder=['intro','opening','setting','worldbook','preset'];
+const detailTabOrder=['opening','setting','worldbook','preset'];
 const detailOptions=document.querySelector('.detail-options');
 const detailReadingPanel=document.querySelector('.detail-reading-panel');
 
@@ -4668,7 +4661,7 @@ function renderDetailTabs(){
 
   detailOptions?.style.setProperty('--detail-count',String(visible.length || 1));
   if(!visible.includes(currentDetailTab)){
-    currentDetailTab=visible[0] || 'intro';
+    currentDetailTab=visible[0] || 'opening';
   }
 }
 
@@ -4694,7 +4687,7 @@ function clearDetailMotionClasses(panel){
 
 function paintDetailContent(key){
   const copy=archiveModal._detailCopy || {};
-  const meta=detailTabMeta[key] || detailTabMeta.intro;
+  const meta=detailTabMeta[key] || detailTabMeta.opening;
   document.getElementById('detailPanelIndex').textContent=meta.index;
   document.getElementById('detailPanelTitle').textContent=meta.title;
   document.getElementById('detailPanelType').textContent=meta.type;
@@ -4702,9 +4695,9 @@ function paintDetailContent(key){
 }
 
 function setDetailTab(key,options={}){
-  if(!detailTabMeta[key]) key='intro';
+  if(!detailTabMeta[key]) key='opening';
   const visible=visibleDetailTabs();
-  if(!visible.includes(key)) key=visible[0] || 'intro';
+  if(!visible.includes(key)) key=visible[0] || 'opening';
   const instant=Boolean(options.instant) || prefersReducedMotion.matches;
   const fromKey=currentDetailTab;
   const fromIndex=Math.max(0,visible.indexOf(fromKey));
@@ -4814,8 +4807,8 @@ async function openArchive(card){
   archiveModal._detailCopy=detailsReady
     ? detailCopyForWork(work)
     : PENDING_COPY;
-  currentDetailTab='intro';
-  setDetailTab('intro',{instant:true});
+  currentDetailTab='opening';
+  setDetailTab('opening',{instant:true});
 
   detailImage.classList.remove('is-ready');
   detailArt?.classList.remove('has-source');
