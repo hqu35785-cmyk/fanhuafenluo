@@ -486,16 +486,18 @@ async function buildCatalog(){
   return catalog;
 }
 
-async function loadAuthorDetails(authorId,fetchOptions){
+async function loadAuthorDetails(authorId){
   if(catalogState.detailPromises[authorId]){
     return catalogState.detailPromises[authorId];
   }
+
+  const priority=lowPriorityDetails.delete(authorId)?'low':'auto';
 
   const path=SOURCE_URLS.details[authorId];
   if(!path) throw new Error(`未找到 ${authorId} 的详情数据源`);
 
   const promise=(async()=>{
-    const source=await fetchText(path,fetchOptions);
+    const source=await fetchText(path,{priority});
     let details=parseDetailsData(source,authorId);
     /* fanhua-publisher:details:start */
     if(window.__FANHUA_PUBLISHER__?.mergeDetails){
@@ -532,9 +534,12 @@ function ensureWorkDetails(work){
 
 /* 角色资料每个分区有几百 KB，不和首屏卡面抢带宽：浏览器空闲时以低优先级预取当前分区，
    鼠标移到「查看档案」或手指按下时也会立刻开始，打开档案时资料通常已经就绪。 */
+const lowPriorityDetails=new Set();
+
 function prefetchAuthorDetails(authorId){
   if(!catalogState.catalog?.[authorId] || catalogState.detailPromises[authorId]) return;
-  loadAuthorDetails(authorId,{priority:'low'}).catch(()=>{});
+  lowPriorityDetails.add(authorId);
+  loadAuthorDetails(authorId).catch(()=>{});
 }
 
 function scheduleDetailsPrefetch(authorId){
@@ -639,7 +644,8 @@ function formatCreatedAt(work){
     match[3].padStart(2,'0');
 }
 
-function applyAuthorCardContent(authorId){
+// 发卡工具发布前会逐字查找这一行函数头（含没用到的 meta 参数），不要改动。
+function applyAuthorCardContent(authorId,meta){
   const works=catalogState.catalog?.[authorId] || [];
   growCardPool(works.length);
   const firstScreen=firstScreenCount();
@@ -840,7 +846,7 @@ async function loadCatalog(){
 statusRetry.addEventListener('click',loadCatalog);
 // 出错时整条状态都可以点（文案写的就是「点击重试」）。
 statusContainer.addEventListener('click',event=>{
-  if(event.target!==statusRetry && statusContainer.classList.contains('is-error')) loadCatalog();
+  if(event.target!==statusRetry && statusContainer.classList.contains('is-error')) statusRetry.click();
 });
 
 headerAuthorCycle.addEventListener('click',()=>{
@@ -1538,7 +1544,8 @@ function openSaveSheet(card=activeCard){
   motionDelay(170,()=>saveSheetClose.focus({preventScroll:true}));
 
   // 先放上已经加载好的卡面预览，原始 PNG 准备好后再换成原图。
-  image.src=card.querySelector('.loaded-card-image')?.currentSrc || publisherCardImageUrl(work);
+  const cardPreview=card.querySelector('.loaded-card-image');
+  image.src=cardPreview?.currentSrc || cardPreview?.src || '';
   image.alt=`${work.name}角色卡预览`;
   applyPreviewPosition(image,work);
 

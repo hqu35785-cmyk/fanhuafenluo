@@ -85,7 +85,36 @@ assets/**/*.webp
 3. 不得增加第三个主要页面/说明文件、未登记的共享脚本、未登记的样式文件或临时数据文件；登记的支持文件只有 `assets/css/archive.css`、`assets/css/motion.css`、`assets/js/motion.js` 和 `assets/publisher/**`。
 4. 详情弹窗不得重新加入 `CHARACTER PROFILE / CREATE TIME` 信息行或角色名下方的标签胶囊；详情正文阅读区必须保持 `overflow-x:hidden` 与 `touch-action:pan-y`，只允许纵向浏览。
 5. 不得把 `sensitive` 元数据重新做成卡面遮罩、模糊层、解锁标记或点击确认流程；列表、详情与保存面板继续直接显示对应卡面。
-6. `assets/publisher/` 由发卡工具维护，不要手动修改；`index.html` 里的 `<script data-fanhua-publisher="cards" …>` 标签和 `/* fanhua-publisher:… */` 标记代码块也必须原样保留。发卡工具每次发布只改写该标签里的 `cards.js?v=` 哈希，并依赖这些标记代码块合并卡片目录、详情、预览与下载地址。
+6. `assets/publisher/` 由发卡工具维护，不要手动修改。发卡工具每次发布只改写 `index.html` 里 `<script data-fanhua-publisher="cards" …>` 标签的 `cards.js?v=` 哈希，但发布前会逐字检查 `index.html`，任何一项对不上就拒绝发布（“旧站页面结构不受支持”）。以下内容必须逐字保留，见下方「发卡工具的页面检查」。
+
+### 发卡工具的页面检查
+
+发卡工具（桌面上的“快捷发布卡片 / 发布到繁花·纷落 / 发布到公开”，检查代码在工具目录的 `tools/card-publisher/legacy-template.mjs`）发布前对 `index.html` 做逐字计数检查。修改 `index.html` 后必须仍然满足：
+
+各出现恰好 1 次：
+
+```text
+function sourceUrl(path){ …整个函数体逐字不变… }
+const SOURCE_BASE='https://hqu35785-cmyk.github.io/fanhuafenluo-pages/';
+works:'src/data/works.js?v=
+async function buildCatalog(){
+async function loadAuthorDetails(authorId){
+function previewFallbackCandidates(work){
+function applyAuthorCardContent(authorId,meta){
+async function openArchive(card){
+function originalPngCandidates(path){
+loadCatalog();
+<script src="assets/js/motion.js?
+```
+
+另外：
+
+- 10 个 `/* fanhua-publisher:…:start|end */` 标记各 1 次，标记之间的代码块（含 `let rawCatalog={…}` 目录块、`let details=…` 详情块前后各一行）逐字不变。
+- `publisherCardImageUrl(work)` 恰好 3 次：解析器里 1 次，卡面和详情顶图的 `image.src=` 各 1 次；`sourceUrl(work.preview || work.image)` 为 0 次。
+- `<script data-fanhua-publisher="cards" src="assets/publisher/cards.js?v=…"></script>` 恰好 1 个，并且紧接着下一行是 `<script>`、再下一行是 `const body=document.body;`。
+- 整个文件不能混用 CRLF 与 LF 行尾。
+
+改名、加参数、多写一次 `loadCatalog();` 或 `publisherCardImageUrl(work)` 都会让发卡工具停止发布。
 
 ### 新增角色卡时必须改源仓库
 
