@@ -4,1021 +4,3255 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>繁花·纷落｜角色卡档案</title>
-<meta name="description" content="繁花·纷落角色卡档案 · 新版外观。页面内的角色、卡面与资料均为示例内容。">
-<meta name="theme-color" content="#0b0b0d">
+<meta name="description" content="繁花·纷落角色卡档案 · 外观改进版。页面内的角色、卡面与资料均为示例内容。">
+<meta name="theme-color" content="#08090d">
 <meta name="referrer" content="no-referrer">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%23c4412d'/%3E%3Crect%20x='3'%20y='3'%20width='26'%20height='26'%20rx='4'%20fill='none'%20stroke='%23fff3e6'%20stroke-width='1.4'/%3E%3Ctext%20x='16'%20y='22.5'%20font-size='16'%20text-anchor='middle'%20fill='%23fff3e6'%20font-family='serif'%20font-weight='700'%3E%E7%B9%81%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='8'%20fill='%2308090d'/%3E%3Ctext%20x='16'%20y='23'%20font-size='17'%20text-anchor='middle'%20fill='%23e8b6c7'%20font-family='serif'%3EF%3C/text%3E%3C/svg%3E">
 <style>
-/* =========================================================
-   繁花·纷落｜角色卡档案 · 新版外观
-   设计语言：墨色漆底 · 鎏金细线 · 朱砂印章
-   栅格列数、卡片比例与尺寸、弹窗与保存面板的尺寸和浏览方式与原站一致，
-   只重做视觉元素。
-   ========================================================= */
 :root{
-  --bg:#0b0b0d;
-  --surface:#151519;
-  --surface-2:#1b1b20;
-  --surface-3:#232329;
-  --text:#f3eee6;
-  --text-2:#cfc7ba;
-  --text-3:#958d81;
-  --text-4:#665f56;
-  --gold:#d9b26f;
-  --gold-hi:#f1d49e;
-  --gold-lo:#a07d43;
-  --gold-ink:#1b1408;
-  --cinnabar:#c94a33;
-  --cinnabar-hi:#ee7a5f;
-  --jade:#86c2a8;
-  --line:rgba(243,238,230,.085);
-  --line-2:rgba(243,238,230,.15);
-  --line-gold:rgba(217,178,111,.34);
-  --glass:rgba(13,13,16,.74);
-  --gold-fill:linear-gradient(180deg,#f3d9a6 0%,#dcb571 55%,#c99b52 100%);
-  --page-w:min(3300px,calc(100% - clamp(12px,2.4vw,42px)));
-  --r-card:14px;
+  --bg:#08090d;
+  --panel:#11131a;
+  --text:#f7f3f6;
+  --soft:#cec7d1;
+  --muted:#8f8997;
+  --pink:#e8b6c7;
+  --blue:#a9bbd9;
+  --violet:#c8b9df;
+  --line:rgba(255,255,255,.085);
   --role-media-focus-x:50%;
   --role-media-focus-y:8%;
-  --serif:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;
-  --sans:system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-  --mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Mono",Menlo,Consolas,monospace;
-  --motion-fast:160ms;
-  --motion-ui:260ms;
-  --motion-panel:420ms;
-  --motion-load:760ms;
-  --ease-expo:cubic-bezier(.16,1,.3,1);
-  --ease-soft:cubic-bezier(.22,.75,.2,1);
-  --ease-inout:cubic-bezier(.65,0,.35,1);
-  --ease-back:cubic-bezier(.34,1.56,.64,1);
+  --serif:"Songti SC","STSong","Noto Serif CJK SC",serif;
+  --sans:Inter,ui-sans-serif,system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
 }
 *{box-sizing:border-box}
-html{background:var(--bg);color-scheme:dark;scrollbar-gutter:stable;-webkit-text-size-adjust:100%}
+html{background:var(--bg);color-scheme:dark}
 body{
   margin:0;min-height:100vh;color:var(--text);font-family:var(--sans);
-  -webkit-font-smoothing:antialiased;
   background:
-    radial-gradient(900px 440px at 0% -12%,rgba(217,178,111,.08),transparent 60%),
-    radial-gradient(760px 400px at 100% -4%,rgba(201,74,51,.07),transparent 62%),
-    linear-gradient(180deg,#0f0e10,#0b0b0d 42%,#09090b);
+    radial-gradient(720px 380px at 4% -8%,rgba(232,182,199,.08),transparent 62%),
+    radial-gradient(680px 360px at 100% 2%,rgba(169,187,217,.065),transparent 64%),
+    linear-gradient(180deg,#0b0c11,#08090d 48%,#07080b);
 }
 body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;
-  background-image:radial-gradient(rgba(243,238,230,.055) 1px,transparent 1.25px);
-  background-size:22px 22px;
-  -webkit-mask-image:linear-gradient(180deg,#000,transparent 70%);
-  mask-image:linear-gradient(180deg,#000,transparent 70%);
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.17;
+  background-image:
+    linear-gradient(to bottom,rgba(8,9,13,0) 0%,rgba(8,9,13,0) 70%,rgba(8,9,13,1) 88%),
+    linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px);
+  background-size:100% 100%,78px 78px,78px 78px;
 }
-button{font:inherit;color:inherit}
-.icon{width:1em;height:1em;display:block;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+button{font:inherit}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
-:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.wrap,.archive-main{width:var(--page-w);margin-inline:auto}
-.site-header,.archive-main,footer{position:relative;z-index:1}
 
-/* ============ Header：印章头像 → 作者名 → 英文名 → 卡片数 ============ */
 .site-header{
-  height:86px;
-  border-bottom:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(22,21,24,.94),rgba(13,13,15,.94));
+  height:76px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.065);
+  background:
+    radial-gradient(220px 90px at 0 0,rgba(232,182,199,.06),transparent 70%),
+    linear-gradient(180deg,rgba(15,15,22,.99),rgba(9,10,14,.985));
 }
-.site-header::after{
-  content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;pointer-events:none;
-  background:linear-gradient(90deg,transparent,rgba(217,178,111,.6) 20%,rgba(201,74,51,.4) 62%,transparent);
+.wrap{width:calc(100% - 40px);margin:auto}
+.archive-main{
+  width:min(3300px,calc(100% - clamp(12px,2.4vw,42px)));
+  margin-inline:auto;
 }
-.author-header-row{
-  height:100%;
-  display:grid;
-  grid-template-columns:48px max-content minmax(0,1fr) auto;
-  grid-template-areas:"avatar name english count";
-  column-gap:14px;
-  align-items:center;
+.site-header .wrap{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center}
+.avatar{
+  width:42px;height:42px;flex:0 0 auto;display:grid;place-items:center;border-radius:14px;
+  border:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(145deg,rgba(232,182,199,.18),rgba(169,187,217,.10)),#12131a;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.065);
+  font-family:var(--serif);font-size:17px;
 }
-.author-avatar-shell{
-  grid-area:avatar;width:48px;height:48px;padding:0;
-  border:0;border-radius:12px;overflow:hidden;cursor:pointer;appearance:none;-webkit-appearance:none;
-  background:var(--cinnabar);
-  box-shadow:0 10px 24px rgba(201,74,51,.22),0 0 0 1px rgba(255,255,255,.08);
-  transform-style:preserve-3d;
-}
-.author-avatar-shell:disabled{cursor:wait;opacity:.6}
-.author-avatar-shell:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-.author-avatar-img{width:100%;height:100%;display:block;object-fit:cover}
-.author-primary{grid-area:name;min-width:0;display:flex;align-items:center}
-.author-primary b{
-  display:block;white-space:nowrap;
-  font-family:var(--serif);font-size:29px;font-weight:700;line-height:1;letter-spacing:.12em;
-  color:var(--text);
-}
-.author-english{grid-area:english;min-width:0;display:flex;align-items:center;gap:12px;overflow:hidden;padding-top:2px}
-.author-english::before{
-  content:"";flex:0 0 auto;width:6px;height:6px;transform:rotate(45deg);
-  border:1px solid var(--gold);background:rgba(217,178,111,.18);
-}
-.author-english span{
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:rgba(217,178,111,.82);
-}
-.author-english small{
-  display:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--text-4);
-}
-@media(min-width:1180px){
-  .author-english small{display:block}
-  .author-english small::before{content:"/";margin-right:12px;color:var(--text-4)}
-}
-.archive-count{
-  grid-area:count;min-width:48px;padding-left:14px;
-  display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:5px;
-  border-left:1px solid var(--line);
-}
-.archive-count span{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--text-3)}
-.archive-count b{
-  font-family:var(--serif);font-size:24px;font-weight:700;line-height:1;
-  color:var(--gold-hi);font-variant-numeric:tabular-nums;
-}
+.archive-count{display:grid;justify-items:end;gap:3px}
+.archive-count span{color:rgba(206,199,209,.34);font-size:6.5px;letter-spacing:.16em}
+.archive-count b{font-family:var(--serif);font-size:20px;font-weight:500;line-height:1}
 
-/* ============ Toolbar：作者分区 + 状态 ============ */
 .toolbar{
-  min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px;
-  border-bottom:1px solid var(--line);
+  min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  border-bottom:1px solid rgba(255,255,255,.055);
 }
-.filters{
-  display:flex;align-items:center;gap:4px;min-width:0;padding:3px;
-  border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.025);
-}
+.filters{display:flex;align-items:center;gap:20px;min-width:0;overflow:hidden}
 .filter{
-  position:relative;height:34px;padding:0 18px;
-  display:inline-flex;align-items:center;
-  border:0;border-radius:999px;background:transparent;cursor:pointer;
-  font-family:var(--serif);font-size:14.5px;font-weight:700;letter-spacing:.1em;white-space:nowrap;
-  color:var(--text-3);
-  overflow:hidden;isolation:isolate;appearance:none;-webkit-appearance:none;
+  position:relative;padding:16px 0 14px;color:rgba(206,199,209,.36);
+  font-size:7px;font-weight:650;letter-spacing:.14em;white-space:nowrap;
 }
-.filter:not(.active):hover{color:var(--text)}
-.filter.active{
-  color:var(--gold-ink);
-  background:var(--gold-fill);
-  box-shadow:0 6px 18px rgba(217,178,111,.22),inset 0 1px 0 rgba(255,255,255,.45);
+.filter.active{color:rgba(247,243,246,.82)}
+.filter.active::after{
+  content:"";position:absolute;left:0;right:0;bottom:8px;height:1px;
+  background:linear-gradient(90deg,var(--pink),rgba(169,187,217,.52));
 }
-.filter::before{
-  content:"";position:absolute;z-index:-1;inset:0 -20px;opacity:0;pointer-events:none;
-  transform:translateX(-70%) skewX(-18deg);
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
-}
-.filter.active::before{z-index:1;mix-blend-mode:soft-light;animation:authorFilterGlint 620ms var(--ease-expo) both}
-.filter:disabled{cursor:wait}
-
-.toolbar-status{
-  display:inline-flex;align-items:center;gap:9px;height:32px;padding:0 13px;
-  border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.025);
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--text-3);white-space:nowrap;
-}
-.toolbar-status i{
-  width:7px;height:7px;flex:0 0 auto;border-radius:50%;
-  background:var(--gold);box-shadow:0 0 0 3px rgba(217,178,111,.16);
-  animation:statusDot 1.6s ease-in-out infinite;
-}
-.toolbar-status.is-ready i{background:var(--jade);box-shadow:0 0 0 3px rgba(134,194,168,.16);animation:none}
-.toolbar-status.is-error{color:var(--cinnabar-hi);border-color:rgba(201,74,51,.45);background:rgba(201,74,51,.07);cursor:pointer}
-.toolbar-status.is-error span{font-family:var(--sans);letter-spacing:.04em;font-size:12px}
-.toolbar-status.is-error i{background:var(--cinnabar);box-shadow:0 0 0 3px rgba(201,74,51,.2);animation:none}
+.toolbar-status{display:flex;align-items:center;gap:7px;color:rgba(206,199,209,.32);font-size:7px;letter-spacing:.12em;white-space:nowrap}
+.toolbar-status i{width:5px;height:5px;border-radius:50%;border:1px solid rgba(232,182,199,.55)}
+.toolbar-status.is-error span{font-size:11px;letter-spacing:.06em;color:#f1b4bd}
 .status-retry{
-  height:22px;padding:0 10px;margin-right:-6px;
-  border:1px solid rgba(238,122,95,.5);border-radius:999px;
-  background:rgba(201,74,51,.16);color:#ffd9cf;font-size:11.5px;cursor:pointer;
+  min-height:26px;padding:0 10px;border:1px solid rgba(241,180,189,.42);border-radius:999px;
+  color:#f1b4bd;background:rgba(241,180,189,.08);font-size:10px;cursor:pointer;
 }
-.status-retry[hidden]{display:none}
 
-/* ============ Gallery：列数与间距与原站一致 ============ */
 .gallery{
   padding:16px 0 34px;display:grid;
   grid-template-columns:repeat(7,minmax(0,1fr));
   column-gap:clamp(10px,.72vw,14px);
   row-gap:clamp(18px,2vh,26px);
-  transition:opacity 220ms ease,transform 300ms var(--ease-expo);
 }
-@media(max-width:1550px){.gallery{grid-template-columns:repeat(6,minmax(0,1fr))}}
-@media(max-width:1320px){.gallery{grid-template-columns:repeat(5,minmax(0,1fr))}}
-@media(max-width:1080px){.gallery{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media(max-width:760px){.gallery{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:620px){.gallery{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px;row-gap:10px}}
-@media(min-width:500px) and (max-width:620px) and (orientation:portrait){.gallery{grid-template-columns:repeat(3,minmax(0,1fr))}}
-
-/* ============ 卡片 ============ */
-.archive-card{position:relative;min-width:0;border-radius:var(--r-card)}
-.archive-card[hidden]{display:none}
+.archive-card{min-width:0;perspective:760px}
 .card-face{
   position:relative;aspect-ratio:.72;overflow:hidden;
-  border:1px solid var(--line);border-radius:var(--r-card);
+  border:1px solid rgba(255,255,255,.072);border-radius:16px;
   background:
-    radial-gradient(120% 70% at 50% 0%,rgba(217,178,111,.07),transparent 60%),
-    linear-gradient(165deg,#19181c,#111013 58%,#0c0c0e);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 14px 30px rgba(0,0,0,.26);
-  transition:border-color var(--motion-load) ease,box-shadow var(--motion-load) var(--ease-expo),transform 360ms var(--ease-expo);
+    radial-gradient(circle at 73% 14%,rgba(169,187,217,.055),transparent 28%),
+    radial-gradient(circle at 16% 88%,rgba(232,182,199,.045),transparent 30%),
+    linear-gradient(148deg,#14151b 0%,#0d0f14 58%,#090a0e 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.032),0 12px 28px rgba(0,0,0,.16);
 }
-.loaded-art{
-  position:absolute;inset:0;isolation:isolate;
-  opacity:0;transform:scale(1.015);
-  transition:opacity 620ms ease,transform 880ms var(--ease-expo);
-}
-.loaded-art::before{
-  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
-  background:linear-gradient(180deg,rgba(8,8,10,.30) 0%,transparent 20%,transparent 46%,rgba(8,8,10,.55) 70%,rgba(8,8,10,.92) 100%);
-}
-.theme-0 .loaded-art{background:linear-gradient(160deg,#2a1d24,#141218 60%,#0c0b0e)}
-.theme-1 .loaded-art{background:linear-gradient(160deg,#1c2229,#121317 60%,#0b0b0e)}
-.theme-2 .loaded-art{background:linear-gradient(160deg,#2a2216,#141215 60%,#0c0b0d)}
-.theme-3 .loaded-art{background:linear-gradient(160deg,#1a2620,#121416 60%,#0b0c0d)}
-.theme-4 .loaded-art{background:linear-gradient(160deg,#241c2c,#131218 60%,#0b0b0e)}
-.theme-5 .loaded-art{background:linear-gradient(160deg,#2b1a17,#141215 60%,#0c0b0c)}
-.loaded-card-image{
-  position:absolute;z-index:0;inset:0;display:block;width:100%;height:100%;
-  object-fit:cover;object-position:var(--role-media-focus-x) var(--role-media-focus-y);
-  opacity:0;transform:scale(1.025);
-  transition:opacity .42s ease,transform .62s var(--ease-soft);
-}
-.archive-card.is-loaded .loaded-art{opacity:1;transform:none}
-.archive-card.is-loaded.has-source-image .loaded-card-image{opacity:1;transform:none}
-.archive-card.is-image-loading .loaded-card-image{opacity:0;transform:scale(1.025)}
-.archive-card.image-error .loaded-card-image{opacity:0}
 
-/* 未加载：纹样底 + 角框 + 花形标记 */
-.stripe-field{
-  position:absolute;inset:0;z-index:4;pointer-events:none;opacity:1;
-  -webkit-mask-image:radial-gradient(110% 85% at 50% 38%,#000 25%,transparent 82%);
-  mask-image:radial-gradient(110% 85% at 50% 38%,#000 25%,transparent 82%);
-  transition:opacity .5s ease;
+/* Loaded art lives under exactly the same overlay/chrome. */
+.loaded-art{
+  position:absolute;inset:0;opacity:0;transform:scale(1.015);
+  transition:opacity .46s ease,transform .62s cubic-bezier(.2,.75,.2,1);
 }
-.pattern-1 .stripe-field{background-image:radial-gradient(rgba(217,178,111,.22) 1px,transparent 1.35px);background-size:14px 14px}
-.pattern-2 .stripe-field{background-image:repeating-radial-gradient(circle at 50% 36%,rgba(217,178,111,.14) 0 1px,transparent 1px 17px)}
-.pattern-3 .stripe-field{background-image:repeating-linear-gradient(135deg,rgba(217,178,111,.12) 0 1px,transparent 1px 9px)}
-.pattern-4 .stripe-field{
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='none' stroke='%23d9b26f' stroke-opacity='.2' stroke-width='1'%3E%3Cpath d='M2 26V2h24v20H8V8h12v8h-6'/%3E%3C/svg%3E");
-  background-size:28px 28px;
-}
-.archive-card.is-loaded .stripe-field{opacity:0}
-.ghost-frame{
-  position:absolute;z-index:6;inset:46px 12px 112px;pointer-events:none;
-  --c:rgba(217,178,111,.42);
+
+.loaded-art::before{
+  content:"";position:absolute;inset:0;
   background:
-    linear-gradient(var(--c),var(--c)) left top/14px 1px no-repeat,
-    linear-gradient(var(--c),var(--c)) left top/1px 14px no-repeat,
-    linear-gradient(var(--c),var(--c)) right top/14px 1px no-repeat,
-    linear-gradient(var(--c),var(--c)) right top/1px 14px no-repeat,
-    linear-gradient(var(--c),var(--c)) left bottom/14px 1px no-repeat,
-    linear-gradient(var(--c),var(--c)) left bottom/1px 14px no-repeat,
-    linear-gradient(var(--c),var(--c)) right bottom/14px 1px no-repeat,
-    linear-gradient(var(--c),var(--c)) right bottom/1px 14px no-repeat;
-  transition:opacity .5s ease;
+    linear-gradient(180deg,rgba(7,8,12,.04),rgba(7,8,12,.10) 58%,rgba(7,8,12,.30)),
+    radial-gradient(circle at 52% 25%,rgba(255,255,255,.07),transparent 24%);
+}
+.theme-0 .loaded-art{background:linear-gradient(150deg,#271d28,#131620 52%,#0c0e13)}
+.theme-1 .loaded-art{background:linear-gradient(145deg,#16202d,#15131b 55%,#0a0c11)}
+.theme-2 .loaded-art{background:linear-gradient(155deg,#241b24,#171521 48%,#0b0d12)}
+.theme-3 .loaded-art{background:linear-gradient(150deg,#14202a,#18151c 50%,#0b0c11)}
+.theme-4 .loaded-art{background:linear-gradient(155deg,#211b2b,#121820 54%,#090b10)}
+.theme-5 .loaded-art{background:linear-gradient(145deg,#241d22,#12151d 50%,#0b0c10)}
+
+/* Same diagonal texture in both states; it becomes a subtle overlay after load. */
+.stripe-field{
+  position:absolute;inset:-25%;z-index:4;
+  transform:rotate(-17deg);transform-origin:center;opacity:.80;
+  transition:opacity .36s ease;
+}
+.pattern-1 .stripe-field{
+  background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22840%22%20height%3D%221%22%20viewBox%3D%220%200%20840%201%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cpattern%20id%3D%22f%22%20width%3D%2215%22%20height%3D%221%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Crect%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffffff%22%20fill-opacity%3D%22.035%22%2F%3E%3C%2Fpattern%3E%3Cpattern%20id%3D%22w%22%20width%3D%22168%22%20height%3D%221%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Crect%20x%3D%2272%22%20width%3D%2224%22%20height%3D%221%22%20fill%3D%22%23e8b6c7%22%20fill-opacity%3D%22.045%22%2F%3E%3C%2Fpattern%3E%3C%2Fdefs%3E%3Crect%20width%3D%22840%22%20height%3D%221%22%20fill%3D%22url(%23w)%22%2F%3E%3Crect%20width%3D%22840%22%20height%3D%221%22%20fill%3D%22url(%23f)%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat:repeat;
+  background-size:840px 100%;
+}
+.pattern-2 .stripe-field{
+  transform:rotate(-24deg);opacity:.72;
+  background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221638%22%20height%3D%221%22%20viewBox%3D%220%200%201638%201%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cpattern%20id%3D%22f%22%20width%3D%2213%22%20height%3D%221%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Crect%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23a9bbd9%22%20fill-opacity%3D%22.038%22%2F%3E%3C%2Fpattern%3E%3Cpattern%20id%3D%22w%22%20width%3D%22126%22%20height%3D%221%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Crect%20x%3D%2250%22%20width%3D%2224%22%20height%3D%221%22%20fill%3D%22%23ffffff%22%20fill-opacity%3D%22.025%22%2F%3E%3C%2Fpattern%3E%3C%2Fdefs%3E%3Crect%20width%3D%221638%22%20height%3D%221%22%20fill%3D%22url(%23w)%22%2F%3E%3Crect%20width%3D%221638%22%20height%3D%221%22%20fill%3D%22url(%23f)%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat:repeat;
+  background-size:1638px 100%;
+}
+.pattern-3 .stripe-field{
+  transform:rotate(-13deg);opacity:.75;
+  background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221710%22%20height%3D%221%22%20viewBox%3D%220%200%201710%201%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cpattern%20id%3D%22f%22%20width%3D%2218%22%20height%3D%221%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Crect%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffffff%22%20fill-opacity%3D%22.03%22%2F%3E%3C%2Fpattern%3E%3Cpattern%20id%3D%22w%22%20width%3D%22190%22%20height%3D%221%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Crect%20x%3D%2288%22%20width%3D%2229%22%20height%3D%221%22%20fill%3D%22%23e8b6c7%22%20fill-opacity%3D%22.035%22%2F%3E%3C%2Fpattern%3E%3C%2Fdefs%3E%3Crect%20width%3D%221710%22%20height%3D%221%22%20fill%3D%22url(%23w)%22%2F%3E%3Crect%20width%3D%221710%22%20height%3D%221%22%20fill%3D%22url(%23f)%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat:repeat;
+  background-size:1710px 100%;
+}
+.pattern-4 .stripe-field{
+  transform:rotate(-21deg);opacity:.72;
+  background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221584%22%20height%3D%221%22%20viewBox%3D%220%200%201584%201%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cpattern%20id%3D%22f%22%20width%3D%2211%22%20height%3D%221%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Crect%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23a9bbd9%22%20fill-opacity%3D%22.03%22%2F%3E%3C%2Fpattern%3E%3Cpattern%20id%3D%22w%22%20width%3D%22144%22%20height%3D%221%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Crect%20x%3D%2264%22%20width%3D%2222%22%20height%3D%221%22%20fill%3D%22%23ffffff%22%20fill-opacity%3D%22.024%22%2F%3E%3C%2Fpattern%3E%3C%2Fdefs%3E%3Crect%20width%3D%221584%22%20height%3D%221%22%20fill%3D%22url(%23w)%22%2F%3E%3Crect%20width%3D%221584%22%20height%3D%221%22%20fill%3D%22url(%23f)%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat:repeat;
+  background-size:1584px 100%;
+}
+.ghost-frame{
+  position:absolute;z-index:6;inset:11px;
+  border:1px solid rgba(255,255,255,.032);border-radius:12px;
+  transition:border-color .36s ease;
+}
+.ghost-frame::before{
+  content:"";position:absolute;left:50%;top:14%;bottom:14%;width:1px;
+  background:linear-gradient(transparent,rgba(255,255,255,.035),transparent);
+  transition:opacity .36s ease;
 }
 .ghost-frame::after{
-  content:"";position:absolute;left:50%;top:50%;width:52%;aspect-ratio:1;
-  transform:translate(-50%,-50%);opacity:.55;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23d9b26f' stroke-width='1.1'%3E%3Ccircle cx='50' cy='50' r='46' stroke-opacity='.45' stroke-dasharray='1.5 4.5'/%3E%3Cg transform='translate(50 50)' stroke-opacity='.85'%3E%3Cellipse cy='-17' rx='9' ry='17'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(72)'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(144)'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(216)'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(288)'/%3E%3Ccircle r='4.5'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
-  transition:opacity .4s ease,transform .6s var(--ease-expo);
+  content:"";position:absolute;top:50%;left:14%;right:14%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent);
+  transition:opacity .36s ease;
 }
-.archive-card.is-loaded .ghost-frame{opacity:0}
-.archive-card.is-loaded .ghost-frame::after{opacity:0;transform:translate(-50%,-50%) scale(.85)}
-
 .corner-code{
   position:absolute;z-index:10;top:10px;left:10px;
-  max-width:calc(100% - 66px);height:24px;
-  display:flex;align-items:center;gap:7px;padding:0 9px 0 7px;
-  border:1px solid var(--line-2);border-radius:7px;
-  background:rgba(12,12,14,.6);color:var(--text-3);
-  font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;
-  transition:color .4s ease,border-color .4s ease,background .4s ease;
+  max-width:calc(100% - 52px);height:25px;
+  display:flex;align-items:center;gap:6px;padding:0 8px;
+  border:1px solid rgba(255,255,255,.085);border-radius:999px;
+  color:rgba(247,243,246,.52);background:rgba(7,8,12,.28);
+  backdrop-filter:blur(6px);
+  font-size:6.5px;font-weight:650;letter-spacing:.08em;
 }
 .corner-dot{
-  width:7px;height:7px;flex:0 0 auto;border-radius:2px;
-  background:var(--cinnabar);box-shadow:0 0 0 2px rgba(201,74,51,.22);
+  width:4px;height:4px;border-radius:50%;
+  background:rgba(232,182,199,.64);box-shadow:0 0 8px rgba(232,182,199,.22);
 }
-.corner-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.corner-label{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
 .corner-index{
   position:absolute;z-index:10;top:15px;right:12px;
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--text-4);
-  font-variant-numeric:tabular-nums;transition:color .4s ease;
+  color:rgba(247,243,246,.22);font-size:6.5px;letter-spacing:.12em;
 }
-.corner-index::before{content:"No.";margin-right:2px;opacity:.7}
-.archive-card.is-loaded .corner-code{
-  color:var(--text);border-color:rgba(217,178,111,.4);background:rgba(12,12,14,.64);
-  font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.06em;
-}
-.archive-card.is-loaded .corner-index{color:rgba(241,212,158,.9);text-shadow:0 1px 3px rgba(0,0,0,.6)}
-
 .loading-core{
   position:absolute;z-index:8;left:12px;right:12px;bottom:61px;
-  display:grid;grid-template-areas:"stack";
+  display:grid;gap:4px;transition:opacity .34s ease,transform .34s ease;
 }
-.loading-core>.state-label{grid-area:stack;align-self:end;align-content:end}
-.state-label{display:grid;gap:6px;transition:opacity .28s ease,transform .28s ease}
-.state-label-ready{opacity:0;transform:translateY(3px);pointer-events:none;padding-right:40px}
-.loading-title{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--text-4)}
-.loading-line{width:46%;height:1px;background:linear-gradient(90deg,rgba(217,178,111,.55),transparent)}
-.loading-sub{font-size:11px;letter-spacing:.08em;color:var(--text-4)}
-.state-label-ready .ready-name{
-  font-family:var(--serif);font-size:16px;font-weight:700;line-height:1.2;letter-spacing:.07em;
-  color:var(--text);text-shadow:0 1px 4px rgba(0,0,0,.65);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+.loading-title{font-size:6px;font-weight:650;letter-spacing:.16em;color:rgba(247,243,246,.26)}
+.loading-line{
+  width:52%;height:1px;
+  background:linear-gradient(90deg,rgba(232,182,199,.35),rgba(169,187,217,.10),transparent);
 }
-.state-label-ready .loading-line{width:22px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--cinnabar))}
-.state-label-ready .ready-meta{
-  font-family:var(--mono);font-size:10px;letter-spacing:.12em;
-  color:rgba(241,212,158,.86);font-variant-numeric:tabular-nums;text-shadow:0 1px 3px rgba(0,0,0,.6);
+.loading-sub{font-size:5.5px;letter-spacing:.1em;color:rgba(206,199,209,.18)}
+.state-label{
+  display:grid;
+  gap:4px;
+  transition:opacity .28s ease,transform .28s ease;
 }
-.state-label-ready.no-created .loading-line,
-.state-label-ready.no-created .ready-meta{display:none}
-.archive-card.is-loaded .state-label-loading{opacity:0;transform:translateY(-3px);pointer-events:none}
-.archive-card.is-loaded .state-label-ready{opacity:1;transform:none}
-
-/* 底部操作：主按钮「查看档案」+ 右上方独立的下载按钮 */
+.state-label-ready{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  transform:translateY(3px);
+  pointer-events:none;
+}
+/* User-requested empty bottom frame: no text, both states. */
 .bottom-frame{
   position:absolute;z-index:10;left:9px;right:9px;bottom:9px;min-height:43px;
-  border:1px dashed rgba(243,238,230,.12);border-radius:11px;
-  transition:border-color .4s ease;
+  border:1px solid rgba(255,255,255,.06);border-radius:10px;
+  background:linear-gradient(180deg,rgba(7,8,12,.32),rgba(7,8,12,.48));
+  backdrop-filter:blur(6px);
+  transition:border-color .36s ease,background .36s ease;
 }
-.archive-card.is-loaded .bottom-frame{border-color:transparent}
-.bottom-frame button{margin:0;font:inherit}
+footer{
+  padding:18px 0 22px;border-top:1px solid rgba(255,255,255,.05);
+  color:rgba(206,199,209,.26);font-size:7px;letter-spacing:.13em;
+}
+footer .wrap{display:flex;justify-content:space-between;gap:12px}
+
+
+@media(max-width:1550px){
+  .gallery{grid-template-columns:repeat(6,minmax(0,1fr))}
+}
+@media(max-width:1320px){
+  .gallery{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media(max-width:1080px){
+  .gallery{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .gallery{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:620px){
+  .gallery{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    column-gap:10px;
+    row-gap:10px;
+  }
+}
+@media(min-width:500px) and (max-width:620px) and (orientation:portrait){
+  .gallery{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important}
+}
+
+/* Loaded-state label now carries useful character metadata. */
+.state-label-ready .ready-name{
+  font-family:var(--serif);
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.08em;
+  color:rgba(247,243,246,.74);
+  text-transform:none;
+}
+.state-label-ready .ready-meta{
+  font-size:5.5px;
+  letter-spacing:.10em;
+  color:rgba(206,199,209,.36);
+}
+.state-label-ready .ready-name{
+  font-family:var(--serif);
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.08em;
+  color:rgba(247,243,246,.78);
+}
+.state-label-ready .ready-meta{
+  font-size:5.7px;
+  font-weight:600;
+  letter-spacing:.12em;
+  color:rgba(206,199,209,.35);
+}
+/* Loaded-state metadata: creation time instead of duplicated identity/name. */
+.state-label-ready .ready-name{
+  font-family:var(--sans);
+  font-size:6.6px;
+  font-weight:650;
+  letter-spacing:.13em;
+  color:rgba(247,243,246,.70);
+  font-variant-numeric:tabular-nums;
+}
+.state-label-ready .ready-meta{
+  font-family:var(--sans);
+  font-size:5.6px;
+  font-weight:550;
+  letter-spacing:.12em;
+  color:rgba(206,199,209,.36);
+  font-variant-numeric:tabular-nums;
+}
+/* Bottom interaction area:
+   unloaded = empty frame; loaded = primary details + secondary download. */
+.bottom-frame{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 39px;
+  gap:6px;
+  align-items:stretch;
+  padding:0;
+  background:transparent;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+.bottom-frame button{
+  min-width:0;
+  margin:0;
+  border:0;
+  color:inherit;
+  background:transparent;
+  font:inherit;
+}
+
+/* Loaded: the former empty zone resolves into two controls. */
+.detail-action,
+.download-action{
+  position:relative;
+  height:100%;
+  border:1px solid rgba(255,255,255,.085)!important;
+  border-radius:10px;
+  background:linear-gradient(180deg,rgba(10,11,16,.46),rgba(7,8,12,.68))!important;
+  -webkit-backdrop-filter:blur(7px);
+  backdrop-filter:blur(7px);
+}
 .detail-action{
-  position:absolute;inset:0;width:100%;height:100%;
-  display:flex;align-items:center;justify-content:space-between;gap:8px;
-  padding:0 7px 0 13px;text-align:left;cursor:pointer;
-  border:1px solid var(--line-gold);border-radius:11px;
-  color:var(--text);
-  background:linear-gradient(180deg,rgba(28,26,24,.88),rgba(13,13,15,.94));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 8px 18px rgba(0,0,0,.25);
-  overflow:hidden;isolation:isolate;
-  opacity:0;visibility:hidden;pointer-events:none;
-  transition:opacity .28s ease,border-color .3s ease,transform .3s var(--ease-expo),box-shadow .3s ease;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:7px 9px 7px 10px!important;
+  text-align:left;
+  border-color:rgba(232,182,199,.15)!important;
 }
-.archive-card.is-loaded .detail-action{opacity:1;visibility:visible;pointer-events:auto}
-.detail-action::before{
-  content:"";position:absolute;z-index:1;top:-40%;bottom:-40%;left:-30%;width:32%;pointer-events:none;
-  transform:translateX(-120%) skewX(-20deg);
-  background:linear-gradient(90deg,transparent,rgba(241,212,158,.10) 35%,rgba(255,244,222,.20) 50%,rgba(241,212,158,.10) 65%,transparent);
-  animation:goldLeafSweep 4.2s var(--ease-inout) infinite;
-  animation-play-state:paused;
+.action-copy{
+  min-width:0;
+  display:grid;
+  gap:3px;
 }
-.archive-card.is-motion-visible.is-loaded .detail-action::before{animation-play-state:running}
-.action-copy{position:relative;z-index:2;min-width:0;display:grid;gap:3px}
-.action-copy b{font-family:var(--serif);font-size:13px;font-weight:700;letter-spacing:.14em;white-space:nowrap}
+.action-copy b{
+  font-family:var(--serif);
+  color:rgba(255,251,253,.90);
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:.075em;
+  white-space:nowrap;
+}
 .action-copy small{
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:var(--text-3);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:rgba(206,199,209,.37);
+  font-size:4.8px;
+  letter-spacing:.095em;
 }
 .action-arrow{
-  position:relative;z-index:2;width:27px;height:27px;flex:0 0 auto;
-  display:grid;place-items:center;border-radius:50%;
-  color:var(--gold-ink);background:var(--gold-fill);font-size:14px;
-  box-shadow:0 2px 8px rgba(217,178,111,.3),inset 0 1px 0 rgba(255,255,255,.5);
-  transition:transform 240ms var(--ease-expo);
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  width:19px;
+  height:19px;
+  border-radius:50%;
+  border:1px solid rgba(232,182,199,.14);
+  color:rgba(247,243,246,.63);
+  background:rgba(232,182,199,.035);
+  font-size:8px;
 }
 .download-action{
-  position:absolute;z-index:4;right:0;top:-39px;width:31px;height:31px;
-  display:grid;place-items:center;padding:0;cursor:pointer;
-  border:1px solid rgba(255,236,200,.55);border-radius:9px;
-  color:var(--gold-ink);background:var(--gold-fill);
-  box-shadow:0 6px 16px rgba(0,0,0,.3),0 0 14px rgba(217,178,111,.16),inset 0 1px 0 rgba(255,255,255,.5);
-  overflow:hidden;isolation:isolate;
-  opacity:0;visibility:hidden;pointer-events:none;transform:translateY(3px);
-  transition:opacity .28s ease,transform .28s var(--ease-expo),box-shadow .3s ease;
+  display:grid;
+  place-items:center;
+  color:rgba(247,243,246,.50)!important;
+  border-color:rgba(255,255,255,.06)!important;
+  background:linear-gradient(180deg,rgba(10,11,16,.30),rgba(7,8,12,.54))!important;
 }
-.archive-card.is-loaded .download-action{opacity:1;visibility:visible;pointer-events:auto;transform:none}
-.download-action::before{
-  content:"";position:absolute;inset:0;z-index:1;opacity:0;pointer-events:none;
-  transform:translateX(-70%) skewX(-18deg);
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);
+.download-icon{
+  display:grid;
+  place-items:center;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.065);
+  color:rgba(247,243,246,.54);
+  font-size:9px;
 }
-.download-icon{position:relative;z-index:2;display:grid;place-items:center;font-size:15px}
-.download-icon .icon{stroke-width:2.2}
-@media(hover:hover) and (pointer:fine){
-  .archive-card.is-loaded:hover .card-face{
-    transform:translateY(-3px);border-color:rgba(217,178,111,.32);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 22px 44px rgba(0,0,0,.4);
-  }
-  .archive-card.is-loaded .detail-action:hover,
-  .archive-card.is-loaded .detail-action:focus-visible{
-    border-color:rgba(241,212,158,.6);transform:translateY(-1px);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 10px 22px rgba(0,0,0,.32),0 0 18px rgba(217,178,111,.12);
-  }
-  .archive-card.is-loaded .detail-action:hover .action-arrow{transform:translate(2px,-2px)}
-  .archive-card.is-loaded .download-action:hover,
-  .archive-card.is-loaded .download-action:focus-visible{
-    transform:translateY(-1px);
-    box-shadow:0 8px 20px rgba(0,0,0,.34),0 0 20px rgba(217,178,111,.3),inset 0 1px 0 rgba(255,255,255,.55);
-  }
-  .archive-card.is-loaded .download-action:hover::before{animation:detailButtonSheen 620ms ease both}
+/* Keep create date useful but quiet. */
+.state-label-ready .ready-name{
+  font-family:var(--sans);
+  font-size:6.3px;
+  font-weight:650;
+  letter-spacing:.13em;
+  font-variant-numeric:tabular-nums;
 }
-.archive-card.is-loaded .detail-action:active{transform:scale(.985)}
-.archive-card.is-loaded .detail-action:active .action-arrow{transform:translateX(3px) scale(.9)}
-.download-action:active .download-icon{animation:detailMiniDownload 360ms var(--ease-soft) both}
+.state-label-ready .ready-meta{
+  font-size:5px;
+  letter-spacing:.12em;
+  color:rgba(206,199,209,.30);
+}
+/* Final bottom action geometry:
+   one full primary archive box, with a smaller download box overlaid at upper-right. */
+.bottom-frame{
+  position:absolute!important;
+  z-index:10;
+  left:9px!important;
+  right:9px!important;
+  bottom:9px!important;
+  min-height:43px!important;
+  display:block!important;
+  padding:0!important;
+  border:1px solid rgba(255,255,255,.06)!important;
+  border-radius:10px!important;
+  background:linear-gradient(180deg,rgba(7,8,12,.12),rgba(7,8,12,.20))!important;
+  overflow:visible!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
 
-/* 卡面缺失时保持占位样式 */
-.archive-card.is-face-missing .loaded-art{opacity:0}
-.archive-card.is-face-missing .stripe-field{opacity:1}
-.archive-card.is-face-missing .ghost-frame{opacity:1}
-.archive-card.is-face-missing .ghost-frame::after{opacity:.55;transform:translate(-50%,-50%)}
-.archive-card.is-face-missing .state-label-loading{opacity:1;transform:none}
-.archive-card.is-face-missing .state-label-ready{opacity:0}
-
-/* 加载中：扫光 + 呼吸 */
-.archive-card.is-motion-visible:not(.is-loaded) .card-face::after{
-  content:"";position:absolute;z-index:7;inset:-40% -80%;pointer-events:none;
-  background:linear-gradient(90deg,transparent 40%,rgba(241,212,158,.05) 47%,rgba(241,212,158,.11) 50%,rgba(241,212,158,.05) 53%,transparent 60%);
-  animation:motionLoadingSweep 1.3s var(--ease-inout) infinite;
+/* While unloaded, only the empty frame remains. */
+.archive-card:not(.is-loaded) .bottom-frame .detail-action,
+.archive-card:not(.is-loaded) .bottom-frame .download-action{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
 }
-.archive-card.is-motion-visible:not(.is-loaded) .loading-core{animation:motionLoadingBreathe 1.7s ease-in-out infinite}
-.archive-card.is-loaded .state-label-ready{animation:motionReadyCopy 560ms 110ms var(--ease-expo) both}
-.archive-card:not(.is-near){content-visibility:auto;contain-intrinsic-size:var(--card-ih,420px)}
+.archive-card:not(.is-loaded) .bottom-frame{
+  border-color:rgba(255,255,255,.06)!important;
+  background:linear-gradient(180deg,rgba(7,8,12,.10),rgba(7,8,12,.18))!important;
+}
 
+/* Loaded: the same outer frame becomes the primary action. */
+.archive-card.is-loaded .bottom-frame{
+  border-color:rgba(232,182,199,.15)!important;
+  background:linear-gradient(180deg,rgba(10,11,16,.46),rgba(7,8,12,.68))!important;
+  -webkit-backdrop-filter:blur(7px)!important;
+  backdrop-filter:blur(7px)!important;
+}
+.detail-action{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+  padding:7px 48px 7px 10px!important;
+  border:0!important;
+  border-radius:inherit!important;
+  background:transparent!important;
+  text-align:left!important;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .28s ease;
+}
+.archive-card.is-loaded .detail-action{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+.download-action{
+  position:absolute!important;
+  z-index:4!important;
+  right:-4px!important;
+  top:-12px!important;
+  width:34px!important;
+  height:34px!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+  border:1px solid rgba(255,255,255,.075)!important;
+  border-radius:9px!important;
+  color:rgba(247,243,246,.54)!important;
+  background:linear-gradient(180deg,rgba(16,17,23,.92),rgba(8,9,13,.96))!important;
+  box-shadow:0 7px 18px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.04)!important;
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(3px);
+  transition:opacity .28s ease,transform .28s ease,border-color .2s ease;
+}
+.archive-card.is-loaded .download-action{
+  opacity:1;
+  visibility:visible;
+  transform:none;
+  pointer-events:auto;
+}
+.download-icon{
+  width:18px!important;
+  height:18px!important;
+  display:grid!important;
+  place-items:center!important;
+  border:0!important;
+  border-radius:0!important;
+  font-size:9px!important;
+  color:rgba(247,243,246,.55)!important;
+}
+.archive-card.is-loaded .download-action:hover{
+  border-color:rgba(169,187,217,.16)!important;
+  color:rgba(247,243,246,.78)!important;
+}
+/* Loading/loaded visuals now belong to each card, not body-global state. */
+.archive-card .loaded-art{
+  opacity:0;
+  transform:scale(1.015);
+}
+.archive-card.is-loaded .loaded-art{
+  opacity:1;
+  transform:scale(1);
+}
+.archive-card.is-loaded .stripe-field{
+  opacity:.22;
+}
+.archive-card.is-loaded.pattern-2 .stripe-field,
+.archive-card.is-loaded.pattern-3 .stripe-field,
+.archive-card.is-loaded.pattern-4 .stripe-field{
+  opacity:.18;
+}
+.archive-card.is-loaded .ghost-frame{
+  border-color:rgba(255,255,255,.05);
+}
+.archive-card.is-loaded .ghost-frame::before,
+.archive-card.is-loaded .ghost-frame::after{
+  opacity:.32;
+}
+.archive-card.is-loaded .corner-code{
+  color:#f7d9e4!important;
+  border-color:rgba(245,210,226,.42)!important;
+  background:
+    linear-gradient(135deg,
+      rgba(232,182,199,.20) 0%,
+      rgba(200,185,223,.16) 52%,
+      rgba(169,187,217,.13) 100%),
+    rgba(7,8,12,.52)!important;
+  text-shadow:0 1px 3px rgba(4,5,9,.6)!important;
+}
+.archive-card.is-loaded .corner-index{
+  color:rgba(247,243,246,.46);
+}
+.archive-card.is-loaded .state-label-loading{
+  opacity:0;
+  transform:translateY(-3px);
+  pointer-events:none;
+}
+.archive-card.is-loaded .state-label-ready{
+  opacity:1;
+  transform:none;
+}
+.archive-card.is-loaded .state-label-ready .ready-name{
+  color:rgba(255,251,253,.84);
+}
+.archive-card.is-loaded .state-label-ready .ready-meta{
+  color:rgba(206,199,209,.48);
+}
+
+/* Download button alignment fix:
+   anchor it inside the primary frame's top-right corner so it never drifts outside. */
+.download-action{
+  right:5px!important;
+  top:5px!important;
+  width:30px!important;
+  height:30px!important;
+  border-radius:8px!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04)!important;
+}
+.detail-action{
+  padding-right:44px!important;
+}
+/* Final geometry: two truly separate controls.
+   Primary archive box stays at the bottom.
+   Download box floats above-right with a visible gap. */
+.bottom-frame{
+  overflow:visible!important;
+}
+
+.detail-action{
+  inset:0!important;
+  padding-right:10px!important;
+}
+
+/* Separate download control: not inside or touching the archive box visually. */
+.download-action{
+  right:0!important;
+  top:-39px!important;
+  width:31px!important;
+  height:31px!important;
+  border-radius:8px!important;
+  border:1px solid rgba(255,255,255,.085)!important;
+  background:linear-gradient(180deg,rgba(16,17,23,.95),rgba(8,9,13,.98))!important;
+  box-shadow:0 7px 18px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.045)!important;
+}
+
+/* Keep a clear air gap between download and primary archive box. */
+/* Correct loaded metadata hierarchy:
+   top-left = identity; lower metadata = character name, then create date. */
+.state-label-ready .ready-name{
+  font-family:var(--serif)!important;
+  font-size:10.5px!important;
+  font-weight:600!important;
+  letter-spacing:.075em!important;
+  color:rgba(255,251,253,.88)!important;
+  font-variant-numeric:normal!important;
+}
+.state-label-ready .ready-meta{
+  font-family:var(--sans)!important;
+  font-size:5.3px!important;
+  font-weight:600!important;
+  letter-spacing:.115em!important;
+  color:rgba(206,199,209,.43)!important;
+  font-variant-numeric:tabular-nums!important;
+}
+/* Readable loaded metadata: stack both states in one grid cell so the
+   ready copy grows the loading core instead of covering the action frame. */
+.loading-core{
+  display:grid;
+  grid-template-areas:"stack";
+}
+.loading-core > .state-label{
+  grid-area:stack;
+  align-self:end;
+  align-content:end;
+}
+.state-label-ready{
+  position:static;
+  inset:auto;
+}
+.state-label{
+  gap:6px!important;
+}
+.state-label-ready .ready-name{
+  font-family:var(--serif)!important;
+  font-size:15px!important;
+  font-weight:600!important;
+  letter-spacing:.06em!important;
+  line-height:1.15!important;
+}
+.archive-card.is-loaded .state-label-ready .loading-line{
+  width:30%!important;
+  height:2px!important;
+  border-radius:2px!important;
+}
+.state-label-ready .ready-meta{
+  font-family:var(--sans)!important;
+  font-size:9px!important;
+  font-weight:650!important;
+  letter-spacing:.10em!important;
+  font-variant-numeric:tabular-nums!important;
+}
+.archive-card.is-loaded .loading-core::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:-12px;
+  right:-12px;
+  top:-16px;
+  bottom:-61px;
+  pointer-events:none;
+  background:linear-gradient(to top,
+    rgba(6,7,11,.80) 0%,
+    rgba(6,7,11,.64) 32%,
+    rgba(6,7,11,.30) 66%,
+    transparent 100%);
+}
+.archive-card.is-loaded .state-label-ready .ready-name{
+  color:#f7d9e4!important;
+  text-shadow:0 1px 3px rgba(4,5,9,.65)!important;
+}
+.archive-card.is-loaded .state-label-ready .loading-line{
+  background:linear-gradient(90deg,
+    var(--pink),
+    var(--violet) 55%,
+    transparent)!important;
+  box-shadow:0 0 6px rgba(232,182,199,.28)!important;
+}
+.archive-card.is-loaded .state-label-ready .ready-meta{
+  color:rgba(169,187,217,.92)!important;
+  text-shadow:0 1px 3px rgba(4,5,9,.6)!important;
+}
+.state-label-ready.no-created .loading-line,
+.state-label-ready.no-created .ready-meta{
+  display:none;
+}
 @media(max-width:620px){
-  :root{--r-card:12px}
-  .ghost-frame{inset:38px 9px 100px}
-  .corner-code{top:8px;left:8px;height:22px;padding:0 7px 0 6px;gap:6px;max-width:calc(100% - 58px)}
-  .archive-card.is-loaded .corner-code{font-size:9.5px}
-  .corner-index{top:13px;right:9px;font-size:9.5px}
-  .loading-core{left:10px;right:10px;bottom:55px}
-  .loading-title{font-size:8px}
-  .loading-sub{font-size:10px}
-  .state-label-ready .ready-name{font-size:14px}
-  .state-label-ready .ready-meta{font-size:9px}
-  .bottom-frame{left:7px;right:7px;bottom:7px;min-height:39px}
-  .detail-action{padding:0 6px 0 11px}
-  .action-copy b{font-size:12px;letter-spacing:.1em}
-  .action-copy small{font-size:7px}
-  .action-arrow{width:24px;height:24px;font-size:13px}
+  .state-label-ready .ready-name{font-size:13px!important}
+  .state-label-ready .ready-meta{font-size:8px!important}
 }
+@media(max-width:620px){
+  .card-face{border-radius:14px}
+  .ghost-frame{inset:8px;border-radius:10px}
 
-/* ============ Footer ============ */
-footer{
-  padding:20px 0 26px;border-top:1px solid var(--line);
-  font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--text-4);
+  .corner-code{
+    top:8px;left:8px;
+    height:23px;padding:0 7px;
+    font-size:5.8px;
+  }
+  .corner-index{
+    top:13px;right:9px;
+    font-size:5.8px;
+  }
+  .loading-core{
+    left:10px;right:10px;bottom:55px;
+  }
+  .loading-title{font-size:5.6px}
+  .loading-sub{font-size:5px}
+  .bottom-frame{
+    left:7px;right:7px;bottom:7px;
+    min-height:39px;
+  }
 }
-footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px}
-footer span:first-child::before{
-  content:"";display:inline-block;width:6px;height:6px;margin-right:10px;vertical-align:1px;
-  border-radius:1.5px;background:var(--cinnabar);
-}
-
-/* ============ 详情弹窗 ============ */
+/* =========================
+   Archive detail modal
+   ========================= */
 .archive-modal,
 .save-sheet{
-  position:fixed;inset:0;z-index:1000;
-  visibility:hidden;opacity:0;pointer-events:none;
-  transition:visibility 0s linear var(--motion-panel),opacity var(--motion-panel) ease;
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:none;
 }
-.save-sheet{z-index:1200}
 .archive-modal.is-open,
-.save-sheet.is-open{visibility:visible;opacity:1;pointer-events:auto;transition-delay:0s}
+.save-sheet.is-open{
+  display:block;
+}
 .archive-modal-backdrop,
 .save-sheet-backdrop{
-  position:absolute;inset:0;
-  background:radial-gradient(120% 90% at 50% 40%,rgba(10,9,11,.72),rgba(5,5,6,.88));
-  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
-  opacity:0;transition:opacity var(--motion-panel) ease;
+  position:absolute;
+  inset:0;
+  background:rgba(4,5,8,.76);
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+}
+.archive-modal-panel{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:min(1040px,calc(100% - 34px));
+  max-height:min(86vh,820px);
+  transform:translate(-50%,-50%);
+  display:grid;
+  grid-template-columns:minmax(310px,.82fr) minmax(0,1.18fr);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:22px;
+  background:
+    radial-gradient(500px 240px at 0 0,rgba(232,182,199,.07),transparent 65%),
+    linear-gradient(160deg,#111219,#090a0f 72%);
+  box-shadow:0 30px 90px rgba(0,0,0,.52);
+}
+.archive-modal-close{
+  position:absolute;
+  right:14px;
+  top:14px;
+  z-index:8;
+  width:34px;
+  height:34px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:50%;
+  color:rgba(255,255,255,.72);
+  background:rgba(7,8,12,.58);
+  font-size:17px;
+  cursor:pointer;
+}
+.archive-detail-visual{
+  position:relative;
+  min-height:580px;
+  overflow:hidden;
+  border-right:1px solid rgba(255,255,255,.07);
+  background:
+    radial-gradient(circle at 42% 26%,rgba(232,182,199,.14),transparent 22%),
+    radial-gradient(circle at 62% 67%,rgba(169,187,217,.12),transparent 28%),
+    linear-gradient(150deg,#1a171e,#10131b 56%,#090a0f);
+}
+.detail-art{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+}
+.detail-art::before{
+  content:"";
+  position:absolute;
+  inset:-30%;
+  transform:rotate(-18deg);
+  background:
+    repeating-linear-gradient(90deg,rgba(255,255,255,.026) 0 1px,transparent 1px 18px),
+    repeating-linear-gradient(90deg,transparent 0 92px,rgba(232,182,199,.035) 92px 126px,transparent 126px 206px);
+}
+.detail-visual-top{
+  position:absolute;
+  left:16px;
+  right:16px;
+  top:16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.detail-visual-top span,
+.detail-visual-top small{
+  padding:8px 10px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:999px;
+  background:rgba(7,8,12,.38);
+  color:rgba(255,255,255,.76);
+  font-size:8px;
+  letter-spacing:.09em;
+}
+.detail-visual-top small{
+  color:rgba(255,255,255,.42);
+}
+.detail-visual-bottom{
+  position:absolute;
+  left:14px;
+  right:14px;
+  bottom:14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 10px 10px 12px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  background:rgba(7,8,12,.50);
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+}
+.detail-visual-bottom>span{
+  color:rgba(255,255,255,.43);
+  font-size:7px;
+  letter-spacing:.14em;
+}
+.detail-save-btn{
+  min-height:34px;
+  padding:0 12px;
+  border:1px solid rgba(232,182,199,.18);
+  border-radius:9px;
+  color:rgba(255,255,255,.86);
+  background:linear-gradient(135deg,rgba(232,182,199,.11),rgba(169,187,217,.055));
+  font-size:8px;
+  font-weight:650;
+  letter-spacing:.08em;
+  cursor:pointer;
+}
+
+.archive-detail-content{
+  min-width:0;
+  overflow:auto;
+  padding:54px 34px 30px;
+}
+.detail-heading{
+  margin-top:0;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+}
+.detail-heading h2{
+  margin:0;
+  font-family:var(--serif);
+  font-size:34px;
+  font-weight:600;
+  letter-spacing:.07em;
+}
+.detail-heading p{
+  margin:8px 0 0;
+  color:rgba(206,199,209,.40);
+  font-size:7px;
+  letter-spacing:.12em;
+}
+.detail-tavo-badge{
+  flex:0 0 auto;
+  padding:7px 9px;
+  border:1px solid rgba(169,187,217,.15);
+  border-radius:8px;
+  color:rgba(216,228,246,.68);
+  background:rgba(169,187,217,.045);
+  font-size:7px;
+  letter-spacing:.14em;
+}
+
+/* =========================
+   Save sheet, patterned after current site flow
+   ========================= */
+.save-sheet{
+  z-index:1200;
+}
+.save-sheet-panel{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:min(430px,calc(100% - 30px));
+  transform:translate(-50%,-50%);
+  padding:18px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:20px;
+  background:
+    radial-gradient(340px 180px at 0 0,rgba(232,182,199,.08),transparent 70%),
+    linear-gradient(160deg,#12131a,#090a0f 72%);
+  box-shadow:0 28px 80px rgba(0,0,0,.56);
+}
+.save-sheet-head{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:flex-start;
+}
+.save-sheet-head small{
+  color:rgba(206,199,209,.34);
+  font-size:6px;
+  letter-spacing:.15em;
+}
+.save-sheet-head h3{
+  margin:6px 0 0;
+  font-family:var(--serif);
+  font-size:20px;
+  font-weight:600;
+  letter-spacing:.07em;
+}
+.save-sheet-head p{
+  margin:7px 0 0;
+  color:rgba(206,199,209,.46);
+  font-size:9px;
+  line-height:1.5;
+}
+.save-sheet-close{
+  width:32px;
+  height:32px;
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:50%;
+  color:rgba(255,255,255,.68);
+  background:rgba(255,255,255,.025);
+  font-size:16px;
+  cursor:pointer;
+}
+.save-sheet-preview{
+  position:relative;
+  margin-top:16px;
+  overflow:hidden;
+  aspect-ratio:.72;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  background:#0c0e13;
+}
+.save-sheet-preview img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  object-position:var(--role-media-focus-x) var(--role-media-focus-y);
+}
+.save-preview-meta{
+  position:absolute;
+  left:10px;
+  right:10px;
+  bottom:10px;
+  padding:10px 11px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;
+  background:rgba(7,8,12,.58);
+  -webkit-backdrop-filter:blur(7px);
+  backdrop-filter:blur(7px);
+}
+.save-preview-meta b{
+  font-family:var(--serif);
+  font-size:10px;
+  font-weight:600;
+}
+.save-preview-meta span{
+  color:rgba(206,199,209,.45);
+  font-size:7px;
+  letter-spacing:.08em;
+}
+.save-sheet-actions{
+  margin-top:12px;
+}
+.save-sheet-actions p{
+  margin:9px 2px 0;
+  color:rgba(206,199,209,.34);
+  font-size:8px;
+  line-height:1.55;
+}
+
+@media(max-width:720px){
+  .archive-modal-panel{
+    top:auto;
+    bottom:0;
+    width:100%;
+    max-height:92vh;
+    transform:translateX(-50%);
+    grid-template-columns:1fr;
+    border-radius:22px 22px 0 0;
+    overflow:auto;
+  }
+  .archive-detail-visual{
+    min-height:330px;
+    border-right:0;
+    border-bottom:1px solid rgba(255,255,255,.07);
+  }
+  .archive-detail-content{
+    overflow:visible;
+    padding:26px 18px 24px;
+  }
+  .detail-heading h2{
+    font-size:28px;
+  }
+  .detail-kicker{
+    padding-right:36px;
+  }
+  .detail-sections p{
+    font-size:10px;
+  }
+  .save-sheet-panel{
+    top:auto;
+    bottom:0;
+    width:100%;
+    transform:translateX(-50%);
+    border-radius:20px 20px 0 0;
+    padding:16px 14px calc(16px + env(safe-area-inset-bottom));
+  }
+  .save-sheet-preview{
+    max-height:54vh;
+  }
+}
+
+
+/* =========================================================
+   Detail reader: long content becomes selectable, not stacked.
+   ========================================================= */
+.detail-reader{
+  margin-top:26px;
+}
+.detail-options{
+  --detail-count:4;
+  display:grid;
+  grid-template-columns:repeat(var(--detail-count),minmax(0,1fr));
+  gap:6px;
+  padding:5px;
+  border:1px solid rgba(255,255,255,.065);
+  border-radius:13px;
+  background:rgba(255,255,255,.018);
+}
+.detail-option{
+  min-width:0;
+  min-height:45px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  padding:7px 7px;
+  border:1px solid transparent;
+  border-radius:9px;
+  color:rgba(213,207,218,.46);
+  background:transparent;
+  cursor:pointer;
+  transition:background .18s ease,border-color .18s ease,color .18s ease;
+}
+.detail-option span{
+  font-size:6px;
+  letter-spacing:.10em;
+  color:rgba(232,182,199,.36);
+}
+.detail-option b{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-family:var(--serif);
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:.05em;
+}
+.detail-option:hover{
+  color:rgba(255,255,255,.72);
+  background:rgba(255,255,255,.025);
+}
+.detail-option.is-active{
+  color:rgba(255,251,253,.92);
+  border-color:rgba(232,182,199,.15);
+  background:
+    linear-gradient(135deg,rgba(232,182,199,.085),rgba(169,187,217,.035)),
+    rgba(255,255,255,.025);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+.detail-option.is-active span{
+  color:rgba(232,182,199,.72);
+}
+
+.detail-reading-panel{
+  position:relative;
+  margin-top:9px;
+  min-height:250px;
+  max-height:330px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior-y:contain;
+  overscroll-behavior-x:none;
+  touch-action:pan-y;
+  padding:18px 17px 28px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:13px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.012)),
+    rgba(5,6,9,.20);
+  scrollbar-width:thin;
+  scrollbar-color:rgba(232,182,199,.18) transparent;
+}
+.detail-reading-panel::-webkit-scrollbar{width:5px}
+.detail-reading-panel::-webkit-scrollbar-thumb{
+  border-radius:99px;
+  background:rgba(232,182,199,.18);
+}
+.detail-reading-head{
+  position:sticky;
+  top:-18px;
+  z-index:2;
+  margin:-18px -17px 15px;
+  padding:15px 17px 12px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  border-bottom:1px solid rgba(255,255,255,.055);
+  background:linear-gradient(180deg,rgba(11,12,17,.98),rgba(11,12,17,.94));
+  -webkit-backdrop-filter:blur(7px);
+  backdrop-filter:blur(7px);
+}
+.detail-reading-head small{
+  display:block;
+  color:rgba(206,199,209,.32);
+  font-size:6px;
+  letter-spacing:.14em;
+}
+.detail-reading-head h3{
+  margin:5px 0 0;
+  font-family:var(--serif);
+  font-size:15px;
+  font-weight:600;
+  letter-spacing:.07em;
+}
+.detail-reading-head>span{
+  margin-top:2px;
+  padding:6px 7px;
+  border:1px solid rgba(255,255,255,.065);
+  border-radius:7px;
+  color:rgba(169,187,217,.45);
+  font-size:5.5px;
+  letter-spacing:.13em;
+}
+.detail-reading-body{
+  color:rgba(226,220,229,.64);
+  font-size:11px;
+  line-height:1.88;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+.detail-reading-body::selection{
+  color:#120e16;
+  background:rgba(232,182,199,.82);
+}
+.detail-reading-fade{
+  position:sticky;
+  z-index:1;
+  left:0;
+  right:0;
+  bottom:-28px;
+  height:28px;
+  margin:0 -17px -28px;
+  pointer-events:none;
+  background:linear-gradient(transparent,rgba(9,10,14,.94));
+}
+
+/* Save panel: only the photo-library destination gets animated holo.
+   The file destination intentionally stays visually static. */
+.save-sheet-photo,
+.save-sheet-file{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+.save-sheet-photo > *,
+.save-sheet-file > *{
+  position:relative;
+  z-index:3;
+}
+
+/* Broad moving rainbow film. It only runs while this sheet is visible. */
+.save-sheet-photo::before{
+  content:"";
+  position:absolute;
+  z-index:1;
+  inset:-75% -45%;
+  pointer-events:none;
+  opacity:0;
+  transform:translate3d(-32%,0,0) rotate(-9deg);
+  background:linear-gradient(
+    108deg,
+    transparent 17%,
+    rgba(255,91,165,.20) 28%,
+    rgba(156,112,255,.18) 37%,
+    rgba(84,220,255,.24) 46%,
+    rgba(116,255,207,.16) 54%,
+    rgba(255,226,105,.22) 63%,
+    rgba(255,138,209,.20) 72%,
+    transparent 83%
+  );
+  mix-blend-mode:screen;
+  will-change:transform,opacity;
+}
+
+/* Narrow bright ribbon so the flow is obvious rather than a static tint. */
+.save-sheet-photo::after{
+  content:"";
+  position:absolute;
+  z-index:2;
+  top:-38%;
+  bottom:-38%;
+  left:-42%;
+  width:34%;
+  pointer-events:none;
+  opacity:0;
+  transform:translate3d(-120%,0,0) skewX(-18deg);
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(117,224,255,.18) 28%,
+    rgba(255,255,255,.48) 48%,
+    rgba(255,178,225,.31) 61%,
+    rgba(255,232,128,.16) 74%,
+    transparent
+  );
+  mix-blend-mode:screen;
+  will-change:transform,opacity;
+}
+
+.save-sheet.is-open .save-sheet-photo::before{
+  opacity:1;
+  animation:savePhotoHoloFilm 3.05s linear infinite;
+}
+.save-sheet.is-open .save-sheet-photo::after{
+  opacity:1;
+  animation:savePhotoHoloRibbon 1.85s cubic-bezier(.43,.05,.46,.95) infinite;
+}
+.save-sheet.is-open .save-sheet-photo{
+  border-color:rgba(171,226,255,.24);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 0 14px rgba(142,218,255,.045);
+}
+
+/* Explicitly keep FILE plain: no rainbow layer, no sweep, no glow loop. */
+.save-sheet-file::before,
+.save-sheet-file::after{
+  content:none!important;
+  animation:none!important;
+}
+.save-sheet-file{
+  box-shadow:none!important;
+}
+
+@keyframes savePhotoHoloFilm{
+  0%{transform:translate3d(-34%,0,0) rotate(-9deg)}
+  50%{transform:translate3d(5%,0,0) rotate(-9deg)}
+  100%{transform:translate3d(36%,0,0) rotate(-9deg)}
+}
+@keyframes savePhotoHoloRibbon{
+  0%{transform:translate3d(-150%,0,0) skewX(-18deg)}
+  100%{transform:translate3d(510%,0,0) skewX(-18deg)}
+}
+
+
+@media(prefers-reduced-motion:reduce){
+  .save-sheet.is-open .save-sheet-photo::before{
+    animation:none!important;
+    opacity:.26!important;
+    transform:translate3d(0,0,0) rotate(-9deg)!important;
+  }
+  .save-sheet.is-open .save-sheet-photo::after{display:none!important}
+}
+
+/* Save panel now mirrors the original site's two destinations. */
+.save-sheet-actions{
+  display:grid!important;
+  gap:8px!important;
+}
+.save-sheet-choice{
+  width:100%;
+  min-height:54px;
+  padding:8px 10px;
+  display:grid;
+  grid-template-columns:28px minmax(0,1fr) 28px;
+  align-items:center;
+  gap:10px;
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:12px;
+  color:rgba(255,255,255,.84);
+  background:rgba(255,255,255,.022);
+  text-decoration:none;
+  cursor:pointer;
+  text-align:left;
+}
+.save-sheet-choice:hover{
+  border-color:rgba(232,182,199,.16);
+  background:rgba(232,182,199,.035);
+}
+.save-sheet-photo{
+  border-color:rgba(232,182,199,.14);
+  background:
+    linear-gradient(135deg,rgba(232,182,199,.085),rgba(169,187,217,.03)),
+    rgba(255,255,255,.018);
+}
+.save-sheet-file{
+  color:rgba(255,255,255,.70);
+  border-color:rgba(255,255,255,.065);
+}
+.save-choice-mark{
+  width:27px;
+  height:27px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:8px;
+  color:rgba(255,255,255,.58);
+  background:rgba(255,255,255,.025);
+  font-size:10px;
+}
+.save-choice-copy{
+  min-width:0;
+  display:grid;
+  gap:4px;
+}
+.save-choice-copy b{
+  font-family:var(--serif);
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:.055em;
+}
+.save-choice-copy small{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:rgba(206,199,209,.37);
+  font-size:5.8px;
+  letter-spacing:.11em;
+}
+.save-sheet-choice i{
+  width:27px;
+  height:27px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.065);
+  border-radius:50%;
+  color:rgba(255,255,255,.51);
+  font-style:normal;
+  font-size:8px;
+}
+.save-sheet-choice[disabled]{
+  opacity:.46;
+  cursor:not-allowed;
+}
+.save-sheet-note{
+  margin:2px 2px 0!important;
+  color:rgba(206,199,209,.35)!important;
+  font-size:7.7px!important;
+  line-height:1.65!important;
+}
+
+@media(max-width:720px){
+  .detail-options{
+    display:flex;
+    overflow-x:auto;
+    overscroll-behavior-x:contain;
+    scrollbar-width:none;
+    padding:5px;
+  }
+  .detail-options::-webkit-scrollbar{display:none}
+  .detail-option{
+    flex:0 0 auto;
+    min-width:84px;
+    min-height:42px;
+  }
+  .detail-reading-panel{
+    min-height:230px;
+    max-height:36vh;
+    padding:16px 14px 26px;
+  }
+  .detail-reading-head{
+    top:-16px;
+    margin:-16px -14px 14px;
+    padding:13px 14px 11px;
+  }
+  .detail-reading-body{
+    font-size:10.5px;
+    line-height:1.85;
+  }
+  .save-sheet-choice{
+    min-height:52px;
+  }
+}
+
+
+/* =========================================================
+   Author-first navigation
+   Avatar -> large Chinese author name -> English -> archive count
+   ========================================================= */
+.site-header{
+  height:88px;
+}
+.site-header .author-header-row{
+  display:grid;
+  grid-template-columns:48px max-content minmax(0,1fr) auto;
+  gap:15px;
+  align-items:center;
+}
+
+.author-avatar-shell{
+  width:48px;
+  height:48px;
+  border-radius:15px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.14);
+  background:#11131a;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    0 9px 24px rgba(0,0,0,.28);
+}
+.author-avatar-img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+}
+
+.author-primary{
+  min-width:0;
+  display:flex;
+  align-items:center;
+}
+.author-primary b{
+  display:block;
+  font-family:var(--serif);
+  font-size:27px;
+  font-weight:600;
+  line-height:1;
+  letter-spacing:.12em;
+  white-space:nowrap;
+  color:rgba(255,251,253,.96);
+  text-shadow:0 1px 20px rgba(232,182,199,.09);
+}
+
+.author-english{
+  min-width:0;
+  display:flex;
+  align-items:baseline;
+  gap:11px;
+  overflow:hidden;
+}
+.author-english span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:rgba(225,218,228,.48);
+  font-size:8px;
+  font-weight:650;
+  letter-spacing:.19em;
+}
+.author-english small{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:rgba(206,199,209,.22);
+  font-size:5.8px;
+  letter-spacing:.15em;
+}
+
+.archive-count{
+  min-width:46px;
+  padding-left:12px;
+  border-left:1px solid rgba(255,255,255,.055);
+}
+
+/* Author selector replaces category filters. */
+.author-filters{
+  gap:23px;
+  overflow:visible;
+}
+.author-filter{
+  appearance:none;
+  -webkit-appearance:none;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  font-family:var(--serif);
+  text-transform:none;
+  letter-spacing:.075em;
+  font-size:9px;
+}
+.author-filter.active{
+  color:rgba(255,251,253,.91);
+}
+.author-filter.active::after{
+  left:0;
+  right:0;
+}
+.author-filter:not(.active):hover{
+  color:rgba(247,243,246,.62);
+}
+
+/* Fade gallery lightly when author section changes. */
+.gallery{
+  transition:opacity .16s ease,transform .16s ease;
+}
+.gallery.is-author-switching{
+  opacity:.18;
+  transform:translateY(2px);
+}
+
+@media(max-width:620px){
+  .site-header{
+    height:94px;
+  }
+  .site-header .author-header-row{
+    width:calc(100% - 22px);
+    grid-template-columns:44px minmax(0,1fr) auto;
+    grid-template-areas:
+      "avatar name count"
+      "avatar english count";
+    column-gap:10px;
+    row-gap:3px;
+  }
+  .author-avatar-shell{
+    grid-area:avatar;
+    width:44px;
+    height:44px;
+    border-radius:13px;
+  }
+  .author-primary{
+    grid-area:name;
+    align-self:end;
+    min-width:0;
+  }
+  .author-primary b{
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-size:21px;
+    letter-spacing:.10em;
+    line-height:1.05;
+  }
+  .author-english{
+    grid-area:english;
+    align-self:start;
+    gap:0;
+  }
+  .author-english span{
+    font-size:6.4px;
+    letter-spacing:.16em;
+  }
+  .author-english small{
+    display:none;
+  }
+  .archive-count{
+    grid-area:count;
+    align-self:center;
+    min-width:42px;
+    padding-left:9px;
+  }
+  .archive-count span{
+    font-size:5.7px;
+  }
+  .archive-count b{
+    font-size:19px;
+  }
+
+  .toolbar{
+    min-height:47px;
+  }
+  .author-filters{
+    gap:19px;
+    overflow:auto;
+    scrollbar-width:none;
+  }
+  .author-filters::-webkit-scrollbar{display:none}
+  .author-filter{
+    flex:0 0 auto;
+    padding-top:15px;
+    padding-bottom:14px;
+    font-size:8.3px;
+  }
+}
+
+
+/* =========================================================
+   Header order fix — one continuous horizontal sequence:
+   avatar -> large Chinese name -> English -> archive count
+   ========================================================= */
+.site-header{
+  height:86px!important;
+}
+.site-header .author-header-row{
+  width:calc(100% - 22px)!important;
+  height:100%!important;
+  margin-inline:auto!important;
+  display:grid!important;
+  grid-template-columns:48px max-content minmax(0,1fr) auto!important;
+  grid-template-rows:1fr!important;
+  grid-template-areas:"avatar name english count"!important;
+  column-gap:12px!important;
+  row-gap:0!important;
+  align-items:center!important;
+}
+
+.author-avatar-shell{
+  grid-area:avatar!important;
+  width:48px!important;
+  height:48px!important;
+  align-self:center!important;
+  border-radius:15px!important;
+}
+
+.author-primary{
+  grid-area:name!important;
+  min-width:0!important;
+  align-self:center!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+}
+.author-primary b{
+  display:block!important;
+  max-width:none!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+  font-family:var(--serif)!important;
+  font-size:29px!important;
+  font-weight:600!important;
+  line-height:1!important;
+  letter-spacing:.11em!important;
+  color:rgba(255,251,253,.96)!important;
+}
+
+.author-english{
+  grid-area:english!important;
+  min-width:0!important;
+  align-self:center!important;
+  padding:2px 0 0!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  overflow:hidden!important;
+}
+.author-english span{
+  display:block!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font-size:7px!important;
+  font-weight:650!important;
+  letter-spacing:.18em!important;
+  color:rgba(225,218,228,.46)!important;
+}
+.author-english small{
+  display:none!important;
+}
+
+.archive-count{
+  grid-area:count!important;
+  align-self:center!important;
+  width:auto!important;
+  min-width:48px!important;
+  height:auto!important;
+  padding-left:10px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  gap:3px!important;
+  border-left:1px solid rgba(255,255,255,.055)!important;
+}
+.archive-count span{
+  font-size:5.6px!important;
+  letter-spacing:.13em!important;
+}
+.archive-count b{
+  font-size:19px!important;
+  line-height:1!important;
+}
+
+/* Narrow viewport: preserve the same left-to-right order, just tighten spacing. */
+@media(max-width:620px){
+  .site-header{
+    height:82px!important;
+  }
+
+  .site-header .author-header-row{
+    grid-template-columns:42px max-content minmax(0,1fr) 45px!important;
+    column-gap:8px!important;
+  }
+
+  .author-avatar-shell{
+    width:42px!important;
+    height:42px!important;
+    border-radius:13px!important;
+  }
+
+  .author-primary b{
+    font-size:21px!important;
+    letter-spacing:.075em!important;
+  }
+
+  .author-english span{
+    font-size:5.8px!important;
+    letter-spacing:.13em!important;
+  }
+
+  .archive-count{
+    min-width:45px!important;
+    padding-left:7px!important;
+  }
+
+  .archive-count b{
+    font-size:17px!important;
+  }
+}
+
+/* =========================================================
+   HOLO FLOW ACTIONS
+   Card-inspired moving foil, but tuned per action:
+   detail = restrained / download = brighter & faster.
+   ========================================================= */
+
+.detail-action,
+.download-action{
+  isolation:isolate!important;
+  overflow:hidden!important;
+  transition:
+    border-color .42s ease,
+    box-shadow .42s ease,
+    color .42s ease,
+    transform .32s cubic-bezier(.2,.8,.2,1)!important;
+}
+
+/* Keep text/icon above both animated holo layers. */
+.detail-action .action-copy,
+.detail-action .action-arrow,
+.download-action .download-icon{
+  position:relative;
+  z-index:4;
+}
+
+/* Base moving rainbow film — invisible until hover/focus, but always moving underneath. */
+.detail-action::before{
+  content:"";
+  position:absolute;
+  z-index:1;
+  inset:-55%;
+  pointer-events:none;
+  opacity:0;
+  transform:translate3d(0,0,0) rotate(-8deg);
+  background:linear-gradient(
+    112deg,
+    rgba(255,92,166,.15) 0%,
+    rgba(151,116,255,.13) 18%,
+    rgba(89,219,255,.16) 36%,
+    rgba(122,255,202,.10) 52%,
+    rgba(255,222,107,.16) 68%,
+    rgba(255,138,205,.14) 84%,
+    rgba(255,92,166,.15) 100%
+  )!important;
+  background-size:260% 100%!important;
+  background-position:0% 50%!important;
+  transition:opacity .48s ease;
+  animation:holoActionDrift 3.1s linear infinite;
+  will-change:background-position,opacity,transform;
+}
+
+/* A narrow specular ribbon makes the effect visibly "flow" instead of just appearing. */
+.detail-action::after{
+  content:"";
+  position:absolute;
+  z-index:2;
+  top:-35%;
+  bottom:-35%;
+  left:-68%;
+  width:48%;
+  pointer-events:none;
+  opacity:0;
+  transform:skewX(-17deg) translateX(-40%);
+  background:linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,.024) 20%,
+    rgba(135,221,255,.168) 39%,
+    rgba(255,203,236,.264) 50%,
+    rgba(255,230,138,.156) 61%,
+    rgba(255,255,255,.024) 80%,
+    transparent 100%
+  );
+  filter:blur(.25px);
+  transition:opacity .45s ease;
+  animation:holoRibbonDetail 2.65s cubic-bezier(.44,.05,.45,.95) infinite;
+  will-change:transform,opacity;
+}
+
+@keyframes holoActionDrift{
+  0%   { background-position:center, 0% 50%; }
+  50%  { background-position:center, 100% 50%; }
+  100% { background-position:center, 0% 50%; }
+}
+
+@keyframes holoRibbonDetail{
+  0%   { transform:skewX(-17deg) translateX(-55%); }
+  100% { transform:skewX(-17deg) translateX(430%); }
+}
+
+/* 查看档案：常态直接使用原悬停态的柔和亮度。 */
+.archive-card.is-loaded .detail-action{
+  border-color:rgba(209,198,255,.26)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.045),
+    0 0 15px rgba(153,218,255,.055)!important;
+}
+.archive-card.is-loaded .detail-action::before{opacity:.68!important}
+.archive-card.is-loaded .detail-action::after{opacity:.70!important}
+.archive-card.is-loaded .detail-action .action-arrow{
+  border-color:rgba(199,214,255,.26)!important;
+  color:rgba(255,255,255,.87)!important;
+  background:rgba(184,211,255,.055)!important;
+}
+
+/* Never flash holo while the card itself is still unloaded. */
+.archive-card:not(.is-loaded) .detail-action::before,
+.archive-card:not(.is-loaded) .detail-action::after{
+  display:none!important;
+}
+
+/* Respect reduced-motion: keep only a soft static tint. */
+@media(prefers-reduced-motion:reduce){
+  .detail-action::before,
+  .detail-action::after{
+    animation:none!important;
+  }
+}
+
+
+/* =========================================================
+   ALWAYS-ON HOLO FLOW
+   Loaded actions continuously flow without requiring hover.
+   ========================================================= */
+
+/* Hover only adds a tiny physical emphasis. */
+@media(hover:hover) and (pointer:fine){
+  .archive-card.is-loaded .detail-action:hover,
+  .archive-card.is-loaded .detail-action:focus-visible{
+    transform:translateY(-1px)!important;
+  }
+  .archive-card.is-loaded .detail-action:hover .action-arrow{
+    transform:translateX(2px);
+  }
+}
+
+/* Touch screens retain the detail-action treatment; the download control is
+   intentionally static on touch devices because there is no hover state. */
+@media(hover:none){
+  .archive-card.is-loaded .detail-action::before{opacity:.68!important}
+  .archive-card.is-loaded .detail-action::after{opacity:.70!important}
+}
+
+/* Reduced motion gets static holo instead of animation. */
+@media(prefers-reduced-motion:reduce){
+  .archive-card.is-loaded .detail-action::before{
+    opacity:.32!important;
+  }
+  .archive-card.is-loaded .detail-action::after{
+    opacity:.18!important;
+  }
+}
+
+
+/* =========================================================
+   MOTION SYSTEM · 2026-08-21
+   One motion language for every existing interaction.
+   Fast response, soft settle, no layout-breaking animation.
+   ========================================================= */
+:root{
+  --motion-fast:160ms;
+  --motion-ui:260ms;
+  --motion-panel:420ms;
+  --motion-load:760ms;
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-soft:cubic-bezier(.22,.75,.2,1);
+  --ease-inout:cubic-bezier(.65,0,.35,1);
+}
+html{scrollbar-gutter:stable}
+
+/* Universal tactile response for all interactive controls. */
+button,
+a.save-sheet-choice,
+.detail-option,
+.author-filter{
+  -webkit-tap-highlight-color:transparent;
+  transform-origin:center;
+}
+button:not(:disabled),
+a.save-sheet-choice{
+  transition:
+    transform var(--motion-fast) var(--ease-out),
+    opacity var(--motion-fast) ease,
+    border-color var(--motion-ui) ease,
+    background-color var(--motion-ui) ease,
+    box-shadow var(--motion-ui) ease,
+    color var(--motion-ui) ease;
+}
+button:not(:disabled):active,
+a.save-sheet-choice:active{
+  transform:scale(.972);
+  transition-duration:90ms;
+}
+
+/* Author switching: header + gallery move as one transition. */
+.author-avatar-img,
+.author-primary b,
+.author-english span,
+.archive-count b{
+  transition:opacity var(--motion-ui) ease,transform var(--motion-ui) var(--ease-out),filter var(--motion-ui) ease;
+}
+.site-header.is-author-swapping .author-avatar-img,
+.site-header.is-author-swapping .author-primary b,
+.site-header.is-author-swapping .author-english span,
+.site-header.is-author-swapping .archive-count b{
+  opacity:.24;
+  transform:translateY(4px);
+  filter:blur(2px);
+}
+.gallery{
+  transition:opacity 220ms ease,transform 300ms var(--ease-out),filter 240ms ease!important;
+}
+.gallery.is-author-switching{
+  opacity:.12!important;
+  transform:translateY(7px) scale(.996)!important;
+  filter:blur(1.5px);
+}
+.author-filter.active::after{
+  transform-origin:left center;
+  animation:motionUnderline 360ms var(--ease-out) both;
+}
+
+/* Unloaded -> loaded choreography. */
+.archive-card .card-face{
+  transition:
+    border-color var(--motion-load) ease,
+    box-shadow var(--motion-load) var(--ease-out),
+    transform 360ms var(--ease-out);
+}
+.archive-card.is-loading-now .card-face::after{
+  content:"";
+  position:absolute;
+  z-index:7;
+  inset:-40% -80%;
+  pointer-events:none;
+  opacity:.52;
+  transform:translateX(-32%) rotate(-14deg);
+  background:linear-gradient(90deg,transparent 39%,rgba(255,255,255,.018) 45%,rgba(232,182,199,.06) 50%,rgba(169,187,217,.045) 55%,transparent 61%);
+  animation:motionLoadingSweep 1.2s var(--ease-inout) infinite;
+}
+.archive-card.is-loaded .card-face{
+  border-color:rgba(255,255,255,.095);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 15px 34px rgba(0,0,0,.19);
+}
+.archive-card.is-loaded .loaded-art{
+  transition:opacity 620ms ease,transform 880ms var(--ease-out),filter 780ms ease!important;
+  filter:saturate(1.04) contrast(1.01);
+}
+.archive-card:not(.is-loaded) .loading-core{
+  animation:motionLoadingBreathe 1.7s ease-in-out infinite;
+}
+.archive-card.is-loaded .state-label-ready{
+  animation:motionReadyCopy 560ms 110ms var(--ease-out) both;
+}
+.toolbar-status span.is-status-pulse{
+  display:inline-block;
+  animation:motionStatusPulse 420ms var(--ease-out) both;
+}
+
+/* Hover/press only when the device actually has hover. */
+@media(hover:hover) and (pointer:fine){
+  .archive-card.is-loaded:hover .card-face{
+    transform:translateY(-2px);
+    border-color:rgba(232,182,199,.13);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 18px 42px rgba(0,0,0,.24);
+  }
+  .author-filter:hover,
+  .detail-option:hover,
+  .save-sheet-choice:hover{
+    transform:translateY(-1px);
+  }
+}
+
+/* Modal/sheet: keep mounted so CLOSE can animate too. */
+.archive-modal,
+.save-sheet{
+  display:block!important;
+  visibility:hidden;
+  opacity:0;
+  pointer-events:none;
+  transition:visibility 0s linear var(--motion-panel),opacity var(--motion-panel) ease;
+}
+.archive-modal.is-open,
+.save-sheet.is-open{
+  visibility:visible;
+  opacity:1;
+  pointer-events:auto;
+  transition-delay:0s;
+}
+.archive-modal-backdrop,
+.save-sheet-backdrop{
+  opacity:0;
+  transition:opacity var(--motion-panel) ease,backdrop-filter var(--motion-panel) ease;
 }
 .archive-modal.is-open .archive-modal-backdrop,
 .save-sheet.is-open .save-sheet-backdrop{opacity:1}
-.archive-modal-panel{
-  position:absolute;left:50%;top:50%;
-  width:min(1040px,calc(100% - 34px));max-height:min(86vh,820px);
-  transform:translate(-50%,-50%);
-  display:grid;grid-template-columns:minmax(310px,.82fr) minmax(0,1.18fr);
-  overflow:hidden;
-  border:1px solid var(--line-2);border-radius:22px;
-  background:
-    radial-gradient(520px 260px at 100% 0%,rgba(217,178,111,.08),transparent 65%),
-    linear-gradient(170deg,#19181c,#101013 70%);
-  box-shadow:0 40px 120px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.05);
-}
+
 .archive-modal-close,
 .save-sheet-close{
-  width:36px;height:36px;flex:0 0 auto;display:grid;place-items:center;padding:0;cursor:pointer;
-  border:1px solid var(--line-2);border-radius:11px;
-  color:var(--text-2);background:rgba(13,13,16,.7);font-size:16px;
-  transition:transform 260ms var(--ease-expo),background 220ms ease,border-color 220ms ease,color 220ms ease;
+  transition:transform 260ms var(--ease-out),background 220ms ease,border-color 220ms ease!important;
 }
-.archive-modal-close{position:absolute;right:14px;top:14px;z-index:8}
 @media(hover:hover){
   .archive-modal-close:hover,
-  .save-sheet-close:hover{transform:rotate(90deg);color:var(--text);border-color:var(--line-gold);background:rgba(30,28,26,.85)}
-}
-.archive-modal-close:active,
-.save-sheet-close:active{transform:rotate(90deg) scale(.88)}
-
-.archive-detail-visual{
-  position:relative;min-height:580px;overflow:hidden;
-  border-right:1px solid var(--line);
-  background:
-    radial-gradient(circle at 50% 30%,rgba(217,178,111,.10),transparent 40%),
-    linear-gradient(160deg,#1d1b1f,#121215 60%,#0c0c0e);
-}
-.detail-art{position:absolute;inset:0;overflow:hidden;isolation:isolate}
-.detail-art::before{
-  content:"";position:absolute;inset:0;z-index:2;transition:opacity .32s ease;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23d9b26f' stroke-width='.8' stroke-opacity='.5'%3E%3Cg transform='translate(50 50)'%3E%3Cellipse cy='-17' rx='9' ry='17'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(72)'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(144)'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(216)'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(288)'/%3E%3C/g%3E%3C/svg%3E") 50% 40%/34% no-repeat,
-    radial-gradient(rgba(217,178,111,.16) 1px,transparent 1.35px) 0 0/16px 16px;
-}
-.detail-art.has-source::before{opacity:0}
-.detail-art::after{
-  content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
-  background:linear-gradient(180deg,rgba(8,8,10,.42),transparent 22%,transparent 62%,rgba(8,8,10,.7));
-}
-.detail-source-image{
-  position:absolute;z-index:0;inset:0;display:block;width:100%;height:100%;
-  object-fit:cover;object-position:var(--role-media-focus-x) var(--role-media-focus-y);
-  opacity:0;transform:scale(1.025);
-  transition:opacity .42s ease,transform .58s ease;
-}
-.detail-source-image.is-ready{opacity:1;transform:none}
-.detail-visual-top{
-  position:absolute;z-index:4;left:16px;right:16px;top:16px;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-}
-.detail-visual-top span{
-  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  padding:6px 11px;border-radius:7px;
-  color:#fff4ec;background:rgba(201,74,51,.92);
-  box-shadow:0 6px 16px rgba(201,74,51,.28),inset 0 0 0 1px rgba(255,255,255,.18);
-  font-size:12px;font-weight:600;letter-spacing:.1em;
-}
-.detail-visual-top small{
-  flex:0 0 auto;padding:6px 10px;border:1px solid var(--line-2);border-radius:7px;
-  color:var(--gold-hi);background:rgba(12,12,14,.6);
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
-}
-.detail-visual-bottom{
-  position:absolute;z-index:4;left:14px;right:14px;bottom:14px;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:9px 9px 9px 14px;
-  border:1px solid var(--line-2);border-radius:14px;
-  background:rgba(13,13,16,.62);
-  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
-}
-.detail-visual-bottom>span{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--text-3)}
-.detail-save-btn{
-  position:relative;min-height:38px;padding:0 14px 0 12px;
-  display:inline-flex;align-items:center;gap:8px;cursor:pointer;
-  border:1px solid rgba(255,236,200,.55);border-radius:10px;
-  color:var(--gold-ink);background:var(--gold-fill);
-  font-size:13px;font-weight:700;letter-spacing:.06em;white-space:nowrap;
-  box-shadow:0 6px 16px rgba(0,0,0,.24),0 0 16px rgba(217,178,111,.14),inset 0 1px 0 rgba(255,255,255,.5);
-  overflow:hidden;isolation:isolate;
-  transition:transform 200ms var(--ease-soft),box-shadow 260ms ease;
-}
-.detail-save-btn .icon{font-size:15px;stroke-width:2.2;position:relative;z-index:2}
-.detail-save-btn::before{
-  content:"";position:absolute;inset:0;z-index:1;opacity:0;pointer-events:none;
-  transform:translateX(-70%) skewX(-18deg);
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);
-}
-@media(hover:hover) and (pointer:fine){
-  .detail-save-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.3),0 0 22px rgba(217,178,111,.28),inset 0 1px 0 rgba(255,255,255,.55)}
-  .detail-save-btn:hover::before{animation:detailButtonSheen 620ms ease both}
+  .save-sheet-close:hover{transform:rotate(8deg) scale(1.04)}
 }
 
-.archive-detail-content{min-width:0;overflow:auto;padding:54px 34px 30px}
-.detail-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
-.detail-heading h2{
-  margin:0;font-family:var(--serif);font-size:34px;font-weight:700;letter-spacing:.08em;line-height:1.15;
-}
-.detail-heading p{
-  margin:12px 0 0;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--text-3);
-}
-.detail-tavo-badge{
-  flex:0 0 auto;margin-top:4px;padding:6px 10px 6px 9px;
-  display:inline-flex;align-items:center;gap:7px;
-  border:1px solid var(--line-gold);border-radius:8px;
-  color:var(--gold);background:rgba(217,178,111,.06);
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;
-}
-.detail-tavo-badge::before{content:"";width:6px;height:6px;border-radius:1.5px;background:var(--cinnabar)}
-
-/* 详情阅读区：四个标签 + 只在内部纵向滚动的正文 */
-.detail-reader{position:relative;margin-top:24px;padding-top:22px}
-.detail-reader::before{
-  content:"";position:absolute;left:0;right:0;top:0;height:1px;
-  background:linear-gradient(90deg,rgba(217,178,111,.5),rgba(243,238,230,.08) 60%,transparent);
-}
-.detail-options{
-  --detail-count:4;--detail-index:0;--detail-shift:0px;
-  position:relative;isolation:isolate;overflow:hidden;
-  display:grid;grid-template-columns:repeat(var(--detail-count),minmax(0,1fr));gap:6px;padding:5px;
-  border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.022);
-}
-.detail-options::before{
-  content:"";position:absolute;z-index:0;left:5px;top:5px;bottom:5px;
-  width:calc((100% - 10px - (var(--detail-count) - 1) * 6px) / var(--detail-count));
-  border:1px solid rgba(217,178,111,.45);border-radius:10px;
-  background:linear-gradient(180deg,rgba(217,178,111,.22),rgba(217,178,111,.09));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 6px 16px rgba(0,0,0,.25);
-  transform:translateX(var(--detail-shift));
-  transition:transform 420ms cubic-bezier(.2,.82,.2,1);
-  pointer-events:none;
-}
-.detail-option{
-  position:relative;z-index:1;min-width:0;min-height:46px;
-  display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 8px;
-  border:0;border-radius:10px;background:transparent;cursor:pointer;
-  color:var(--text-3);-webkit-tap-highlight-color:transparent;
-  transition:color 220ms ease,transform 180ms var(--ease-expo);
-}
-.detail-option span{
-  font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--gold-lo);
-  transition:transform 330ms cubic-bezier(.2,.82,.2,1),opacity 260ms ease,color 260ms ease;
-}
-.detail-option b{
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  font-family:var(--serif);font-size:14px;font-weight:700;letter-spacing:.08em;
-  transition:transform 330ms cubic-bezier(.2,.82,.2,1),opacity 260ms ease,letter-spacing 330ms ease;
-}
-.detail-option:hover{color:var(--text-2)}
-.detail-option.is-active{color:var(--text)}
-.detail-option.is-active span{color:var(--gold-hi)}
-.detail-option:not(.is-active) span{transform:scale(.92);opacity:.8}
-.detail-option.is-active span{transform:scale(1.06)}
-.detail-option.is-active b{letter-spacing:.1em}
-.detail-option.is-tab-hit span{animation:detailIndexTick 420ms cubic-bezier(.2,.82,.2,1) both}
-.detail-option.is-tab-hit b{animation:detailLabelSettle 420ms cubic-bezier(.2,.82,.2,1) both}
-
-.detail-reading-panel{
-  position:relative;margin-top:10px;min-height:250px;max-height:330px;
-  overflow-y:auto;overflow-x:hidden;
-  overscroll-behavior-y:contain;overscroll-behavior-x:none;touch-action:pan-y;
-  padding:18px 20px 28px;
-  border:1px solid var(--line);border-radius:16px;
-  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.012));
-  scrollbar-width:thin;scrollbar-color:rgba(217,178,111,.32) transparent;
-  isolation:isolate;
-  transition:border-color 320ms ease,box-shadow 360ms ease;
-}
-.detail-reading-panel::-webkit-scrollbar{width:6px}
-.detail-reading-panel::-webkit-scrollbar-thumb{border-radius:99px;background:rgba(217,178,111,.32)}
-.detail-reading-head{
-  position:sticky;top:-18px;z-index:3;
-  margin:-18px -20px 16px;padding:15px 20px 13px;
-  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
-  border-bottom:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(24,23,27,.98),rgba(22,21,25,.95));
-  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
-  transition:box-shadow 300ms ease,border-color 300ms ease;
-}
-.detail-reading-head small{
-  display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--text-4);
-}
-.detail-reading-head h3{
-  margin:6px 0 0;font-family:var(--serif);font-size:17px;font-weight:700;letter-spacing:.1em;
-}
-.detail-reading-head>span{
-  margin-top:2px;padding:5px 8px;border:1px solid var(--line-gold);border-radius:6px;
-  font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--gold);
-  transition:color 300ms ease,border-color 300ms ease;
-}
-.detail-reading-body{
-  position:relative;z-index:2;transform-origin:50% 0;
-  font-size:13.5px;line-height:1.95;color:var(--text-2);
-  white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;
-}
-.detail-reading-body::selection{color:var(--gold-ink);background:rgba(241,212,158,.85)}
-.detail-reading-fade{
-  position:sticky;z-index:2;left:0;right:0;bottom:-28px;height:30px;
-  margin:0 -20px -28px;pointer-events:none;
-  background:linear-gradient(transparent,rgba(19,18,22,.96));
-}
-.detail-reading-panel.is-reading-scrolled{border-color:var(--line-2);box-shadow:inset 0 10px 22px rgba(0,0,0,.14)}
-.detail-reading-panel.is-reading-scrolled .detail-reading-head{border-bottom-color:rgba(217,178,111,.22);box-shadow:0 10px 18px rgba(4,4,6,.22)}
-.detail-reading-panel.is-reading-scrolled .detail-reading-head>span{color:var(--gold-hi);border-color:rgba(217,178,111,.55)}
-
-/* ============ 保存面板 ============ */
-.save-sheet-panel{
-  position:absolute;left:50%;top:50%;
-  width:min(430px,calc(100% - 30px));max-height:calc(100vh - 24px);overflow-y:auto;
-  padding:20px;
-  border:1px solid var(--line-2);border-radius:22px;
-  background:
-    radial-gradient(360px 200px at 0% 0%,rgba(217,178,111,.09),transparent 70%),
-    linear-gradient(170deg,#1a191d,#101013 72%);
-  box-shadow:0 34px 100px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.05);
-  opacity:0;transform:translate(-50%,calc(-50% + 28px)) scale(.97);
-  transition:transform var(--motion-panel) var(--ease-expo),opacity 260ms ease;
-}
-.save-sheet.is-open .save-sheet-panel{opacity:1;transform:translate(-50%,-50%)}
-.save-sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
-.save-sheet-head small{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--gold)}
-.save-sheet-head h3{margin:7px 0 0;font-family:var(--serif);font-size:22px;font-weight:700;letter-spacing:.08em}
-.save-sheet-head p{margin:8px 0 0;font-size:12.5px;line-height:1.6;color:var(--text-3)}
-.save-sheet-preview{
-  position:relative;margin-top:16px;overflow:hidden;aspect-ratio:.72;
-  border:1px solid var(--line-2);border-radius:16px;
-  background:
-    radial-gradient(rgba(217,178,111,.14) 1px,transparent 1.35px) 0 0/16px 16px,
-    linear-gradient(160deg,#1c1a1e,#111013);
-}
 .save-sheet-preview img{
-  width:100%;height:100%;display:block;object-fit:cover;
-  object-position:var(--role-media-focus-x) var(--role-media-focus-y);
-  transition:opacity 280ms ease,transform 520ms var(--ease-expo);
+  transition:opacity 280ms ease,transform 520ms var(--ease-out),filter 340ms ease;
 }
-.save-sheet.is-preparing .save-sheet-preview img{opacity:.42;transform:scale(1.018)}
-.save-sheet.is-ready .save-sheet-preview img{animation:motionImageReady 540ms var(--ease-expo) both}
-.save-preview-meta{
-  position:absolute;left:10px;right:10px;bottom:10px;
-  display:flex;justify-content:space-between;align-items:center;gap:12px;
-  padding:10px 12px;border:1px solid var(--line-2);border-radius:12px;
-  background:rgba(13,13,16,.66);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+.save-sheet.is-preparing .save-sheet-preview img{
+  opacity:.42;
+  transform:scale(1.018);
+  filter:blur(2px);
 }
-.save-preview-meta b{font-family:var(--serif);font-size:14px;font-weight:700;letter-spacing:.08em}
-.save-preview-meta span{
-  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  font-size:11px;letter-spacing:.06em;color:var(--gold-hi);
+/* Tab selection + reading content. */
+.detail-option{
+  position:relative;
+  overflow:hidden;
+  transition:color 220ms ease,border-color 260ms ease,background 260ms ease,transform 180ms var(--ease-out)!important;
 }
-.save-sheet-actions{margin-top:14px;display:grid;gap:8px}
-.save-sheet-choice{
-  position:relative;width:100%;min-height:58px;padding:10px 12px;
-  display:grid;grid-template-columns:34px minmax(0,1fr) 28px;align-items:center;gap:12px;
-  border:1px solid var(--line);border-radius:14px;
-  color:var(--text);background:rgba(255,255,255,.025);
-  text-decoration:none;text-align:left;cursor:pointer;
-  overflow:hidden;isolation:isolate;
-  -webkit-tap-highlight-color:transparent;
-  transition:transform var(--motion-fast) var(--ease-expo),border-color var(--motion-ui) ease,background var(--motion-ui) ease;
+.detail-option::after{
+  content:"";
+  position:absolute;
+  left:22%;right:22%;bottom:4px;height:1px;
+  opacity:0;
+  transform:scaleX(.15);
+  background:linear-gradient(90deg,transparent,rgba(232,182,199,.72),transparent);
+  transition:opacity 240ms ease,transform 320ms var(--ease-out);
 }
-.save-sheet-choice>*{position:relative;z-index:3}
-.save-choice-mark{
-  width:34px;height:34px;display:grid;place-items:center;
-  border:1px solid var(--line-2);border-radius:10px;
-  color:var(--text-2);background:rgba(255,255,255,.03);font-size:17px;
-  transition:transform 240ms var(--ease-expo);
+.detail-option.is-active::after{opacity:1;transform:scaleX(1)}
+/* Save/download controls visibly acknowledge action. */
+.save-sheet-choice.is-activating,
+.detail-save-btn.is-activating{
+  animation:motionActionConfirm 440ms var(--ease-out) both;
 }
-.save-choice-copy{min-width:0;display:grid;gap:4px}
-.save-choice-copy b{font-family:var(--serif);font-size:14.5px;font-weight:700;letter-spacing:.08em}
-.save-choice-copy small{
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--text-3);
-}
-.save-sheet-choice i{
-  width:28px;height:28px;display:grid;place-items:center;
-  border:1px solid var(--line);border-radius:50%;
-  color:var(--text-3);font-style:normal;font-size:13px;
-  transition:transform 240ms var(--ease-expo),color 240ms ease;
+.save-choice-mark,
+.save-sheet-choice i,
+.action-arrow,
+.download-icon{
+  transition:transform 240ms var(--ease-out),border-color 240ms ease,color 240ms ease,background 240ms ease;
 }
 @media(hover:hover){
-  .save-sheet-choice:hover{transform:translateY(-1px);border-color:var(--line-gold)}
-  .save-sheet-choice:hover i{transform:translateX(2px);color:var(--gold-hi)}
+  .save-sheet-choice:hover .save-choice-mark,
+  .save-sheet-choice:hover i,
+  .detail-primary-download:hover i,
+  .detail-action:hover .action-arrow{transform:translateX(2px)}
 }
-.save-sheet-choice:not([disabled]):active{transform:scale(.975)}
-.save-sheet-photo{
-  border-color:var(--line-gold);
-  background:linear-gradient(135deg,rgba(217,178,111,.15),rgba(201,74,51,.07) 60%,rgba(255,255,255,.02));
-}
-.save-sheet-photo .save-choice-mark{color:var(--gold-ink);background:var(--gold-fill);border-color:rgba(255,236,200,.55)}
-.save-sheet-photo::before{
-  content:"";position:absolute;z-index:1;inset:-70% -40%;pointer-events:none;opacity:0;
-  transform:translate3d(-30%,0,0) rotate(-9deg);
-  background:linear-gradient(108deg,transparent 22%,rgba(241,212,158,.12) 36%,rgba(255,246,226,.2) 46%,rgba(238,122,95,.1) 58%,transparent 74%);
-}
-.save-sheet-photo::after{
-  content:"";position:absolute;z-index:2;top:-38%;bottom:-38%;left:-42%;width:30%;pointer-events:none;opacity:0;
-  transform:translate3d(-120%,0,0) skewX(-18deg);
-  background:linear-gradient(90deg,transparent,rgba(255,240,210,.32) 50%,transparent);
-}
-.save-sheet.is-open .save-sheet-photo::before{opacity:1;animation:sheetGoldFilm 3.4s linear infinite}
-.save-sheet.is-open .save-sheet-photo::after{opacity:1;animation:sheetGoldRibbon 2.2s cubic-bezier(.43,.05,.46,.95) infinite}
-.save-sheet-file{color:var(--text-2)}
-.save-sheet-choice[disabled]{opacity:.5;cursor:not-allowed}
-.save-sheet.is-open .save-sheet-photo[disabled]{opacity:.88}
-.save-sheet.is-preparing #saveSheetLink{pointer-events:none;opacity:.55}
-.save-sheet-note{margin:4px 2px 0;font-size:11.5px;line-height:1.7;color:var(--text-3)}
 
-/* ============ Toast ============ */
+/* Animated success/status toast, injected by JS. */
 .motion-toast{
-  position:fixed;z-index:3000;left:50%;
+  position:fixed;
+  z-index:3000;
+  left:50%;
   bottom:max(22px,calc(14px + env(safe-area-inset-bottom)));
-  width:min(360px,calc(100% - 28px));min-height:56px;padding:10px 14px 10px 10px;
-  display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:center;
-  visibility:hidden;opacity:0;transform:translate(-50%,14px) scale(.97);
-  border:1px solid var(--line-2);border-radius:16px;
-  color:var(--text);background:rgba(20,19,23,.92);
-  -webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);
-  box-shadow:0 18px 46px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.05);
+  width:min(360px,calc(100% - 28px));
+  min-height:52px;
+  padding:10px 13px;
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr);
+  gap:10px;
+  align-items:center;
+  visibility:hidden;
+  opacity:0;
+  transform:translate(-50%,14px) scale(.97);
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:14px;
+  color:rgba(255,255,255,.91);
+  background:rgba(12,13,19,.88);
+  -webkit-backdrop-filter:blur(16px) saturate(1.2);
+  backdrop-filter:blur(16px) saturate(1.2);
+  box-shadow:0 18px 46px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
   pointer-events:none;
-  transition:visibility 0s linear 320ms,opacity 260ms ease,transform 360ms var(--ease-expo);
+  transition:
+    visibility 0s linear 320ms,
+    opacity 260ms ease,
+    transform 360ms var(--ease-out);
 }
-.motion-toast.is-show{visibility:visible;opacity:1;transform:translate(-50%,0) scale(1);transition-delay:0s}
+.motion-toast.is-show{
+  visibility:visible;
+  opacity:1;
+  transform:translate(-50%,0) scale(1);
+  transition-delay:0s;
+}
 .motion-toast-mark{
-  width:34px;height:34px;display:grid;place-items:center;border-radius:10px;
-  color:var(--gold-ink);background:var(--gold-fill);font-size:16px;
+  width:30px;height:30px;display:grid;place-items:center;
+  border:1px solid rgba(169,187,217,.18);
+  border-radius:10px;
+  background:linear-gradient(135deg,rgba(232,182,199,.10),rgba(169,187,217,.07));
+  font-size:12px;
 }
-.motion-toast-mark .icon{stroke-width:2.3}
 .motion-toast-copy{min-width:0;display:grid;gap:3px}
-.motion-toast-copy b{font-family:var(--serif);font-size:13.5px;font-weight:700;letter-spacing:.06em}
-.motion-toast-copy small{font-size:11.5px;line-height:1.5;color:var(--text-3)}
-.motion-toast.is-show .motion-toast-mark{animation:motionToastMark 520ms 80ms var(--ease-expo) both}
+.motion-toast-copy b{font-family:var(--serif);font-size:10px;font-weight:600;letter-spacing:.06em}
+.motion-toast-copy small{font-size:7px;color:rgba(206,199,209,.48);letter-spacing:.06em;white-space:normal}
+.motion-toast.is-show .motion-toast-mark{animation:motionToastMark 520ms 80ms var(--ease-out) both}
 
-/* ============ 手机：弹窗与保存面板改为底部抽屉 ============ */
-@media(max-width:720px){
-  .archive-modal-panel{
-    top:auto;bottom:0;width:100%;max-height:92vh;
-    transform:translateX(-50%);
-    grid-template-columns:1fr;
-    border-radius:22px 22px 0 0;border-bottom:0;
-    overflow:auto;
-  }
-  .archive-detail-visual{min-height:330px;border-right:0;border-bottom:1px solid var(--line)}
-  .archive-detail-visual::after{
-    content:"";position:absolute;z-index:5;left:50%;top:8px;width:40px;height:4px;
-    transform:translateX(-50%);border-radius:4px;background:rgba(243,238,230,.35);
-  }
-  .detail-visual-top{top:22px;right:62px}
-  .archive-modal-close{top:20px}
-  .archive-detail-content{overflow:visible;padding:26px 18px 24px}
-  .detail-heading h2{font-size:28px}
-  .detail-options{
-    display:flex;overflow-x:auto;overflow-y:hidden;
-    overscroll-behavior-x:contain;scrollbar-width:none;padding:5px;
-  }
-  .detail-options::-webkit-scrollbar{display:none}
-  .detail-options::before{width:84px;transform:translateX(calc(var(--detail-index) * 90px))}
-  .detail-option{flex:0 0 84px;width:84px;min-height:46px;flex-direction:column;gap:2px;padding:5px 4px}
-  .detail-option b{font-size:13px}
-  .detail-reading-panel{min-height:230px;max-height:36vh;padding:16px 14px 26px}
-  .detail-reading-head{top:-16px;margin:-16px -14px 14px;padding:13px 14px 11px}
-  .detail-reading-fade{margin:0 -14px -26px;bottom:-26px}
-  .detail-reading-body{font-size:13px;line-height:1.9}
-
-  .save-sheet-panel{
-    top:auto;bottom:0;width:100%;
-    border-radius:22px 22px 0 0;border-bottom:0;
-    padding:16px 14px calc(16px + env(safe-area-inset-bottom));
-    transform:translate(-50%,100%);opacity:1;
-  }
-  .save-sheet.is-open .save-sheet-panel{transform:translate(-50%,0)}
-  .save-sheet-preview{max-height:54vh}
-  .save-sheet-choice{min-height:56px}
-}
-@media(min-width:721px){
-  .save-sheet-preview{width:auto;height:min(52vh,620px);max-height:none;aspect-ratio:.72;margin-left:auto;margin-right:auto}
-}
-
-/* ============ 手机：页头与工具栏 ============ */
-@media(max-width:620px){
-  .site-header{height:82px}
-  .author-header-row{grid-template-columns:42px max-content minmax(0,1fr) 46px;column-gap:9px}
-  .author-avatar-shell{width:42px;height:42px;border-radius:11px}
-  .author-primary b{font-size:21px;letter-spacing:.08em}
-  .author-english{gap:8px}
-  .author-english::before{width:5px;height:5px}
-  .author-english span{font-size:9px;letter-spacing:.16em}
-  .archive-count{min-width:46px;padding-left:9px}
-  .archive-count span{font-size:8.5px;letter-spacing:.14em}
-  .archive-count b{font-size:19px}
-  .toolbar{min-height:54px;gap:10px}
-  .filters{overflow-x:auto;scrollbar-width:none}
-  .filters::-webkit-scrollbar{display:none}
-  .filter{flex:0 0 auto;height:32px;padding:0 14px;font-size:13.5px}
-  .toolbar-status{height:30px;padding:0 11px;font-size:9.5px;letter-spacing:.1em}
-  footer{font-size:9px;letter-spacing:.12em}
-}
-
-/* ============ 动效：作者切换（发牌式）============ */
-.site-header.author-switch-out .author-avatar-shell{animation:authorAvatarOut 235ms cubic-bezier(.5,0,.8,.35) both}
-.site-header.author-switch-in .author-avatar-shell{animation:authorAvatarIn 520ms var(--ease-expo) both}
-.site-header.author-switch-out .author-primary b{animation:authorNameOut 210ms cubic-bezier(.55,0,.8,.35) both}
-.site-header.author-switch-in .author-primary b{animation:authorNameIn 500ms 35ms var(--ease-expo) both}
-.site-header.author-switch-out .author-english span{animation:authorEnglishOut 190ms ease-in both}
-.site-header.author-switch-in .author-english span{animation:authorEnglishIn 540ms 70ms var(--ease-expo) both}
-.site-header.author-switch-out .archive-count b{animation:authorCountOut 210ms cubic-bezier(.5,0,.8,.35) both}
-.site-header.author-switch-in .archive-count b{animation:authorCountIn 520ms 55ms var(--ease-expo) both}
-.gallery.author-switch-out .archive-card.is-motion-visible:not([hidden]){
-  animation:authorCardDealOut 225ms cubic-bezier(.52,0,.82,.32) both;animation-delay:var(--author-delay,0ms);
-}
-.gallery.author-switch-in .archive-card.is-motion-visible:not([hidden]){
-  animation:authorCardDealIn 520ms var(--ease-expo) both;animation-delay:var(--author-delay,0ms);
-}
-@media(max-width:720px){
-  .gallery.author-switch-out .archive-card.is-motion-visible:not([hidden]){animation-duration:190ms}
-  .gallery.author-switch-in .archive-card.is-motion-visible:not([hidden]){animation-duration:440ms}
-}
-
-/* ============ 动效：弹窗内细节 ============ */
-.archive-modal.is-open .detail-visual-top span{animation:detailBadgeFromLeft 470ms 130ms cubic-bezier(.2,.82,.2,1) both}
-.archive-modal.is-open .detail-visual-top small{animation:detailBadgeFromRight 470ms 170ms cubic-bezier(.2,.82,.2,1) both}
-.archive-modal.is-open .detail-visual-bottom{animation:detailVisualFooterIn 560ms 200ms cubic-bezier(.2,.82,.2,1) both}
-.archive-modal.is-open .detail-save-btn{animation:detailSaveButtonResolve 500ms 260ms cubic-bezier(.2,.82,.2,1) both}
-.detail-save-btn.is-activating{animation:detailSaveDrop 460ms cubic-bezier(.2,.82,.2,1) both}
-.save-sheet-photo.is-activating .save-choice-mark{animation:savePhotoPulse 470ms cubic-bezier(.2,.82,.2,1) both}
-.save-sheet-file.is-activating i{animation:saveFileDrop 480ms cubic-bezier(.2,.82,.2,1) both}
-.save-sheet-choice.is-activating{animation:motionActionConfirm 440ms var(--ease-expo) both}
-.save-sheet.is-ready .save-sheet-note{animation:saveNoteResolve 440ms 80ms ease both}
-.toolbar-status span.is-status-pulse{display:inline-block;animation:motionStatusPulse 420ms var(--ease-expo) both}
-.archive-modal-panel{transform-origin:var(--archive-origin-x,50%) var(--archive-origin-y,50%)}
-
-/* 性能：遮罩打开时冻结背景卡片动画；后台标签页暂停全部动画 */
-body.has-overlay .archive-card .detail-action::before{animation-play-state:paused}
-body.is-page-hidden *,
-body.is-page-hidden *::before,
-body.is-page-hidden *::after{animation-play-state:paused!important}
-
-/* ============ 入场动效（滚动入场 / 弹窗展开 / 标签切换）============ */
-[data-motion].mo-hide{opacity:0}
-[data-motion].is-in{
-  animation-duration:var(--mo-dur,420ms);
-  animation-timing-function:var(--mo-ease,var(--ease-expo));
-}
-[data-motion="sweep-down"].is-in{animation-name:mo-sweep-down}
-[data-motion="sweep-up"].is-in{animation-name:mo-sweep-up}
-[data-motion="sweep-left"].is-in{animation-name:mo-sweep-left}
-[data-motion="sweep-right"].is-in{animation-name:mo-sweep-right}
-[data-motion="focus-in"].is-in{animation-name:mo-focus-in}
-[data-motion="settle"].is-in{animation-name:mo-settle}
-[data-motion="rise"].is-in{animation-name:mo-rise}
-.mo-tab{--mo-dur:220ms;--mo-ease:cubic-bezier(.22,.61,.36,1)}
-.mo-title{--mo-dur:520ms}
-.mo-status{--mo-dur:300ms}
-.mo-cta{--mo-dur:300ms;--mo-ease:var(--ease-back)}
-.mo-card{--mo-dur:420ms}
-.mo-section{--mo-dur:420ms}
-.mo-card::after{
-  content:"";position:absolute;inset:0;z-index:20;border-radius:inherit;pointer-events:none;
-  background:linear-gradient(to top,rgba(241,212,158,.16) 0%,rgba(241,212,158,.05) 45%,rgba(241,212,158,0) 78%);
-  opacity:0;transform:translateY(45%);
-  transition:opacity 300ms ease,transform 300ms var(--ease-expo);
-}
-.mo-card.is-loaded:hover::after,
-.mo-card:focus-within::after{opacity:1;transform:none}
-@media(hover:none){.mo-card::after{display:none}}
-.mo-backdrop{animation:mo-fade-in 300ms ease both}
-.mo-backdrop.is-closing{animation:mo-exit 220ms ease both}
-.mo-panel{
-  transform-origin:var(--mo-ox,50%) var(--mo-oy,50%);
-  animation:mo-unfold 420ms var(--ease-expo) both;
-}
-.mo-panel.is-closing{animation:mo-exit 220ms ease both}
-.mo-tabpanel.is-enter-opening{animation:mo-sweep-left 420ms var(--ease-expo) both}
-.mo-tabpanel.is-enter-setting{animation:mo-settle 420ms var(--ease-back) both}
-.mo-tabpanel.is-enter-worldbook{animation:mo-sweep-down 520ms var(--ease-expo) both}
-.mo-tabpanel.is-enter-preset{animation:mo-sweep-up 520ms var(--ease-expo) both}
-
-/* ============ Keyframes ============ */
-@keyframes statusDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.8)}}
-@keyframes goldLeafSweep{0%{transform:translateX(-120%) skewX(-20deg)}55%,100%{transform:translateX(520%) skewX(-20deg)}}
+@keyframes motionDotIn{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:scale(1)}}
+@keyframes motionUnderline{from{opacity:0;transform:scaleX(.15)}to{opacity:1;transform:scaleX(1)}}
 @keyframes motionLoadingSweep{0%{transform:translateX(-35%) rotate(-14deg)}100%{transform:translateX(35%) rotate(-14deg)}}
 @keyframes motionLoadingBreathe{0%,100%{opacity:.72;transform:translateY(0)}50%{opacity:1;transform:translateY(-1px)}}
 @keyframes motionReadyCopy{from{opacity:0;transform:translateY(7px);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
 @keyframes motionStatusPulse{0%{opacity:.38;transform:translateY(2px)}100%{opacity:1;transform:none}}
 @keyframes motionActionConfirm{0%{transform:scale(1)}42%{transform:scale(.975)}100%{transform:scale(1)}}
 @keyframes motionToastMark{0%{opacity:0;transform:scale(.45) rotate(-10deg)}65%{transform:scale(1.08) rotate(2deg)}100%{opacity:1;transform:none}}
-@keyframes motionImageReady{from{opacity:.4;transform:scale(1.02)}to{opacity:1;transform:none}}
-@keyframes authorFilterGlint{0%{opacity:0;transform:translateX(-70%) skewX(-18deg)}25%{opacity:1}100%{opacity:0;transform:translateX(75%) skewX(-18deg)}}
-@keyframes authorAvatarOut{from{opacity:1;transform:rotateY(0) scale(1);filter:none}to{opacity:.08;transform:rotateY(var(--author-avatar-out-rot)) scale(.88);filter:blur(2px)}}
-@keyframes authorAvatarIn{0%{opacity:0;transform:rotateY(var(--author-avatar-in-rot)) scale(.86);filter:blur(3px)}62%{opacity:1;transform:rotateY(var(--author-avatar-bounce-rot)) scale(1.025);filter:none}100%{opacity:1;transform:none;filter:none}}
-@keyframes authorNameOut{to{opacity:0;transform:translateX(var(--author-name-out-x)) skewX(var(--author-name-out-skew));filter:blur(2px)}}
-@keyframes authorNameIn{0%{opacity:0;transform:translateX(var(--author-name-in-x)) skewX(var(--author-name-in-skew));filter:blur(3px)}70%{opacity:1;transform:translateX(var(--author-name-over-x));filter:none}100%{opacity:1;transform:none;filter:none}}
-@keyframes authorEnglishOut{to{opacity:0;clip-path:inset(0 100% 0 0);letter-spacing:.3em}}
-@keyframes authorEnglishIn{0%{opacity:0;clip-path:inset(0 0 0 100%);letter-spacing:.3em}100%{opacity:1;clip-path:inset(0)}}
-@keyframes authorCountOut{to{opacity:0;transform:translateY(var(--author-count-out-y)) scale(.92);filter:blur(1px)}}
-@keyframes authorCountIn{0%{opacity:0;transform:translateY(var(--author-count-in-y)) scale(.9);filter:blur(2px)}72%{opacity:1;transform:translateY(var(--author-count-over-y)) scale(1.04);filter:none}100%{opacity:1;transform:none;filter:none}}
-@keyframes authorCardDealOut{0%{opacity:1;transform:none}100%{opacity:0;transform:translateX(var(--author-card-out-x)) translateY(5px) rotateZ(var(--author-card-out-rot)) scale(.985)}}
-@keyframes authorCardDealIn{0%{opacity:0;transform:translateX(var(--author-card-in-x)) translateY(8px) rotateZ(var(--author-card-in-rot)) scale(.972)}72%{opacity:1;transform:translateX(var(--author-card-over-x)) translateY(-1px) rotateZ(var(--author-card-over-rot)) scale(1.004)}100%{opacity:1;transform:none}}
-@keyframes detailIndexTick{0%{transform:scale(1.06)}38%{transform:scale(.82) rotate(-7deg)}72%{transform:scale(1.16) rotate(2deg)}100%{transform:scale(1.06)}}
+
+@media(prefers-reduced-motion:reduce){
+  .archive-card,
+  .archive-card .card-face,
+  .archive-modal,
+  .archive-modal-panel,
+  .archive-modal-backdrop,
+  .save-sheet,
+  .save-sheet-panel,
+  .save-sheet-backdrop,
+  .motion-toast,
+  .gallery,
+  .author-avatar-img,
+  .author-primary b,
+  .author-english span,
+  .archive-count b{
+    transition-duration:.01ms!important;
+    animation:none!important;
+  }
+  .archive-card.is-loading-now .card-face::after{display:none!important}
+  .archive-card:not(.is-loaded) .loading-core{animation:none!important}
+  .archive-card{opacity:1;transform:none;filter:none}
+}
+
+
+
+/* =========================================================
+   MOTION DIVERSITY V2
+   Author switching = archive reel / card dealing.
+   Scroll = physical inertia and spring-back, not ordinary parallax.
+   ========================================================= */
+
+/* Author filter gets a traveling glint, separate from normal button feedback. */
+.author-filter{
+  overflow:hidden;
+  isolation:isolate;
+}
+.author-filter::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:8px -18px;
+  opacity:0;
+  transform:translateX(-65%) skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(232,182,199,.075),rgba(169,187,217,.045),transparent);
+  pointer-events:none;
+}
+.author-filter.active::before{
+  animation:authorFilterGlint 560ms var(--ease-out) both;
+}
+
+/* The header elements each obey a different piece of the "change archive reel" motion. */
+.site-header .author-avatar-shell{
+  transform-style:preserve-3d;
+  perspective:700px;
+}
+.site-header.author-switch-out .author-avatar-shell{
+  animation:authorAvatarOut 235ms cubic-bezier(.5,0,.8,.35) both;
+}
+.site-header.author-switch-in .author-avatar-shell{
+  animation:authorAvatarIn 520ms var(--ease-out) both;
+}
+.site-header.author-switch-out .author-primary b{
+  animation:authorNameOut 210ms cubic-bezier(.55,0,.8,.35) both;
+}
+.site-header.author-switch-in .author-primary b{
+  animation:authorNameIn 500ms 35ms var(--ease-out) both;
+}
+.site-header.author-switch-out .author-english span{
+  animation:authorEnglishOut 190ms ease-in both;
+}
+.site-header.author-switch-in .author-english span{
+  animation:authorEnglishIn 540ms 70ms var(--ease-out) both;
+}
+.site-header.author-switch-out .archive-count b{
+  animation:authorCountOut 210ms cubic-bezier(.5,0,.8,.35) both;
+}
+.site-header.author-switch-in .archive-count b{
+  animation:authorCountIn 520ms 55ms var(--ease-out) both;
+}
+
+/* Gallery no longer fades as one slab. Visible cards are "dealt" out/in individually. */
+.gallery.author-switch-out,
+.gallery.author-switch-in{
+  opacity:1!important;
+  transform:none!important;
+  filter:none!important;
+}
+.gallery.author-switch-out .archive-card:not([hidden]){
+  animation:authorCardDealOut 225ms cubic-bezier(.52,0,.82,.32) both;
+  animation-delay:var(--author-delay,0ms);
+}
+.gallery.author-switch-in .archive-card:not([hidden]){
+  animation:authorCardDealIn 520ms var(--ease-out) both;
+  animation-delay:var(--author-delay,0ms);
+}
+
+@keyframes authorFilterGlint{
+  0%{opacity:0;transform:translateX(-70%) skewX(-18deg)}
+  25%{opacity:1}
+  100%{opacity:0;transform:translateX(75%) skewX(-18deg)}
+}
+@keyframes authorAvatarOut{
+  from{opacity:1;transform:rotateY(0) scale(1);filter:none}
+  to{opacity:.08;transform:rotateY(var(--author-avatar-out-rot)) scale(.88);filter:blur(2px)}
+}
+@keyframes authorAvatarIn{
+  0%{opacity:0;transform:rotateY(var(--author-avatar-in-rot)) scale(.86);filter:blur(3px)}
+  62%{opacity:1;transform:rotateY(var(--author-avatar-bounce-rot)) scale(1.025);filter:none}
+  100%{opacity:1;transform:none;filter:none}
+}
+@keyframes authorNameOut{
+  to{opacity:0;transform:translateX(var(--author-name-out-x)) skewX(var(--author-name-out-skew));filter:blur(2px)}
+}
+@keyframes authorNameIn{
+  0%{opacity:0;transform:translateX(var(--author-name-in-x)) skewX(var(--author-name-in-skew));filter:blur(3px)}
+  70%{opacity:1;transform:translateX(var(--author-name-over-x));filter:none}
+  100%{opacity:1;transform:none;filter:none}
+}
+@keyframes authorEnglishOut{
+  to{opacity:0;clip-path:inset(0 100% 0 0);letter-spacing:.22em}
+}
+@keyframes authorEnglishIn{
+  0%{opacity:0;clip-path:inset(0 0 0 100%);letter-spacing:.22em}
+  100%{opacity:1;clip-path:inset(0);letter-spacing:inherit}
+}
+@keyframes authorCountOut{
+  to{opacity:0;transform:translateY(var(--author-count-out-y)) scale(.92);filter:blur(1px)}
+}
+@keyframes authorCountIn{
+  0%{opacity:0;transform:translateY(var(--author-count-in-y)) scale(.9);filter:blur(2px)}
+  72%{opacity:1;transform:translateY(var(--author-count-over-y)) scale(1.04);filter:none}
+  100%{opacity:1;transform:none;filter:none}
+}
+@keyframes authorCardDealOut{
+  0%{opacity:1;transform:translateX(0) translateY(0) rotateZ(0) scale(1);filter:none}
+  100%{
+    opacity:0;
+    transform:
+      translateX(var(--author-card-out-x))
+      translateY(5px)
+      rotateZ(var(--author-card-out-rot))
+      scale(.985);
+    filter:blur(1.2px) saturate(.8);
+  }
+}
+@keyframes authorCardDealIn{
+  0%{
+    opacity:0;
+    transform:
+      translateX(var(--author-card-in-x))
+      translateY(8px)
+      rotateZ(var(--author-card-in-rot))
+      scale(.972);
+    filter:blur(2px) saturate(.78);
+  }
+  72%{
+    opacity:1;
+    transform:translateX(var(--author-card-over-x)) translateY(-1px) rotateZ(var(--author-card-over-rot)) scale(1.004);
+    filter:none;
+  }
+  100%{opacity:1;transform:none;filter:none}
+}
+
+@media(max-width:720px){
+  .gallery.author-switch-out .archive-card:not([hidden]){animation-duration:190ms}
+  .gallery.author-switch-in .archive-card:not([hidden]){animation-duration:440ms}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .site-header.author-switch-out .author-avatar-shell,
+  .site-header.author-switch-in .author-avatar-shell,
+  .site-header.author-switch-out .author-primary b,
+  .site-header.author-switch-in .author-primary b,
+  .site-header.author-switch-out .author-english span,
+  .site-header.author-switch-in .author-english span,
+  .site-header.author-switch-out .archive-count b,
+  .site-header.author-switch-in .archive-count b,
+  .gallery.author-switch-out .archive-card,
+  .gallery.author-switch-in .archive-card,
+  .author-filter.active::before{
+    animation:none!important;
+  }
+}
+
+
+/* =========================================================
+   MICRO MOTION V3 — detail reader and fine interaction layer
+   Each function gets its own motion language instead of one generic fade.
+   ========================================================= */
+
+/* Shared sliding selection plate for the four archive sections. */
+.detail-options{
+  --detail-index:0;
+  --detail-shift:0px;
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+}
+.detail-options::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  left:5px;
+  top:5px;
+  bottom:5px;
+  width:calc((100% - 10px - (var(--detail-count) - 1) * 6px) / var(--detail-count));
+  border:1px solid rgba(232,182,199,.14);
+  border-radius:9px;
+  background:
+    linear-gradient(135deg,rgba(232,182,199,.082),rgba(169,187,217,.035)),
+    rgba(255,255,255,.022);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+  transform:translateX(var(--detail-shift));
+  transition:transform 420ms cubic-bezier(.2,.82,.2,1),border-color 260ms ease,background 320ms ease;
+  pointer-events:none;
+}
+.detail-option{
+  z-index:1;
+  background:transparent!important;
+  border-color:transparent!important;
+  -webkit-tap-highlight-color:transparent;
+}
+.detail-option.is-active{
+  box-shadow:none!important;
+}
+.detail-option span,
+.detail-option b{
+  transition:transform 330ms cubic-bezier(.2,.82,.2,1),opacity 260ms ease,color 260ms ease,letter-spacing 330ms ease;
+}
+.detail-option:not(.is-active) span{transform:scale(.92);opacity:.72}
+.detail-option.is-active span{transform:scale(1.08);opacity:1}
+.detail-option.is-active b{letter-spacing:.075em}
+.detail-option.is-tab-hit span{animation:detailIndexTick 420ms cubic-bezier(.2,.82,.2,1) both}
+.detail-option.is-tab-hit b{animation:detailLabelSettle 420ms cubic-bezier(.2,.82,.2,1) both}
+
+/* Reading panel gets a small living surface, not a static box. */
+.detail-reading-panel{
+  --detail-dir:1;
+  --detail-accent-x:50%;
+  isolation:isolate;
+  perspective:900px;
+  transition:border-color 320ms ease,box-shadow 360ms ease,background 420ms ease;
+}
+.detail-reading-panel::before{
+  content:"";
+  position:absolute;
+  z-index:6;
+  left:0;right:0;
+  top:0;
+  height:1px;
+  opacity:0;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(232,182,199,.55),rgba(169,187,217,.34),transparent);
+  transform:translateY(-2px);
+}
+.detail-reading-panel::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0;
+  opacity:0;
+  pointer-events:none;
+  background:radial-gradient(280px 120px at var(--detail-accent-x) 0%,rgba(232,182,199,.055),transparent 70%);
+  transition:opacity 420ms ease;
+}
+.detail-reading-head,.detail-reading-body,.detail-reading-fade{position:relative}
+.detail-reading-head{z-index:3}
+.detail-reading-body{z-index:2;transform-origin:50% 0}
+.detail-reading-fade{z-index:2}
+.detail-reading-panel.is-reading-scrolled{
+  border-color:rgba(255,255,255,.092);
+  box-shadow:inset 0 9px 22px rgba(0,0,0,.13);
+}
+.detail-reading-panel.is-reading-scrolled .detail-reading-head{
+  border-bottom-color:rgba(232,182,199,.09);
+  box-shadow:0 10px 18px rgba(4,5,8,.16);
+}
+.detail-reading-panel.is-reading-scrolled .detail-reading-head>span{
+  border-color:rgba(169,187,217,.12);
+  color:rgba(185,203,231,.62);
+}
+@media(hover:hover) and (pointer:fine){
+  .detail-tags span:hover{
+    transform:translateY(-2px);
+    color:rgba(238,233,241,.69);
+    border-color:rgba(232,182,199,.13);
+    background:rgba(232,182,199,.035);
+  }
+}
+.detail-save-btn{
+  overflow:hidden;
+  isolation:isolate;
+  transition:transform 200ms cubic-bezier(.2,.82,.2,1),border-color 260ms ease,background 300ms ease!important;
+}
+.detail-save-btn::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  opacity:0;
+  transform:translateX(-70%) skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.045),transparent);
+  pointer-events:none;
+}
+.detail-save-btn:hover::before{animation:detailButtonSheen 620ms ease both}
+.detail-save-btn.is-activating{animation:detailSaveDrop 460ms cubic-bezier(.2,.82,.2,1) both}
+
+/* Close control gets a distinct mechanical snap rather than ordinary hover. */
+.archive-modal-close:active,.save-sheet-close:active{transform:rotate(-11deg) scale(.9)!important}
+
+/* When a modal opens, scale from the approximate location of the selected card. */
+.archive-modal-panel{transform-origin:var(--archive-origin-x,50%) var(--archive-origin-y,50%)}
+
+@keyframes detailIndexTick{0%{transform:scale(1.08)}38%{transform:scale(.82) rotate(-7deg)}72%{transform:scale(1.16) rotate(2deg)}100%{transform:scale(1.08)}}
 @keyframes detailLabelSettle{0%{transform:translateY(0)}42%{transform:translateY(2px);opacity:.62}100%{transform:none;opacity:1}}
+
+@keyframes detailTagResolve{0%{opacity:0;transform:translateY(5px) scale(.94)}70%{opacity:1;transform:translateY(-1px) scale(1.015)}100%{opacity:1;transform:none}}
 @keyframes detailButtonSheen{0%{opacity:0;transform:translateX(-75%) skewX(-18deg)}30%{opacity:.8}100%{opacity:0;transform:translateX(80%) skewX(-18deg)}}
 @keyframes detailSaveDrop{0%{transform:translateY(0)}38%{transform:translateY(4px) scale(.9)}72%{transform:translateY(-1px) scale(1.04)}100%{transform:none}}
+
+@media(max-width:720px){
+  .detail-options{
+    overflow-x:auto;
+    overflow-y:hidden;
+  }
+  .detail-options::before{
+    width:84px;
+    transform:translateX(calc(var(--detail-index) * 90px));
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .detail-options::before,
+  .detail-option span,
+  .detail-option b,
+  .detail-reading-panel,
+  .detail-reading-head,
+  .detail-reading-body,
+  .detail-reading-panel::before,
+  .detail-reading-panel::after,
+  .detail-tags span,
+  .detail-primary-download,
+  .detail-primary-download i{
+    animation:none!important;
+    transition-duration:.01ms!important;
+    transform:none!important;
+    filter:none!important;
+    clip-path:none!important;
+  }
+}
+
+
+/* Detail visual itself has a separate "evidence desk" entrance. */
+.archive-modal.is-open .detail-visual-top span{animation:detailBadgeFromLeft 470ms 130ms cubic-bezier(.2,.82,.2,1) both}
+.archive-modal.is-open .detail-visual-top small{animation:detailBadgeFromRight 470ms 170ms cubic-bezier(.2,.82,.2,1) both}
+.archive-modal.is-open .detail-visual-bottom{animation:detailVisualFooterIn 560ms 200ms cubic-bezier(.2,.82,.2,1) both}
+.archive-modal.is-open .detail-save-btn{animation:detailSaveButtonResolve 500ms 260ms cubic-bezier(.2,.82,.2,1) both}
+
+/* Primary card action feels like a physical latch; separate from hover shimmer. */
+.archive-card.is-loaded .detail-action:active{
+  transform:scale(.987)!important;
+}
+.archive-card.is-loaded .detail-action:active .action-arrow{
+  transform:translateX(3px) scale(.9)!important;
+}
+.download-action:active .download-icon{animation:detailMiniDownload 360ms cubic-bezier(.2,.82,.2,1) both}
+
+/* Save sheet choices are intentionally different: share pops, file drops. */
+.save-sheet-photo.is-activating .save-choice-mark{animation:savePhotoPulse 470ms cubic-bezier(.2,.82,.2,1) both}
+.save-sheet-file.is-activating i{animation:saveFileDrop 480ms cubic-bezier(.2,.82,.2,1) both}
+.save-sheet.is-ready .save-sheet-note{animation:saveNoteResolve 440ms 80ms ease both}
+
 @keyframes detailBadgeFromLeft{from{opacity:0;transform:translateX(-9px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes detailBadgeFromRight{from{opacity:0;transform:translateX(9px) scale(.96)}to{opacity:1;transform:none}}
-@keyframes detailVisualFooterIn{0%{opacity:0;transform:translateY(12px) scale(.98)}100%{opacity:1;transform:none}}
+@keyframes detailVisualFooterIn{0%{opacity:0;transform:translateY(12px) scale(.98);filter:blur(3px)}100%{opacity:1;transform:none;filter:none}}
 @keyframes detailSaveButtonResolve{0%{opacity:0;transform:translateX(8px)}70%{opacity:1;transform:translateX(-1px)}100%{opacity:1;transform:none}}
 @keyframes detailMiniDownload{0%{transform:none}44%{transform:translateY(4px) scale(.86)}100%{transform:none}}
 @keyframes savePhotoPulse{0%{transform:scale(1)}42%{transform:scale(.8)}70%{transform:scale(1.1)}100%{transform:none}}
 @keyframes saveFileDrop{0%{transform:none}38%{transform:translateY(5px) scale(.9)}76%{transform:translateY(-1px)}100%{transform:none}}
 @keyframes saveNoteResolve{from{opacity:.3;transform:translateY(3px)}to{opacity:1;transform:none}}
-@keyframes sheetGoldFilm{0%{transform:translate3d(-34%,0,0) rotate(-9deg)}50%{transform:translate3d(5%,0,0) rotate(-9deg)}100%{transform:translate3d(36%,0,0) rotate(-9deg)}}
-@keyframes sheetGoldRibbon{0%{transform:translate3d(-150%,0,0) skewX(-18deg)}100%{transform:translate3d(510%,0,0) skewX(-18deg)}}
-@keyframes mo-sweep-down{from{clip-path:inset(0 0 100% 0);opacity:0;transform:translateY(-8px)}to{clip-path:inset(0);opacity:1;transform:none}}
-@keyframes mo-sweep-up{from{clip-path:inset(100% 0 0 0);opacity:0;transform:translateY(10px)}to{clip-path:inset(0);opacity:1;transform:none}}
-@keyframes mo-sweep-left{from{clip-path:inset(0 100% 0 0);opacity:0;transform:translateX(-14px)}to{clip-path:inset(0);opacity:1;transform:none}}
-@keyframes mo-sweep-right{from{clip-path:inset(0 0 0 100%);opacity:0;transform:translateX(14px)}to{clip-path:inset(0);opacity:1;transform:none}}
-@keyframes mo-focus-in{from{filter:blur(10px);opacity:0;letter-spacing:.3em}to{filter:blur(0);opacity:1}}
-@keyframes mo-settle{from{transform:scale(1.04);opacity:0}to{transform:scale(1);opacity:1}}
-@keyframes mo-rise{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
-@keyframes mo-unfold{from{scale:.92;opacity:0}to{scale:1;opacity:1}}
-@keyframes mo-fade-in{from{opacity:0}to{opacity:1}}
-@keyframes mo-exit{from{opacity:1;scale:1}to{opacity:0;scale:.98}}
 
-/* ============ 减少动态效果 ============ */
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{transition-duration:.01ms!important;animation-iteration-count:1!important}
-  .archive-card,.archive-card .card-face,.gallery,
-  .site-header .author-avatar-shell,.author-primary b,.author-english span,.archive-count b,
-  .archive-card .card-face::after,.archive-card .loading-core,
-  .detail-action::before,.toolbar-status i,
-  .detail-option span,.detail-option b,.filter::before{animation:none!important}
-  .save-sheet.is-open .save-sheet-photo::before{animation:none!important;opacity:.4;transform:rotate(-9deg)}
-  .save-sheet.is-open .save-sheet-photo::after{display:none}
-  [data-motion].is-in,.mo-backdrop,.mo-panel,.mo-tabpanel{animation-name:mo-fade-in!important;animation-duration:150ms!important}
-  .mo-backdrop.is-closing,.mo-panel.is-closing{animation-name:mo-fade-in!important;animation-direction:reverse!important}
+
+
+/* =========================================================
+   PERFORMANCE PASS · perceptible motion kept, invisible work removed
+   ========================================================= */
+
+/* Per-card glass blur is extremely expensive when several cards are visible.
+   Their surfaces already have dark translucent fills, so keep the look and drop
+   only the live background sampling. */
+.archive-card .corner-code,
+.archive-card .bottom-frame,
+.archive-card .detail-action,
+.archive-card .download-action{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* Reveal/load keeps the compositor-only filter optimization. */
+.archive-card{
+  filter:none!important;
+}
+.gallery,
+.gallery.is-author-switching,
+.gallery.author-switch-out,
+.gallery.author-switch-in{
+  filter:none!important;
+}
+.archive-card.is-loaded .loaded-art{
+  filter:none!important;
+  transition:opacity 620ms ease,transform 880ms var(--ease-out)!important;
+}
+
+/* Never keep every card promoted to its own GPU layer. Promote only the active
+   card shell; art, stripes, ghosts and foil buttons stay ordinary paint layers. */
+.archive-card .card-face{
+  will-change:auto!important;
+}
+.archive-card.is-motion-visible .card-face{will-change:transform!important}
+.archive-modal.is-open .archive-modal-panel,
+.save-sheet.is-open .save-sheet-panel{will-change:transform,opacity!important}
+
+/* Do not animate unloaded cards that are sitting far below/above the viewport.
+   The visible loading state keeps the same breathe + sweep choreography. */
+.archive-card:not(.is-loaded) .loading-core{animation:none!important}
+.archive-card.is-motion-visible.is-loading-now .loading-core{
+  animation:motionLoadingBreathe 1.7s ease-in-out infinite!important;
+}
+
+/* Base foil used to animate background-position, which repaints the gradient every
+   frame. Moving the already-rasterized foil layer gives the same visible drift but
+   stays on the compositor. */
+@keyframes holoFilmDriftLite{
+  0%,100%{transform:translate3d(-5%,0,0) rotate(-8deg) scale(1.03)}
+  50%{transform:translate3d(5%,0,0) rotate(-8deg) scale(1.03)}
+}
+.detail-action::before{
+  background-position:0% 50%!important;
+  animation-name:holoFilmDriftLite!important;
+  will-change:auto!important;
+}
+.detail-action::after{filter:none!important}
+
+/* Continuous foil exists only while the card is on/near screen. Once a user has
+   scrolled past 50+ loaded cards, those old cards stop consuming animation time. */
+.archive-card .detail-action::before,
+.archive-card .detail-action::after{
+  animation-play-state:paused!important;
+}
+.archive-card.is-motion-visible.is-loaded .detail-action::before,
+.archive-card.is-motion-visible.is-loaded .detail-action::after{
+  animation-play-state:running!important;
+}
+
+/* Keep distant cards in the grid with a measured intrinsic placeholder, while
+   the near-viewport observer removes the paint cost before they are needed. */
+.archive-card:not(.is-near){
+  content-visibility:auto;
+  contain-intrinsic-size:var(--card-ih,420px);
+}
+
+/* Download button: match the detail save control, stay matte at rest, and
+   use one existing sheen only while a fine pointer hovers. */
+.archive-card.is-loaded .download-action{
+  color:#fff!important;
+  border-color:rgba(245,210,226,.42)!important;
+  background:
+    linear-gradient(135deg,
+      rgba(232,182,199,.42) 0%,
+      rgba(200,185,223,.34) 52%,
+      rgba(169,187,217,.27) 100%)!important;
+  animation:none!important;
+  box-shadow:
+    0 6px 16px rgba(0,0,0,.18),
+    0 0 15px rgba(232,182,199,.10),
+    inset 0 1px 0 rgba(255,255,255,.15)!important;
+}
+.archive-card.is-loaded .download-action .download-icon{
+  color:#fff!important;
+  text-shadow:0 1px 0 rgba(0,0,0,.18)!important;
+}
+.download-action::after,
+.archive-card.is-loaded .download-action::after{
+  content:none!important;
+  transition:opacity .34s ease;
+}
+.archive-card.is-loaded .download-action::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:1!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  transform:translateX(-70%) skewX(-18deg)!important;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.045),transparent)!important;
+  transition:opacity .38s ease;
+  animation:none!important;
+}
+@media(hover:hover) and (pointer:fine){
+  .archive-card.is-loaded .download-action:hover::before{
+    animation:detailButtonSheen 620ms ease both!important;
+    opacity:1!important;
+  }
+  .archive-card.is-loaded .download-action:hover,
+  .archive-card.is-loaded .download-action:focus-visible{
+    border-color:rgba(255,226,239,.58)!important;
+    background:
+      linear-gradient(135deg,
+        rgba(239,190,210,.54) 0%,
+        rgba(205,190,230,.44) 52%,
+        rgba(175,197,226,.36) 100%)!important;
+    box-shadow:
+      0 7px 18px rgba(0,0,0,.20),
+      0 0 18px rgba(232,182,199,.16),
+      0 0 22px rgba(169,187,217,.09),
+      inset 0 1px 0 rgba(255,255,255,.18)!important;
+    transform:translateY(-1px)!important;
+  }
+}
+
+/* Author switches used to animate every non-hidden card, including dozens far
+   outside the viewport. Offscreen cards can swap instantly; visible cards keep the
+   full deal-in/deal-out motion. */
+.gallery.author-switch-out .archive-card:not([hidden]):not(.is-motion-visible),
+.gallery.author-switch-in .archive-card:not([hidden]):not(.is-motion-visible){
+  animation:none!important;
+}
+
+/* Full-panel blur during scale-in is one of the most expensive modal operations.
+   Keep the scale/fade (the part the eye actually reads as motion), not the blur. */
+.archive-modal-panel,
+.save-sheet-panel{
+  filter:none!important;
+}
+.save-sheet.is-preparing .save-sheet-preview img{filter:none!important}
+
+/* While an overlay covers the gallery, background card foil cannot be meaningfully
+   seen through the dark backdrop. Freeze it until the overlay closes. */
+body.has-overlay .archive-card .detail-action::before,
+body.has-overlay .archive-card .detail-action::after{
+  animation-play-state:paused!important;
+}
+
+/* Photo save remains visibly holographic even while PNG/share capability is preparing.
+   Disabled still blocks clicks; only the visual opacity is kept strong. */
+.save-sheet.is-open .save-sheet-photo[disabled]{
+  opacity:.88!important;
+}
+.save-sheet.is-open .save-sheet-photo{
+  background:
+    linear-gradient(135deg,rgba(255,108,180,.10),rgba(102,222,255,.075) 46%,rgba(255,222,112,.065)),
+    rgba(255,255,255,.022)!important;
+}
+/* FILE destination is deliberately static. */
+.save-sheet.is-open .save-sheet-file,
+.save-sheet.is-open .save-sheet-file::before,
+.save-sheet.is-open .save-sheet-file::after{
+  animation:none!important;
+}
+
+/* Hidden tabs should not keep compositor animations alive. */
+body.is-page-hidden *,
+body.is-page-hidden *::before,
+body.is-page-hidden *::after{animation-play-state:paused!important}
+
+.save-sheet.is-preparing #saveSheetLink{
+  pointer-events:none!important;
+  opacity:.55!important;
+}
+
+
+
+.detail-save-btn{
+  color:#fff!important;
+  border-color:rgba(245,210,226,.42)!important;
+  background:
+    linear-gradient(135deg,
+      rgba(232,182,199,.42) 0%,
+      rgba(200,185,223,.34) 52%,
+      rgba(169,187,217,.27) 100%)!important;
+  box-shadow:
+    0 6px 16px rgba(0,0,0,.18),
+    0 0 15px rgba(232,182,199,.10),
+    inset 0 1px 0 rgba(255,255,255,.15)!important;
+  text-shadow:0 1px 0 rgba(0,0,0,.18);
+}
+@media(hover:hover) and (pointer:fine){
+  .detail-save-btn:hover,
+  .detail-save-btn:focus-visible{
+    border-color:rgba(255,226,239,.58)!important;
+    background:
+      linear-gradient(135deg,
+        rgba(239,190,210,.54) 0%,
+        rgba(205,190,230,.44) 52%,
+        rgba(175,197,226,.36) 100%)!important;
+    box-shadow:
+      0 7px 18px rgba(0,0,0,.20),
+      0 0 18px rgba(232,182,199,.16),
+      0 0 22px rgba(169,187,217,.09),
+      inset 0 1px 0 rgba(255,255,255,.18)!important;
+  }
+}
+
+/* The author avatar remains the original shell, with keyboard semantics added. */
+.author-avatar-shell{
+  padding:0;
+  color:inherit;
+  font:inherit;
+  cursor:pointer;
+  appearance:none;
+}
+.author-avatar-shell:focus-visible{
+  outline:2px solid rgba(232,182,199,.68);
+  outline-offset:3px;
+}
+.author-avatar-shell:disabled{
+  cursor:wait;
+  opacity:.55;
+}
+
+/* Real role-card media; keep the eye/head area in the display crop. */
+.loaded-art{
+  isolation:isolate;
+}
+.loaded-card-image{
+  position:absolute;
+  z-index:0;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:var(--role-media-focus-x) var(--role-media-focus-y);
+  opacity:0;
+  transform:scale(1.025);
+  transition:
+    opacity .42s ease,
+    transform .62s cubic-bezier(.2,.75,.2,1),
+    filter .32s ease;
+}
+.archive-card.is-loaded.has-source-image .loaded-card-image{
+  opacity:1;
+  transform:scale(1);
+}
+.archive-card.is-image-loading .loaded-card-image{
+  opacity:0;
+  transform:scale(1.025);
+}
+.archive-card.image-error .loaded-card-image{
+  opacity:0;
+}
+.archive-card.is-face-missing .loaded-art{opacity:0!important}
+.archive-card.is-face-missing .state-label-loading{
+  opacity:1!important;
+  transform:none!important;
+}
+.archive-card.is-face-missing .state-label-ready{opacity:0!important}
+.archive-card.is-face-missing .card-face::after{display:none!important}
+.archive-card.is-face-missing .stripe-field{opacity:.80!important}
+.archive-card.is-face-missing.pattern-2 .stripe-field{opacity:.72!important}
+.archive-card.is-face-missing.pattern-3 .stripe-field{opacity:.75!important}
+.archive-card.is-face-missing.pattern-4 .stripe-field{opacity:.72!important}
+.loaded-art::before{
+  z-index:2;
+}
+.detail-art{
+  isolation:isolate;
+}
+.detail-source-image{
+  position:absolute;
+  z-index:0;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:var(--role-media-focus-x) var(--role-media-focus-y);
+  opacity:0;
+  transform:scale(1.025);
+  transition:opacity .42s ease,transform .58s ease;
+}
+.detail-source-image.is-ready{
+  opacity:1;
+  transform:scale(1);
+}
+.detail-art::before{
+  z-index:2;
+  transition:opacity .32s ease;
+}
+.detail-art.has-source::before{opacity:0}
+.toolbar-status.is-error{
+  color:#f1b4bd;
+  cursor:pointer;
+}
+.toolbar-status.is-error i{
+  border-color:#f1b4bd;
+  background:#f1b4bd;
+}
+.save-sheet-panel{
+  max-height:calc(100vh - 24px);
+  overflow-y:auto;
+}
+@media(min-width:721px){
+  .save-sheet-preview{
+    width:auto;
+    height:min(52vh,620px);
+    max-height:none;
+    aspect-ratio:.72;
+    margin-left:auto;
+    margin-right:auto;
+  }
+}
+
+</style>
+<style>
+/* ===== motion.css（原样内联） ===== */
+/* ==========================================================================
+   motion.css — 繁花·纷落 角色卡档案 · 入场动效系统
+   --------------------------------------------------------------------------
+   设计原则：
+   1. 方向有语义 —— 元素"从哪来"就往哪个方向揭开，同屏不出现两组以上同向入场
+   2. 时长分层   —— 小元素快、卡片中、弹窗慢，避免全站一个速度
+   3. 性能安全   —— 只动 transform / opacity / clip-path / filter
+   4. 无障碍     —— prefers-reduced-motion 下全部降级为纯淡入
+   本文件不依赖站点原有类名，全部通过 data-motion 属性与 mo-* 类驱动，
+   这些属性和类由 motion.js 自动挂载。
+   ========================================================================== */
+
+/* ---------- 1. Tokens ---------- */
+:root {
+  --dur-xs: 220ms;
+  --dur-sm: 300ms;
+  --dur-md: 420ms;
+  --dur-lg: 520ms;
+
+  --ease-out:  cubic-bezier(.22, .61, .36, 1);
+  --ease-expo: cubic-bezier(.16, 1, .3, 1);
+  --ease-back: cubic-bezier(.34, 1.56, .64, 1);
+
+  --stagger: 60ms;
+  --shift: 1;          /* 位移倍率，移动端减半 */
+  --sweep-tint: 255, 255, 255;   /* 卡片 hover 高光颜色，深底用白、浅底改成 0,0,0 */
+}
+
+@media (max-width: 768px) {
+  :root {
+    --dur-xs: 180ms;
+    --dur-sm: 240ms;
+    --dur-md: 340ms;
+    --dur-lg: 420ms;
+    --stagger: 45ms;
+    --shift: .5;
+  }
+}
+
+/* ---------- 2. Keyframes ---------- */
+@keyframes mo-sweep-down {           /* 从上往下揭开 */
+  from { clip-path: inset(0 0 100% 0); opacity: 0; transform: translateY(calc(-8px * var(--shift))); }
+  to   { clip-path: inset(0 0 0 0);    opacity: 1; transform: none; }
+}
+@keyframes mo-sweep-up {             /* 从下往上揭开 */
+  from { clip-path: inset(100% 0 0 0); opacity: 0; transform: translateY(calc(10px * var(--shift))); }
+  to   { clip-path: inset(0 0 0 0);    opacity: 1; transform: none; }
+}
+@keyframes mo-sweep-left {           /* 从左往右揭开 */
+  from { clip-path: inset(0 100% 0 0); opacity: 0; transform: translateX(calc(-14px * var(--shift))); }
+  to   { clip-path: inset(0 0 0 0);    opacity: 1; transform: none; }
+}
+@keyframes mo-sweep-right {          /* 从右往左揭开 */
+  from { clip-path: inset(0 0 0 100%); opacity: 0; transform: translateX(calc(14px * var(--shift))); }
+  to   { clip-path: inset(0 0 0 0);    opacity: 1; transform: none; }
+}
+@keyframes mo-focus-in {             /* 模糊聚焦，无位移 */
+  from { filter: blur(10px); opacity: 0; letter-spacing: .18em; }
+  to   { filter: blur(0);    opacity: 1; }
+}
+@keyframes mo-settle {               /* 轻微落定 */
+  from { transform: scale(1.04); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+@keyframes mo-rise {                 /* 常规上浮，正文类元素专用 */
+  from { transform: translateY(calc(14px * var(--shift))); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+@keyframes mo-unfold {               /* 以指定原点展开，弹窗专用 */
+  from { scale: .92; opacity: 0; }
+  to   { scale: 1;   opacity: 1; }
+}
+@keyframes mo-fade-in {
+  from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes mo-exit {                 /* 统一退出，不反放入场 */
+  from { opacity: 1; scale: 1; }
+  to   { opacity: 0; scale: .98; }
+}
+/* ---------- 3. 滚动入场基础 ---------- */
+/* 隐藏状态只加在「在屏幕外、还没入场」的元素上，mo-hide 全部由 motion.js 挂。
+   屏幕上的元素永远不会是透明的，所以「整屏纯黑」在结构上就发生不了。 */
+[data-motion].mo-hide { opacity: 0; }
+
+/* 这里刻意不写 animation-fill-mode，也不写 animation-delay。
+   带 fill-mode 的话，动画只要没真正跑起来——后台标签页、被节流的合成器、
+   低电量模式——元素就会永久停在首帧的 opacity:0 上；不带的话它保持静态样式，
+   也就是可见。出错的方向必须永远是「看得见」。
+   交错改由 JS 推迟挂 is-in 实现：等待期间元素还是 mo-hide，
+   不会出现「先显示出来、又被动画打回透明」的闪烁。 */
+[data-motion].is-in {
+  animation-duration: var(--mo-dur, var(--dur-md));
+  animation-timing-function: var(--mo-ease, var(--ease-expo));
+}
+
+[data-motion="sweep-down"].is-in  { animation-name: mo-sweep-down; }
+[data-motion="sweep-up"].is-in    { animation-name: mo-sweep-up; }
+[data-motion="sweep-left"].is-in  { animation-name: mo-sweep-left; }
+[data-motion="sweep-right"].is-in { animation-name: mo-sweep-right; }
+[data-motion="focus-in"].is-in    { animation-name: mo-focus-in; }
+[data-motion="settle"].is-in      { animation-name: mo-settle; }
+[data-motion="rise"].is-in        { animation-name: mo-rise; }
+
+/* ---------- 4. 各角色的时长与缓动分层 ---------- */
+.mo-tab      { --mo-dur: var(--dur-xs); --mo-ease: var(--ease-out); }
+.mo-title    { --mo-dur: var(--dur-lg); --mo-ease: var(--ease-expo); }
+.mo-status   { --mo-dur: var(--dur-sm); }
+.mo-cta      { --mo-dur: var(--dur-sm); --mo-ease: var(--ease-back); }
+.mo-card     { --mo-dur: var(--dur-md); --mo-ease: var(--ease-expo); }
+.mo-section  { --mo-dur: var(--dur-md); }
+
+/* ---------- 5. 下载箭头：固定显示，不参与循环或点击位移动画 ---------- */
+.mo-arrow {
+  animation: none !important;
+  transform: none !important;
+}
+
+/* ---------- 6. 卡片 hover：从下往上扫过的高光 ---------- */
+.mo-card { position: relative; }
+.mo-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(var(--sweep-tint), .18) 0%,
+    rgba(var(--sweep-tint), .06) 45%,
+    rgba(var(--sweep-tint), 0) 78%
+  );
+  opacity: 0;
+  transform: translateY(45%);
+  transition: opacity var(--dur-sm) var(--ease-out),
+              transform var(--dur-sm) var(--ease-out);
+}
+.mo-card:hover::after,
+.mo-card:focus-visible::after { opacity: 1; transform: translateY(0); }
+@media (hover: none) { .mo-card::after { display: none; } }
+
+/* ---------- 7. 详情弹窗 ---------- */
+.mo-backdrop {
+  animation: mo-fade-in var(--dur-sm) var(--ease-out) both;
+}
+.mo-backdrop.is-closing {
+  animation: mo-exit var(--dur-xs) var(--ease-out) both;
+}
+.mo-panel {
+  /* --mo-ox / --mo-oy 由 motion.js 按点击的卡片位置写入 */
+  transform-origin: var(--mo-ox, 50%) var(--mo-oy, 50%);
+  animation: mo-unfold var(--dur-md) var(--ease-expo) both;
+}
+.mo-panel.is-closing {
+  animation: mo-exit var(--dur-xs) var(--ease-out) both;
+}
+
+/* ---------- 8. 弹窗内 tab 切换：五栏各用一种语义动效 ---------- */
+.mo-tabpanel.is-enter-intro     { animation: mo-focus-in   var(--dur-md) var(--ease-expo) both; }
+.mo-tabpanel.is-enter-opening   { animation: mo-sweep-left var(--dur-md) var(--ease-expo) both; }
+.mo-tabpanel.is-enter-setting   { animation: mo-settle     var(--dur-md) var(--ease-back) both; }
+.mo-tabpanel.is-enter-worldbook { animation: mo-sweep-down var(--dur-lg) var(--ease-expo) both; }
+.mo-tabpanel.is-enter-preset    { animation: mo-sweep-up   var(--dur-lg) var(--ease-expo) both; }
+
+/* ---------- 9. 保存 PNG：底部上滑 ---------- */
+.mo-sheet {
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform var(--dur-md) var(--ease-expo),
+              opacity var(--dur-sm) linear;
+}
+.mo-sheet.is-open { transform: translateY(0); opacity: 1; }
+
+/* ---------- 10. 降级与清理 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  [data-motion].is-in,
+  .mo-backdrop,
+  .mo-panel,
+  .mo-tabpanel.is-enter-intro,
+  .mo-tabpanel.is-enter-opening,
+  .mo-tabpanel.is-enter-setting,
+  .mo-tabpanel.is-enter-worldbook,
+  .mo-tabpanel.is-enter-preset {
+    animation-name: mo-fade-in !important;
+    animation-duration: 150ms !important;
+  }
+  .mo-backdrop.is-closing,
+  .mo-panel.is-closing { animation-name: mo-fade-in !important; animation-direction: reverse !important; }
+  .mo-card::after { transition-duration: 1ms !important; }
+  .mo-sheet { transition-duration: 120ms !important; }
+}
+</style>
+<style>
+/* =========================================================
+   外观改进层
+   在原有外观上做的修改都集中在这里：配色、版式、卡片尺寸与浏览方式不变，
+   主要是放大过小的文字、统一按钮与图标、修正几处错位。
+   ========================================================= */
+:root{
+  --accent-fill:linear-gradient(135deg,#d995b1 0%,#a993d2 52%,#7f9dd1 100%);
+  --accent-fill-hover:linear-gradient(135deg,#e3a3bd 0%,#b5a0dc 52%,#8eaad9 100%);
+  --accent-glow:0 6px 16px rgba(0,0,0,.24),0 0 16px rgba(217,149,177,.22),inset 0 1px 0 rgba(255,255,255,.28);
+  --accent-glow-hover:0 8px 20px rgba(0,0,0,.28),0 0 22px rgba(217,149,177,.32),0 0 26px rgba(127,157,209,.16),inset 0 1px 0 rgba(255,255,255,.34);
+}
+.icon{width:1em;height:1em;display:block;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- 页头：与下方卡片左右对齐，补一条柔和的渐变分隔线 ---------- */
+.site-header{position:relative}
+.site-header::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(232,182,199,.42) 22%,rgba(169,187,217,.32) 70%,transparent);
+}
+.site-header .author-header-row,
+footer .wrap{width:min(3300px,calc(100% - clamp(12px,2.4vw,42px)))!important}
+.author-avatar-shell{
+  border-color:rgba(255,255,255,.16)!important;
+  box-shadow:0 0 0 3px rgba(232,182,199,.07),0 9px 24px rgba(0,0,0,.3)!important;
+}
+.author-primary b{text-shadow:0 2px 24px rgba(232,182,199,.16)!important}
+.author-english{gap:12px!important}
+.author-english::before{content:"";flex:0 0 auto;width:1px;height:16px;background:linear-gradient(transparent,rgba(232,182,199,.5),transparent)}
+.author-english span{font-size:10.5px!important;letter-spacing:.24em!important;color:rgba(225,218,228,.62)!important}
+.archive-count{gap:5px!important}
+.archive-count span{font-size:9px!important;letter-spacing:.2em!important;color:rgba(206,199,209,.46)}
+.archive-count b{
+  font-size:23px!important;
+  background:linear-gradient(135deg,#f7d9e4,#cdd7ef);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+/* ---------- 工具栏：作者切换与状态 ---------- */
+.toolbar{min-height:52px}
+.author-filters{gap:28px}
+.author-filter{
+  padding:17px 1px 15px!important;
+  font-size:13.5px!important;letter-spacing:.1em!important;
+  color:rgba(206,199,209,.5);
+}
+.author-filter.active{color:#fffbfd!important}
+.filter.active::after{
+  bottom:7px;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,var(--pink),var(--violet) 55%,var(--blue));
+  box-shadow:0 0 10px rgba(232,182,199,.35);
+}
+.toolbar-status{
+  height:28px;gap:8px;padding:0 12px;
+  border:1px solid rgba(255,255,255,.07);border-radius:999px;background:rgba(255,255,255,.022);
+  font-size:10px;letter-spacing:.14em;color:rgba(206,199,209,.58);
+}
+.toolbar-status i{
+  width:6px;height:6px;border:0;background:var(--pink);
+  box-shadow:0 0 0 3px rgba(232,182,199,.14);
+  animation:polishStatusBreath 1.6s ease-in-out infinite;
+}
+.toolbar-status.is-ready i{background:var(--blue);box-shadow:0 0 0 3px rgba(169,187,217,.16);animation:none}
+.toolbar-status.is-error{border-color:rgba(241,180,189,.34);background:rgba(241,180,189,.06)}
+.toolbar-status.is-error i{animation:none}
+.status-retry{height:22px;min-height:0;margin-right:-6px;font-size:11px}
+.status-retry[hidden]{display:none}
+
+/* ---------- 卡片：文字放大到能看清，按钮统一 ---------- */
+.corner-code{
+  height:24px;gap:6px;padding:0 10px 0 8px;
+  font-size:9.5px;letter-spacing:.1em;
+}
+.corner-dot{width:5px;height:5px}
+.archive-card.is-loaded .corner-code{font-size:10.5px;letter-spacing:.06em;font-weight:600}
+.corner-index{top:16px;right:13px;font-size:10px;letter-spacing:.1em;font-variant-numeric:tabular-nums}
+.loading-title{font-size:8.5px;letter-spacing:.18em;color:rgba(247,243,246,.34)}
+.loading-sub{font-size:10px;letter-spacing:.08em;color:rgba(206,199,209,.32)}
+.state-label-ready{padding-right:38px}
+.state-label-ready .ready-name{font-size:16px!important;letter-spacing:.07em!important}
+.state-label-ready .ready-meta{font-size:10px!important;letter-spacing:.12em!important}
+
+.detail-action{padding:6px 8px 6px 12px!important}
+.action-copy{gap:4px}
+.action-copy b{font-size:12.5px;letter-spacing:.12em}
+.action-copy small{font-size:7.5px;letter-spacing:.12em;color:rgba(206,199,209,.52)}
+.action-arrow{width:25px;height:25px;font-size:13px}
+.action-arrow .icon{stroke-width:2.1}
+
+.archive-card.is-loaded .download-action{
+  color:#fff!important;
+  border-color:rgba(255,232,242,.5)!important;
+  background:var(--accent-fill)!important;
+  box-shadow:var(--accent-glow)!important;
+}
+.download-icon{font-size:15px!important;width:auto!important;height:auto!important}
+.download-icon .icon{stroke-width:2.2}
+@media(hover:hover) and (pointer:fine){
+  .archive-card.is-loaded .download-action:hover,
+  .archive-card.is-loaded .download-action:focus-visible{
+    background:var(--accent-fill-hover)!important;
+    box-shadow:var(--accent-glow-hover)!important;
+  }
+}
+
+/* 卡面加载中：原本写好但没有接上的扫光，现在跟着「正在加载」显示 */
+.archive-card.is-motion-visible:not(.is-loaded) .card-face::after{
+  content:"";position:absolute;z-index:7;inset:-40% -80%;pointer-events:none;opacity:.6;
+  background:linear-gradient(90deg,transparent 39%,rgba(255,255,255,.02) 45%,rgba(232,182,199,.07) 50%,rgba(169,187,217,.05) 55%,transparent 61%);
+  animation:motionLoadingSweep 1.3s var(--ease-inout) infinite;
+}
+.archive-card.is-motion-visible:not(.is-loaded) .loading-core{animation:motionLoadingBreathe 1.7s ease-in-out infinite!important}
+
+/* ---------- 详情弹窗 ---------- */
+.archive-modal-close,
+.save-sheet-close{display:grid;place-items:center;padding:0;width:36px;height:36px;font-size:16px}
+.archive-modal-close .icon,
+.save-sheet-close .icon{stroke-width:2}
+.detail-visual-top span{
+  padding:7px 12px;font-size:11px;letter-spacing:.08em;
+  color:#f7d9e4;border-color:rgba(245,210,226,.3);background:rgba(7,8,12,.52);
+}
+.detail-visual-top small{padding:7px 11px;font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.62)}
+.detail-visual-bottom>span{font-size:9px;letter-spacing:.18em;color:rgba(255,255,255,.5)}
+.detail-save-btn{
+  min-height:36px;padding:0 14px 0 12px;
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:12px;letter-spacing:.06em;
+  border-color:rgba(255,232,242,.5)!important;
+  background:var(--accent-fill)!important;
+  box-shadow:var(--accent-glow)!important;
+}
+.detail-save-btn .icon{font-size:15px;stroke-width:2.2}
+@media(hover:hover) and (pointer:fine){
+  .detail-save-btn:hover,
+  .detail-save-btn:focus-visible{background:var(--accent-fill-hover)!important;box-shadow:var(--accent-glow-hover)!important}
+}
+.detail-heading p{margin-top:10px;font-size:10.5px;letter-spacing:.12em;color:rgba(206,199,209,.5)}
+.detail-tavo-badge{padding:6px 10px;font-size:10px;letter-spacing:.18em}
+.detail-option{gap:8px}
+.detail-option span{font-size:9.5px;letter-spacing:.08em}
+.detail-option b{font-size:13px}
+
+/* 阅读区标题原本被一条通用规则改成了 relative，往上错位 18px 还被裁掉一半；改回吸顶 */
+.detail-reading-head{position:sticky!important}
+.detail-reading-fade{position:sticky!important}
+.detail-reading-head small{font-size:9.5px;letter-spacing:.16em;color:rgba(206,199,209,.42)}
+.detail-reading-head h3{margin-top:6px;font-size:17px}
+.detail-reading-head>span{padding:5px 8px;font-size:9.5px;letter-spacing:.14em;color:rgba(169,187,217,.62)}
+.detail-reading-body{font-size:13.5px;line-height:1.9;color:rgba(226,220,229,.76)}
+
+/* ---------- 保存面板 ---------- */
+.save-sheet-head small{font-size:9.5px;letter-spacing:.18em;color:rgba(232,182,199,.62)}
+.save-sheet-head h3{font-size:22px}
+.save-sheet-head p{font-size:12px;line-height:1.6;color:rgba(206,199,209,.56)}
+.save-sheet-preview{
+  background:
+    radial-gradient(circle at 50% 30%,rgba(232,182,199,.08),transparent 45%),
+    linear-gradient(160deg,#14151b,#0c0e13);
+}
+.save-preview-meta{align-items:center}
+.save-preview-meta b{font-size:13.5px;letter-spacing:.06em}
+.save-preview-meta span{font-size:11px;letter-spacing:.06em;color:rgba(247,217,228,.7)}
+.save-sheet-choice{
+  min-height:58px;padding:9px 12px;
+  grid-template-columns:32px minmax(0,1fr) 28px;gap:12px;
+  border-radius:14px;
+}
+.save-choice-mark{width:32px;height:32px;border-radius:9px;font-size:16px}
+.save-sheet-photo .save-choice-mark{color:#fff;border-color:rgba(255,232,242,.5);background:var(--accent-fill)}
+.save-choice-copy{gap:5px}
+.save-choice-copy b{font-size:14px}
+.save-choice-copy small{font-size:8.5px;letter-spacing:.12em;color:rgba(206,199,209,.5)}
+.save-sheet-choice i{width:28px;height:28px;font-size:13px}
+.save-sheet-note{font-size:11px!important;line-height:1.7!important;color:rgba(206,199,209,.5)!important}
+
+/* ---------- 提示条与页脚 ---------- */
+.motion-toast{min-height:56px;grid-template-columns:32px minmax(0,1fr);gap:11px;border-radius:16px}
+.motion-toast-mark{width:32px;height:32px;border:0;color:#fff;background:var(--accent-fill);font-size:16px}
+.motion-toast-mark .icon{stroke-width:2.3}
+.motion-toast-copy b{font-size:13px}
+.motion-toast-copy small{font-size:11px;line-height:1.5;color:rgba(206,199,209,.62)}
+footer{font-size:10px;letter-spacing:.16em;color:rgba(206,199,209,.34)}
+
+@keyframes polishStatusBreath{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.8)}}
+
+/* ---------- 平板与手机 ---------- */
+@media(max-width:720px){
+  /* 手机上关闭按钮压在图片右上角，编号标签让出位置 */
+  .detail-visual-top{right:62px}
+  .detail-option{flex:0 0 84px!important;width:84px;min-width:84px;gap:5px;padding:6px 4px}
+  .detail-option b{font-size:12.5px}
+  .detail-reading-body{font-size:13px;line-height:1.85}
+}
+@media(max-width:620px){
+  .author-english span{font-size:8px!important;letter-spacing:.16em!important}
+  .author-english::before{height:12px}
+  .archive-count span{font-size:8px!important;letter-spacing:.14em!important}
+  .archive-count b{font-size:19px!important}
+  .author-filters{gap:22px}
+  .author-filter{font-size:13px!important}
+  .toolbar-status{height:26px;padding:0 10px;font-size:9.5px;letter-spacing:.1em}
+  .corner-code{height:22px;padding:0 8px 0 7px;font-size:8.5px}
+  .archive-card.is-loaded .corner-code{font-size:9.5px}
+  .corner-index{top:14px;right:10px;font-size:9px}
+  .loading-title{font-size:7.5px}
+  .loading-sub{font-size:9px}
+  .state-label-ready .ready-name{font-size:14px!important}
+  .state-label-ready .ready-meta{font-size:9px!important}
+  .detail-action{padding:5px 6px 5px 10px!important}
+  .action-copy b{font-size:12px;letter-spacing:.1em}
+  .action-copy small{font-size:6.5px}
+  .action-arrow{width:23px;height:23px;font-size:12px}
+  footer{font-size:9px;letter-spacing:.12em}
 }
 </style>
 </head>
@@ -1056,7 +3290,7 @@ body.is-page-hidden *::after{animation-play-state:paused!important}
 
         <div class="author-english">
           <span id="headerAuthorEnglish">FANHUA · FENLUO</span>
-          <small>TAVO ROLE CARDS</small>
+          <small>CHARACTER CARD ARCHIVE</small>
         </div>
 
         <div class="archive-count">
@@ -1685,20 +3919,6 @@ const DemoArchive=(()=>{
       ]}
   ];
 
-  const PALETTES=[
-    {sky:['#2a1d3d','#45274f','#140e1f'],glow:'#fbe3ea',petal:['#fbd0dc','#e58aa8'],center:'#ffe9b8',leaf:'#56786a',branch:'#20141f',hill:'#1c1428'},
-    {sky:['#3a1612','#5c2218','#170908'],glow:'#ffe2c2',petal:['#ffb08a','#e0583f'],center:'#ffe7a8',leaf:'#6d7a45',branch:'#1e0c08',hill:'#200c0a'},
-    {sky:['#10302c','#1c4a42','#08140f'],glow:'#e8f7ee',petal:['#d9f0e4','#8cc6b0'],center:'#fff3c4',leaf:'#3a6e5c',branch:'#0d1c18',hill:'#0b1a16'},
-    {sky:['#221b0e','#3b2f15','#0e0b05'],glow:'#fff1cc',petal:['#f6dca6','#d9a54f'],center:'#fff8e0',leaf:'#6b6436',branch:'#1a1408',hill:'#15110a'},
-    {sky:['#121c3d','#203266','#080c1c'],glow:'#e6edff',petal:['#c8d6fa','#7f98de'],center:'#fff1c2',leaf:'#3d5a6e',branch:'#0e1426',hill:'#0c1226'},
-    {sky:['#241739','#3e2860','#100b1c'],glow:'#f1e6ff',petal:['#e0c8f7','#a985da'],center:'#fff0c4',leaf:'#4a6a56',branch:'#170f24',hill:'#160f26'},
-    {sky:['#33200d','#5a3412','#160c05'],glow:'#ffe6bf',petal:['#ffc777','#e5793a'],center:'#fff1c0',leaf:'#7a6a30',branch:'#1e1206',hill:'#1c1006'},
-    {sky:['#1c232d','#30404f','#0c1015'],glow:'#ffffff',petal:['#f4f8fc','#c6d4e2'],center:'#ffe9b0',leaf:'#56687a',branch:'#121820',hill:'#10161d'},
-    {sky:['#15240f','#27401f','#0a1208'],glow:'#f7f5d4',petal:['#efe9b2','#bfcb6c'],center:'#fff6c8',leaf:'#47763b',branch:'#0f180b',hill:'#0d170b'},
-    {sky:['#331224','#561c3a','#16070f'],glow:'#ffdbe8',petal:['#f9b3cb','#dc6894'],center:'#ffe6b0',leaf:'#57663f',branch:'#1d0912',hill:'#1c0912'},
-    {sky:['#0e2830','#184657','#061218'],glow:'#e2f9fc',petal:['#b4e7ef','#62b6c8'],center:'#fff4cc',leaf:'#2f5d68',branch:'#0a1a20',hill:'#081a20'},
-    {sky:['#1a1918','#2c2a28','#0b0b0a'],glow:'#fff7ea',petal:['#f6efe5','#dccbb5'],center:'#e9573f',leaf:'#4d4c45',branch:'#0d0d0c',hill:'#121110'}
-  ];
 
   const SECTIONS={
     fanhuafenluo:{count:72,seed:20260101,collection:'FANHUA ARCHIVE',creator:'繁花·纷落'},
@@ -1741,7 +3961,7 @@ const DemoArchive=(()=>{
         _detailKey:`demo/${id}/${String(i+1).padStart(3,'0')}`,
         _seed:seed,
         _arch:archIndex,
-        _palette:Math.floor(r()*PALETTES.length),
+        _palette:Math.floor(r()*6),
         _motif:r()<.72?arch.motif:pick(r,['moon','bloom','arch']),
         _season:pick(r,SEASONS),
         _time:pick(r,TIMES),
@@ -1843,212 +4063,47 @@ const DemoArchive=(()=>{
     return out;
   }
 
-  /* ---------------- 卡面：程序生成的花卉画 ---------------- */
+  /* ---------------- 卡面占位：柔和的渐变光斑（真实站点这里是角色卡原图） ---------------- */
   const W=720;
   const H=1000;
   const f1=n=>Number(n).toFixed(1);
-  const esc=text=>String(text).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
-  const SERIF="'Noto Serif SC','Source Han Serif SC','Songti SC','STSong',serif";
-
-  function cubic(x0,y0,x1,y1,x2,y2,x3,y3){
-    return t=>{
-      const u=1-t;
-      return [
-        u*u*u*x0+3*u*u*t*x1+3*u*t*t*x2+t*t*t*x3,
-        u*u*u*y0+3*u*u*t*y1+3*u*t*t*y2+t*t*t*y3
-      ];
-    };
-  }
-
-  function branch(r,x0,y0,x3,y3,wobble){
-    const x1=x0+(x3-x0)*.3+(r()-.5)*wobble;
-    const y1=y0+(y3-y0)*.3+(r()-.5)*wobble;
-    const x2=x0+(x3-x0)*.7+(r()-.5)*wobble;
-    const y2=y0+(y3-y0)*.7+(r()-.5)*wobble;
-    return {
-      d:`M${f1(x0)} ${f1(y0)}C${f1(x1)} ${f1(y1)} ${f1(x2)} ${f1(y2)} ${f1(x3)} ${f1(y3)}`,
-      at:cubic(x0,y0,x1,y1,x2,y2,x3,y3)
-    };
-  }
-
-  function blossom(x,y,size,rot,P){
-    let g=`<g transform="translate(${f1(x)} ${f1(y)}) rotate(${Math.round(rot)})">`;
-    for(let i=0;i<5;i++){
-      const a=i*72*Math.PI/180;
-      g+=`<circle cx="${f1(Math.cos(a)*size*.44)}" cy="${f1(Math.sin(a)*size*.44)}" r="${f1(size*.42)}" fill="url(#pt)"/>`;
-    }
-    g+=`<circle r="${f1(size*.2)}" fill="${P.center}"/>`;
-    for(let i=0;i<7;i++){
-      const a=(i*51+12)*Math.PI/180;
-      g+=`<circle cx="${f1(Math.cos(a)*size*.32)}" cy="${f1(Math.sin(a)*size*.32)}" r="1.6" fill="${P.center}" fill-opacity=".9"/>`;
-    }
-    return g+'</g>';
-  }
-
-  function rosette(r,cx,cy,R,P){
-    let s=`<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(R*1.9)}" fill="url(#glow)"/>`;
-    const n=6+Math.floor(r()*7);
-    const base=r()*30;
-    for(let k=0;k<3;k++){
-      const len=R*(1-k*.27);
-      const w=len*(.33+r()*.08);
-      const off=base+k*(180/n);
-      const fill=k===0?P.petal[1]:'url(#pt)';
-      for(let i=0;i<n;i++){
-        s+=`<ellipse cx="${f1(cx)}" cy="${f1(cy-len/2)}" rx="${f1(w)}" ry="${f1(len/2)}" transform="rotate(${f1(off+i*360/n)} ${f1(cx)} ${f1(cy)})" fill="${fill}" fill-opacity="${(.72+k*.1).toFixed(2)}" stroke="${P.glow}" stroke-opacity=".2" stroke-width="1.2"/>`;
-      }
-    }
-    s+=`<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(R*.17)}" fill="${P.center}"/>`;
-    for(let i=0;i<14;i++){
-      const a=i*(360/14)*Math.PI/180;
-      s+=`<circle cx="${f1(cx+Math.cos(a)*R*.24)}" cy="${f1(cy+Math.sin(a)*R*.24)}" r="2.6" fill="${P.center}" fill-opacity=".85"/>`;
-    }
-    return s;
-  }
-
-  function leaf(x,y,len,rot,P){
-    return `<g transform="translate(${f1(x)} ${f1(y)}) rotate(${Math.round(rot)})"><path d="M0 0Q${f1(len*.45)} ${f1(-len*.32)} ${f1(len)} 0Q${f1(len*.45)} ${f1(len*.32)} 0 0Z" fill="${P.leaf}"/><path d="M4 0H${f1(len*.86)}" stroke="#fff" stroke-opacity=".16" stroke-width="1.4"/></g>`;
-  }
-
-  function moon(r,cx,cy,R,P){
-    let s=`<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(R*2.5)}" fill="url(#glow)"/>`;
-    s+=`<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(R)}" fill="${P.glow}" fill-opacity=".93"/>`;
-    for(let i=0;i<4;i++){
-      s+=`<circle cx="${f1(cx+(r()-.5)*R*1.1)}" cy="${f1(cy+(r()-.5)*R*1.1)}" r="${f1(R*(.08+r()*.14))}" fill="${P.sky[1]}" fill-opacity=".07"/>`;
-    }
-    return s;
-  }
-
-  function hills(r,P,baseY,layers){
-    let s='';
-    for(let k=0;k<layers;k++){
-      const y=baseY+k*70;
-      let d=`M0 ${f1(y+r()*40)}`;
-      const steps=4;
-      for(let i=1;i<=steps;i++){
-        const x=W*i/steps;
-        d+=`Q${f1(x-W/steps/2)} ${f1(y-40-r()*90)} ${f1(x)} ${f1(y+r()*40)}`;
-      }
-      d+=`V${H}H0Z`;
-      s+=`<path d="${d}" fill="${P.hill}" fill-opacity="${(.55+k*.18).toFixed(2)}"/>`;
-    }
-    return s;
-  }
-
-  function petals(r,P,count){
-    let s='';
-    for(let i=0;i<count;i++){
-      const x=r()*W;
-      const y=40+Math.pow(r(),1.2)*(H-200);
-      const rx=5+r()*7;
-      s+=`<ellipse cx="${f1(x)}" cy="${f1(y)}" rx="${f1(rx)}" ry="${f1(rx*.55)}" transform="rotate(${Math.round(r()*180)} ${f1(x)} ${f1(y)})" fill="${P.petal[r()<.6?0:1]}" fill-opacity="${(.35+r()*.5).toFixed(2)}"/>`;
-    }
-    return s;
-  }
-
-  function blossomBranch(r,P,x0,y0,x3,y3,width,count){
-    const main=branch(r,x0,y0,x3,y3,180);
-    let s=`<path d="${main.d}" fill="none" stroke="${P.branch}" stroke-width="${width}" stroke-linecap="round"/>`;
-    const tips=[];
-    [.42,.68].forEach(t=>{
-      const [bx,by]=main.at(t);
-      const ex=bx+60+r()*130;
-      const ey=by+(r()<.5?-1:1)*(70+r()*110);
-      const sub=branch(r,bx,by,ex,ey,60);
-      s+=`<path d="${sub.d}" fill="none" stroke="${P.branch}" stroke-width="${f1(width*.5)}" stroke-linecap="round"/>`;
-      tips.push(sub);
-    });
-    let flowers='';
-    for(let i=0;i<count;i++){
-      const [x,y]=main.at(.22+r()*.78);
-      flowers+=blossom(x+(r()-.5)*22,y+(r()-.5)*22,22+r()*18,r()*72,P);
-    }
-    tips.forEach(sub=>{
-      for(let i=0;i<3;i++){
-        const [x,y]=sub.at(.35+r()*.65);
-        flowers+=blossom(x,y,18+r()*14,r()*72,P);
-      }
-      const [tx,ty]=sub.at(1);
-      flowers+=`<circle cx="${f1(tx)}" cy="${f1(ty)}" r="6" fill="${P.petal[1]}"/>`;
-    });
-    return s+flowers;
-  }
-
-  function inscription(work,P){
-    const chars=[...work.cardLabel];
-    const x=W-132;
-    let y=168;
-    let s=`<g font-family="${SERIF}" font-size="27" font-weight="700" text-anchor="middle" fill="${P.glow}" fill-opacity=".72">`;
-    chars.forEach(ch=>{
-      s+=`<text x="${x}" y="${y}">${esc(ch)}</text>`;
-      y+=33;
-    });
-    s+='</g>';
-    const sy=y-14;
-    s+=`<rect x="${x-19}" y="${sy}" width="38" height="38" rx="4" fill="#c4412d"/>`;
-    s+=`<rect x="${x-15.5}" y="${sy+3.5}" width="31" height="31" rx="2.5" fill="none" stroke="#fff3e6" stroke-opacity=".7" stroke-width="1.2"/>`;
-    s+=`<text x="${x}" y="${sy+28}" font-family="${SERIF}" font-size="21" font-weight="700" text-anchor="middle" fill="#fff3e6">${esc(work.name.slice(-1))}</text>`;
-    return s;
-  }
+  const PALETTES=[
+    {bg:['#2b1d2a','#1b1722','#0e0f15'],blobs:['#f0a9c2','#c79be0','#7f9fd8']},
+    {bg:['#231d35','#191a2b','#0d0f17'],blobs:['#b9a3f0','#f2b5cf','#8fc2e8']},
+    {bg:['#17202f','#141a26','#0b0e14'],blobs:['#9cc3f0','#c7b5ee','#f3c2d6']},
+    {bg:['#2c2020','#1d1820','#0f0f14'],blobs:['#f6bfa3','#ec9fbf','#a8a4e6']},
+    {bg:['#15242a','#141c24','#0b0f14'],blobs:['#8fd5d3','#a9b8ef','#e9b4d0']},
+    {bg:['#2a1f30','#1c1a2a','#0d0f17'],blobs:['#f2a7b6','#f3d1a2','#9fb0ea']}
+  ];
 
   function svgArt(work){
     const r=rng(work._seed);
-    const P=PALETTES[work._palette];
-    let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`;
-    s+='<defs>';
-    s+=`<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.sky[0]}"/><stop offset=".55" stop-color="${P.sky[1]}"/><stop offset="1" stop-color="${P.sky[2]}"/></linearGradient>`;
-    s+=`<radialGradient id="glow"><stop offset="0" stop-color="${P.glow}" stop-opacity=".5"/><stop offset=".45" stop-color="${P.glow}" stop-opacity=".12"/><stop offset="1" stop-color="${P.glow}" stop-opacity="0"/></radialGradient>`;
-    s+=`<radialGradient id="pt" cx=".38" cy=".32" r=".85"><stop offset="0" stop-color="${P.petal[0]}"/><stop offset="1" stop-color="${P.petal[1]}"/></radialGradient>`;
-    s+='<radialGradient id="vig" cx=".5" cy=".42" r=".78"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>';
-    s+=`<linearGradient id="haze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.glow}" stop-opacity="0"/><stop offset="1" stop-color="${P.glow}" stop-opacity=".28"/></linearGradient>`;
-    s+='<pattern id="grain" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".7" fill="#fff" fill-opacity=".05"/></pattern>';
-    if(work._motif==='arch'){
-      s+='<clipPath id="win"><path d="M140 830V400A220 220 0 0 1 580 400V830Z"/></clipPath>';
-    }
+    const P=PALETTES[work._palette%PALETTES.length];
+    let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><defs>`;
+    s+=`<linearGradient id="bg" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="${P.bg[0]}"/><stop offset=".55" stop-color="${P.bg[1]}"/><stop offset="1" stop-color="${P.bg[2]}"/></linearGradient>`;
+    P.blobs.forEach((color,i)=>{
+      s+=`<radialGradient id="b${i}"><stop offset="0" stop-color="${color}" stop-opacity=".78"/><stop offset=".42" stop-color="${color}" stop-opacity=".3"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></radialGradient>`;
+    });
+    s+='<linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".09"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>';
+    s+='<radialGradient id="vig" cx=".5" cy=".4" r=".8"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></radialGradient>';
+    s+='<pattern id="grain" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".6" fill="#fff" fill-opacity=".045"/></pattern>';
     s+='</defs>';
-    s+=`<rect width="${W}" height="${H}" fill="url(#sky)"/>`;
-
-    if(work._motif==='moon'){
-      s+=moon(r,230+r()*240,220+r()*120,105+r()*55,P);
-      s+=hills(r,P,770,3);
-      s+=blossomBranch(r,P,-30,560+r()*160,560+r()*130,200+r()*170,12,10+Math.floor(r()*4));
-      s+=petals(r,P,24);
-    }else if(work._motif==='bloom'){
-      const cx=330+(r()-.5)*90;
-      const cy=350+r()*60;
-      const R=150+r()*40;
-      s+=`<path d="M${f1(cx)} ${f1(cy+R*.4)}C${f1(cx-40)} ${f1(cy+R+120)} ${f1(cx+70)} 760 ${f1(cx-20)} 1010" fill="none" stroke="${P.leaf}" stroke-width="9" stroke-linecap="round"/>`;
-      s+=leaf(cx-6,cy+R+150,140+r()*40,-150-r()*30,P);
-      s+=leaf(cx+12,cy+R+250,150+r()*40,-20+r()*25,P);
-      s+=rosette(r,cx,cy,R,P);
-      s+=rosette(r,cx-220+r()*40,cy+R+250,58+r()*20,P);
-      s+=`<rect y="860" width="${W}" height="140" fill="${P.hill}" fill-opacity=".7"/>`;
-      s+=petals(r,P,20);
-    }else{
-      s+=`<rect width="${W}" height="${H}" fill="#000" fill-opacity=".22"/>`;
-      s+='<g clip-path="url(#win)">';
-      s+=`<rect width="${W}" height="${H}" fill="${P.sky[1]}"/><rect y="180" width="${W}" height="520" fill="url(#haze)"/>`;
-      const mx=280+r()*160;
-      s+=moon(r,mx,330+r()*60,70+r()*30,P);
-      s+=hills(r,P,600,2);
-      s+=`<rect y="700" width="${W}" height="140" fill="${P.sky[2]}" fill-opacity=".9"/>`;
-      for(let i=0;i<9;i++){
-        const y=715+i*13;
-        const len=40+r()*120;
-        s+=`<path d="M${f1(mx-len/2+(r()-.5)*30)} ${y}h${f1(len)}" stroke="${P.glow}" stroke-opacity="${(.12+r()*.2).toFixed(2)}" stroke-width="2" stroke-linecap="round"/>`;
-      }
-      s+='</g>';
-      s+=`<path d="M140 830V400A220 220 0 0 1 580 400V830Z" fill="none" stroke="${P.glow}" stroke-opacity=".55" stroke-width="3"/>`;
-      s+=`<path d="M122 848V400A238 238 0 0 1 598 400V848Z" fill="none" stroke="${P.glow}" stroke-opacity=".18" stroke-width="1.5"/>`;
-      s+=blossomBranch(r,P,-20,940,330+r()*80,600+r()*60,10,7);
-      s+=petals(r,P,16);
+    s+=`<rect width="${W}" height="${H}" fill="url(#bg)"/>`;
+    const spots=[[.28,.22],[.72,.36],[.42,.62]];
+    for(let i=0;i<5;i++){
+      const [bx,by]=spots[i%3];
+      const cx=W*(bx+(r()-.5)*.36);
+      const cy=H*(by+(r()-.5)*.3);
+      const rad=200+r()*240;
+      s+=`<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(rad)}" fill="url(#b${i%3})" fill-opacity="${(.55+r()*.35).toFixed(2)}"/>`;
     }
-
-    s+=inscription(work,P);
+    s+=`<rect x="-200" y="${f1(160+r()*260)}" width="1200" height="${f1(70+r()*90)}" fill="url(#beam)" transform="rotate(${f1(-24-r()*16)} 360 500)"/>`;
+    for(let i=0;i<9;i++){
+      s+=`<circle cx="${f1(r()*W)}" cy="${f1(r()*H*.8)}" r="${f1(4+r()*22)}" fill="#fff" fill-opacity="${(.04+r()*.12).toFixed(2)}"/>`;
+    }
     s+=`<rect width="${W}" height="${H}" fill="url(#grain)"/><rect width="${W}" height="${H}" fill="url(#vig)"/>`;
     return s+'</svg>';
   }
-
   const artCache=new Map();
   function artUrl(work){
     const key=work._detailKey;
@@ -2176,15 +4231,14 @@ const DemoArchive=(()=>{
     }
   }
 
-  /* ---------------- 作者头像：印章 ---------------- */
-  function sealAvatar(chars,bg,fg){
-    const [a,b,c,d]=[...chars];
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><rect width="96" height="96" fill="${bg}"/><rect x="8" y="8" width="80" height="80" rx="7" fill="none" stroke="${fg}" stroke-width="3" stroke-opacity=".9"/><g font-family="${SERIF}" font-size="31" font-weight="700" fill="${fg}" text-anchor="middle"><text x="66" y="45">${a}</text><text x="66" y="79">${b}</text><text x="30" y="45">${c}</text><text x="30" y="79">${d}</text></g></svg>`;
+  /* ---------------- 作者头像占位 ---------------- */
+  function avatarSvg(char,from,to){
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient></defs><rect width="96" height="96" fill="url(#g)"/><circle cx="70" cy="22" r="34" fill="#fff" fill-opacity=".12"/><text x="48" y="63" font-family="'Songti SC','STSong','Noto Serif CJK SC',serif" font-size="40" font-weight="600" text-anchor="middle" fill="#fff" fill-opacity=".92">${char}</text></svg>`;
     return `data:image/svg+xml,${encodeURIComponent(svg)}`;
   }
   const AVATARS={
-    fanhuafenluo:sealAvatar('繁花纷落','#c4412d','#fff3e6'),
-    public:sealAvatar('公开档案','#d9b26f','#1b1408')
+    fanhuafenluo:avatarSvg('繁','#d98fac','#7d8fc4'),
+    public:avatarSvg('公','#8fa6d6','#b28fd0')
   };
 
   return {
@@ -2192,7 +4246,8 @@ const DemoArchive=(()=>{
     details,
     artUrl,
     renderPng,
-    avatar:id=>AVATARS[id]||AVATARS.fanhuafenluo
+    avatar:id=>AVATARS[id]||AVATARS.fanhuafenluo,
+    svgArt
   };
 })();
 </script>
@@ -3314,199 +5369,331 @@ window.addEventListener('beforeunload',()=>{
 });
 </script>
 <script>
-/* =========================================================
-   入场动效：只负责挂 data-motion 属性和 mo-* 类，
-   不接管数据加载、弹窗开关和 PNG 导出。
-   规则只有一条：屏幕上的元素永远不隐藏，mo-hide 只加在视口之外的元素上。
-   ========================================================= */
-(function(){
+/* ==========================================================================
+   motion.js — 繁花·纷落 角色卡档案 · 动效驱动
+   --------------------------------------------------------------------------
+   职责：只负责给元素挂 data-motion 属性和 mo-* 类，动画本身全在 motion.css 里。
+   不接管、不修改站点任何业务逻辑（数据加载、弹窗开关、PNG 导出都保持原样）。
+
+   选择器配置已经按当前页面真实结构适配；其余逻辑只负责挂载动效类。
+   ========================================================================== */
+(function () {
   'use strict';
 
-  const SEL={
-    authorTabs:'.author-filter',
-    heroTitle:'#headerAuthorName',
-    heroStatus:'#status span',
-    card:'.archive-card',
-    cardGrid:'#archiveGallery',
-    section:'footer',
-    modal:'#archiveModal',
-    modalPanel:'#archiveModal .archive-modal-panel',
-    modalBackdrop:'#archiveModal .archive-modal-backdrop',
-    tabButtons:'#archiveModal .detail-option',
-    tabPanel:'#archiveModal .detail-reading-body'
+  /* ====================== ① 选择器配置 ====================== */
+  const SEL = {
+    authorTabs:    '.author-filter',
+    heroTitle:     '#headerAuthorName',
+    heroStatus:    '#status span',
+    heroCta:       '.detail-action',
+    heroArrow:     '.download-icon',
+    cardGrid:      '#archiveGallery',
+    card:          '.archive-card',
+    section:       'footer',
+    modalBackdrop: '#archiveModal',
+    modalPanel:    '#archiveModal .archive-modal-panel',
+    tabButtons:    '#archiveModal .detail-option',
+    tabPanels:     '#archiveModal .detail-reading-body',
+    sheet:         '#saveSheet'
   };
 
-  const $=(s,r)=>(r||document).querySelector(s);
-  const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
-  const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const MAX_DELAY=420;
-  const SKIP_ENTRANCE=performance.getEntriesByType('paint').length>0 || document.hidden;
+  /* ====================== ② 工具 ====================== */
+  const $  = (s, r) => (s ? (r || document).querySelector(s) : null);
+  const $$ = (s, r) => (s ? Array.from((r || document).querySelectorAll(s)) : []);
+  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const MAX_DELAY = 420;   // 单个元素最大延迟，防止长列表尾部等太久
 
-  function inView(el){
-    const box=el.getBoundingClientRect();
-    return box.bottom>0 && box.top<innerHeight;
-  }
+  function mark(el, motion, opts) {
+    if (!el || el.dataset.motion) return;
+    opts = opts || {};
+    el.dataset.motion = motion;
+    if (opts.cls) el.classList.add(opts.cls);
 
-  function enter(el,animate){
-    if(el.dataset.moIn) return;
-    el.dataset.moIn='1';
-    el.classList.remove('mo-hide');
-    io.unobserve(el);
-    if(animate===false) return;
-    el.classList.add('is-in');
-    /* 入场只播一次：播完就摘掉 is-in，避免作者切换的发牌动画结束后又重放一遍入场。 */
-    const done=event=>{
-      if(event.target!==el || !event.animationName.startsWith('mo-')) return;
-      el.classList.remove('is-in');
-      el.removeEventListener('animationend',done);
-      el.removeEventListener('animationcancel',done);
-    };
-    el.addEventListener('animationend',done);
-    el.addEventListener('animationcancel',done);
-  }
+    // 已经在屏幕上的，就地入场，一帧都不隐藏。
+    if (inView(el)) { enter(el, !SKIP_ENTRANCE); return; }
 
-  const io=new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(!entry.isIntersecting) return;
-      const el=entry.target;
-      const delay=REDUCED?0:Number(el.dataset.moDelay)||0;
-      if(delay) setTimeout(()=>enter(el),delay);
-      else enter(el);
-    });
-  },{threshold:.15,rootMargin:'0px 0px -8% 0px'});
-
-  function mark(el,motion,opts={}){
-    if(!el || el.dataset.motion) return;
-    el.dataset.motion=motion;
-    if(opts.cls) el.classList.add(opts.cls);
-    if(inView(el)){enter(el,!SKIP_ENTRANCE);return;}
-    if(opts.delay && !REDUCED) el.dataset.moDelay=opts.delay;
+    // 只有屏幕外的才藏起来等滚动，藏的时候用户本来也看不见它。
+    if (opts.delay && !REDUCED) el.dataset.moDelay = opts.delay;
     el.classList.add('mo-hide');
     io.observe(el);
   }
 
-  /* IO 迟到或布局突变把屏幕外元素挪到屏幕上时，直接显示，不补动画。 */
-  function revealVisible(){
-    $$('[data-motion].mo-hide').forEach(el=>{
-      const box=el.getBoundingClientRect();
-      const shown=Math.min(box.bottom,innerHeight)-Math.max(box.top,0);
-      if(shown>Math.min(box.height,innerHeight)/2) enter(el,false);
+  /* ====================== ③ 入场 ====================== */
+  /* 整套机制只有一条规则：屏幕上的元素永远不隐藏。
+     隐藏状态（mo-hide）只加在视口之外的元素上，所以无论 IntersectionObserver
+     迟到、不来，还是动画根本没跑起来，用户看到的都不可能是一片黑。
+     正因为如此，这里不需要任何轮询兜底。 */
+
+  /* 首屏要不要补入场动画。以下两种情况一律不补，直接落到最终状态：
+     1) 页面已经画出来了。文档是边解析边画的，deferred 脚本执行时首屏往往
+        已经在屏幕上了；这时再补一段从 opacity:0 起步的动画，等于把用户已经
+        看见的内容重新抹黑再淡入——手机上「从黑的加载出来」正是这么来的。
+     2) 文档当前不可见（后台标签页、被节流的合成器）。动画不会推进，元素会
+        卡在首帧的透明上；而且本来也没人在看，补了没有意义。
+     动画只是锦上添花，任何拿不准的情况都按「直接显示」处理。 */
+  const SKIP_ENTRANCE =
+    performance.getEntriesByType('paint').length > 0 || document.hidden;
+
+  function inView(el) {
+    const box = el.getBoundingClientRect();
+    return box.bottom > 0 && box.top < innerHeight;
+  }
+
+  function enter(el, animate) {
+    if (el.dataset.moIn) return;                    // 只播一次，不重播
+    el.dataset.moIn = '1';
+    el.classList.remove('mo-hide');
+    io.unobserve(el);
+    if (animate === false) return;
+    el.classList.add('is-in');
+    // 入场只播一次：播完摘掉 is-in，避免作者切换的发牌动画结束后又重放一遍入场。
+    el.addEventListener('animationend', function done(e) {
+      if (e.target !== el) return;
+      el.style.willChange = '';
+      el.classList.remove('is-in');
+      el.removeEventListener('animationend', done);
     });
   }
-  let lastReveal=0;
-  ['scroll','resize','orientationchange'].forEach(type=>{
-    addEventListener(type,()=>{
-      const now=Date.now();
-      if(now-lastReveal<120) return;
-      lastReveal=now;
+
+  const io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const delay = REDUCED ? 0 : +el.dataset.moDelay || 0;
+      // 交错期间元素仍然是 mo-hide，推迟挂 is-in 不会闪
+      if (delay) setTimeout(function () { enter(el); }, delay);
+      else enter(el);
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+  /* mo-hide 的前提是「这东西在屏幕外」。IO 的回调跟着渲染步骤派发，被节流时
+     可能迟到甚至不来；切换作者之类的布局变化也可能把屏幕外的元素直接挪到屏幕上，
+     期间一个 scroll 事件都没有。所以凡是已经露出一半却还挂着 mo-hide 的，
+     一律直接显示——判据比 IO 宽松得多，正常情况下轮不到它出手。 */
+  function revealVisible() {
+    $$('[data-motion].mo-hide').forEach(function (el) {
+      const box = el.getBoundingClientRect();
+      const shown = Math.min(box.bottom, innerHeight) - Math.max(box.top, 0);
+      // 走到这一步说明 IO 没能及时接手，直接显示，不再补动画
+      if (shown > Math.min(box.height, innerHeight) / 2) enter(el, false);
+    });
+  }
+
+  // 不用 requestAnimationFrame —— 页面被节流时它同样不触发。
+  let lastReveal = 0;
+  ['scroll', 'resize', 'orientationchange'].forEach(function (type) {
+    addEventListener(type, function () {
+      const now = Date.now();
+      if (now - lastReveal < 120) return;
+      lastReveal = now;
       revealVisible();
-    },{passive:true});
+    }, { passive: true });
   });
 
-  function initHero(){
-    $$(SEL.authorTabs).forEach((el,i)=>mark(el,'sweep-down',{cls:'mo-tab',delay:i*40}));
-    mark($(SEL.heroTitle),'sweep-up',{cls:'mo-title'});
-    $$(SEL.heroStatus).forEach(el=>mark(el,'focus-in',{cls:'mo-status'}));
-    $$(SEL.section).forEach(el=>mark(el,'rise',{cls:'mo-section'}));
-  }
-
-  /* 卡片网格：奇偶列反向揭开 + 斜向波浪延迟 */
-  function layoutCards(grid){
-    const list=$$(SEL.card,grid).filter(card=>!card.dataset.motion && !card.hidden);
-    if(!list.length) return;
-    const rows=new Map();
-    list.forEach(card=>{
-      const key=Math.round(card.offsetTop/8)*8;
-      if(!rows.has(key)) rows.set(key,[]);
-      rows.get(key).push(card);
+  /* ====================== ④ 首屏 ====================== */
+  function initHero() {
+    // 作者切换 tab：从上往下，短促，依次 40ms
+    $$(SEL.authorTabs).forEach(function (el, i) {
+      mark(el, 'sweep-down', { cls: 'mo-tab', delay: i * 40 });
     });
-    [...rows.keys()].sort((a,b)=>a-b).forEach((key,rowIndex)=>{
-      rows.get(key).forEach((card,col)=>{
-        card.classList.add('mo-card');
-        mark(card,col%2?'sweep-up':'sweep-down',{delay:Math.min((rowIndex*2+col)*60,MAX_DELAY)});
+
+    // 主标题：逐行从下往上；有子元素就按子元素分行
+    const title = $(SEL.heroTitle);
+    if (title) {
+      const lines = Array.from(title.children).filter(function (n) {
+        return n.nodeType === 1 && n.offsetHeight;
       });
+      if (lines.length > 1) {
+        lines.forEach(function (line, i) {
+          mark(line, 'sweep-up', { cls: 'mo-title', delay: i * 80 });
+        });
+      } else {
+        mark(title, 'sweep-up', { cls: 'mo-title' });
+      }
+    }
+
+    // 状态小字（ARCHIVE MATERIALIZING / WAITING…）：模糊聚焦，不位移
+    $$(SEL.heroStatus).forEach(function (el) {
+      mark(el, 'focus-in', { cls: 'mo-status' });
+    });
+
+    // 「查看档案」：落定，带回弹
+    $$(SEL.heroCta).forEach(function (el) {
+      mark(el, 'settle', { cls: 'mo-cta' });
+    });
+
+    // ⇩ 箭头：与按钮解耦，但保持静态
+    $$(SEL.heroArrow).forEach(function (el) { el.classList.add('mo-arrow'); });
+
+    // 其它区块：常规上浮
+    $$(SEL.section).forEach(function (el) {
+      mark(el, 'rise', { cls: 'mo-section' });
     });
   }
 
-  function initCards(){
-    const grid=$(SEL.cardGrid);
-    if(!grid) return;
-    layoutCards(grid);
-    let timer;
-    new MutationObserver(()=>{
-      clearTimeout(timer);
-      timer=setTimeout(()=>{layoutCards(grid);revealVisible();},80);
-    }).observe(grid,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
+  /* ====================== ⑤ 卡片网格：奇偶列反向 + 斜向波浪 ====================== */
+  function layoutCards(grid) {
+    const cards = $$(SEL.card, grid).filter(function (c) { return !c.dataset.motion; });
+    if (!cards.length) return;
+
+    const rows = new Map();
+    cards.forEach(function (c) {
+      const key = Math.round(c.offsetTop / 8) * 8;      // 容忍 1~2px 抖动
+      if (!rows.has(key)) rows.set(key, []);
+      rows.get(key).push(c);
+    });
+
+    Array.from(rows.keys()).sort(function (a, b) { return a - b; })
+      .forEach(function (key, rowIndex) {
+        rows.get(key).forEach(function (card, col) {
+          card.classList.add('mo-card');
+          mark($(SEL.heroCta, card), 'settle', { cls: 'mo-cta' });
+          $$(SEL.heroArrow, card).forEach(function (el) { el.classList.add('mo-arrow'); });
+          mark(card, col % 2 ? 'sweep-up' : 'sweep-down', {
+            delay: Math.min((rowIndex * 2 + col) * 60, MAX_DELAY)
+          });
+        });
+      });
   }
 
-  /* 详情弹窗：以被点击的卡片为展开原点 */
-  let lastRect=null;
-  document.addEventListener('click',e=>{
-    const card=e.target.closest && e.target.closest(SEL.card);
-    if(card) lastRect=card.getBoundingClientRect();
-  },true);
+  function initCards() {
+    const grid = $(SEL.cardGrid) || document.body;
+    layoutCards(grid);
 
-  function replay(el,cls){
-    el.classList.remove(cls,'is-closing');
-    void el.offsetWidth;
+    // 卡片是异步插入的；显示/隐藏又是靠 hidden 属性切的。两者都会改变布局，
+    // 也就都可能把原本在屏幕外、正挂着 mo-hide 的元素挪到屏幕上。
+    let t;
+    new MutationObserver(function () {
+      clearTimeout(t);
+      t = setTimeout(function () { layoutCards(grid); revealVisible(); }, 80);
+    }).observe(grid, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['hidden']
+    });
+  }
+
+  /* ====================== ⑥ 详情弹窗：以被点击的卡片为展开原点 ====================== */
+  let lastRect = null;
+  document.addEventListener('click', function (e) {
+    const card = e.target.closest && e.target.closest(SEL.card);
+    if (card) lastRect = card.getBoundingClientRect();
+  }, true);
+
+  function isVisible(el) {
+    if (!el) return false;
+    if (el.hidden || el.getAttribute('aria-hidden') === 'true') return false;
+    if (!(el.offsetWidth || el.offsetHeight || el.getClientRects().length)) return false;
+    return getComputedStyle(el).visibility !== 'hidden';
+  }
+
+  // 站点自己控制开关，这里只观察可见性变化后补上动画类
+  function watchOpen(el, onOpen, onClose) {
+    if (!el) return;
+    let open = isVisible(el);
+    if (open) onOpen(el);
+    new MutationObserver(function () {
+      const now = isVisible(el);
+      if (now === open) return;
+      open = now;
+      open ? onOpen(el) : onClose(el);
+    }).observe(el, {
+      attributes: true,
+      attributeFilter: ['class', 'style', 'hidden', 'open', 'aria-hidden']
+    });
+  }
+
+  function replay(el, cls) {
+    el.classList.remove(cls, 'is-closing');
+    void el.offsetWidth;                 // 强制重排，动画可重放
     el.classList.add(cls);
   }
 
-  function initModal(){
-    const modal=$(SEL.modal);
-    const panel=$(SEL.modalPanel);
-    const backdrop=$(SEL.modalBackdrop);
-    if(!modal || !panel || !backdrop) return;
-    let open=modal.classList.contains('is-open');
-    new MutationObserver(()=>{
-      const now=modal.classList.contains('is-open');
-      if(now===open) return;
-      open=now;
-      if(open){
-        backdrop.classList.add('mo-backdrop');
-        replay(backdrop,'mo-backdrop');
-        panel.classList.add('mo-panel');
-        if(lastRect){
-          const box=panel.getBoundingClientRect();
-          panel.style.setProperty('--mo-ox',`${(lastRect.left+lastRect.width/2-box.left).toFixed(1)}px`);
-          panel.style.setProperty('--mo-oy',`${(lastRect.top+lastRect.height/2-box.top).toFixed(1)}px`);
-        }
-        replay(panel,'mo-panel');
-      }else{
-        replay(backdrop,'is-closing');
-        replay(panel,'is-closing');
+  function initModal() {
+    const backdrop = $(SEL.modalBackdrop);
+    if (!backdrop) return;
+    const panel = $(SEL.modalPanel, backdrop) || $(SEL.modalPanel);
+
+    watchOpen(backdrop, function () {
+      backdrop.classList.add('mo-backdrop');
+      replay(backdrop, 'mo-backdrop');
+
+      if (!panel) return;
+      panel.classList.add('mo-panel');
+      if (lastRect) {
+        const p = panel.getBoundingClientRect();
+        const cx = lastRect.left + lastRect.width / 2 - p.left;
+        const cy = lastRect.top + lastRect.height / 2 - p.top;
+        panel.style.setProperty('--mo-ox', cx.toFixed(1) + 'px');
+        panel.style.setProperty('--mo-oy', cy.toFixed(1) + 'px');
       }
-    }).observe(modal,{attributes:true,attributeFilter:['class']});
+      replay(panel, 'mo-panel');
+    }, function () {
+      replay(backdrop, 'is-closing');
+      if (panel) replay(panel, 'is-closing');
+    });
   }
 
-  /* 弹窗内标签：每一栏一种语义动效 */
-  function initTabs(){
-    const panel=$(SEL.tabPanel);
-    if(!panel) return;
-    const classes=['is-enter-opening','is-enter-setting','is-enter-worldbook','is-enter-preset'];
-    $$(SEL.tabButtons).forEach(tab=>{
-      tab.addEventListener('click',()=>{
-        const cls=`is-enter-${tab.dataset.detailTab}`;
-        if(!classes.includes(cls)) return;
-        requestAnimationFrame(()=>requestAnimationFrame(()=>{
-          panel.classList.add('mo-tabpanel');
-          panel.classList.remove(...classes);
-          void panel.offsetWidth;
-          panel.classList.add(cls);
-        }));
+  /* ====================== ⑦ 弹窗内 tab：五栏各自的语义动效 ====================== */
+  function initTabs() {
+    const tabs = $$(SEL.tabButtons);
+    if (tabs.length < 2) return;
+
+    const motionClasses = [
+      'is-enter-intro',
+      'is-enter-opening',
+      'is-enter-setting',
+      'is-enter-worldbook',
+      'is-enter-preset'
+    ];
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        const key = tab.getAttribute('data-detail-tab');
+        const motionClass = 'is-enter-' + key;
+        if (motionClasses.indexOf(motionClass) < 0) return;
+
+        // 等站点自己切完 DOM 再补动画
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            const panel = $$(SEL.tabPanels).filter(isVisible)[0];
+            if (!panel) return;
+            panel.classList.add('mo-tabpanel');
+            panel.classList.remove.apply(panel.classList, motionClasses);
+            void panel.offsetWidth;
+            panel.classList.add(motionClass);
+          });
+        });
       });
     });
   }
 
-  function boot(){
+  /* ====================== ⑧ 保存 PNG：底部上滑 ====================== */
+  function initSheet() {
+    const sheet = $(SEL.sheet);
+    if (!sheet) return;
+    sheet.classList.add('mo-sheet');
+    watchOpen(sheet,
+      function () { requestAnimationFrame(function () { sheet.classList.add('is-open'); }); },
+      function () { sheet.classList.remove('is-open'); }
+    );
+  }
+
+  /* ====================== ⑨ 启动 ====================== */
+  function boot() {
     initHero();
     initCards();
     initModal();
     initTabs();
+    initSheet();
   }
 
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
-  else boot();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
 })();
 </script>
 </body>
