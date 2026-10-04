@@ -154,8 +154,7 @@
   animation: mo-exit var(--dur-xs) var(--ease-out) both;
 }
 
-/* ---------- 8. 弹窗内 tab 切换：五栏各用一种语义动效 ---------- */
-.mo-tabpanel.is-enter-intro     { animation: mo-focus-in   var(--dur-md) var(--ease-expo) both; }
+/* ---------- 8. 弹窗内 tab 切换：四栏各用一种语义动效 ---------- */
 .mo-tabpanel.is-enter-opening   { animation: mo-sweep-left var(--dur-md) var(--ease-expo) both; }
 .mo-tabpanel.is-enter-setting   { animation: mo-settle     var(--dur-md) var(--ease-back) both; }
 .mo-tabpanel.is-enter-worldbook { animation: mo-sweep-down var(--dur-lg) var(--ease-expo) both; }
@@ -175,7 +174,6 @@
   [data-motion].is-in,
   .mo-backdrop,
   .mo-panel,
-  .mo-tabpanel.is-enter-intro,
   .mo-tabpanel.is-enter-opening,
   .mo-tabpanel.is-enter-setting,
   .mo-tabpanel.is-enter-worldbook,
