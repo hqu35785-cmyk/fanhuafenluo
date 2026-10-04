@@ -1,0 +1,3513 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>繁花·纷落｜角色卡档案</title>
+<meta name="description" content="繁花·纷落角色卡档案 · 新版外观。页面内的角色、卡面与资料均为示例内容。">
+<meta name="theme-color" content="#0b0b0d">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%23c4412d'/%3E%3Crect%20x='3'%20y='3'%20width='26'%20height='26'%20rx='4'%20fill='none'%20stroke='%23fff3e6'%20stroke-width='1.4'/%3E%3Ctext%20x='16'%20y='22.5'%20font-size='16'%20text-anchor='middle'%20fill='%23fff3e6'%20font-family='serif'%20font-weight='700'%3E%E7%B9%81%3C/text%3E%3C/svg%3E">
+<style>
+/* =========================================================
+   繁花·纷落｜角色卡档案 · 新版外观
+   设计语言：墨色漆底 · 鎏金细线 · 朱砂印章
+   栅格列数、卡片比例与尺寸、弹窗与保存面板的尺寸和浏览方式与原站一致，
+   只重做视觉元素。
+   ========================================================= */
+:root{
+  --bg:#0b0b0d;
+  --surface:#151519;
+  --surface-2:#1b1b20;
+  --surface-3:#232329;
+  --text:#f3eee6;
+  --text-2:#cfc7ba;
+  --text-3:#958d81;
+  --text-4:#665f56;
+  --gold:#d9b26f;
+  --gold-hi:#f1d49e;
+  --gold-lo:#a07d43;
+  --gold-ink:#1b1408;
+  --cinnabar:#c94a33;
+  --cinnabar-hi:#ee7a5f;
+  --jade:#86c2a8;
+  --line:rgba(243,238,230,.085);
+  --line-2:rgba(243,238,230,.15);
+  --line-gold:rgba(217,178,111,.34);
+  --glass:rgba(13,13,16,.74);
+  --gold-fill:linear-gradient(180deg,#f3d9a6 0%,#dcb571 55%,#c99b52 100%);
+  --page-w:min(3300px,calc(100% - clamp(12px,2.4vw,42px)));
+  --r-card:14px;
+  --role-media-focus-x:50%;
+  --role-media-focus-y:8%;
+  --serif:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;
+  --sans:system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Mono",Menlo,Consolas,monospace;
+  --motion-fast:160ms;
+  --motion-ui:260ms;
+  --motion-panel:420ms;
+  --motion-load:760ms;
+  --ease-expo:cubic-bezier(.16,1,.3,1);
+  --ease-soft:cubic-bezier(.22,.75,.2,1);
+  --ease-inout:cubic-bezier(.65,0,.35,1);
+  --ease-back:cubic-bezier(.34,1.56,.64,1);
+}
+*{box-sizing:border-box}
+html{background:var(--bg);color-scheme:dark;scrollbar-gutter:stable;-webkit-text-size-adjust:100%}
+body{
+  margin:0;min-height:100vh;color:var(--text);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(900px 440px at 0% -12%,rgba(217,178,111,.08),transparent 60%),
+    radial-gradient(760px 400px at 100% -4%,rgba(201,74,51,.07),transparent 62%),
+    linear-gradient(180deg,#0f0e10,#0b0b0d 42%,#09090b);
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;
+  background-image:radial-gradient(rgba(243,238,230,.055) 1px,transparent 1.25px);
+  background-size:22px 22px;
+  -webkit-mask-image:linear-gradient(180deg,#000,transparent 70%);
+  mask-image:linear-gradient(180deg,#000,transparent 70%);
+}
+button{font:inherit;color:inherit}
+.icon{width:1em;height:1em;display:block;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.wrap,.archive-main{width:var(--page-w);margin-inline:auto}
+.site-header,.archive-main,footer{position:relative;z-index:1}
+
+/* ============ Header：印章头像 → 作者名 → 英文名 → 卡片数 ============ */
+.site-header{
+  height:86px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(22,21,24,.94),rgba(13,13,15,.94));
+}
+.site-header::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(217,178,111,.6) 20%,rgba(201,74,51,.4) 62%,transparent);
+}
+.author-header-row{
+  height:100%;
+  display:grid;
+  grid-template-columns:48px max-content minmax(0,1fr) auto;
+  grid-template-areas:"avatar name english count";
+  column-gap:14px;
+  align-items:center;
+}
+.author-avatar-shell{
+  grid-area:avatar;width:48px;height:48px;padding:0;
+  border:0;border-radius:12px;overflow:hidden;cursor:pointer;appearance:none;-webkit-appearance:none;
+  background:var(--cinnabar);
+  box-shadow:0 10px 24px rgba(201,74,51,.22),0 0 0 1px rgba(255,255,255,.08);
+  transform-style:preserve-3d;
+}
+.author-avatar-shell:disabled{cursor:wait;opacity:.6}
+.author-avatar-shell:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.author-avatar-img{width:100%;height:100%;display:block;object-fit:cover}
+.author-primary{grid-area:name;min-width:0;display:flex;align-items:center}
+.author-primary b{
+  display:block;white-space:nowrap;
+  font-family:var(--serif);font-size:29px;font-weight:700;line-height:1;letter-spacing:.12em;
+  color:var(--text);
+}
+.author-english{grid-area:english;min-width:0;display:flex;align-items:center;gap:12px;overflow:hidden;padding-top:2px}
+.author-english::before{
+  content:"";flex:0 0 auto;width:6px;height:6px;transform:rotate(45deg);
+  border:1px solid var(--gold);background:rgba(217,178,111,.18);
+}
+.author-english span{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:rgba(217,178,111,.82);
+}
+.author-english small{
+  display:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--text-4);
+}
+@media(min-width:1180px){
+  .author-english small{display:block}
+  .author-english small::before{content:"/";margin-right:12px;color:var(--text-4)}
+}
+.archive-count{
+  grid-area:count;min-width:48px;padding-left:14px;
+  display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:5px;
+  border-left:1px solid var(--line);
+}
+.archive-count span{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--text-3)}
+.archive-count b{
+  font-family:var(--serif);font-size:24px;font-weight:700;line-height:1;
+  color:var(--gold-hi);font-variant-numeric:tabular-nums;
+}
+
+/* ============ Toolbar：作者分区 + 状态 ============ */
+.toolbar{
+  min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  border-bottom:1px solid var(--line);
+}
+.filters{
+  display:flex;align-items:center;gap:4px;min-width:0;padding:3px;
+  border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.025);
+}
+.filter{
+  position:relative;height:34px;padding:0 18px;
+  display:inline-flex;align-items:center;
+  border:0;border-radius:999px;background:transparent;cursor:pointer;
+  font-family:var(--serif);font-size:14.5px;font-weight:700;letter-spacing:.1em;white-space:nowrap;
+  color:var(--text-3);
+  overflow:hidden;isolation:isolate;appearance:none;-webkit-appearance:none;
+}
+.filter:not(.active):hover{color:var(--text)}
+.filter.active{
+  color:var(--gold-ink);
+  background:var(--gold-fill);
+  box-shadow:0 6px 18px rgba(217,178,111,.22),inset 0 1px 0 rgba(255,255,255,.45);
+}
+.filter::before{
+  content:"";position:absolute;z-index:-1;inset:0 -20px;opacity:0;pointer-events:none;
+  transform:translateX(-70%) skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+}
+.filter.active::before{z-index:1;mix-blend-mode:soft-light;animation:authorFilterGlint 620ms var(--ease-expo) both}
+.filter:disabled{cursor:wait}
+
+.toolbar-status{
+  display:inline-flex;align-items:center;gap:9px;height:32px;padding:0 13px;
+  border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.025);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--text-3);white-space:nowrap;
+}
+.toolbar-status i{
+  width:7px;height:7px;flex:0 0 auto;border-radius:50%;
+  background:var(--gold);box-shadow:0 0 0 3px rgba(217,178,111,.16);
+  animation:statusDot 1.6s ease-in-out infinite;
+}
+.toolbar-status.is-ready i{background:var(--jade);box-shadow:0 0 0 3px rgba(134,194,168,.16);animation:none}
+.toolbar-status.is-error{color:var(--cinnabar-hi);border-color:rgba(201,74,51,.45);background:rgba(201,74,51,.07);cursor:pointer}
+.toolbar-status.is-error span{font-family:var(--sans);letter-spacing:.04em;font-size:12px}
+.toolbar-status.is-error i{background:var(--cinnabar);box-shadow:0 0 0 3px rgba(201,74,51,.2);animation:none}
+.status-retry{
+  height:22px;padding:0 10px;margin-right:-6px;
+  border:1px solid rgba(238,122,95,.5);border-radius:999px;
+  background:rgba(201,74,51,.16);color:#ffd9cf;font-size:11.5px;cursor:pointer;
+}
+.status-retry[hidden]{display:none}
+
+/* ============ Gallery：列数与间距与原站一致 ============ */
+.gallery{
+  padding:16px 0 34px;display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  column-gap:clamp(10px,.72vw,14px);
+  row-gap:clamp(18px,2vh,26px);
+  transition:opacity 220ms ease,transform 300ms var(--ease-expo);
+}
+@media(max-width:1550px){.gallery{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(max-width:1320px){.gallery{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(max-width:1080px){.gallery{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:760px){.gallery{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:620px){.gallery{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px;row-gap:10px}}
+@media(min-width:500px) and (max-width:620px) and (orientation:portrait){.gallery{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* ============ 卡片 ============ */
+.archive-card{position:relative;min-width:0;border-radius:var(--r-card)}
+.archive-card[hidden]{display:none}
+.card-face{
+  position:relative;aspect-ratio:.72;overflow:hidden;
+  border:1px solid var(--line);border-radius:var(--r-card);
+  background:
+    radial-gradient(120% 70% at 50% 0%,rgba(217,178,111,.07),transparent 60%),
+    linear-gradient(165deg,#19181c,#111013 58%,#0c0c0e);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 14px 30px rgba(0,0,0,.26);
+  transition:border-color var(--motion-load) ease,box-shadow var(--motion-load) var(--ease-expo),transform 360ms var(--ease-expo);
+}
+.loaded-art{
+  position:absolute;inset:0;isolation:isolate;
+  opacity:0;transform:scale(1.015);
+  transition:opacity 620ms ease,transform 880ms var(--ease-expo);
+}
+.loaded-art::before{
+  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(180deg,rgba(8,8,10,.30) 0%,transparent 20%,transparent 46%,rgba(8,8,10,.55) 70%,rgba(8,8,10,.92) 100%);
+}
+.theme-0 .loaded-art{background:linear-gradient(160deg,#2a1d24,#141218 60%,#0c0b0e)}
+.theme-1 .loaded-art{background:linear-gradient(160deg,#1c2229,#121317 60%,#0b0b0e)}
+.theme-2 .loaded-art{background:linear-gradient(160deg,#2a2216,#141215 60%,#0c0b0d)}
+.theme-3 .loaded-art{background:linear-gradient(160deg,#1a2620,#121416 60%,#0b0c0d)}
+.theme-4 .loaded-art{background:linear-gradient(160deg,#241c2c,#131218 60%,#0b0b0e)}
+.theme-5 .loaded-art{background:linear-gradient(160deg,#2b1a17,#141215 60%,#0c0b0c)}
+.loaded-card-image{
+  position:absolute;z-index:0;inset:0;display:block;width:100%;height:100%;
+  object-fit:cover;object-position:var(--role-media-focus-x) var(--role-media-focus-y);
+  opacity:0;transform:scale(1.025);
+  transition:opacity .42s ease,transform .62s var(--ease-soft);
+}
+.archive-card.is-loaded .loaded-art{opacity:1;transform:none}
+.archive-card.is-loaded.has-source-image .loaded-card-image{opacity:1;transform:none}
+.archive-card.is-image-loading .loaded-card-image{opacity:0;transform:scale(1.025)}
+.archive-card.image-error .loaded-card-image{opacity:0}
+
+/* 未加载：纹样底 + 角框 + 花形标记 */
+.stripe-field{
+  position:absolute;inset:0;z-index:4;pointer-events:none;opacity:1;
+  -webkit-mask-image:radial-gradient(110% 85% at 50% 38%,#000 25%,transparent 82%);
+  mask-image:radial-gradient(110% 85% at 50% 38%,#000 25%,transparent 82%);
+  transition:opacity .5s ease;
+}
+.pattern-1 .stripe-field{background-image:radial-gradient(rgba(217,178,111,.22) 1px,transparent 1.35px);background-size:14px 14px}
+.pattern-2 .stripe-field{background-image:repeating-radial-gradient(circle at 50% 36%,rgba(217,178,111,.14) 0 1px,transparent 1px 17px)}
+.pattern-3 .stripe-field{background-image:repeating-linear-gradient(135deg,rgba(217,178,111,.12) 0 1px,transparent 1px 9px)}
+.pattern-4 .stripe-field{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='none' stroke='%23d9b26f' stroke-opacity='.2' stroke-width='1'%3E%3Cpath d='M2 26V2h24v20H8V8h12v8h-6'/%3E%3C/svg%3E");
+  background-size:28px 28px;
+}
+.archive-card.is-loaded .stripe-field{opacity:0}
+.ghost-frame{
+  position:absolute;z-index:6;inset:46px 12px 112px;pointer-events:none;
+  --c:rgba(217,178,111,.42);
+  background:
+    linear-gradient(var(--c),var(--c)) left top/14px 1px no-repeat,
+    linear-gradient(var(--c),var(--c)) left top/1px 14px no-repeat,
+    linear-gradient(var(--c),var(--c)) right top/14px 1px no-repeat,
+    linear-gradient(var(--c),var(--c)) right top/1px 14px no-repeat,
+    linear-gradient(var(--c),var(--c)) left bottom/14px 1px no-repeat,
+    linear-gradient(var(--c),var(--c)) left bottom/1px 14px no-repeat,
+    linear-gradient(var(--c),var(--c)) right bottom/14px 1px no-repeat,
+    linear-gradient(var(--c),var(--c)) right bottom/1px 14px no-repeat;
+  transition:opacity .5s ease;
+}
+.ghost-frame::after{
+  content:"";position:absolute;left:50%;top:50%;width:52%;aspect-ratio:1;
+  transform:translate(-50%,-50%);opacity:.55;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23d9b26f' stroke-width='1.1'%3E%3Ccircle cx='50' cy='50' r='46' stroke-opacity='.45' stroke-dasharray='1.5 4.5'/%3E%3Cg transform='translate(50 50)' stroke-opacity='.85'%3E%3Cellipse cy='-17' rx='9' ry='17'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(72)'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(144)'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(216)'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(288)'/%3E%3Ccircle r='4.5'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+  transition:opacity .4s ease,transform .6s var(--ease-expo);
+}
+.archive-card.is-loaded .ghost-frame{opacity:0}
+.archive-card.is-loaded .ghost-frame::after{opacity:0;transform:translate(-50%,-50%) scale(.85)}
+
+.corner-code{
+  position:absolute;z-index:10;top:10px;left:10px;
+  max-width:calc(100% - 66px);height:24px;
+  display:flex;align-items:center;gap:7px;padding:0 9px 0 7px;
+  border:1px solid var(--line-2);border-radius:7px;
+  background:rgba(12,12,14,.6);color:var(--text-3);
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;
+  transition:color .4s ease,border-color .4s ease,background .4s ease;
+}
+.corner-dot{
+  width:7px;height:7px;flex:0 0 auto;border-radius:2px;
+  background:var(--cinnabar);box-shadow:0 0 0 2px rgba(201,74,51,.22);
+}
+.corner-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.corner-index{
+  position:absolute;z-index:10;top:15px;right:12px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--text-4);
+  font-variant-numeric:tabular-nums;transition:color .4s ease;
+}
+.corner-index::before{content:"No.";margin-right:2px;opacity:.7}
+.archive-card.is-loaded .corner-code{
+  color:var(--text);border-color:rgba(217,178,111,.4);background:rgba(12,12,14,.64);
+  font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.06em;
+}
+.archive-card.is-loaded .corner-index{color:rgba(241,212,158,.9);text-shadow:0 1px 3px rgba(0,0,0,.6)}
+
+.loading-core{
+  position:absolute;z-index:8;left:12px;right:12px;bottom:61px;
+  display:grid;grid-template-areas:"stack";
+}
+.loading-core>.state-label{grid-area:stack;align-self:end;align-content:end}
+.state-label{display:grid;gap:6px;transition:opacity .28s ease,transform .28s ease}
+.state-label-ready{opacity:0;transform:translateY(3px);pointer-events:none;padding-right:40px}
+.loading-title{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--text-4)}
+.loading-line{width:46%;height:1px;background:linear-gradient(90deg,rgba(217,178,111,.55),transparent)}
+.loading-sub{font-size:11px;letter-spacing:.08em;color:var(--text-4)}
+.state-label-ready .ready-name{
+  font-family:var(--serif);font-size:16px;font-weight:700;line-height:1.2;letter-spacing:.07em;
+  color:var(--text);text-shadow:0 1px 4px rgba(0,0,0,.65);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.state-label-ready .loading-line{width:22px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--cinnabar))}
+.state-label-ready .ready-meta{
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  color:rgba(241,212,158,.86);font-variant-numeric:tabular-nums;text-shadow:0 1px 3px rgba(0,0,0,.6);
+}
+.state-label-ready.no-created .loading-line,
+.state-label-ready.no-created .ready-meta{display:none}
+.archive-card.is-loaded .state-label-loading{opacity:0;transform:translateY(-3px);pointer-events:none}
+.archive-card.is-loaded .state-label-ready{opacity:1;transform:none}
+
+/* 底部操作：主按钮「查看档案」+ 右上方独立的下载按钮 */
+.bottom-frame{
+  position:absolute;z-index:10;left:9px;right:9px;bottom:9px;min-height:43px;
+  border:1px dashed rgba(243,238,230,.12);border-radius:11px;
+  transition:border-color .4s ease;
+}
+.archive-card.is-loaded .bottom-frame{border-color:transparent}
+.bottom-frame button{margin:0;font:inherit}
+.detail-action{
+  position:absolute;inset:0;width:100%;height:100%;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:0 7px 0 13px;text-align:left;cursor:pointer;
+  border:1px solid var(--line-gold);border-radius:11px;
+  color:var(--text);
+  background:linear-gradient(180deg,rgba(28,26,24,.88),rgba(13,13,15,.94));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 8px 18px rgba(0,0,0,.25);
+  overflow:hidden;isolation:isolate;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .28s ease,border-color .3s ease,transform .3s var(--ease-expo),box-shadow .3s ease;
+}
+.archive-card.is-loaded .detail-action{opacity:1;visibility:visible;pointer-events:auto}
+.detail-action::before{
+  content:"";position:absolute;z-index:1;top:-40%;bottom:-40%;left:-30%;width:32%;pointer-events:none;
+  transform:translateX(-120%) skewX(-20deg);
+  background:linear-gradient(90deg,transparent,rgba(241,212,158,.10) 35%,rgba(255,244,222,.20) 50%,rgba(241,212,158,.10) 65%,transparent);
+  animation:goldLeafSweep 4.2s var(--ease-inout) infinite;
+  animation-play-state:paused;
+}
+.archive-card.is-motion-visible.is-loaded .detail-action::before{animation-play-state:running}
+.action-copy{position:relative;z-index:2;min-width:0;display:grid;gap:3px}
+.action-copy b{font-family:var(--serif);font-size:13px;font-weight:700;letter-spacing:.14em;white-space:nowrap}
+.action-copy small{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:var(--text-3);
+}
+.action-arrow{
+  position:relative;z-index:2;width:27px;height:27px;flex:0 0 auto;
+  display:grid;place-items:center;border-radius:50%;
+  color:var(--gold-ink);background:var(--gold-fill);font-size:14px;
+  box-shadow:0 2px 8px rgba(217,178,111,.3),inset 0 1px 0 rgba(255,255,255,.5);
+  transition:transform 240ms var(--ease-expo);
+}
+.download-action{
+  position:absolute;z-index:4;right:0;top:-39px;width:31px;height:31px;
+  display:grid;place-items:center;padding:0;cursor:pointer;
+  border:1px solid rgba(255,236,200,.55);border-radius:9px;
+  color:var(--gold-ink);background:var(--gold-fill);
+  box-shadow:0 6px 16px rgba(0,0,0,.3),0 0 14px rgba(217,178,111,.16),inset 0 1px 0 rgba(255,255,255,.5);
+  overflow:hidden;isolation:isolate;
+  opacity:0;visibility:hidden;pointer-events:none;transform:translateY(3px);
+  transition:opacity .28s ease,transform .28s var(--ease-expo),box-shadow .3s ease;
+}
+.archive-card.is-loaded .download-action{opacity:1;visibility:visible;pointer-events:auto;transform:none}
+.download-action::before{
+  content:"";position:absolute;inset:0;z-index:1;opacity:0;pointer-events:none;
+  transform:translateX(-70%) skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);
+}
+.download-icon{position:relative;z-index:2;display:grid;place-items:center;font-size:15px}
+.download-icon .icon{stroke-width:2.2}
+@media(hover:hover) and (pointer:fine){
+  .archive-card.is-loaded:hover .card-face{
+    transform:translateY(-3px);border-color:rgba(217,178,111,.32);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 22px 44px rgba(0,0,0,.4);
+  }
+  .archive-card.is-loaded .detail-action:hover,
+  .archive-card.is-loaded .detail-action:focus-visible{
+    border-color:rgba(241,212,158,.6);transform:translateY(-1px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 10px 22px rgba(0,0,0,.32),0 0 18px rgba(217,178,111,.12);
+  }
+  .archive-card.is-loaded .detail-action:hover .action-arrow{transform:translate(2px,-2px)}
+  .archive-card.is-loaded .download-action:hover,
+  .archive-card.is-loaded .download-action:focus-visible{
+    transform:translateY(-1px);
+    box-shadow:0 8px 20px rgba(0,0,0,.34),0 0 20px rgba(217,178,111,.3),inset 0 1px 0 rgba(255,255,255,.55);
+  }
+  .archive-card.is-loaded .download-action:hover::before{animation:detailButtonSheen 620ms ease both}
+}
+.archive-card.is-loaded .detail-action:active{transform:scale(.985)}
+.archive-card.is-loaded .detail-action:active .action-arrow{transform:translateX(3px) scale(.9)}
+.download-action:active .download-icon{animation:detailMiniDownload 360ms var(--ease-soft) both}
+
+/* 卡面缺失时保持占位样式 */
+.archive-card.is-face-missing .loaded-art{opacity:0}
+.archive-card.is-face-missing .stripe-field{opacity:1}
+.archive-card.is-face-missing .ghost-frame{opacity:1}
+.archive-card.is-face-missing .ghost-frame::after{opacity:.55;transform:translate(-50%,-50%)}
+.archive-card.is-face-missing .state-label-loading{opacity:1;transform:none}
+.archive-card.is-face-missing .state-label-ready{opacity:0}
+
+/* 加载中：扫光 + 呼吸 */
+.archive-card.is-motion-visible:not(.is-loaded) .card-face::after{
+  content:"";position:absolute;z-index:7;inset:-40% -80%;pointer-events:none;
+  background:linear-gradient(90deg,transparent 40%,rgba(241,212,158,.05) 47%,rgba(241,212,158,.11) 50%,rgba(241,212,158,.05) 53%,transparent 60%);
+  animation:motionLoadingSweep 1.3s var(--ease-inout) infinite;
+}
+.archive-card.is-motion-visible:not(.is-loaded) .loading-core{animation:motionLoadingBreathe 1.7s ease-in-out infinite}
+.archive-card.is-loaded .state-label-ready{animation:motionReadyCopy 560ms 110ms var(--ease-expo) both}
+.archive-card:not(.is-near){content-visibility:auto;contain-intrinsic-size:var(--card-ih,420px)}
+
+@media(max-width:620px){
+  :root{--r-card:12px}
+  .ghost-frame{inset:38px 9px 100px}
+  .corner-code{top:8px;left:8px;height:22px;padding:0 7px 0 6px;gap:6px;max-width:calc(100% - 58px)}
+  .archive-card.is-loaded .corner-code{font-size:9.5px}
+  .corner-index{top:13px;right:9px;font-size:9.5px}
+  .loading-core{left:10px;right:10px;bottom:55px}
+  .loading-title{font-size:8px}
+  .loading-sub{font-size:10px}
+  .state-label-ready .ready-name{font-size:14px}
+  .state-label-ready .ready-meta{font-size:9px}
+  .bottom-frame{left:7px;right:7px;bottom:7px;min-height:39px}
+  .detail-action{padding:0 6px 0 11px}
+  .action-copy b{font-size:12px;letter-spacing:.1em}
+  .action-copy small{font-size:7px}
+  .action-arrow{width:24px;height:24px;font-size:13px}
+}
+
+/* ============ Footer ============ */
+footer{
+  padding:20px 0 26px;border-top:1px solid var(--line);
+  font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--text-4);
+}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px}
+footer span:first-child::before{
+  content:"";display:inline-block;width:6px;height:6px;margin-right:10px;vertical-align:1px;
+  border-radius:1.5px;background:var(--cinnabar);
+}
+
+/* ============ 详情弹窗 ============ */
+.archive-modal,
+.save-sheet{
+  position:fixed;inset:0;z-index:1000;
+  visibility:hidden;opacity:0;pointer-events:none;
+  transition:visibility 0s linear var(--motion-panel),opacity var(--motion-panel) ease;
+}
+.save-sheet{z-index:1200}
+.archive-modal.is-open,
+.save-sheet.is-open{visibility:visible;opacity:1;pointer-events:auto;transition-delay:0s}
+.archive-modal-backdrop,
+.save-sheet-backdrop{
+  position:absolute;inset:0;
+  background:radial-gradient(120% 90% at 50% 40%,rgba(10,9,11,.72),rgba(5,5,6,.88));
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  opacity:0;transition:opacity var(--motion-panel) ease;
+}
+.archive-modal.is-open .archive-modal-backdrop,
+.save-sheet.is-open .save-sheet-backdrop{opacity:1}
+.archive-modal-panel{
+  position:absolute;left:50%;top:50%;
+  width:min(1040px,calc(100% - 34px));max-height:min(86vh,820px);
+  transform:translate(-50%,-50%);
+  display:grid;grid-template-columns:minmax(310px,.82fr) minmax(0,1.18fr);
+  overflow:hidden;
+  border:1px solid var(--line-2);border-radius:22px;
+  background:
+    radial-gradient(520px 260px at 100% 0%,rgba(217,178,111,.08),transparent 65%),
+    linear-gradient(170deg,#19181c,#101013 70%);
+  box-shadow:0 40px 120px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.05);
+}
+.archive-modal-close,
+.save-sheet-close{
+  width:36px;height:36px;flex:0 0 auto;display:grid;place-items:center;padding:0;cursor:pointer;
+  border:1px solid var(--line-2);border-radius:11px;
+  color:var(--text-2);background:rgba(13,13,16,.7);font-size:16px;
+  transition:transform 260ms var(--ease-expo),background 220ms ease,border-color 220ms ease,color 220ms ease;
+}
+.archive-modal-close{position:absolute;right:14px;top:14px;z-index:8}
+@media(hover:hover){
+  .archive-modal-close:hover,
+  .save-sheet-close:hover{transform:rotate(90deg);color:var(--text);border-color:var(--line-gold);background:rgba(30,28,26,.85)}
+}
+.archive-modal-close:active,
+.save-sheet-close:active{transform:rotate(90deg) scale(.88)}
+
+.archive-detail-visual{
+  position:relative;min-height:580px;overflow:hidden;
+  border-right:1px solid var(--line);
+  background:
+    radial-gradient(circle at 50% 30%,rgba(217,178,111,.10),transparent 40%),
+    linear-gradient(160deg,#1d1b1f,#121215 60%,#0c0c0e);
+}
+.detail-art{position:absolute;inset:0;overflow:hidden;isolation:isolate}
+.detail-art::before{
+  content:"";position:absolute;inset:0;z-index:2;transition:opacity .32s ease;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23d9b26f' stroke-width='.8' stroke-opacity='.5'%3E%3Cg transform='translate(50 50)'%3E%3Cellipse cy='-17' rx='9' ry='17'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(72)'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(144)'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(216)'/%3E%3Cellipse cy='-17' rx='9' ry='17' transform='rotate(288)'/%3E%3C/g%3E%3C/svg%3E") 50% 40%/34% no-repeat,
+    radial-gradient(rgba(217,178,111,.16) 1px,transparent 1.35px) 0 0/16px 16px;
+}
+.detail-art.has-source::before{opacity:0}
+.detail-art::after{
+  content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:linear-gradient(180deg,rgba(8,8,10,.42),transparent 22%,transparent 62%,rgba(8,8,10,.7));
+}
+.detail-source-image{
+  position:absolute;z-index:0;inset:0;display:block;width:100%;height:100%;
+  object-fit:cover;object-position:var(--role-media-focus-x) var(--role-media-focus-y);
+  opacity:0;transform:scale(1.025);
+  transition:opacity .42s ease,transform .58s ease;
+}
+.detail-source-image.is-ready{opacity:1;transform:none}
+.detail-visual-top{
+  position:absolute;z-index:4;left:16px;right:16px;top:16px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.detail-visual-top span{
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  padding:6px 11px;border-radius:7px;
+  color:#fff4ec;background:rgba(201,74,51,.92);
+  box-shadow:0 6px 16px rgba(201,74,51,.28),inset 0 0 0 1px rgba(255,255,255,.18);
+  font-size:12px;font-weight:600;letter-spacing:.1em;
+}
+.detail-visual-top small{
+  flex:0 0 auto;padding:6px 10px;border:1px solid var(--line-2);border-radius:7px;
+  color:var(--gold-hi);background:rgba(12,12,14,.6);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+}
+.detail-visual-bottom{
+  position:absolute;z-index:4;left:14px;right:14px;bottom:14px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:9px 9px 9px 14px;
+  border:1px solid var(--line-2);border-radius:14px;
+  background:rgba(13,13,16,.62);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+}
+.detail-visual-bottom>span{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--text-3)}
+.detail-save-btn{
+  position:relative;min-height:38px;padding:0 14px 0 12px;
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  border:1px solid rgba(255,236,200,.55);border-radius:10px;
+  color:var(--gold-ink);background:var(--gold-fill);
+  font-size:13px;font-weight:700;letter-spacing:.06em;white-space:nowrap;
+  box-shadow:0 6px 16px rgba(0,0,0,.24),0 0 16px rgba(217,178,111,.14),inset 0 1px 0 rgba(255,255,255,.5);
+  overflow:hidden;isolation:isolate;
+  transition:transform 200ms var(--ease-soft),box-shadow 260ms ease;
+}
+.detail-save-btn .icon{font-size:15px;stroke-width:2.2;position:relative;z-index:2}
+.detail-save-btn::before{
+  content:"";position:absolute;inset:0;z-index:1;opacity:0;pointer-events:none;
+  transform:translateX(-70%) skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);
+}
+@media(hover:hover) and (pointer:fine){
+  .detail-save-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.3),0 0 22px rgba(217,178,111,.28),inset 0 1px 0 rgba(255,255,255,.55)}
+  .detail-save-btn:hover::before{animation:detailButtonSheen 620ms ease both}
+}
+
+.archive-detail-content{min-width:0;overflow:auto;padding:54px 34px 30px}
+.detail-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.detail-heading h2{
+  margin:0;font-family:var(--serif);font-size:34px;font-weight:700;letter-spacing:.08em;line-height:1.15;
+}
+.detail-heading p{
+  margin:12px 0 0;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--text-3);
+}
+.detail-tavo-badge{
+  flex:0 0 auto;margin-top:4px;padding:6px 10px 6px 9px;
+  display:inline-flex;align-items:center;gap:7px;
+  border:1px solid var(--line-gold);border-radius:8px;
+  color:var(--gold);background:rgba(217,178,111,.06);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;
+}
+.detail-tavo-badge::before{content:"";width:6px;height:6px;border-radius:1.5px;background:var(--cinnabar)}
+
+/* 详情阅读区：四个标签 + 只在内部纵向滚动的正文 */
+.detail-reader{position:relative;margin-top:24px;padding-top:22px}
+.detail-reader::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:1px;
+  background:linear-gradient(90deg,rgba(217,178,111,.5),rgba(243,238,230,.08) 60%,transparent);
+}
+.detail-options{
+  --detail-count:4;--detail-index:0;--detail-shift:0px;
+  position:relative;isolation:isolate;overflow:hidden;
+  display:grid;grid-template-columns:repeat(var(--detail-count),minmax(0,1fr));gap:6px;padding:5px;
+  border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.022);
+}
+.detail-options::before{
+  content:"";position:absolute;z-index:0;left:5px;top:5px;bottom:5px;
+  width:calc((100% - 10px - (var(--detail-count) - 1) * 6px) / var(--detail-count));
+  border:1px solid rgba(217,178,111,.45);border-radius:10px;
+  background:linear-gradient(180deg,rgba(217,178,111,.22),rgba(217,178,111,.09));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 6px 16px rgba(0,0,0,.25);
+  transform:translateX(var(--detail-shift));
+  transition:transform 420ms cubic-bezier(.2,.82,.2,1);
+  pointer-events:none;
+}
+.detail-option{
+  position:relative;z-index:1;min-width:0;min-height:46px;
+  display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 8px;
+  border:0;border-radius:10px;background:transparent;cursor:pointer;
+  color:var(--text-3);-webkit-tap-highlight-color:transparent;
+  transition:color 220ms ease,transform 180ms var(--ease-expo);
+}
+.detail-option span{
+  font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--gold-lo);
+  transition:transform 330ms cubic-bezier(.2,.82,.2,1),opacity 260ms ease,color 260ms ease;
+}
+.detail-option b{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:var(--serif);font-size:14px;font-weight:700;letter-spacing:.08em;
+  transition:transform 330ms cubic-bezier(.2,.82,.2,1),opacity 260ms ease,letter-spacing 330ms ease;
+}
+.detail-option:hover{color:var(--text-2)}
+.detail-option.is-active{color:var(--text)}
+.detail-option.is-active span{color:var(--gold-hi)}
+.detail-option:not(.is-active) span{transform:scale(.92);opacity:.8}
+.detail-option.is-active span{transform:scale(1.06)}
+.detail-option.is-active b{letter-spacing:.1em}
+.detail-option.is-tab-hit span{animation:detailIndexTick 420ms cubic-bezier(.2,.82,.2,1) both}
+.detail-option.is-tab-hit b{animation:detailLabelSettle 420ms cubic-bezier(.2,.82,.2,1) both}
+
+.detail-reading-panel{
+  position:relative;margin-top:10px;min-height:250px;max-height:330px;
+  overflow-y:auto;overflow-x:hidden;
+  overscroll-behavior-y:contain;overscroll-behavior-x:none;touch-action:pan-y;
+  padding:18px 20px 28px;
+  border:1px solid var(--line);border-radius:16px;
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.012));
+  scrollbar-width:thin;scrollbar-color:rgba(217,178,111,.32) transparent;
+  isolation:isolate;
+  transition:border-color 320ms ease,box-shadow 360ms ease;
+}
+.detail-reading-panel::-webkit-scrollbar{width:6px}
+.detail-reading-panel::-webkit-scrollbar-thumb{border-radius:99px;background:rgba(217,178,111,.32)}
+.detail-reading-head{
+  position:sticky;top:-18px;z-index:3;
+  margin:-18px -20px 16px;padding:15px 20px 13px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(24,23,27,.98),rgba(22,21,25,.95));
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  transition:box-shadow 300ms ease,border-color 300ms ease;
+}
+.detail-reading-head small{
+  display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--text-4);
+}
+.detail-reading-head h3{
+  margin:6px 0 0;font-family:var(--serif);font-size:17px;font-weight:700;letter-spacing:.1em;
+}
+.detail-reading-head>span{
+  margin-top:2px;padding:5px 8px;border:1px solid var(--line-gold);border-radius:6px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--gold);
+  transition:color 300ms ease,border-color 300ms ease;
+}
+.detail-reading-body{
+  position:relative;z-index:2;transform-origin:50% 0;
+  font-size:13.5px;line-height:1.95;color:var(--text-2);
+  white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;
+}
+.detail-reading-body::selection{color:var(--gold-ink);background:rgba(241,212,158,.85)}
+.detail-reading-fade{
+  position:sticky;z-index:2;left:0;right:0;bottom:-28px;height:30px;
+  margin:0 -20px -28px;pointer-events:none;
+  background:linear-gradient(transparent,rgba(19,18,22,.96));
+}
+.detail-reading-panel.is-reading-scrolled{border-color:var(--line-2);box-shadow:inset 0 10px 22px rgba(0,0,0,.14)}
+.detail-reading-panel.is-reading-scrolled .detail-reading-head{border-bottom-color:rgba(217,178,111,.22);box-shadow:0 10px 18px rgba(4,4,6,.22)}
+.detail-reading-panel.is-reading-scrolled .detail-reading-head>span{color:var(--gold-hi);border-color:rgba(217,178,111,.55)}
+
+/* ============ 保存面板 ============ */
+.save-sheet-panel{
+  position:absolute;left:50%;top:50%;
+  width:min(430px,calc(100% - 30px));max-height:calc(100vh - 24px);overflow-y:auto;
+  padding:20px;
+  border:1px solid var(--line-2);border-radius:22px;
+  background:
+    radial-gradient(360px 200px at 0% 0%,rgba(217,178,111,.09),transparent 70%),
+    linear-gradient(170deg,#1a191d,#101013 72%);
+  box-shadow:0 34px 100px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.05);
+  opacity:0;transform:translate(-50%,calc(-50% + 28px)) scale(.97);
+  transition:transform var(--motion-panel) var(--ease-expo),opacity 260ms ease;
+}
+.save-sheet.is-open .save-sheet-panel{opacity:1;transform:translate(-50%,-50%)}
+.save-sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.save-sheet-head small{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--gold)}
+.save-sheet-head h3{margin:7px 0 0;font-family:var(--serif);font-size:22px;font-weight:700;letter-spacing:.08em}
+.save-sheet-head p{margin:8px 0 0;font-size:12.5px;line-height:1.6;color:var(--text-3)}
+.save-sheet-preview{
+  position:relative;margin-top:16px;overflow:hidden;aspect-ratio:.72;
+  border:1px solid var(--line-2);border-radius:16px;
+  background:
+    radial-gradient(rgba(217,178,111,.14) 1px,transparent 1.35px) 0 0/16px 16px,
+    linear-gradient(160deg,#1c1a1e,#111013);
+}
+.save-sheet-preview img{
+  width:100%;height:100%;display:block;object-fit:cover;
+  object-position:var(--role-media-focus-x) var(--role-media-focus-y);
+  transition:opacity 280ms ease,transform 520ms var(--ease-expo);
+}
+.save-sheet.is-preparing .save-sheet-preview img{opacity:.42;transform:scale(1.018)}
+.save-sheet.is-ready .save-sheet-preview img{animation:motionImageReady 540ms var(--ease-expo) both}
+.save-preview-meta{
+  position:absolute;left:10px;right:10px;bottom:10px;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:10px 12px;border:1px solid var(--line-2);border-radius:12px;
+  background:rgba(13,13,16,.66);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+}
+.save-preview-meta b{font-family:var(--serif);font-size:14px;font-weight:700;letter-spacing:.08em}
+.save-preview-meta span{
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:11px;letter-spacing:.06em;color:var(--gold-hi);
+}
+.save-sheet-actions{margin-top:14px;display:grid;gap:8px}
+.save-sheet-choice{
+  position:relative;width:100%;min-height:58px;padding:10px 12px;
+  display:grid;grid-template-columns:34px minmax(0,1fr) 28px;align-items:center;gap:12px;
+  border:1px solid var(--line);border-radius:14px;
+  color:var(--text);background:rgba(255,255,255,.025);
+  text-decoration:none;text-align:left;cursor:pointer;
+  overflow:hidden;isolation:isolate;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform var(--motion-fast) var(--ease-expo),border-color var(--motion-ui) ease,background var(--motion-ui) ease;
+}
+.save-sheet-choice>*{position:relative;z-index:3}
+.save-choice-mark{
+  width:34px;height:34px;display:grid;place-items:center;
+  border:1px solid var(--line-2);border-radius:10px;
+  color:var(--text-2);background:rgba(255,255,255,.03);font-size:17px;
+  transition:transform 240ms var(--ease-expo);
+}
+.save-choice-copy{min-width:0;display:grid;gap:4px}
+.save-choice-copy b{font-family:var(--serif);font-size:14.5px;font-weight:700;letter-spacing:.08em}
+.save-choice-copy small{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--text-3);
+}
+.save-sheet-choice i{
+  width:28px;height:28px;display:grid;place-items:center;
+  border:1px solid var(--line);border-radius:50%;
+  color:var(--text-3);font-style:normal;font-size:13px;
+  transition:transform 240ms var(--ease-expo),color 240ms ease;
+}
+@media(hover:hover){
+  .save-sheet-choice:hover{transform:translateY(-1px);border-color:var(--line-gold)}
+  .save-sheet-choice:hover i{transform:translateX(2px);color:var(--gold-hi)}
+}
+.save-sheet-choice:not([disabled]):active{transform:scale(.975)}
+.save-sheet-photo{
+  border-color:var(--line-gold);
+  background:linear-gradient(135deg,rgba(217,178,111,.15),rgba(201,74,51,.07) 60%,rgba(255,255,255,.02));
+}
+.save-sheet-photo .save-choice-mark{color:var(--gold-ink);background:var(--gold-fill);border-color:rgba(255,236,200,.55)}
+.save-sheet-photo::before{
+  content:"";position:absolute;z-index:1;inset:-70% -40%;pointer-events:none;opacity:0;
+  transform:translate3d(-30%,0,0) rotate(-9deg);
+  background:linear-gradient(108deg,transparent 22%,rgba(241,212,158,.12) 36%,rgba(255,246,226,.2) 46%,rgba(238,122,95,.1) 58%,transparent 74%);
+}
+.save-sheet-photo::after{
+  content:"";position:absolute;z-index:2;top:-38%;bottom:-38%;left:-42%;width:30%;pointer-events:none;opacity:0;
+  transform:translate3d(-120%,0,0) skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,240,210,.32) 50%,transparent);
+}
+.save-sheet.is-open .save-sheet-photo::before{opacity:1;animation:sheetGoldFilm 3.4s linear infinite}
+.save-sheet.is-open .save-sheet-photo::after{opacity:1;animation:sheetGoldRibbon 2.2s cubic-bezier(.43,.05,.46,.95) infinite}
+.save-sheet-file{color:var(--text-2)}
+.save-sheet-choice[disabled]{opacity:.5;cursor:not-allowed}
+.save-sheet.is-open .save-sheet-photo[disabled]{opacity:.88}
+.save-sheet.is-preparing #saveSheetLink{pointer-events:none;opacity:.55}
+.save-sheet-note{margin:4px 2px 0;font-size:11.5px;line-height:1.7;color:var(--text-3)}
+
+/* ============ Toast ============ */
+.motion-toast{
+  position:fixed;z-index:3000;left:50%;
+  bottom:max(22px,calc(14px + env(safe-area-inset-bottom)));
+  width:min(360px,calc(100% - 28px));min-height:56px;padding:10px 14px 10px 10px;
+  display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:center;
+  visibility:hidden;opacity:0;transform:translate(-50%,14px) scale(.97);
+  border:1px solid var(--line-2);border-radius:16px;
+  color:var(--text);background:rgba(20,19,23,.92);
+  -webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);
+  box-shadow:0 18px 46px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.05);
+  pointer-events:none;
+  transition:visibility 0s linear 320ms,opacity 260ms ease,transform 360ms var(--ease-expo);
+}
+.motion-toast.is-show{visibility:visible;opacity:1;transform:translate(-50%,0) scale(1);transition-delay:0s}
+.motion-toast-mark{
+  width:34px;height:34px;display:grid;place-items:center;border-radius:10px;
+  color:var(--gold-ink);background:var(--gold-fill);font-size:16px;
+}
+.motion-toast-mark .icon{stroke-width:2.3}
+.motion-toast-copy{min-width:0;display:grid;gap:3px}
+.motion-toast-copy b{font-family:var(--serif);font-size:13.5px;font-weight:700;letter-spacing:.06em}
+.motion-toast-copy small{font-size:11.5px;line-height:1.5;color:var(--text-3)}
+.motion-toast.is-show .motion-toast-mark{animation:motionToastMark 520ms 80ms var(--ease-expo) both}
+
+/* ============ 手机：弹窗与保存面板改为底部抽屉 ============ */
+@media(max-width:720px){
+  .archive-modal-panel{
+    top:auto;bottom:0;width:100%;max-height:92vh;
+    transform:translateX(-50%);
+    grid-template-columns:1fr;
+    border-radius:22px 22px 0 0;border-bottom:0;
+    overflow:auto;
+  }
+  .archive-detail-visual{min-height:330px;border-right:0;border-bottom:1px solid var(--line)}
+  .archive-detail-visual::after{
+    content:"";position:absolute;z-index:5;left:50%;top:8px;width:40px;height:4px;
+    transform:translateX(-50%);border-radius:4px;background:rgba(243,238,230,.35);
+  }
+  .detail-visual-top{top:22px;right:62px}
+  .archive-modal-close{top:20px}
+  .archive-detail-content{overflow:visible;padding:26px 18px 24px}
+  .detail-heading h2{font-size:28px}
+  .detail-options{
+    display:flex;overflow-x:auto;overflow-y:hidden;
+    overscroll-behavior-x:contain;scrollbar-width:none;padding:5px;
+  }
+  .detail-options::-webkit-scrollbar{display:none}
+  .detail-options::before{width:84px;transform:translateX(calc(var(--detail-index) * 90px))}
+  .detail-option{flex:0 0 84px;width:84px;min-height:46px;flex-direction:column;gap:2px;padding:5px 4px}
+  .detail-option b{font-size:13px}
+  .detail-reading-panel{min-height:230px;max-height:36vh;padding:16px 14px 26px}
+  .detail-reading-head{top:-16px;margin:-16px -14px 14px;padding:13px 14px 11px}
+  .detail-reading-fade{margin:0 -14px -26px;bottom:-26px}
+  .detail-reading-body{font-size:13px;line-height:1.9}
+
+  .save-sheet-panel{
+    top:auto;bottom:0;width:100%;
+    border-radius:22px 22px 0 0;border-bottom:0;
+    padding:16px 14px calc(16px + env(safe-area-inset-bottom));
+    transform:translate(-50%,100%);opacity:1;
+  }
+  .save-sheet.is-open .save-sheet-panel{transform:translate(-50%,0)}
+  .save-sheet-preview{max-height:54vh}
+  .save-sheet-choice{min-height:56px}
+}
+@media(min-width:721px){
+  .save-sheet-preview{width:auto;height:min(52vh,620px);max-height:none;aspect-ratio:.72;margin-left:auto;margin-right:auto}
+}
+
+/* ============ 手机：页头与工具栏 ============ */
+@media(max-width:620px){
+  .site-header{height:82px}
+  .author-header-row{grid-template-columns:42px max-content minmax(0,1fr) 46px;column-gap:9px}
+  .author-avatar-shell{width:42px;height:42px;border-radius:11px}
+  .author-primary b{font-size:21px;letter-spacing:.08em}
+  .author-english{gap:8px}
+  .author-english::before{width:5px;height:5px}
+  .author-english span{font-size:9px;letter-spacing:.16em}
+  .archive-count{min-width:46px;padding-left:9px}
+  .archive-count span{font-size:8.5px;letter-spacing:.14em}
+  .archive-count b{font-size:19px}
+  .toolbar{min-height:54px;gap:10px}
+  .filters{overflow-x:auto;scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .filter{flex:0 0 auto;height:32px;padding:0 14px;font-size:13.5px}
+  .toolbar-status{height:30px;padding:0 11px;font-size:9.5px;letter-spacing:.1em}
+  footer{font-size:9px;letter-spacing:.12em}
+}
+
+/* ============ 动效：作者切换（发牌式）============ */
+.site-header.author-switch-out .author-avatar-shell{animation:authorAvatarOut 235ms cubic-bezier(.5,0,.8,.35) both}
+.site-header.author-switch-in .author-avatar-shell{animation:authorAvatarIn 520ms var(--ease-expo) both}
+.site-header.author-switch-out .author-primary b{animation:authorNameOut 210ms cubic-bezier(.55,0,.8,.35) both}
+.site-header.author-switch-in .author-primary b{animation:authorNameIn 500ms 35ms var(--ease-expo) both}
+.site-header.author-switch-out .author-english span{animation:authorEnglishOut 190ms ease-in both}
+.site-header.author-switch-in .author-english span{animation:authorEnglishIn 540ms 70ms var(--ease-expo) both}
+.site-header.author-switch-out .archive-count b{animation:authorCountOut 210ms cubic-bezier(.5,0,.8,.35) both}
+.site-header.author-switch-in .archive-count b{animation:authorCountIn 520ms 55ms var(--ease-expo) both}
+.gallery.author-switch-out .archive-card.is-motion-visible:not([hidden]){
+  animation:authorCardDealOut 225ms cubic-bezier(.52,0,.82,.32) both;animation-delay:var(--author-delay,0ms);
+}
+.gallery.author-switch-in .archive-card.is-motion-visible:not([hidden]){
+  animation:authorCardDealIn 520ms var(--ease-expo) both;animation-delay:var(--author-delay,0ms);
+}
+@media(max-width:720px){
+  .gallery.author-switch-out .archive-card.is-motion-visible:not([hidden]){animation-duration:190ms}
+  .gallery.author-switch-in .archive-card.is-motion-visible:not([hidden]){animation-duration:440ms}
+}
+
+/* ============ 动效：弹窗内细节 ============ */
+.archive-modal.is-open .detail-visual-top span{animation:detailBadgeFromLeft 470ms 130ms cubic-bezier(.2,.82,.2,1) both}
+.archive-modal.is-open .detail-visual-top small{animation:detailBadgeFromRight 470ms 170ms cubic-bezier(.2,.82,.2,1) both}
+.archive-modal.is-open .detail-visual-bottom{animation:detailVisualFooterIn 560ms 200ms cubic-bezier(.2,.82,.2,1) both}
+.archive-modal.is-open .detail-save-btn{animation:detailSaveButtonResolve 500ms 260ms cubic-bezier(.2,.82,.2,1) both}
+.detail-save-btn.is-activating{animation:detailSaveDrop 460ms cubic-bezier(.2,.82,.2,1) both}
+.save-sheet-photo.is-activating .save-choice-mark{animation:savePhotoPulse 470ms cubic-bezier(.2,.82,.2,1) both}
+.save-sheet-file.is-activating i{animation:saveFileDrop 480ms cubic-bezier(.2,.82,.2,1) both}
+.save-sheet-choice.is-activating{animation:motionActionConfirm 440ms var(--ease-expo) both}
+.save-sheet.is-ready .save-sheet-note{animation:saveNoteResolve 440ms 80ms ease both}
+.toolbar-status span.is-status-pulse{display:inline-block;animation:motionStatusPulse 420ms var(--ease-expo) both}
+.archive-modal-panel{transform-origin:var(--archive-origin-x,50%) var(--archive-origin-y,50%)}
+
+/* 性能：遮罩打开时冻结背景卡片动画；后台标签页暂停全部动画 */
+body.has-overlay .archive-card .detail-action::before{animation-play-state:paused}
+body.is-page-hidden *,
+body.is-page-hidden *::before,
+body.is-page-hidden *::after{animation-play-state:paused!important}
+
+/* ============ 入场动效（滚动入场 / 弹窗展开 / 标签切换）============ */
+[data-motion].mo-hide{opacity:0}
+[data-motion].is-in{
+  animation-duration:var(--mo-dur,420ms);
+  animation-timing-function:var(--mo-ease,var(--ease-expo));
+}
+[data-motion="sweep-down"].is-in{animation-name:mo-sweep-down}
+[data-motion="sweep-up"].is-in{animation-name:mo-sweep-up}
+[data-motion="sweep-left"].is-in{animation-name:mo-sweep-left}
+[data-motion="sweep-right"].is-in{animation-name:mo-sweep-right}
+[data-motion="focus-in"].is-in{animation-name:mo-focus-in}
+[data-motion="settle"].is-in{animation-name:mo-settle}
+[data-motion="rise"].is-in{animation-name:mo-rise}
+.mo-tab{--mo-dur:220ms;--mo-ease:cubic-bezier(.22,.61,.36,1)}
+.mo-title{--mo-dur:520ms}
+.mo-status{--mo-dur:300ms}
+.mo-cta{--mo-dur:300ms;--mo-ease:var(--ease-back)}
+.mo-card{--mo-dur:420ms}
+.mo-section{--mo-dur:420ms}
+.mo-card::after{
+  content:"";position:absolute;inset:0;z-index:20;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(to top,rgba(241,212,158,.16) 0%,rgba(241,212,158,.05) 45%,rgba(241,212,158,0) 78%);
+  opacity:0;transform:translateY(45%);
+  transition:opacity 300ms ease,transform 300ms var(--ease-expo);
+}
+.mo-card.is-loaded:hover::after,
+.mo-card:focus-within::after{opacity:1;transform:none}
+@media(hover:none){.mo-card::after{display:none}}
+.mo-backdrop{animation:mo-fade-in 300ms ease both}
+.mo-backdrop.is-closing{animation:mo-exit 220ms ease both}
+.mo-panel{
+  transform-origin:var(--mo-ox,50%) var(--mo-oy,50%);
+  animation:mo-unfold 420ms var(--ease-expo) both;
+}
+.mo-panel.is-closing{animation:mo-exit 220ms ease both}
+.mo-tabpanel.is-enter-opening{animation:mo-sweep-left 420ms var(--ease-expo) both}
+.mo-tabpanel.is-enter-setting{animation:mo-settle 420ms var(--ease-back) both}
+.mo-tabpanel.is-enter-worldbook{animation:mo-sweep-down 520ms var(--ease-expo) both}
+.mo-tabpanel.is-enter-preset{animation:mo-sweep-up 520ms var(--ease-expo) both}
+
+/* ============ Keyframes ============ */
+@keyframes statusDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.8)}}
+@keyframes goldLeafSweep{0%{transform:translateX(-120%) skewX(-20deg)}55%,100%{transform:translateX(520%) skewX(-20deg)}}
+@keyframes motionLoadingSweep{0%{transform:translateX(-35%) rotate(-14deg)}100%{transform:translateX(35%) rotate(-14deg)}}
+@keyframes motionLoadingBreathe{0%,100%{opacity:.72;transform:translateY(0)}50%{opacity:1;transform:translateY(-1px)}}
+@keyframes motionReadyCopy{from{opacity:0;transform:translateY(7px);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
+@keyframes motionStatusPulse{0%{opacity:.38;transform:translateY(2px)}100%{opacity:1;transform:none}}
+@keyframes motionActionConfirm{0%{transform:scale(1)}42%{transform:scale(.975)}100%{transform:scale(1)}}
+@keyframes motionToastMark{0%{opacity:0;transform:scale(.45) rotate(-10deg)}65%{transform:scale(1.08) rotate(2deg)}100%{opacity:1;transform:none}}
+@keyframes motionImageReady{from{opacity:.4;transform:scale(1.02)}to{opacity:1;transform:none}}
+@keyframes authorFilterGlint{0%{opacity:0;transform:translateX(-70%) skewX(-18deg)}25%{opacity:1}100%{opacity:0;transform:translateX(75%) skewX(-18deg)}}
+@keyframes authorAvatarOut{from{opacity:1;transform:rotateY(0) scale(1);filter:none}to{opacity:.08;transform:rotateY(var(--author-avatar-out-rot)) scale(.88);filter:blur(2px)}}
+@keyframes authorAvatarIn{0%{opacity:0;transform:rotateY(var(--author-avatar-in-rot)) scale(.86);filter:blur(3px)}62%{opacity:1;transform:rotateY(var(--author-avatar-bounce-rot)) scale(1.025);filter:none}100%{opacity:1;transform:none;filter:none}}
+@keyframes authorNameOut{to{opacity:0;transform:translateX(var(--author-name-out-x)) skewX(var(--author-name-out-skew));filter:blur(2px)}}
+@keyframes authorNameIn{0%{opacity:0;transform:translateX(var(--author-name-in-x)) skewX(var(--author-name-in-skew));filter:blur(3px)}70%{opacity:1;transform:translateX(var(--author-name-over-x));filter:none}100%{opacity:1;transform:none;filter:none}}
+@keyframes authorEnglishOut{to{opacity:0;clip-path:inset(0 100% 0 0);letter-spacing:.3em}}
+@keyframes authorEnglishIn{0%{opacity:0;clip-path:inset(0 0 0 100%);letter-spacing:.3em}100%{opacity:1;clip-path:inset(0)}}
+@keyframes authorCountOut{to{opacity:0;transform:translateY(var(--author-count-out-y)) scale(.92);filter:blur(1px)}}
+@keyframes authorCountIn{0%{opacity:0;transform:translateY(var(--author-count-in-y)) scale(.9);filter:blur(2px)}72%{opacity:1;transform:translateY(var(--author-count-over-y)) scale(1.04);filter:none}100%{opacity:1;transform:none;filter:none}}
+@keyframes authorCardDealOut{0%{opacity:1;transform:none}100%{opacity:0;transform:translateX(var(--author-card-out-x)) translateY(5px) rotateZ(var(--author-card-out-rot)) scale(.985)}}
+@keyframes authorCardDealIn{0%{opacity:0;transform:translateX(var(--author-card-in-x)) translateY(8px) rotateZ(var(--author-card-in-rot)) scale(.972)}72%{opacity:1;transform:translateX(var(--author-card-over-x)) translateY(-1px) rotateZ(var(--author-card-over-rot)) scale(1.004)}100%{opacity:1;transform:none}}
+@keyframes detailIndexTick{0%{transform:scale(1.06)}38%{transform:scale(.82) rotate(-7deg)}72%{transform:scale(1.16) rotate(2deg)}100%{transform:scale(1.06)}}
+@keyframes detailLabelSettle{0%{transform:translateY(0)}42%{transform:translateY(2px);opacity:.62}100%{transform:none;opacity:1}}
+@keyframes detailButtonSheen{0%{opacity:0;transform:translateX(-75%) skewX(-18deg)}30%{opacity:.8}100%{opacity:0;transform:translateX(80%) skewX(-18deg)}}
+@keyframes detailSaveDrop{0%{transform:translateY(0)}38%{transform:translateY(4px) scale(.9)}72%{transform:translateY(-1px) scale(1.04)}100%{transform:none}}
+@keyframes detailBadgeFromLeft{from{opacity:0;transform:translateX(-9px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes detailBadgeFromRight{from{opacity:0;transform:translateX(9px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes detailVisualFooterIn{0%{opacity:0;transform:translateY(12px) scale(.98)}100%{opacity:1;transform:none}}
+@keyframes detailSaveButtonResolve{0%{opacity:0;transform:translateX(8px)}70%{opacity:1;transform:translateX(-1px)}100%{opacity:1;transform:none}}
+@keyframes detailMiniDownload{0%{transform:none}44%{transform:translateY(4px) scale(.86)}100%{transform:none}}
+@keyframes savePhotoPulse{0%{transform:scale(1)}42%{transform:scale(.8)}70%{transform:scale(1.1)}100%{transform:none}}
+@keyframes saveFileDrop{0%{transform:none}38%{transform:translateY(5px) scale(.9)}76%{transform:translateY(-1px)}100%{transform:none}}
+@keyframes saveNoteResolve{from{opacity:.3;transform:translateY(3px)}to{opacity:1;transform:none}}
+@keyframes sheetGoldFilm{0%{transform:translate3d(-34%,0,0) rotate(-9deg)}50%{transform:translate3d(5%,0,0) rotate(-9deg)}100%{transform:translate3d(36%,0,0) rotate(-9deg)}}
+@keyframes sheetGoldRibbon{0%{transform:translate3d(-150%,0,0) skewX(-18deg)}100%{transform:translate3d(510%,0,0) skewX(-18deg)}}
+@keyframes mo-sweep-down{from{clip-path:inset(0 0 100% 0);opacity:0;transform:translateY(-8px)}to{clip-path:inset(0);opacity:1;transform:none}}
+@keyframes mo-sweep-up{from{clip-path:inset(100% 0 0 0);opacity:0;transform:translateY(10px)}to{clip-path:inset(0);opacity:1;transform:none}}
+@keyframes mo-sweep-left{from{clip-path:inset(0 100% 0 0);opacity:0;transform:translateX(-14px)}to{clip-path:inset(0);opacity:1;transform:none}}
+@keyframes mo-sweep-right{from{clip-path:inset(0 0 0 100%);opacity:0;transform:translateX(14px)}to{clip-path:inset(0);opacity:1;transform:none}}
+@keyframes mo-focus-in{from{filter:blur(10px);opacity:0;letter-spacing:.3em}to{filter:blur(0);opacity:1}}
+@keyframes mo-settle{from{transform:scale(1.04);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes mo-rise{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+@keyframes mo-unfold{from{scale:.92;opacity:0}to{scale:1;opacity:1}}
+@keyframes mo-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes mo-exit{from{opacity:1;scale:1}to{opacity:0;scale:.98}}
+
+/* ============ 减少动态效果 ============ */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:.01ms!important;animation-iteration-count:1!important}
+  .archive-card,.archive-card .card-face,.gallery,
+  .site-header .author-avatar-shell,.author-primary b,.author-english span,.archive-count b,
+  .archive-card .card-face::after,.archive-card .loading-core,
+  .detail-action::before,.toolbar-status i,
+  .detail-option span,.detail-option b,.filter::before{animation:none!important}
+  .save-sheet.is-open .save-sheet-photo::before{animation:none!important;opacity:.4;transform:rotate(-9deg)}
+  .save-sheet.is-open .save-sheet-photo::after{display:none}
+  [data-motion].is-in,.mo-backdrop,.mo-panel,.mo-tabpanel{animation-name:mo-fade-in!important;animation-duration:150ms!important}
+  .mo-backdrop.is-closing,.mo-panel.is-closing{animation-name:mo-fade-in!important;animation-direction:reverse!important}
+}
+</style>
+</head>
+<body class="motion-rich">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-photo" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 15.5-4.8-4.8-8.7 8.8"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8z"/><path d="M14 3.5V8h4.5M12 11v6M9.5 14.5 12 17l2.5-2.5"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m10 7 5 5-5 5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+</svg>
+
+    <header class="site-header">
+      <div class="wrap author-header-row">
+        <button
+          class="author-avatar-shell"
+          id="headerAuthorCycle"
+          type="button"
+          aria-label="切换下一位作者"
+        >
+          <img
+            id="headerAuthorAvatar"
+            class="author-avatar-img"
+            alt="繁花·纷落头像"
+            width="48"
+            height="48"
+          >
+        </button>
+
+        <div class="author-primary">
+          <b id="headerAuthorName">繁花·纷落</b>
+        </div>
+
+        <div class="author-english">
+          <span id="headerAuthorEnglish">FANHUA · FENLUO</span>
+          <small>TAVO ROLE CARDS</small>
+        </div>
+
+        <div class="archive-count">
+          <span>ARCHIVE</span>
+          <b id="headerArchiveCount">—</b>
+        </div>
+      </div>
+    </header>
+
+    <main class="archive-main">
+      <div class="toolbar">
+        <div class="filters author-filters" aria-label="作者分区">
+          <button class="filter author-filter active" type="button" data-author="fanhuafenluo" aria-pressed="true">繁花·纷落</button>
+          <button class="filter author-filter" type="button" data-author="public" aria-pressed="false">公开</button>
+        </div>
+        <div class="toolbar-status" id="status" aria-live="polite">
+          <i></i><span>WAITING</span>
+          <button class="status-retry" id="statusRetry" type="button" hidden>重新加载</button>
+        </div>
+      </div>
+
+      <h1 class="sr-only">繁花·纷落角色卡档案</h1>
+      <template id="archiveCardTemplate">
+    <article class="archive-card">
+      <div class="card-face">
+        <div class="loaded-art" aria-hidden="true"></div>
+
+        <div class="stripe-field" aria-hidden="true"></div>
+        <div class="ghost-frame" aria-hidden="true"></div>
+
+        <div class="corner-code"><span class="corner-dot"></span><span class="corner-label"></span></div>
+        <div class="corner-index"></div>
+
+        <div class="loading-core" aria-hidden="true">
+          <div class="state-label state-label-loading">
+            <div class="loading-title">ARCHIVE MATERIALIZING</div>
+            <div class="loading-line"></div>
+            <div class="loading-sub">等待卡面</div>
+          </div>
+          <div class="state-label state-label-ready">
+            <div class="loading-title ready-name"></div>
+            <div class="loading-line"></div>
+            <div class="loading-sub ready-meta"></div>
+          </div>
+        </div>
+
+        <div class="bottom-frame">
+          <button class="detail-action" type="button" tabindex="-1" disabled>
+            <span class="action-copy">
+              <b>查看档案</b>
+              <small>PROFILE · SETTING · OPENING</small>
+            </span>
+            <span class="action-arrow"><svg class="icon"><use href="#i-arrow"/></svg></span>
+          </button>
+          <button class="download-action" type="button" tabindex="-1" disabled aria-label="下载角色卡">
+            <span class="download-icon"><svg class="icon"><use href="#i-download"/></svg></span>
+          </button>
+        </div>
+      </div>
+    </article>
+      </template>
+
+      <section
+        class="gallery"
+        id="archiveGallery"
+        aria-label="角色卡档案"
+        aria-busy="true"
+      ></section>
+
+      <noscript>
+        <p style="padding:40px 20px;text-align:center;color:#cfc7ba;font-size:13px">
+          本页需要 JavaScript 才能加载角色卡档案。
+        </p>
+      </noscript>
+    </main>
+
+    <footer>
+      <div class="wrap"><span>© 2026 繁花·纷落</span><span>UNIFIED CARD LAYOUT</span></div>
+    </footer>
+
+<div class="archive-modal" id="archiveModal" aria-hidden="true" inert>
+  <div class="archive-modal-backdrop" data-close-archive></div>
+  <section class="archive-modal-panel" role="dialog" aria-modal="true" aria-labelledby="detailName">
+    <button class="archive-modal-close" id="archiveModalClose" type="button" aria-label="关闭档案"><svg class="icon"><use href="#i-close"/></svg></button>
+
+    <div class="archive-detail-visual" id="detailVisual">
+      <div class="detail-art">
+        <img
+          id="detailImage"
+          class="detail-source-image"
+          alt=""
+          decoding="async"
+        >
+      </div>
+      <div class="detail-visual-top">
+        <span id="detailIdentity">角色身份</span>
+        <small id="detailIndex">ARCHIVE · 01</small>
+      </div>
+      <div class="detail-visual-bottom">
+        <span>TAVO CHARACTER CARD</span>
+        <button class="detail-save-btn" id="detailSaveBtn" type="button"><svg class="icon"><use href="#i-download"/></svg><span>保存角色卡 PNG</span></button>
+      </div>
+    </div>
+
+    <div class="archive-detail-content">
+      <div class="detail-heading">
+        <div>
+          <h2 id="detailName">角色名</h2>
+          <p id="detailAlias">TAVO CHARACTER CARD · SPEC V1 / V2 / V3</p>
+        </div>
+        <span class="detail-tavo-badge">TAVO</span>
+      </div>
+
+      <div class="detail-reader">
+        <div class="detail-options" role="tablist" aria-label="角色档案内容">
+          <button class="detail-option is-active" type="button" role="tab" aria-selected="true" data-detail-tab="opening">
+            <span>01</span><b>开场白</b>
+          </button>
+          <button class="detail-option" type="button" role="tab" aria-selected="false" data-detail-tab="setting">
+            <span>02</span><b>人物设定</b>
+          </button>
+          <button class="detail-option" type="button" role="tab" aria-selected="false" data-detail-tab="worldbook">
+            <span>03</span><b>世界书</b>
+          </button>
+          <button class="detail-option" type="button" role="tab" aria-selected="false" data-detail-tab="preset">
+            <span>04</span><b>预设</b>
+          </button>
+        </div>
+
+        <section class="detail-reading-panel" role="tabpanel" tabindex="0">
+          <div class="detail-reading-head">
+            <div>
+              <small id="detailPanelIndex">01 · CHARACTER DATA</small>
+              <h3 id="detailPanelTitle">开场白</h3>
+            </div>
+            <span id="detailPanelType">OPENING</span>
+          </div>
+          <div class="detail-reading-body" id="detailPanelBody"></div>
+          <div class="detail-reading-fade" aria-hidden="true"></div>
+        </section>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="save-sheet" id="saveSheet" aria-hidden="true" inert>
+  <div class="save-sheet-backdrop" data-close-save></div>
+  <section class="save-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="saveSheetTitle">
+    <div class="save-sheet-head">
+      <div>
+        <small>CHARACTER CARD EXPORT</small>
+        <h3 id="saveSheetTitle">保存角色卡</h3>
+        <p>PNG 卡片可用于 TAVO 的图片角色卡导入。</p>
+      </div>
+      <button class="save-sheet-close" id="saveSheetClose" type="button" aria-label="关闭保存面板"><svg class="icon"><use href="#i-close"/></svg></button>
+    </div>
+
+    <div class="save-sheet-preview">
+      <img id="saveSheetImage" alt="角色卡 PNG 预览">
+      <div class="save-preview-meta">
+        <b id="savePreviewName">角色名</b>
+        <span id="savePreviewIdentity">角色身份</span>
+      </div>
+    </div>
+
+    <div class="save-sheet-actions">
+      <button class="save-sheet-choice save-sheet-photo" id="saveSheetPhoto" type="button">
+        <span class="save-choice-mark"><svg class="icon"><use href="#i-photo"/></svg></span>
+        <span class="save-choice-copy">
+          <b>保存到相册</b>
+          <small>PHOTO LIBRARY · SYSTEM MENU</small>
+        </span>
+        <i><svg class="icon"><use href="#i-chevron"/></svg></i>
+      </button>
+
+      <a class="save-sheet-choice save-sheet-file" id="saveSheetLink" download="character-card.png">
+        <span class="save-choice-mark"><svg class="icon"><use href="#i-file"/></svg></span>
+        <span class="save-choice-copy">
+          <b>以文件形式保存</b>
+          <small>PNG FILE · KEEP CHARACTER CARD DATA</small>
+        </span>
+        <i><svg class="icon"><use href="#i-download"/></svg></i>
+      </a>
+
+      <p class="save-sheet-note" id="saveSheetNote">
+        保存到相册由系统菜单处理；部分相册可能重新处理图片。需要保留角色卡数据用于导入时，请使用“以文件形式保存”。
+      </p>
+    </div>
+  </section>
+</div>
+
+<script>
+/* =========================================================
+   示例数据
+   原站从远程仓库读取角色卡；这个版本只用来展示新外观，
+   所以角色、卡面、资料和 PNG 都在本地生成，内容全部为虚构的全年龄向示例。
+   ========================================================= */
+const DemoArchive=(()=>{
+  'use strict';
+
+  function rng(seed){
+    let a=seed>>>0;
+    return ()=>{
+      a=(a+0x6D2B79F5)>>>0;
+      let t=a;
+      t=Math.imul(t^(t>>>15),t|1);
+      t^=t+Math.imul(t^(t>>>7),t|61);
+      return ((t^(t>>>14))>>>0)/4294967296;
+    };
+  }
+  function hashStr(text){
+    let h=2166136261;
+    for(const ch of text){
+      h^=ch.codePointAt(0);
+      h=Math.imul(h,16777619);
+    }
+    return h>>>0;
+  }
+  const pick=(r,list)=>list[Math.floor(r()*list.length)];
+  const fill=(tpl,ctx)=>tpl.replace(/\{(\w)\}/g,(m,key)=>ctx[key] ?? m);
+  function shuffle(r,list){
+    const out=[...list];
+    for(let i=out.length-1;i>0;i--){
+      const j=Math.floor(r()*(i+1));
+      [out[i],out[j]]=[out[j],out[i]];
+    }
+    return out;
+  }
+
+  const SURNAMES='沈林顾苏温陆许江叶季秦白程宋谢傅姜孟楚柳裴闻祁岑言池唐韩黎乔'.split('');
+  const GIVEN=['知微','栖迟','南乔','挽星','听澜','清和','予安','望舒','照影','鹤年','书禾','长宁','念秋','云岫','既白','初霁','砚秋','临渊','晚晴','疏桐','清越','若溪','星澜','怀瑾','知意','沐川','一苇','青梧','向晚','听雪','拾光','明川','映雪','闻笛','九思','未央','落梅','见山','归鸿','微澜'];
+  const SEASONS=['初春','暮春','梅雨时节','盛夏','初秋','深秋','初冬','落雪的冬夜'];
+  const TIMES=['黄昏','深夜','清晨','午后','雨夜','薄暮'];
+
+  /* {n} 角色名 · {s} 季节 · {t} 时间 */
+  const ARCHETYPES=[
+    {label:'古籍修复师',place:'临川旧书阁',world:'临川',motif:'arch',age:[26,34],
+      traits:'安静而耐心，对细节近乎固执；嘴上爱较真，心却很软',
+      speech:'语速很慢，常以“嗯”开头，偶尔引一句古书',
+      likes:'旧纸的气味、桂花糕、下雨天',
+      habit:'思考时用指尖轻敲桌面三下',
+      scene:'{t}的旧书阁只亮着一盏灯。{n}俯在长桌前，用竹镊把一片薄如蝉翼的补纸覆上残页，听见门响，也没有抬头。',
+      line1:'……风铃响了两次。你是今天第三位迷路到这里的客人。',
+      action:'{n}放下竹镊，把一盏温热的茶推到桌角，示意你坐下。',
+      line2:'先别碰那本书，它比我们俩加起来还要老。说吧，你想找哪一卷？',
+      scenario:'{s}，临川旧书阁即将闭馆修缮。{n}受托在三十天内修好一部残缺的地方志，而你带来的一页散佚残稿，恰好能补上其中缺失的一章。',
+      lore:[
+        ['临川旧书阁','书阁, 藏书, 旧书阁','城南最古老的藏书楼，三层木构，顶层终年不对外开放。阁中规矩：借书须登记，夜里不得点明火。'],
+        ['补纸','补纸, 修复, 残页','{n}亲手抄制的楮皮纸，薄而韧。染色时会比照原书的年代与纸色，讲究“修旧如旧”。'],
+        ['散佚残稿','残稿, 地方志, 缺页','据说记载着临川一条早已改道的河流。{n}对它的兴趣，远比愿意承认的要多。']
+      ]},
+    {label:'灯塔守夜人',place:'雾港灯塔',world:'雾港',motif:'moon',age:[28,38],
+      traits:'寡言、可靠，习惯独处；对天气与潮汐的直觉准得惊人',
+      speech:'句子很短，常用航海术语，笑起来却很温和',
+      likes:'热姜茶、旧唱片、数过往的船只',
+      habit:'每隔一小时擦一次灯罩，哪怕它一尘不染',
+      scene:'{t}，雾从海面漫上石阶。灯塔顶层的巨灯缓缓转动，{n}靠在铁栏边，手里的提灯照出你湿透的衣角。',
+      line1:'这种天气还往岬角走，你要么是迷路了，要么是来找我的。',
+      action:'{n}侧身让出通往楼梯的路，提灯的光在雾里晕成一团暖黄。',
+      line2:'进来吧。水壶刚烧开，潮水要到后半夜才退。',
+      scenario:'{s}，雾港接连三晚出现不明的灯语信号。作为港口唯一的守夜人，{n}必须在下一场大雾前弄清信号来自何方——而你，是这几天唯一登上岬角的人。',
+      lore:[
+        ['雾港灯塔','灯塔, 岬角, 雾港','建于百年前的白色石塔，共一百二十七级台阶。灯光每十二秒旋转一周，是雾港渔船归航的坐标。'],
+        ['灯语','灯语, 信号, 闪光','以长短闪光传递讯息的古老方式。{n}能在三秒内读出任何一组灯语。'],
+        ['潮汐表','潮汐, 退潮, 涨潮','贴在值班室墙上的手写潮汐表，边角写满了{n}多年的观测笔记。']
+      ]},
+    {label:'星图测绘员',place:'北岭观星台',world:'北岭',motif:'moon',age:[24,32],
+      traits:'好奇心旺盛，思维跳跃；做起计算来却一丝不苟',
+      speech:'兴奋时语速飞快，会突然停下来问“你看见了吗？”',
+      likes:'晴朗的冬夜、热可可、给星星起外号',
+      habit:'随身带着一支只剩半截的铅笔',
+      scene:'{t}的观星台上，铜制望远镜对着北方的天空。{n}裹着厚毯子坐在台阶上，膝头摊着一张画满坐标的星图。',
+      line1:'嘘——别出声，再等七秒……好了，它出来了！',
+      action:'{n}一把拉过你的袖子，把你按到目镜前，眼睛亮得像刚捡到宝。',
+      line2:'那颗偏红的，星表上没有。从今晚开始，它得有个名字了——你来取吧？',
+      scenario:'{s}，北岭观星台在例行测绘中发现了一颗未登记的星。{n}需要连续观测四十个夜晚来确认它的轨道，并为此招募一名夜间记录员——也就是你。',
+      lore:[
+        ['北岭观星台','观星台, 北岭, 望远镜','建在山脊上的圆顶石屋，穹顶可以手摇开合。山路积雪时，补给每周只送一次。'],
+        ['星图','星图, 坐标, 测绘','{n}手绘的星图共有九卷，每一卷都用不同颜色的墨水标注年份。'],
+        ['未名之星','新星, 红星, 未登记','颜色偏红、亮度不稳定的天体。{n}坚信它不是一颗普通的恒星。']
+      ]},
+    {label:'茶馆掌柜',place:'落花巷茶馆',world:'落花巷',motif:'bloom',age:[27,38],
+      traits:'圆滑周到、消息灵通；看似漫不经心，其实把每位客人都记在心里',
+      speech:'说话带笑，爱打趣，喜欢用茶名打比方',
+      likes:'新茶、听书、收集客人讲的故事',
+      habit:'擦茶杯时会哼一段走调的小曲',
+      scene:'{t}的落花巷，茶馆门口的灯笼刚刚点亮。{n}倚在柜台后拨着算盘，抬眼看见你，算珠“啪”地停住了。',
+      line1:'哟，稀客。靠窗那桌刚空出来，正对着巷口那棵老桂树。',
+      action:'{n}提起铜壶，滚水冲进盖碗，茶香一下子漫开。',
+      line2:'今天这壶不收钱——不过，你得给我讲一件这几天遇见的新鲜事。',
+      scenario:'{s}，落花巷要办一年一度的斗茶会。{n}的茶馆却在这时丢了一罐压箱底的老茶，而据说那罐茶，藏着茶馆上一任掌柜留下的秘密。',
+      lore:[
+        ['落花巷茶馆','茶馆, 落花巷, 柜台','两层木楼，楼下喝茶听书，楼上是只接熟客的雅间。门口的老桂树每到秋天就落满一地金黄。'],
+        ['斗茶会','斗茶, 茶会, 比试','每年秋分举行，各家茶馆比茶汤、比茶器、比点茶的手艺。{n}已经连续三年拿了第二。'],
+        ['老茶','老茶, 茶罐, 秘密','一罐封存了二十年的陈茶，罐底刻着一行谁也看不懂的小字。']
+      ]},
+    {label:'钟表匠',place:'齿轮街钟表铺',world:'齿轮街',motif:'arch',age:[29,40],
+      traits:'严谨守时、略带洁癖；对坏掉的东西有着近乎温柔的执着',
+      speech:'用词精确，讨厌“大概”“差不多”，紧张时会看怀表',
+      likes:'机油味、整点的报时声、拆开再装好',
+      habit:'每天傍晚六点准时给店里所有的钟上弦',
+      scene:'{t}，齿轮街的店铺陆续打烊。钟表铺里却响着几十只钟表此起彼伏的滴答声，{n}戴着单片放大镜，正对着一只怀表皱眉。',
+      line1:'你迟到了四分十二秒——哦，抱歉，我以为你是来取表的那位。',
+      action:'{n}摘下放大镜，把那只停摆的怀表推到你面前，表盖内侧刻着一个陌生的名字。',
+      line2:'它停在了三点十七分。修好它不难，难的是弄清楚，它为什么偏偏停在那一刻。',
+      scenario:'{s}，有人把一只古老的怀表寄存在{n}的店里，之后便再也没有出现。怀表停摆的时刻，与齿轮街钟楼多年前那场停电恰好一致。',
+      lore:[
+        ['齿轮街','齿轮街, 街道, 钟楼','以手工匠铺闻名的老街，街尾的钟楼已经停摆多年。'],
+        ['怀表','怀表, 停摆, 三点十七分','银壳怀表，机芯做工远超这个时代的水平。表盖内侧刻着名字“晚舟”。'],
+        ['钟表铺规矩','规矩, 修表, 取表','修好的表保留九十天；逾期不取的表，{n}会挂在墙上，替它们继续走下去。']
+      ]},
+    {label:'温室植物学家',place:'青藤园玻璃温室',world:'青藤园',motif:'bloom',age:[25,35],
+      traits:'温和、慢热，对植物比对人更有耐心；认真起来很固执',
+      speech:'轻声细语，常把人比作某种植物',
+      likes:'清晨的露水、苔藓、手写标签',
+      habit:'进温室前一定要先敲三下玻璃门，说是“打招呼”',
+      scene:'{t}的玻璃温室里蒸腾着湿润的雾气。{n}蹲在一排陶盆前，袖子挽到手肘，指尖沾着泥土。',
+      line1:'小心脚下，那株刚发芽——好，就站在那里，别动。',
+      action:'{n}拿起喷壶，往你身边的蕨叶上洒了一层细雾，阳光穿过水珠，落下一小片彩虹。',
+      line2:'你看起来像一株缺水的薄荷。坐吧，我刚泡了柠檬草茶。',
+      scenario:'{s}，青藤园的温室里，一株据说百年才开一次花的植物冒出了花苞。{n}需要有人帮忙日夜照看——在它开花的那一刻，必须有人在场。',
+      lore:[
+        ['玻璃温室','温室, 青藤园, 玻璃','铸铁框架的老式温室，分热带区、蕨类区和多肉区，常年保持着二十六度。'],
+        ['百年花','花苞, 开花, 百年','青藤园最珍贵的藏品，上一次开花还是在建园之初。没有人知道它的花是什么颜色。'],
+        ['手写标签','标签, 植物名, 笔记','{n}给每一株植物都写了标签，除了学名，还有一句只有自己看得懂的话。']
+      ]},
+    {label:'山道邮差',place:'云栈驿站',world:'云栈山',motif:'moon',age:[22,30],
+      traits:'开朗、爱说话，脚程极快；把每一封信都当成必须完成的承诺',
+      speech:'热情直率，爱讲路上的见闻，常说“包在我身上”',
+      likes:'山间的风、烤红薯、收信人拆信时的表情',
+      habit:'出发前会把邮包的带子系三遍',
+      scene:'{t}，山道上的雾刚散。{n}背着鼓鼓囊囊的邮包，从石阶上一路小跑下来，在驿站门口刹住脚步。',
+      line1:'你就是住在半山腰那间木屋的新住户？太好了，总算找到你了！',
+      action:'{n}在邮包里翻了半天，掏出一封边角磨得起毛的旧信，郑重地双手递给你。',
+      line2:'这封信在驿站压了整整三年，收件人一栏写的，正是你现在住的地址。',
+      scenario:'{s}，云栈山的驿站翻修时找出了一批无人认领的旧信。{n}决定把它们一封一封送到主人手里——第一封，就寄到了你的门前。',
+      lore:[
+        ['云栈驿站','驿站, 云栈山, 邮局','半山腰的小石屋，是山里十几个村子唯一的邮局，门口挂着一只铜铃。'],
+        ['无人认领的信','旧信, 信件, 认领','驿站阁楼里找出的四十七封旧信，有些已经寄出了二十年。'],
+        ['邮包','邮包, 背包, 送信','{n}的邮包是祖辈传下来的，帆布上补了九块补丁。']
+      ]},
+    {label:'剑术教习',place:'青石武馆',world:'青石镇',motif:'arch',age:[27,39],
+      traits:'严厉、直接，对自己比对学生更狠；私下里会偷偷给学生留点心',
+      speech:'简短干脆，训话时声音洪亮，夸人时却会别过脸去',
+      likes:'清晨练剑、磨刀石、热腾腾的面条',
+      habit:'收剑入鞘前一定要用布擦三遍',
+      scene:'{t}的武馆后院，青石板上落满了花瓣。{n}手持木剑立在院中，听见脚步声，剑尖稳稳地指向你。',
+      line1:'武馆今天不收新人。……不过，你刚才那一步躲得不错。',
+      action:'{n}手腕一翻，把另一柄木剑抛向你，剑在空中划了一道弧。',
+      line2:'接住。走三招，让我看看你是来学剑的，还是来闹事的。',
+      scenario:'{s}，青石武馆收到了一封来自城中剑会的挑战书。馆里的弟子都还太年轻，{n}需要一位能并肩作战的搭档，在一个月后的比剑会上守住武馆的招牌。',
+      lore:[
+        ['青石武馆','武馆, 青石镇, 后院','镇东头的老武馆，前院练拳，后院练剑。院中有一棵三人合抱的老海棠。'],
+        ['剑会挑战书','挑战, 剑会, 比剑','以朱砂写就的挑战书，约定比剑点到为止，输的一方须摘下牌匾一年。'],
+        ['木剑','木剑, 练剑, 剑术','武馆的木剑都由{n}亲手削制，剑柄上刻着每个弟子的名字。']
+      ]},
+    {label:'调香师',place:'雨巷香铺',world:'雨巷',motif:'bloom',age:[26,36],
+      traits:'敏锐、优雅，带一点捉摸不透的神秘；能凭气味记住一个人',
+      speech:'说话轻柔，喜欢用气味形容情绪',
+      likes:'雨后的泥土香、旧书页、雪松',
+      habit:'见到新客人时会不自觉地轻嗅一下空气',
+      scene:'{t}，雨巷深处的香铺挂着半卷竹帘。{n}正把一滴琥珀色的精油滴上试香纸，听见你进门，轻轻扇了扇纸条。',
+      line1:'你身上有雨水、铁锈，还有一点……桂花。今天路过了城西的老桥，对吗？',
+      action:'{n}把试香纸递到你面前，一缕清冷的木质香慢慢散开。',
+      line2:'我在调一款叫“归途”的香，还差最后一味。也许，你能帮我找到它。',
+      scenario:'{s}，雨巷香铺接到一份特别的委托：为一位失去记忆的老人，调出他年轻时故乡的气味。{n}手上只有一张褪色的照片和三个模糊的关键词。',
+      lore:[
+        ['雨巷香铺','香铺, 雨巷, 竹帘','藏在小巷尽头的香铺，墙上整面都是小小的木抽屉，每个抽屉里装着一种原料。'],
+        ['归途','归途, 香水, 调香','{n}正在调配的香，前调是雨，中调是旧木，尾调至今没有定下来。'],
+        ['气味记忆','气味, 记忆, 照片','{n}相信气味是最长久的记忆，比照片和文字都更难被遗忘。']
+      ]},
+    {label:'夜行列车乘务长',place:'银河夜行列车',world:'银河线',motif:'moon',age:[28,40],
+      traits:'礼貌周全、笑容得体；对每一节车厢的秘密都心知肚明',
+      speech:'措辞考究，像在念车站广播，偶尔冒出一句俏皮话',
+      likes:'车窗外的星河、银质怀表、准点到站',
+      habit:'检票时会把车票对着灯光看一眼',
+      scene:'{t}，夜行列车驶过一片发光的原野。车厢里灯光昏黄，{n}穿着笔挺的制服，推着餐车停在你的座位旁。',
+      line1:'晚上好，这位乘客。您的车票上……没有写终点站。',
+      action:'{n}把一杯冒着热气的红茶放在小桌上，压低声音，像在分享一个秘密。',
+      line2:'别担心，这趟列车上，没写终点的票不止您一张。接下来的旅程，就由我为您服务。',
+      scenario:'{s}，银河夜行列车每年只开行一次，乘客都是收到神秘车票的人。{n}是这趟列车的乘务长，负责在抵达终点前，帮每位乘客找到他们上车的理由。',
+      lore:[
+        ['银河夜行列车','列车, 夜行, 车厢','九节车厢的蒸汽列车，沿着星河铺设的轨道行驶。每节车厢的装潢都来自不同的年代。'],
+        ['无终点车票','车票, 终点, 乘客','票面只印着出发站与日期。传说票上的终点，会在乘客想明白某件事之后才浮现出来。'],
+        ['餐车','餐车, 红茶, 点心','列车上唯一通宵营业的地方，菜单每过一站就会换一次。']
+      ]},
+    {label:'侦探事务所所长',place:'雾都侦探事务所',world:'雾都',motif:'arch',age:[30,42],
+      traits:'头脑敏锐、观察入微，有点懒散；只对有趣的案子提得起劲',
+      speech:'慢条斯理，喜欢反问，推理时会突然加快语速',
+      likes:'黑咖啡、下雨天、没有头绪的谜题',
+      habit:'思考时会把钢笔在指间转个不停',
+      scene:'{t}，雾都的街灯在雾里晕成一圈圈光斑。事务所二楼的窗还亮着，{n}把双脚搭在办公桌上，手里翻着一沓旧报纸。',
+      line1:'门没锁。……你在楼下徘徊了三圈，鞋跟上沾着码头的沙，看来委托不小。',
+      action:'{n}放下报纸，指了指对面那把吱呀作响的椅子。',
+      line2:'坐。先说清楚，我只接两种案子：特别难的，和特别奇怪的。你的属于哪一种？',
+      scenario:'{s}，雾都接连发生了几起“物品自己回家”的怪事：失窃多年的东西，一夜之间回到了原主人的门前。{n}受托调查，而你，是最新一件物品的收件人。',
+      lore:[
+        ['雾都侦探事务所','事务所, 侦探, 雾都','位于钟表店楼上的小事务所，门牌上的字掉了一半，只剩下“侦探”二字。'],
+        ['归还事件','归还, 失窃, 怪事','近一个月内发生了七起，每件归还的物品都附有一张写着“物归原主”的卡片。'],
+        ['旧报纸','报纸, 档案, 剪报','{n}收集了雾都近三十年的报纸，相信所有新案子都能在旧新闻里找到影子。']
+      ]},
+    {label:'甜点师',place:'枫糖街转角甜品店',world:'枫糖街',motif:'bloom',age:[23,32],
+      traits:'活泼、热情，对味道有着惊人的记忆；遇到难题会越挫越勇',
+      speech:'语气轻快，喜欢用食物打比方，常说“尝一口再说”',
+      likes:'刚出炉的可颂、草莓、看客人吃到第一口的表情',
+      habit:'心情好的时候会在奶油上画小花',
+      scene:'{t}，枫糖街转角的甜品店飘出黄油和焦糖的香气。{n}系着沾了面粉的围裙，正把一盘刚出炉的点心摆上橱窗。',
+      line1:'欢迎光临！你来得正好，这一炉是新口味，还没有人尝过呢。',
+      action:'{n}用夹子夹起一块还冒着热气的点心，放在小碟里推到你面前，眼睛期待地盯着你。',
+      line2:'怎么样？是太甜了，还是刚刚好？……不许说“还行”！',
+      scenario:'{s}，枫糖街要评选“年度招牌甜点”。{n}想复刻祖母留下的一道失传配方，可配方本上关键的那一页，被一块洇开的茶渍盖住了。',
+      lore:[
+        ['转角甜品店','甜品店, 枫糖街, 橱窗','只有六张桌子的小店，橱窗里的点心每天都不一样，下午四点前通常就会卖光。'],
+        ['祖母的配方本','配方, 祖母, 失传','一本手写配方本，记录着四十多道甜点。最后一道没有名字，只画着一朵小花。'],
+        ['年度招牌甜点','评选, 招牌, 甜点','枫糖街每年冬至举办的评选，由街坊邻居盲选投票。']
+      ]},
+    {label:'博物馆夜间讲解员',place:'星川博物馆',world:'星川',motif:'arch',age:[25,36],
+      traits:'博学、幽默，喜欢讲冷知识；独自守夜久了，有点爱自言自语',
+      speech:'像在讲故事，常以“你知道吗”开头',
+      likes:'安静的展厅、手电筒、标签上写错的年份',
+      habit:'经过每一件展品都会轻轻点头，像在打招呼',
+      scene:'{t}，星川博物馆早已闭馆。走廊里只亮着应急灯，{n}举着手电筒从拐角走来，光柱落在你脸上。',
+      line1:'闭馆时间已经过了三个小时……不过，既然你都进来了，要不要听一场只在夜里开放的讲解？',
+      action:'{n}关掉手电筒，展厅深处的一排展柜竟自己亮起了微光。',
+      line2:'别怕。这里的展品白天睡觉，晚上——偶尔会想找人聊聊天。',
+      scenario:'{s}，星川博物馆的展品在夜里会“醒来”，每一件都有放不下的心事。{n}是唯一知道这个秘密的人，而你，是第一个在夜里误入展厅的访客。',
+      lore:[
+        ['星川博物馆','博物馆, 展厅, 星川','拥有三百年历史的老博物馆，共有十二个展厅。夜间只有{n}一人值守。'],
+        ['醒来的展品','展品, 夜里, 醒来','午夜到黎明之间，部分展品会以微光表达情绪，只有心怀好奇的人才能看见。'],
+        ['夜间讲解','讲解, 导览, 手电筒','{n}私下准备的“夜间版”讲解词，比白天的版本有趣十倍。']
+      ]},
+    {label:'风铃匠',place:'风之谷工坊',world:'风之谷',motif:'moon',age:[22,31],
+      traits:'随性、浪漫，有点孩子气；对声音极其敏感',
+      speech:'说话像唱歌，爱用拟声词',
+      likes:'有风的日子、玻璃、在屋顶上看日落',
+      habit:'听见好听的声音时会闭上眼睛',
+      scene:'{t}，风之谷的工坊屋檐下挂满了风铃，玻璃的、竹子的、铜的，风一吹便响成一片。{n}站在梯子上，正往最高的那根横梁上系新做的风铃。',
+      line1:'啊，你听——叮、叮、叮——第三声是不是比前两声低一点？',
+      action:'{n}从梯子上一跃而下，长长的围巾在风里扬起，落地时差点撞到你。',
+      line2:'抱歉抱歉！我在找一种“能让人想起家”的声音。你家乡的风，是什么声音的？',
+      scenario:'{s}，风之谷的风突然停了。没有风，{n}的风铃再也不会响，山谷里的风车也停止了转动。传说只有找回“第一只风铃”，风才会回来。',
+      lore:[
+        ['风之谷','风之谷, 山谷, 风车','终年有风的山谷，谷中有一百零八架风车，日夜不停地转动。'],
+        ['风铃工坊','工坊, 风铃, 玻璃','{n}的工坊兼住处，屋檐下挂着三百多只风铃，每一只都有名字。'],
+        ['第一只风铃','第一只风铃, 传说, 风','传说中风之谷的守护物，据说被藏在山谷最高处的某个地方。']
+      ]},
+    {label:'宫廷画师',place:'承光画院',world:'承光城',motif:'arch',age:[26,37],
+      traits:'骄傲、才华横溢，表面挑剔；其实最看重真诚',
+      speech:'用词讲究，爱挑刺，被说中心事时会结巴',
+      likes:'上等的矿物颜料、晨光、无人打扰的午后',
+      habit:'作画前会把毛笔在指间转一圈',
+      scene:'{t}，承光画院的回廊里挂着半干的画卷。{n}立在一幅未完成的长卷前，笔尖悬在纸上，迟迟没有落下。',
+      line1:'站住。你挡着光了。……算了，就站在那里，别动——这个角度刚好。',
+      action:'{n}蘸了蘸墨，飞快地在纸角勾出几笔，然后才抬起头，认真地打量你。',
+      line2:'画院要交一幅《百工图》，还差最后一个人物。你看起来……勉强合格。',
+      scenario:'{s}，承光画院奉命绘制一幅描绘城中百业的长卷。{n}负责最难的最后一段，却始终找不到合适的人物——直到你闯进了画院的回廊。',
+      lore:[
+        ['承光画院','画院, 承光城, 回廊','城中最负盛名的画院，回廊九曲，每一段墙上都挂着历代画师的作品。'],
+        ['百工图','百工图, 长卷, 人物','长达三十丈的画卷，描绘城中一百种行当。{n}负责的最后一段，至今仍是一片空白。'],
+        ['矿物颜料','颜料, 石青, 朱砂','画院珍藏的颜料，石青、石绿、朱砂皆研磨自远方的矿石，价比黄金。']
+      ]},
+    {label:'旧书店店主',place:'拾页书店',world:'河湾镇',motif:'bloom',age:[28,40],
+      traits:'懒洋洋的，有点毒舌；读过的书多到惊人，却很少主动推荐',
+      speech:'说话拖长音，爱用书里的句子回答问题',
+      likes:'午睡、猫、夹在旧书里的小纸条',
+      habit:'收书时会先翻到最后一页',
+      scene:'{t}，拾页书店的门半掩着，一只橘猫趴在门口晒太阳。{n}窝在柜台后的藤椅里，脸上盖着一本摊开的书。',
+      line1:'……书架是按心情排的，不按作者。你自己找吧，找不到再叫我。',
+      action:'{n}把书从脸上拿下来，眯着眼看了你一会儿，忽然从抽屉里抽出一张泛黄的纸条。',
+      line2:'等等。上周有人在一本旧诗集里夹了这个，上面写着——“给下一个推门进来的人”。',
+      scenario:'{s}，有人开始在拾页书店的旧书里留下纸条，一张接一张，像是在玩一场寻宝游戏。{n}本来懒得理会，直到第七张纸条上，出现了你的名字。',
+      lore:[
+        ['拾页书店','书店, 河湾镇, 书架','开在河湾边的二手书店，书架按“适合下雨天读”“适合失眠时读”这样的心情分类。'],
+        ['纸条','纸条, 寻宝, 留言','已经发现了七张，字迹工整，每一张都指向店里的另一本书。'],
+        ['橘猫','猫, 橘猫, 店猫','书店的店猫，名叫“书签”，最喜欢睡在诗集区。']
+      ]},
+    {label:'草药师',place:'南山药庐',world:'南山',motif:'bloom',age:[27,40],
+      traits:'沉稳、温柔，见过太多病痛，所以格外珍惜平静的日子',
+      speech:'语气平和，叮嘱人时会不厌其烦地重复',
+      likes:'晒药材的晴天、山泉水、清淡的粥',
+      habit:'闻到陌生的草木气味时会停下来分辨',
+      scene:'{t}，南山脚下的药庐飘着淡淡的药香。竹匾里晒着各色草药，{n}正坐在檐下分拣，见你一瘸一拐地走来，便放下了手里的活。',
+      line1:'别急着说话，先坐下。……脚踝扭了，还走了这么远的山路？',
+      action:'{n}从屋里取出一只小陶罐，挖出一点清凉的药膏，示意你把脚伸过来。',
+      line2:'忍着点，会有些凉。这几天哪儿也别去，就在药庐住下吧。',
+      scenario:'{s}，南山的雾里开出了一种从未见过的蓝色花朵，靠近过它的人都会沉沉入睡。{n}需要一位帮手上山采样，在花期结束前找出解药。',
+      lore:[
+        ['南山药庐','药庐, 南山, 草药','南山脚下的三间草屋，院子里种满了药草，后院有一眼终年不冻的山泉。'],
+        ['蓝色花朵','蓝花, 沉睡, 花期','只在大雾天开放的花，香气会让人陷入无梦的长眠。花期大约二十天。'],
+        ['药方簿','药方, 药膏, 配方','{n}记录药方的本子，每一页都标注了采药的时节与地点。']
+      ]},
+    {label:'浮空艇船长',place:'云海号',world:'云海',motif:'moon',age:[29,42],
+      traits:'豪爽、冒险心强，看似鲁莽，其实把船员的安全放在第一位',
+      speech:'嗓门大，爱开玩笑，下命令时却干脆利落',
+      likes:'逆风、地图上的空白处、热腾腾的炖菜',
+      habit:'起航前会拍三下船舵',
+      scene:'{t}，云海号停泊在悬崖边的码头上，巨大的气囊在风里轻轻起伏。{n}一只脚踩在舷梯上，冲你挥了挥手里的航海图。',
+      line1:'喂！你就是新来的领航员？比我想象的要瘦啊——上来吧，马上起航！',
+      action:'{n}一把拉你上了甲板，指着远处翻涌的云层，眼里闪着光。',
+      line2:'看到那片云了吗？地图上那里什么也没有。我们这趟，就是去把它画出来。',
+      scenario:'{s}，云海号接到一份前往“地图空白处”的探索委托。传说那里藏着一座漂浮的古城。{n}缺一位领航员，而你恰好会看星星。',
+      lore:[
+        ['云海号','云海号, 浮空艇, 甲板','中型浮空艇，船员七人，气囊上绣着一只展翅的白鹭。'],
+        ['地图空白处','空白, 古城, 探索','云海深处从未被测绘过的区域，常年被积雨云环绕。'],
+        ['船员守则','守则, 船员, 起航','第一条：船长的炖菜必须吃完。第二条：任何人不得独自上甲板看暴风雨。']
+      ]},
+    {label:'学院图书管理员',place:'星辉学院藏书塔',world:'星辉学院',motif:'arch',age:[26,38],
+      traits:'一丝不苟、规矩至上；对爱书的人格外宽容',
+      speech:'压低声音说话，提醒别人时只说一个字：“嘘。”',
+      likes:'安静、按编号排列整齐的书架、薄荷糖',
+      habit:'推眼镜的时候会顺便扫一眼借阅登记',
+      scene:'{t}，星辉学院的藏书塔里，书页翻动的声音此起彼伏。{n}站在旋转楼梯的中段，正把一本会自己扑腾的书按回书架。',
+      line1:'嘘。……你的借阅卡已经逾期十四天了。',
+      action:'{n}从高处走下来，把一本封皮发烫的旧书放进你怀里，书页“哗啦”一声自己翻开了。',
+      line2:'它选了你，我也没办法。按规矩，选中读者的书，必须由读者亲手送回原处——它的原处，在禁书区。',
+      scenario:'{s}，藏书塔里的一本古书“选中”了你，执意要回到禁书区最深处的书架。{n}作为管理员必须全程陪同，而禁书区，已经有五十年没人进去过了。',
+      lore:[
+        ['藏书塔','藏书塔, 学院, 书架','星辉学院中央的九层高塔，书架会随着读者的需要缓慢移动。'],
+        ['禁书区','禁书区, 古书, 封印','位于塔底的地下书库，收藏着会说话、会做梦、会迷路的书。'],
+        ['借阅守则','借阅, 逾期, 守则','逾期不还的书会自己飞回塔里，并在借阅人的名字旁边画一个小小的叉。']
+      ]},
+    {label:'灯笼匠',place:'上元灯坊',world:'上元街',motif:'moon',age:[22,33],
+      traits:'手巧、心细，有点害羞；一旦聊起灯笼就停不下来',
+      speech:'说话轻声，紧张时会结巴，讲起手艺却滔滔不绝',
+      likes:'竹篾、彩纸、元宵节的夜晚',
+      habit:'一边说话一边折纸，手从不闲着',
+      scene:'{t}，上元灯坊里堆满了竹篾与彩纸。{n}坐在小板凳上，正给一盏莲花灯糊最后一片花瓣，被你的脚步声吓了一跳。',
+      line1:'啊、对、对不起！我没听见有人进来……你、你是来订灯的吗？',
+      action:'{n}手忙脚乱地站起来，怀里的莲花灯却被稳稳护住，一点没碰坏。',
+      line2:'今年的灯会只剩七天了，订单已经排满……不过，如果是特别的灯，我、我可以熬夜做。',
+      scenario:'{s}，上元街的灯会将在七天后举行。灯会的压轴是一盏传了三代的走马灯，却在灯坊的仓库里被发现骨架断裂。{n}必须在灯会前修好它。',
+      lore:[
+        ['上元灯坊','灯坊, 上元街, 灯笼','街角的小作坊，一年到头都在做灯，最忙的时候是元宵节前一个月。'],
+        ['走马灯','走马灯, 压轴, 三代','灯面上画着八幅连环画，点亮后会缓缓转动，讲述上元街的来历。'],
+        ['灯会','灯会, 元宵, 夜晚','上元街一年一度的盛事，整条街会挂满上千盏灯笼。']
+      ]},
+    {label:'花艺师',place:'四季花坊',world:'落英街',motif:'bloom',age:[24,34],
+      traits:'浪漫、敏感，审美极高；对“刚刚好”的执着近乎任性',
+      speech:'语气温柔，爱用花语表达心意',
+      likes:'清晨的花市、带露水的玫瑰、手写卡片',
+      habit:'包花时会在丝带上打一个只有自己会的结',
+      scene:'{t}，四季花坊的玻璃门上挂着“营业中”的木牌。{n}站在满屋的花桶之间，正用剪刀修去一枝玫瑰多余的叶子。',
+      line1:'欢迎光临。……让我猜猜，你是来买花送人的，还是送给自己的？',
+      action:'{n}从花桶里抽出一枝淡色的小花，放在你掌心，花瓣上还挂着露水。',
+      line2:'这是今天第一枝开的。花语是“重逢”——我觉得，它很适合你。',
+      scenario:'{s}，四季花坊接到一笔奇怪的订单：每天送一束花到城北的同一个地址，持续一百天，订花人却没有留下名字。{n}决定在第一百天之前，查出订花人的身份。',
+      lore:[
+        ['四季花坊','花坊, 落英街, 花店','落英街上的小花店，门口种着一棵会在春天落满花瓣的老樱树。'],
+        ['百日订单','订单, 一百天, 匿名','每天一束，花材每天都不一样，附言卡片上只写着日期。'],
+        ['花语','花语, 卡片, 重逢','{n}收集的花语手册，里面有许多是{n}自己给花起的新花语。']
+      ]},
+    {label:'机关术师',place:'千机阁',world:'千机城',motif:'arch',age:[23,35],
+      traits:'聪明、自信，有些不拘小节；对复杂的机关有着孩子般的热情',
+      speech:'说话很快，满嘴术语，讲解时会手舞足蹈',
+      likes:'齿轮、木榫、半夜灵光一闪的点子',
+      habit:'随手拆开身边的任何小物件',
+      scene:'{t}，千机阁里叮叮当当响个不停。木鸟在梁上扑扇翅膀，铜蛇在地板上蜿蜒爬行，{n}蹲在一堆零件中间，头发上还插着两支刻刀。',
+      line1:'别踩那块地板！——好险，那是个还没调好的机关。你差点被弹到房梁上去。',
+      action:'{n}抹了一把脸上的木屑，咧嘴一笑，递给你一只巴掌大的木制小鸟。',
+      line2:'拧一下它的尾巴试试。……飞起来了吧？这还只是半成品！',
+      scenario:'{s}，千机城要举办机关大赛，优胜者可以获准进入城中心那座封闭百年的“万象机关楼”。{n}志在必得，只差一位愿意帮忙测试机关的助手。',
+      lore:[
+        ['千机阁','千机阁, 工坊, 机关','{n}的工坊，三层木楼里塞满了各种机关，连楼梯都会自己折叠。'],
+        ['万象机关楼','机关楼, 封闭, 百年','千机城中心的高楼，据说里面藏着能让整座城“动起来”的总枢。'],
+        ['机关大赛','大赛, 比赛, 优胜','每十年举办一次，评判标准只有一条：让评委们惊叹。']
+      ]},
+    {label:'守林人',place:'雾松林',world:'雾松林',motif:'moon',age:[28,42],
+      traits:'沉默、警觉，熟悉森林的每一条小路；对动物比对人温柔',
+      speech:'话很少，常用手势代替语言，偶尔说出的话却意味深长',
+      likes:'松针的气味、篝火、猫头鹰的叫声',
+      habit:'进林子前会把手按在最老的那棵松树上',
+      scene:'{t}，雾松林里起了雾。你在林间迷失了方向，一盏马灯从雾中亮起，{n}披着旧斗篷站在不远处，肩上停着一只灰色的猫头鹰。',
+      line1:'……别往前走了。那边是沼泽。',
+      action:'{n}举起马灯照了照你的脸，似乎确认了什么，转身示意你跟上。',
+      line2:'跟紧我，踩着我的脚印走。天亮之前，林子不会放你出去的。',
+      scenario:'{s}，雾松林里的雾一天比一天浓，林中的动物开始成群地往外迁徙。{n}察觉到森林深处出了问题，却从不曾带外人进过林子的最深处——直到遇见你。',
+      lore:[
+        ['雾松林','雾松林, 森林, 沼泽','一片古老的松林，林中常年起雾，只有守林人知道安全的路径。'],
+        ['灰羽','猫头鹰, 灰羽, 夜鸟','{n}养的猫头鹰，能在浓雾中为人引路。'],
+        ['最老的松树','老松树, 古树, 守护','林子中央的一棵千年古松，守林人世代都会在它身上刻下自己的名字。']
+      ]},
+    {label:'渡口船夫',place:'白鹭渡',world:'白鹭河',motif:'moon',age:[30,45],
+      traits:'豁达、乐天，见过南来北往的各色人；总能在别人发愁时说出宽心的话',
+      speech:'慢悠悠的，爱哼船歌，说话带着河边人的俚语',
+      likes:'傍晚的河风、米酒、听乘客讲故事',
+      habit:'撑船时会数自己划了多少下',
+      scene:'{t}，白鹭河上起了薄雾。渡口的木桩上拴着一条小船，{n}坐在船头，草帽压得低低的，嘴里哼着一支听不清词的船歌。',
+      line1:'过河吗？最后一趟了。再晚，雾就要把河面封住喽。',
+      action:'{n}站起身，长篙往岸边一点，小船稳稳地靠了过来。',
+      line2:'上来坐稳。船钱嘛……就用你这一路上的故事来抵吧。',
+      scenario:'{s}，白鹭河对岸的村子一夜之间被浓雾笼罩，没有人能进出。{n}是唯一认得雾中水路的人，而你，有必须去对岸的理由。',
+      lore:[
+        ['白鹭渡','渡口, 白鹭渡, 小船','河湾处的老渡口，岸边栖着一群白鹭，渡船每天往返十二趟。'],
+        ['雾中水路','水路, 雾, 对岸','只有在雾里才会显现的一条暗道，{n}从祖辈那里学会了辨认它。'],
+        ['船歌','船歌, 歌谣, 河','白鹭河一带流传的老歌谣，据说唱对了词，雾就会让出一条路。']
+      ]},
+    {label:'戏班名角',place:'长乐戏楼',world:'长乐城',motif:'bloom',age:[25,38],
+      traits:'自信、风趣，台上光芒万丈，台下却有着不为人知的疲惫',
+      speech:'说话带着戏腔的韵律，爱用戏文调侃人',
+      likes:'满堂喝彩、清茶润嗓、深夜空无一人的戏台',
+      habit:'上台前会对着镜子默念一遍戏词',
+      scene:'{t}，长乐戏楼散了场。观众走尽，后台还亮着一盏油灯，{n}坐在镜前卸着妆，从镜子里看见了站在门口的你。',
+      line1:'哟，散场了还不走，是想讨一张签名，还是来找人的？',
+      action:'{n}转过身，脸上的油彩卸了一半，一边是戏中人，一边是自己。',
+      line2:'别站着了，进来坐。……正好，下个月的新戏还缺个说戏的人，你来帮我听听？',
+      scenario:'{s}，长乐戏楼要排一出失传已久的老戏，剧本却只剩下半部。{n}决定自己补写后半部，并希望你成为这出戏的第一位观众。',
+      lore:[
+        ['长乐戏楼','戏楼, 长乐城, 戏台','城中最古老的戏楼，木质戏台被几代名角的脚步磨得发亮。'],
+        ['半部剧本','剧本, 老戏, 失传','一出名叫《落花渡》的老戏，后半部在一场火灾中遗失。'],
+        ['后台','后台, 镜子, 油彩','后台墙上挂满了历代名角的戏服，{n}的那一套挂在最中间。']
+      ]},
+    {label:'高原气象观测员',place:'雪线气象站',world:'雪线高原',motif:'moon',age:[26,38],
+      traits:'冷静、专注，习惯孤独；对数据近乎痴迷，对人却出乎意料地体贴',
+      speech:'说话像在报天气，喜欢精确到小数点后一位',
+      likes:'晴朗的早晨、热汤、记录本上整齐的数字',
+      habit:'每隔三小时出门看一次百叶箱',
+      scene:'{t}，雪线高原上的风呼呼地刮着。气象站的小屋里，{n}正在记录本上写下今天的第三组数据，窗外突然出现了一个踉跄的身影。',
+      line1:'气温零下十二点四度，风速每秒九点二米——这种天气，你是怎么走到这里的？',
+      action:'{n}一把把你拉进屋，裹上毯子，又往炉子里添了两块木炭。',
+      line2:'先别说话，喝了这碗汤。暴风雪至少还要持续两天，你哪儿也去不了了。',
+      scenario:'{s}，雪线气象站的仪器开始记录到一些无法解释的数据：每天傍晚，气温都会在同一时刻骤升三度。{n}需要一名助手协助观测，而一场暴风雪，把你送到了这里。',
+      lore:[
+        ['雪线气象站','气象站, 雪线, 高原','海拔四千米的小型气象站，常驻人员只有一人，补给每月一次。'],
+        ['百叶箱','百叶箱, 观测, 温度','放置温度计的白色木箱，是{n}每天必须照看的“老伙计”。'],
+        ['异常数据','异常, 升温, 傍晚','已连续记录十一天，升温的时刻精确到分钟，每天都一模一样。']
+      ]}
+  ];
+
+  const PALETTES=[
+    {sky:['#2a1d3d','#45274f','#140e1f'],glow:'#fbe3ea',petal:['#fbd0dc','#e58aa8'],center:'#ffe9b8',leaf:'#56786a',branch:'#20141f',hill:'#1c1428'},
+    {sky:['#3a1612','#5c2218','#170908'],glow:'#ffe2c2',petal:['#ffb08a','#e0583f'],center:'#ffe7a8',leaf:'#6d7a45',branch:'#1e0c08',hill:'#200c0a'},
+    {sky:['#10302c','#1c4a42','#08140f'],glow:'#e8f7ee',petal:['#d9f0e4','#8cc6b0'],center:'#fff3c4',leaf:'#3a6e5c',branch:'#0d1c18',hill:'#0b1a16'},
+    {sky:['#221b0e','#3b2f15','#0e0b05'],glow:'#fff1cc',petal:['#f6dca6','#d9a54f'],center:'#fff8e0',leaf:'#6b6436',branch:'#1a1408',hill:'#15110a'},
+    {sky:['#121c3d','#203266','#080c1c'],glow:'#e6edff',petal:['#c8d6fa','#7f98de'],center:'#fff1c2',leaf:'#3d5a6e',branch:'#0e1426',hill:'#0c1226'},
+    {sky:['#241739','#3e2860','#100b1c'],glow:'#f1e6ff',petal:['#e0c8f7','#a985da'],center:'#fff0c4',leaf:'#4a6a56',branch:'#170f24',hill:'#160f26'},
+    {sky:['#33200d','#5a3412','#160c05'],glow:'#ffe6bf',petal:['#ffc777','#e5793a'],center:'#fff1c0',leaf:'#7a6a30',branch:'#1e1206',hill:'#1c1006'},
+    {sky:['#1c232d','#30404f','#0c1015'],glow:'#ffffff',petal:['#f4f8fc','#c6d4e2'],center:'#ffe9b0',leaf:'#56687a',branch:'#121820',hill:'#10161d'},
+    {sky:['#15240f','#27401f','#0a1208'],glow:'#f7f5d4',petal:['#efe9b2','#bfcb6c'],center:'#fff6c8',leaf:'#47763b',branch:'#0f180b',hill:'#0d170b'},
+    {sky:['#331224','#561c3a','#16070f'],glow:'#ffdbe8',petal:['#f9b3cb','#dc6894'],center:'#ffe6b0',leaf:'#57663f',branch:'#1d0912',hill:'#1c0912'},
+    {sky:['#0e2830','#184657','#061218'],glow:'#e2f9fc',petal:['#b4e7ef','#62b6c8'],center:'#fff4cc',leaf:'#2f5d68',branch:'#0a1a20',hill:'#081a20'},
+    {sky:['#1a1918','#2c2a28','#0b0b0a'],glow:'#fff7ea',petal:['#f6efe5','#dccbb5'],center:'#e9573f',leaf:'#4d4c45',branch:'#0d0d0c',hill:'#121110'}
+  ];
+
+  const SECTIONS={
+    fanhuafenluo:{count:72,seed:20260101,collection:'FANHUA ARCHIVE',creator:'繁花·纷落'},
+    public:{count:31,seed:20260202,collection:'PUBLIC ARCHIVE',creator:'公开投稿'}
+  };
+
+  let catalogCache=null;
+
+  function buildSection(id,usedNames){
+    const cfg=SECTIONS[id];
+    const r=rng(cfg.seed);
+    const order=[];
+    const indices=ARCHETYPES.map((_,index)=>index);
+    while(order.length<cfg.count) order.push(...shuffle(r,indices));
+
+    const works=[];
+    for(let i=0;i<cfg.count;i++){
+      const archIndex=order[i];
+      const arch=ARCHETYPES[archIndex];
+      let name='';
+      do{
+        name=pick(r,SURNAMES)+pick(r,GIVEN);
+      }while(usedNames.has(name));
+      usedNames.add(name);
+
+      const seed=hashStr(`${id}:${i}:${name}`);
+      const span=Date.UTC(2026,8,28)-Date.UTC(2025,2,1);
+      const created=r()<.16?'':new Date(Date.UTC(2025,2,1)+r()*span).toISOString().slice(0,10);
+
+      works.push({
+        name,
+        alias:`CARD · ${seed.toString(16).toUpperCase().padStart(8,'0')}`,
+        collectionLabel:cfg.collection,
+        previewPosition:'50% 8%',
+        role:arch.label,
+        tags:[arch.label,arch.world],
+        cardLabel:arch.label,
+        creator:cfg.creator,
+        createdAt:created,
+        _detailKey:`demo/${id}/${String(i+1).padStart(3,'0')}`,
+        _seed:seed,
+        _arch:archIndex,
+        _palette:Math.floor(r()*PALETTES.length),
+        _motif:r()<.72?arch.motif:pick(r,['moon','bloom','arch']),
+        _season:pick(r,SEASONS),
+        _time:pick(r,TIMES),
+        _age:arch.age[0]+Math.floor(r()*(arch.age[1]-arch.age[0]+1)),
+        _hasBook:i%11!==7,
+        _hasPreset:i%8!==5
+      });
+    }
+    return works;
+  }
+
+  function catalog(){
+    if(!catalogCache){
+      const usedNames=new Set();
+      catalogCache={
+        fanhuafenluo:buildSection('fanhuafenluo',usedNames),
+        public:buildSection('public',usedNames)
+      };
+    }
+    return catalogCache;
+  }
+
+  function detailFor(work){
+    const a=ARCHETYPES[work._arch];
+    const ctx={n:work.name,s:work._season,t:work._time};
+    const opening=[
+      `（${fill(a.scene,ctx)}）`,
+      fill(a.line1,ctx),
+      `（${fill(a.action,ctx)}）`,
+      fill(a.line2,ctx)
+    ].join('\n');
+    const personality=[
+      `姓名：${work.name}`,
+      `身份：${a.label} · ${a.place}`,
+      `年龄：${work._age} 岁`,
+      `性格：${a.traits}`,
+      `说话方式：${a.speech}`,
+      `喜好：${a.likes}`,
+      `小习惯：${a.habit}`
+    ].join('\n');
+    const setting=`${fill(a.scenario,ctx)}\n\n故事从你们的第一次相遇开始。你可以以任何身份出现在${a.place}——旅人、委托人，或是${work.name}多年未见的旧识。`;
+
+    const entries=a.lore.map(([name,keys,content],index)=>({
+      name:fill(name,ctx),
+      keys:keys.split(/,\s*/),
+      content:fill(content,ctx),
+      enabled:true,
+      order:100+index*10
+    }));
+    if(work._seed%3===0){
+      entries.push({
+        name:`${work.name}的旧笔记`,
+        keys:['旧笔记','往事'],
+        content:`一本写满批注的旧笔记，记录着${work.name}来到${a.place}之前的事。默认停用，可在故事后段手动开启。`,
+        enabled:false,
+        order:200
+      });
+    }
+    const bookName=`${a.world} · ${a.label}`;
+    const worldbook=work._hasBook
+      ? ['【世界书】',bookName,'',...entries.flatMap(entry=>[
+          `【${entry.name}】`,
+          `状态：${entry.enabled?'启用':'停用'}`,
+          '位置：before_char',
+          `关键词：${entry.keys.join('、')}`,
+          entry.content,
+          ''
+        ])].join('\n').trim()
+      : '';
+
+    const system=[
+      `你将扮演${work.name}，${a.place}的${a.label}。请始终以${work.name}的视角与口吻回应，用细腻的动作、神态与环境描写推动故事。`,
+      '回复使用中文，每次约 200–400 字；动作与心理描写放在（）中，对白单独成行。',
+      '不要替用户做决定，也不要复述用户已经说过的话。',
+      '故事基调温和、日常，保持适合所有年龄阅读的内容。'
+    ].join('\n');
+    const post=[
+      `保持${work.name}的说话方式：${a.speech}。`,
+      `适时描写${a.place}的天气、光线与声音。`,
+      '在每次回复的结尾留下一个可以继续互动的细节。'
+    ].join('\n');
+    const preset=work._hasPreset?`【系统提示词】\n${system}\n\n【历史后指令】\n${post}`:'';
+
+    return {
+      opening,
+      personality,
+      setting,
+      worldbook,
+      preset,
+      _book:work._hasBook?{name:bookName,entries}:null,
+      _system:work._hasPreset?system:'',
+      _post:work._hasPreset?post:''
+    };
+  }
+
+  function details(works){
+    const out={};
+    works.forEach(work=>{out[work._detailKey]=detailFor(work);});
+    return out;
+  }
+
+  /* ---------------- 卡面：程序生成的花卉画 ---------------- */
+  const W=720;
+  const H=1000;
+  const f1=n=>Number(n).toFixed(1);
+  const esc=text=>String(text).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+  const SERIF="'Noto Serif SC','Source Han Serif SC','Songti SC','STSong',serif";
+
+  function cubic(x0,y0,x1,y1,x2,y2,x3,y3){
+    return t=>{
+      const u=1-t;
+      return [
+        u*u*u*x0+3*u*u*t*x1+3*u*t*t*x2+t*t*t*x3,
+        u*u*u*y0+3*u*u*t*y1+3*u*t*t*y2+t*t*t*y3
+      ];
+    };
+  }
+
+  function branch(r,x0,y0,x3,y3,wobble){
+    const x1=x0+(x3-x0)*.3+(r()-.5)*wobble;
+    const y1=y0+(y3-y0)*.3+(r()-.5)*wobble;
+    const x2=x0+(x3-x0)*.7+(r()-.5)*wobble;
+    const y2=y0+(y3-y0)*.7+(r()-.5)*wobble;
+    return {
+      d:`M${f1(x0)} ${f1(y0)}C${f1(x1)} ${f1(y1)} ${f1(x2)} ${f1(y2)} ${f1(x3)} ${f1(y3)}`,
+      at:cubic(x0,y0,x1,y1,x2,y2,x3,y3)
+    };
+  }
+
+  function blossom(x,y,size,rot,P){
+    let g=`<g transform="translate(${f1(x)} ${f1(y)}) rotate(${Math.round(rot)})">`;
+    for(let i=0;i<5;i++){
+      const a=i*72*Math.PI/180;
+      g+=`<circle cx="${f1(Math.cos(a)*size*.44)}" cy="${f1(Math.sin(a)*size*.44)}" r="${f1(size*.42)}" fill="url(#pt)"/>`;
+    }
+    g+=`<circle r="${f1(size*.2)}" fill="${P.center}"/>`;
+    for(let i=0;i<7;i++){
+      const a=(i*51+12)*Math.PI/180;
+      g+=`<circle cx="${f1(Math.cos(a)*size*.32)}" cy="${f1(Math.sin(a)*size*.32)}" r="1.6" fill="${P.center}" fill-opacity=".9"/>`;
+    }
+    return g+'</g>';
+  }
+
+  function rosette(r,cx,cy,R,P){
+    let s=`<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(R*1.9)}" fill="url(#glow)"/>`;
+    const n=6+Math.floor(r()*7);
+    const base=r()*30;
+    for(let k=0;k<3;k++){
+      const len=R*(1-k*.27);
+      const w=len*(.33+r()*.08);
+      const off=base+k*(180/n);
+      const fill=k===0?P.petal[1]:'url(#pt)';
+      for(let i=0;i<n;i++){
+        s+=`<ellipse cx="${f1(cx)}" cy="${f1(cy-len/2)}" rx="${f1(w)}" ry="${f1(len/2)}" transform="rotate(${f1(off+i*360/n)} ${f1(cx)} ${f1(cy)})" fill="${fill}" fill-opacity="${(.72+k*.1).toFixed(2)}" stroke="${P.glow}" stroke-opacity=".2" stroke-width="1.2"/>`;
+      }
+    }
+    s+=`<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(R*.17)}" fill="${P.center}"/>`;
+    for(let i=0;i<14;i++){
+      const a=i*(360/14)*Math.PI/180;
+      s+=`<circle cx="${f1(cx+Math.cos(a)*R*.24)}" cy="${f1(cy+Math.sin(a)*R*.24)}" r="2.6" fill="${P.center}" fill-opacity=".85"/>`;
+    }
+    return s;
+  }
+
+  function leaf(x,y,len,rot,P){
+    return `<g transform="translate(${f1(x)} ${f1(y)}) rotate(${Math.round(rot)})"><path d="M0 0Q${f1(len*.45)} ${f1(-len*.32)} ${f1(len)} 0Q${f1(len*.45)} ${f1(len*.32)} 0 0Z" fill="${P.leaf}"/><path d="M4 0H${f1(len*.86)}" stroke="#fff" stroke-opacity=".16" stroke-width="1.4"/></g>`;
+  }
+
+  function moon(r,cx,cy,R,P){
+    let s=`<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(R*2.5)}" fill="url(#glow)"/>`;
+    s+=`<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(R)}" fill="${P.glow}" fill-opacity=".93"/>`;
+    for(let i=0;i<4;i++){
+      s+=`<circle cx="${f1(cx+(r()-.5)*R*1.1)}" cy="${f1(cy+(r()-.5)*R*1.1)}" r="${f1(R*(.08+r()*.14))}" fill="${P.sky[1]}" fill-opacity=".07"/>`;
+    }
+    return s;
+  }
+
+  function hills(r,P,baseY,layers){
+    let s='';
+    for(let k=0;k<layers;k++){
+      const y=baseY+k*70;
+      let d=`M0 ${f1(y+r()*40)}`;
+      const steps=4;
+      for(let i=1;i<=steps;i++){
+        const x=W*i/steps;
+        d+=`Q${f1(x-W/steps/2)} ${f1(y-40-r()*90)} ${f1(x)} ${f1(y+r()*40)}`;
+      }
+      d+=`V${H}H0Z`;
+      s+=`<path d="${d}" fill="${P.hill}" fill-opacity="${(.55+k*.18).toFixed(2)}"/>`;
+    }
+    return s;
+  }
+
+  function petals(r,P,count){
+    let s='';
+    for(let i=0;i<count;i++){
+      const x=r()*W;
+      const y=40+Math.pow(r(),1.2)*(H-200);
+      const rx=5+r()*7;
+      s+=`<ellipse cx="${f1(x)}" cy="${f1(y)}" rx="${f1(rx)}" ry="${f1(rx*.55)}" transform="rotate(${Math.round(r()*180)} ${f1(x)} ${f1(y)})" fill="${P.petal[r()<.6?0:1]}" fill-opacity="${(.35+r()*.5).toFixed(2)}"/>`;
+    }
+    return s;
+  }
+
+  function blossomBranch(r,P,x0,y0,x3,y3,width,count){
+    const main=branch(r,x0,y0,x3,y3,180);
+    let s=`<path d="${main.d}" fill="none" stroke="${P.branch}" stroke-width="${width}" stroke-linecap="round"/>`;
+    const tips=[];
+    [.42,.68].forEach(t=>{
+      const [bx,by]=main.at(t);
+      const ex=bx+60+r()*130;
+      const ey=by+(r()<.5?-1:1)*(70+r()*110);
+      const sub=branch(r,bx,by,ex,ey,60);
+      s+=`<path d="${sub.d}" fill="none" stroke="${P.branch}" stroke-width="${f1(width*.5)}" stroke-linecap="round"/>`;
+      tips.push(sub);
+    });
+    let flowers='';
+    for(let i=0;i<count;i++){
+      const [x,y]=main.at(.22+r()*.78);
+      flowers+=blossom(x+(r()-.5)*22,y+(r()-.5)*22,22+r()*18,r()*72,P);
+    }
+    tips.forEach(sub=>{
+      for(let i=0;i<3;i++){
+        const [x,y]=sub.at(.35+r()*.65);
+        flowers+=blossom(x,y,18+r()*14,r()*72,P);
+      }
+      const [tx,ty]=sub.at(1);
+      flowers+=`<circle cx="${f1(tx)}" cy="${f1(ty)}" r="6" fill="${P.petal[1]}"/>`;
+    });
+    return s+flowers;
+  }
+
+  function inscription(work,P){
+    const chars=[...work.cardLabel];
+    const x=W-132;
+    let y=168;
+    let s=`<g font-family="${SERIF}" font-size="27" font-weight="700" text-anchor="middle" fill="${P.glow}" fill-opacity=".72">`;
+    chars.forEach(ch=>{
+      s+=`<text x="${x}" y="${y}">${esc(ch)}</text>`;
+      y+=33;
+    });
+    s+='</g>';
+    const sy=y-14;
+    s+=`<rect x="${x-19}" y="${sy}" width="38" height="38" rx="4" fill="#c4412d"/>`;
+    s+=`<rect x="${x-15.5}" y="${sy+3.5}" width="31" height="31" rx="2.5" fill="none" stroke="#fff3e6" stroke-opacity=".7" stroke-width="1.2"/>`;
+    s+=`<text x="${x}" y="${sy+28}" font-family="${SERIF}" font-size="21" font-weight="700" text-anchor="middle" fill="#fff3e6">${esc(work.name.slice(-1))}</text>`;
+    return s;
+  }
+
+  function svgArt(work){
+    const r=rng(work._seed);
+    const P=PALETTES[work._palette];
+    let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`;
+    s+='<defs>';
+    s+=`<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.sky[0]}"/><stop offset=".55" stop-color="${P.sky[1]}"/><stop offset="1" stop-color="${P.sky[2]}"/></linearGradient>`;
+    s+=`<radialGradient id="glow"><stop offset="0" stop-color="${P.glow}" stop-opacity=".5"/><stop offset=".45" stop-color="${P.glow}" stop-opacity=".12"/><stop offset="1" stop-color="${P.glow}" stop-opacity="0"/></radialGradient>`;
+    s+=`<radialGradient id="pt" cx=".38" cy=".32" r=".85"><stop offset="0" stop-color="${P.petal[0]}"/><stop offset="1" stop-color="${P.petal[1]}"/></radialGradient>`;
+    s+='<radialGradient id="vig" cx=".5" cy=".42" r=".78"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>';
+    s+=`<linearGradient id="haze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.glow}" stop-opacity="0"/><stop offset="1" stop-color="${P.glow}" stop-opacity=".28"/></linearGradient>`;
+    s+='<pattern id="grain" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".7" fill="#fff" fill-opacity=".05"/></pattern>';
+    if(work._motif==='arch'){
+      s+='<clipPath id="win"><path d="M140 830V400A220 220 0 0 1 580 400V830Z"/></clipPath>';
+    }
+    s+='</defs>';
+    s+=`<rect width="${W}" height="${H}" fill="url(#sky)"/>`;
+
+    if(work._motif==='moon'){
+      s+=moon(r,230+r()*240,220+r()*120,105+r()*55,P);
+      s+=hills(r,P,770,3);
+      s+=blossomBranch(r,P,-30,560+r()*160,560+r()*130,200+r()*170,12,10+Math.floor(r()*4));
+      s+=petals(r,P,24);
+    }else if(work._motif==='bloom'){
+      const cx=330+(r()-.5)*90;
+      const cy=350+r()*60;
+      const R=150+r()*40;
+      s+=`<path d="M${f1(cx)} ${f1(cy+R*.4)}C${f1(cx-40)} ${f1(cy+R+120)} ${f1(cx+70)} 760 ${f1(cx-20)} 1010" fill="none" stroke="${P.leaf}" stroke-width="9" stroke-linecap="round"/>`;
+      s+=leaf(cx-6,cy+R+150,140+r()*40,-150-r()*30,P);
+      s+=leaf(cx+12,cy+R+250,150+r()*40,-20+r()*25,P);
+      s+=rosette(r,cx,cy,R,P);
+      s+=rosette(r,cx-220+r()*40,cy+R+250,58+r()*20,P);
+      s+=`<rect y="860" width="${W}" height="140" fill="${P.hill}" fill-opacity=".7"/>`;
+      s+=petals(r,P,20);
+    }else{
+      s+=`<rect width="${W}" height="${H}" fill="#000" fill-opacity=".22"/>`;
+      s+='<g clip-path="url(#win)">';
+      s+=`<rect width="${W}" height="${H}" fill="${P.sky[1]}"/><rect y="180" width="${W}" height="520" fill="url(#haze)"/>`;
+      const mx=280+r()*160;
+      s+=moon(r,mx,330+r()*60,70+r()*30,P);
+      s+=hills(r,P,600,2);
+      s+=`<rect y="700" width="${W}" height="140" fill="${P.sky[2]}" fill-opacity=".9"/>`;
+      for(let i=0;i<9;i++){
+        const y=715+i*13;
+        const len=40+r()*120;
+        s+=`<path d="M${f1(mx-len/2+(r()-.5)*30)} ${y}h${f1(len)}" stroke="${P.glow}" stroke-opacity="${(.12+r()*.2).toFixed(2)}" stroke-width="2" stroke-linecap="round"/>`;
+      }
+      s+='</g>';
+      s+=`<path d="M140 830V400A220 220 0 0 1 580 400V830Z" fill="none" stroke="${P.glow}" stroke-opacity=".55" stroke-width="3"/>`;
+      s+=`<path d="M122 848V400A238 238 0 0 1 598 400V848Z" fill="none" stroke="${P.glow}" stroke-opacity=".18" stroke-width="1.5"/>`;
+      s+=blossomBranch(r,P,-20,940,330+r()*80,600+r()*60,10,7);
+      s+=petals(r,P,16);
+    }
+
+    s+=inscription(work,P);
+    s+=`<rect width="${W}" height="${H}" fill="url(#grain)"/><rect width="${W}" height="${H}" fill="url(#vig)"/>`;
+    return s+'</svg>';
+  }
+
+  const artCache=new Map();
+  function artUrl(work){
+    const key=work._detailKey;
+    if(!artCache.has(key)){
+      const blob=new Blob([svgArt(work)],{type:'image/svg+xml'});
+      artCache.set(key,URL.createObjectURL(blob));
+    }
+    return artCache.get(key);
+  }
+
+  /* ---------------- 原始 PNG：卡面 + 内嵌 chara 角色卡数据 ---------------- */
+  const CRC_TABLE=(()=>{
+    const table=new Uint32Array(256);
+    for(let n=0;n<256;n++){
+      let c=n;
+      for(let k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1;
+      table[n]=c>>>0;
+    }
+    return table;
+  })();
+  function crc32(bytes){
+    let crc=0xFFFFFFFF;
+    for(let i=0;i<bytes.length;i++) crc=CRC_TABLE[(crc^bytes[i])&0xFF]^(crc>>>8);
+    return (crc^0xFFFFFFFF)>>>0;
+  }
+  function utf8Base64(text){
+    const bytes=new TextEncoder().encode(text);
+    let binary='';
+    for(let i=0;i<bytes.length;i+=0x8000){
+      binary+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));
+    }
+    return btoa(binary);
+  }
+  function textChunk(keyword,value){
+    const data=new TextEncoder().encode(`${keyword}\0${value}`);
+    const chunk=new Uint8Array(12+data.length);
+    const view=new DataView(chunk.buffer);
+    view.setUint32(0,data.length);
+    chunk.set([0x74,0x45,0x58,0x74],4);
+    chunk.set(data,8);
+    view.setUint32(8+data.length,crc32(chunk.subarray(4,8+data.length)));
+    return chunk;
+  }
+  function embedChara(png,card){
+    const chunk=textChunk('chara',utf8Base64(JSON.stringify(card)));
+    const iend=png.length-12;
+    const out=new Uint8Array(png.length+chunk.length);
+    out.set(png.subarray(0,iend),0);
+    out.set(chunk,iend);
+    out.set(png.subarray(iend),iend+chunk.length);
+    return out;
+  }
+  function cardJson(work){
+    const d=work._book!==undefined?work:{...work,...detailFor(work)};
+    const a=ARCHETYPES[work._arch];
+    const description=`${work.name}，${a.place}的${a.label}。${d.setting.split('\n')[0]}`;
+    const data={
+      name:work.name,
+      description,
+      personality:d.personality,
+      scenario:d.setting,
+      first_mes:d.opening,
+      mes_example:'',
+      creator_notes:'繁花·纷落 新版外观示例卡，人物与故事均为虚构的全年龄向内容。',
+      system_prompt:d._system,
+      post_history_instructions:d._post,
+      alternate_greetings:[],
+      tags:work.tags,
+      creator:work.creator,
+      character_version:'1.0',
+      extensions:{}
+    };
+    if(d._book){
+      data.character_book={
+        name:d._book.name,
+        entries:d._book.entries.map((entry,index)=>({
+          id:index+1,
+          keys:entry.keys,
+          secondary_keys:[],
+          comment:entry.name,
+          name:entry.name,
+          content:entry.content,
+          enabled:entry.enabled,
+          insertion_order:entry.order,
+          position:'before_char',
+          constant:false,
+          selective:false,
+          priority:10,
+          extensions:{}
+        })),
+        extensions:{}
+      };
+    }
+    return {
+      spec:'chara_card_v2',
+      spec_version:'2.0',
+      name:data.name,
+      description:data.description,
+      personality:data.personality,
+      scenario:data.scenario,
+      first_mes:data.first_mes,
+      mes_example:'',
+      data
+    };
+  }
+
+  async function renderPng(work){
+    const svgUrl=URL.createObjectURL(new Blob([svgArt(work)],{type:'image/svg+xml'}));
+    try{
+      const image=new Image();
+      image.decoding='async';
+      image.src=svgUrl;
+      await image.decode();
+      const canvas=document.createElement('canvas');
+      canvas.width=1080;
+      canvas.height=1500;
+      canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);
+      const blob=await new Promise((resolve,reject)=>{
+        canvas.toBlob(result=>result?resolve(result):reject(new Error('卡面 PNG 生成失败')),'image/png');
+      });
+      const png=new Uint8Array(await blob.arrayBuffer());
+      return new Blob([embedChara(png,cardJson(work))],{type:'image/png'});
+    }finally{
+      URL.revokeObjectURL(svgUrl);
+    }
+  }
+
+  /* ---------------- 作者头像：印章 ---------------- */
+  function sealAvatar(chars,bg,fg){
+    const [a,b,c,d]=[...chars];
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><rect width="96" height="96" fill="${bg}"/><rect x="8" y="8" width="80" height="80" rx="7" fill="none" stroke="${fg}" stroke-width="3" stroke-opacity=".9"/><g font-family="${SERIF}" font-size="31" font-weight="700" fill="${fg}" text-anchor="middle"><text x="66" y="45">${a}</text><text x="66" y="79">${b}</text><text x="30" y="45">${c}</text><text x="30" y="79">${d}</text></g></svg>`;
+    return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  }
+  const AVATARS={
+    fanhuafenluo:sealAvatar('繁花纷落','#c4412d','#fff3e6'),
+    public:sealAvatar('公开档案','#d9b26f','#1b1408')
+  };
+
+  return {
+    catalog,
+    details,
+    artUrl,
+    renderPng,
+    avatar:id=>AVATARS[id]||AVATARS.fanhuafenluo
+  };
+})();
+</script>
+<script>
+const body=document.body;
+const statusContainer=document.getElementById('status');
+const status=statusContainer.querySelector('span');
+const statusRetry=document.getElementById('statusRetry');
+const cardTemplate=document.getElementById('archiveCardTemplate');
+const cards=[];
+
+const authorSections={
+  fanhuafenluo:{
+    name:'繁花·纷落',
+    english:'FANHUA · FENLUO',
+    count:72,
+    avatar:DemoArchive.avatar('fanhuafenluo')
+  },
+  public:{
+    name:'公开',
+    english:'PUBLIC · CHARACTER ARCHIVE',
+    count:31,
+    avatar:DemoArchive.avatar('public')
+  }
+};
+let activeAuthorId='fanhuafenluo';
+
+const headerAuthorAvatar=document.getElementById('headerAuthorAvatar');
+const headerAuthorName=document.getElementById('headerAuthorName');
+const headerAuthorEnglish=document.getElementById('headerAuthorEnglish');
+const headerArchiveCount=document.getElementById('headerArchiveCount');
+const authorFilterButtons=[...document.querySelectorAll('.author-filter')];
+const galleryEl=document.querySelector('.gallery');
+const authorOrder=['fanhuafenluo','public'];
+const archiveGallery=document.getElementById('archiveGallery');
+const headerAuthorCycle=document.getElementById('headerAuthorCycle');
+const prefersReducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+const siteHeader=document.querySelector('.site-header');
+
+headerAuthorAvatar.src=authorSections.fanhuafenluo.avatar;
+
+/* 示例环境：模拟网络延迟，让加载态、读取中等状态都能看到。
+   地址后加 ?state=error 可以预览数据源加载失败与重试。 */
+const DEMO_LATENCY={catalog:520,details:360,png:380};
+const DEMO_FAIL_ONCE=new URLSearchParams(location.search).get('state')==='error';
+let demoFailed=false;
+const demoSeenImages=new Set();
+const wait=ms=>new Promise(resolve=>window.setTimeout(resolve,ms));
+
+const catalogState={
+  catalog:null,
+  activeWork:null,
+  loadToken:0,
+  detailPromises:Object.create(null),
+  detailsReady:Object.create(null)
+};
+
+async function buildCatalog(){
+  await wait(DEMO_LATENCY.catalog);
+  if(DEMO_FAIL_ONCE && !demoFailed){
+    demoFailed=true;
+    throw new Error('示例：数据源暂时无法访问');
+  }
+
+  const rawCatalog=DemoArchive.catalog();
+  const catalog={};
+
+  Object.keys(rawCatalog).forEach(authorId=>{
+    catalog[authorId]=(rawCatalog[authorId] || []).map(work=>({
+      ...work,
+      _authorId:authorId
+    }));
+    if(authorSections[authorId]){
+      authorSections[authorId].count=catalog[authorId].length;
+    }
+  });
+
+  return catalog;
+}
+
+async function loadAuthorDetails(authorId){
+  if(catalogState.detailPromises[authorId]){
+    return catalogState.detailPromises[authorId];
+  }
+
+  const promise=(async()=>{
+    await wait(DEMO_LATENCY.details);
+    const works=catalogState.catalog?.[authorId] || [];
+    const details=DemoArchive.details(works);
+
+    works.forEach(work=>{
+      Object.assign(work,details[work._detailKey] || {});
+    });
+
+    catalogState.detailsReady[authorId]=true;
+    return details;
+  })();
+
+  catalogState.detailPromises[authorId]=promise;
+
+  try{
+    return await promise;
+  }catch(error){
+    delete catalogState.detailPromises[authorId];
+    throw error;
+  }
+}
+
+function ensureWorkDetails(work){
+  return loadAuthorDetails(work?._authorId || activeAuthorId);
+}
+
+let authorSwitchLocked=false;
+let queuedAuthorId=null;
+
+const DEFAULT_PREVIEW_POSITION='50% 8%';
+
+function previewPositionForWork(work){
+  const raw=String(work?.previewPosition || '').trim();
+
+  if(raw){
+    const parts=raw.split(/\s+/);
+    if(parts.length===2){
+      const x=Number.parseFloat(parts[0]);
+      const y=Number.parseFloat(parts[1]);
+      if(
+        parts[0].endsWith('%') &&
+        parts[1].endsWith('%') &&
+        Number.isFinite(x) &&
+        Number.isFinite(y) &&
+        x>=0 && x<=100 &&
+        y>=0 && y<=100
+      ){
+        return `${x}% ${y}%`;
+      }
+    }
+  }
+
+  return DEFAULT_PREVIEW_POSITION;
+}
+
+function applyPreviewPosition(image,work){
+  const position=previewPositionForWork(work);
+  image.style.objectPosition=position;
+  image.dataset.previewPosition=position;
+}
+
+function cardFaceMissing(card){
+  card?.classList.remove('is-image-loading');
+  card?.classList.add('image-error','is-face-missing');
+  const sub=card?.querySelector('.state-label-loading .loading-sub');
+  if(sub) sub.textContent='CARD FACE UNAVAILABLE';
+  revealCard(card);
+}
+
+function ensureCardPreview(card){
+  const art=card.querySelector('.loaded-art');
+  let image=art.querySelector('.loaded-card-image');
+
+  if(!image){
+    image=document.createElement('img');
+    image.className='loaded-card-image';
+    image.decoding='async';
+    art.prepend(image);
+  }
+
+  return image;
+}
+
+function formatCreatedAt(work){
+  const raw=String(work?.createdAt || work?.created || '').trim();
+  const match=raw.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
+  if(!match) return '';
+  return match[1]+'.'+
+    match[2].padStart(2,'0')+'.'+
+    match[3].padStart(2,'0');
+}
+
+/* 示例卡面第一次出现时给一点随机延迟，模拟逐张加载；之后视为已缓存。 */
+function demoImageDelay(work,index){
+  if(demoSeenImages.has(work._detailKey)) return 0;
+  demoSeenImages.add(work._detailKey);
+  return 180+Math.min(index,24)*36+(work._seed%240);
+}
+
+function applyAuthorCardContent(authorId){
+  const works=catalogState.catalog?.[authorId] || [];
+  growCardPool(works.length);
+  const firstScreen=firstScreenCount();
+
+  cards.forEach((card,index)=>{
+    const work=works[index];
+    const show=Boolean(work);
+
+    card.classList.remove(
+      'is-loaded',
+      'has-source-image',
+      'image-error',
+      'is-face-missing',
+      'is-image-loading'
+    );
+    card.hidden=!show;
+    card._work=work || null;
+    window.clearTimeout(card._srcTimer);
+
+    if(!show){
+      delete card.dataset.author;
+      delete card.dataset.workIndex;
+      card.removeAttribute('role');
+      card.removeAttribute('aria-label');
+      const oldImage=card.querySelector('.loaded-card-image');
+      if(oldImage){
+        oldImage.onload=null;
+        oldImage.onerror=null;
+        oldImage.removeAttribute('src');
+      }
+      card.querySelectorAll('.detail-action,.download-action').forEach(button=>{
+        button.disabled=true;
+        button.tabIndex=-1;
+      });
+      return;
+    }
+
+    card.dataset.author=authorId;
+    card.dataset.workIndex=String(index);
+    card.setAttribute('role','group');
+    card.setAttribute(
+      'aria-label',
+      `${work.name} · ${work.cardLabel || work.tags?.[0] || '角色卡'}`
+    );
+
+    const number=String(index+1).padStart(2,'0');
+    const name=card.querySelector('.ready-name');
+    const metaText=card.querySelector('.ready-meta');
+    const label=card.querySelector('.corner-label');
+    const cornerIndex=card.querySelector('.corner-index');
+    const loadingSub=card.querySelector('.state-label-loading .loading-sub');
+
+    if(name) name.textContent=work.name;
+    const created=formatCreatedAt(work);
+    const readyLabel=card.querySelector('.state-label-ready');
+    if(metaText) metaText.textContent=created;
+    readyLabel?.classList.toggle('no-created',!created);
+    if(label) label.textContent=`ARCHIVE · ${number}`;
+    if(cornerIndex) cornerIndex.textContent=number;
+    if(loadingSub) loadingSub.textContent='等待卡面';
+
+    card.querySelector('.detail-action')?.setAttribute('aria-label',`查看 ${work.name} 的档案`);
+    card.querySelector('.download-action')?.setAttribute('aria-label',`保存 ${work.name} 的角色卡 PNG`);
+
+    const image=ensureCardPreview(card);
+
+    image.alt=`${work.name}角色卡卡面`;
+    applyPreviewPosition(image,work);
+    image.width=720;
+    image.height=1000;
+    image.loading=index<firstScreen?'eager':'lazy';
+    image.fetchPriority=index<Math.min(firstScreen,8)?'high':'low';
+
+    card.classList.add('is-image-loading');
+
+    image.onload=()=>{
+      if(card._work!==work) return;
+      card.classList.remove('is-image-loading');
+      card.classList.add('has-source-image');
+      revealCard(card);
+    };
+
+    image.onerror=()=>{
+      if(card._work!==work) return;
+      image.onerror=null;
+      cardFaceMissing(card);
+    };
+
+    const src=DemoArchive.artUrl(work);
+    const delay=demoImageDelay(work,index);
+    if(delay){
+      image.removeAttribute('src');
+      card._srcTimer=window.setTimeout(()=>{
+        if(card._work===work) image.src=src;
+      },delay);
+    }else{
+      image.src=src;
+    }
+
+    card.querySelectorAll('.detail-action,.download-action').forEach(button=>{
+      button.disabled=true;
+      button.tabIndex=-1;
+    });
+  });
+
+  archiveGallery?.setAttribute('aria-busy','false');
+  cardHeightMeasured=false;
+  queueCardMetricsRefresh();
+}
+
+function setAuthorControlsDisabled(disabled){
+  authorFilterButtons.forEach(button=>{
+    button.disabled=disabled;
+  });
+  headerAuthorCycle.disabled=disabled;
+}
+
+function paintAuthorHeader(authorId){
+  const meta=authorSections[authorId];
+  headerAuthorName.textContent=meta.name;
+  headerAuthorEnglish.textContent=meta.english;
+  headerArchiveCount.textContent=String(meta.count);
+  headerAuthorAvatar.src=meta.avatar;
+  headerAuthorAvatar.alt=`${meta.name}头像`;
+}
+
+async function loadCatalog(){
+  const token=++catalogState.loadToken;
+
+  setAuthorControlsDisabled(true);
+  statusContainer.classList.remove('is-error','is-ready');
+  statusRetry.hidden=true;
+  status.textContent='LOADING SOURCE';
+  archiveGallery?.setAttribute('aria-busy','true');
+
+  // 数据回来之前先按首屏容量铺一批占位卡，加载过程有东西可看。
+  growCardPool(firstScreenCount());
+  cards.forEach(card=>{if(!card._work) card.hidden=false;});
+
+  try{
+    const catalog=await buildCatalog();
+
+    if(token!==catalogState.loadToken) return;
+
+    catalogState.catalog=catalog;
+    catalogState.detailPromises=Object.create(null);
+    catalogState.detailsReady=Object.create(null);
+
+    authorFilterButtons.forEach(button=>{
+      button.hidden=!Object.prototype.hasOwnProperty.call(catalog,button.dataset.author);
+    });
+
+    activeAuthorId=authorOrder.find(id=>catalog[id]) || Object.keys(catalog)[0];
+    if(!activeAuthorId) throw new Error('没有可用的作者数据');
+
+    authorFilterButtons.forEach(button=>{
+      const active=button.dataset.author===activeAuthorId;
+      button.classList.toggle('active',active);
+      button.setAttribute('aria-pressed',String(active));
+    });
+
+    paintAuthorHeader(activeAuthorId);
+    applyAuthorCardContent(activeAuthorId);
+    setAuthorControlsDisabled(false);
+    updateStatus();
+  }catch(error){
+    if(token!==catalogState.loadToken) return;
+
+    status.textContent='SOURCE ERROR · 点击重试';
+    statusContainer.classList.add('is-error');
+    statusRetry.hidden=false;
+    archiveGallery?.setAttribute('aria-busy','false');
+    cards.forEach(card=>{if(!card._work) card.hidden=true;});
+  }
+}
+
+statusRetry.addEventListener('click',event=>{
+  event.stopPropagation();
+  loadCatalog();
+});
+statusContainer.addEventListener('click',()=>{
+  if(statusContainer.classList.contains('is-error')) loadCatalog();
+});
+
+headerAuthorCycle.addEventListener('click',()=>{
+  if(!catalogState.catalog) return;
+  const current=authorOrder.indexOf(activeAuthorId);
+  setAuthor(authorOrder[(current+1)%authorOrder.length]);
+});
+
+function setAuthor(authorId){
+  if(!catalogState.catalog?.[authorId]) return;
+  const meta=authorSections[authorId];
+  if(!meta) return;
+  if(authorSwitchLocked){
+    if(authorId!==activeAuthorId) queuedAuthorId=authorId;
+    return;
+  }
+  if(authorId===activeAuthorId) return;
+
+  authorSwitchLocked=true;
+  const fromIndex=Math.max(0,authorOrder.indexOf(activeAuthorId));
+  const toIndex=Math.max(0,authorOrder.indexOf(authorId));
+  const dir=toIndex>=fromIndex?1:-1;
+
+  authorFilterButtons.forEach(btn=>{
+    const active=btn.dataset.author===authorId;
+    btn.classList.toggle('active',active);
+    btn.setAttribute('aria-pressed',String(active));
+  });
+
+  const headerVars={
+    '--author-avatar-out-rot':`${-72*dir}deg`,
+    '--author-avatar-in-rot':`${76*dir}deg`,
+    '--author-avatar-bounce-rot':`${-8*dir}deg`,
+    '--author-name-out-x':`${-18*dir}px`,
+    '--author-name-in-x':`${24*dir}px`,
+    '--author-name-over-x':`${-2*dir}px`,
+    '--author-name-out-skew':`${4*dir}deg`,
+    '--author-name-in-skew':`${-6*dir}deg`,
+    '--author-count-out-y':`${-15*dir}px`,
+    '--author-count-in-y':`${18*dir}px`,
+    '--author-count-over-y':`${-2*dir}px`
+  };
+  Object.entries(headerVars).forEach(([key,value])=>siteHeader.style.setProperty(key,value));
+  galleryEl.style.setProperty('--author-card-out-x',`${-28*dir}px`);
+  galleryEl.style.setProperty('--author-card-in-x',`${42*dir}px`);
+  galleryEl.style.setProperty('--author-card-over-x',`${-3*dir}px`);
+  galleryEl.dataset.authorDirection=dir>0?'next':'prev';
+
+  cards.forEach((card,i)=>{
+    if(!card.classList.contains('is-motion-visible')) return;
+    const lean=i%2===0?1:-1;
+    card.style.setProperty('--author-delay',`${Math.min(i,12)*11}ms`);
+    card.style.setProperty('--author-card-out-rot',`${1.2*dir*lean}deg`);
+    card.style.setProperty('--author-card-in-rot',`${-1.8*dir*lean}deg`);
+    card.style.setProperty('--author-card-over-rot',`${.18*lean}deg`);
+  });
+
+  siteHeader.classList.remove('author-switch-in');
+  galleryEl.classList.remove('author-switch-in');
+  siteHeader.classList.add('author-switch-out');
+  galleryEl.classList.add('author-switch-out');
+
+  const swapDelay=prefersReducedMotion.matches?0:235;
+  window.setTimeout(()=>{
+    activeAuthorId=authorId;
+    paintAuthorHeader(authorId);
+    applyAuthorCardContent(authorId);
+    updateStatus();
+
+    siteHeader.classList.remove('author-switch-out');
+    galleryEl.classList.remove('author-switch-out');
+
+    const beginAuthorEntrance=()=>{
+      siteHeader.classList.add('author-switch-in');
+      galleryEl.classList.add('author-switch-in');
+      pulseStatus();
+
+      window.setTimeout(()=>{
+        siteHeader.classList.remove('author-switch-in');
+        galleryEl.classList.remove('author-switch-in');
+        authorSwitchLocked=false;
+        const next=queuedAuthorId;
+        queuedAuthorId=null;
+        if(next && next!==activeAuthorId) setAuthor(next);
+      },prefersReducedMotion.matches?0:590);
+    };
+    if(prefersReducedMotion.matches) beginAuthorEntrance();
+    else requestAnimationFrame(beginAuthorEntrance);
+  },swapDelay);
+}
+
+authorFilterButtons.forEach(btn=>{
+  btn.addEventListener('click',()=>setAuthor(btn.dataset.author));
+});
+
+
+const archiveModal=document.getElementById('archiveModal');
+const archiveModalClose=document.getElementById('archiveModalClose');
+const saveSheet=document.getElementById('saveSheet');
+const saveSheetClose=document.getElementById('saveSheetClose');
+const saveSheetPhoto=document.getElementById('saveSheetPhoto');
+const saveSheetNote=document.getElementById('saveSheetNote');
+let saveSheetShareFile=null;
+
+let activeCard=null;
+let lastArchiveTrigger=null;
+let lastSaveTrigger=null;
+let toastTimer=null;
+
+function motionDelay(ms,fn){
+  if(prefersReducedMotion.matches){fn();return;}
+  window.setTimeout(fn,ms);
+}
+
+function restartClass(el,className,duration=420){
+  if(!el || prefersReducedMotion.matches) return;
+  el.classList.remove(className);
+  void el.offsetWidth;
+  el.classList.add(className);
+  window.setTimeout(()=>el.classList.remove(className),duration);
+}
+
+function pulseStatus(){
+  restartClass(status,'is-status-pulse',430);
+}
+
+function markAction(el){
+  restartClass(el,'is-activating',460);
+}
+
+const TOAST_ICONS={
+  '✓':'<svg class="icon"><use href="#i-check"/></svg>',
+  '↓':'<svg class="icon"><use href="#i-download"/></svg>'
+};
+
+function ensureToast(){
+  let toast=document.getElementById('motionToast');
+  if(toast) return toast;
+  toast=document.createElement('div');
+  toast.id='motionToast';
+  toast.className='motion-toast';
+  toast.setAttribute('role','status');
+  toast.setAttribute('aria-live','polite');
+  toast.innerHTML='<span class="motion-toast-mark"></span><span class="motion-toast-copy"><b></b><small></small></span>';
+  document.body.appendChild(toast);
+  return toast;
+}
+
+function showToast(title,message,mark='✓'){
+  const toast=ensureToast();
+  toast.querySelector('.motion-toast-mark').innerHTML=TOAST_ICONS[mark] || TOAST_ICONS['✓'];
+  toast.querySelector('.motion-toast-copy b').textContent=title;
+  toast.querySelector('.motion-toast-copy small').textContent=message;
+  toast.classList.remove('is-show');
+  void toast.offsetWidth;
+  toast.classList.add('is-show');
+  window.clearTimeout(toastTimer);
+  toastTimer=window.setTimeout(()=>toast.classList.remove('is-show'),2600);
+}
+
+function setShellInert(on){
+  ['.site-header','.archive-main','footer'].forEach(selector=>{
+    const element=document.querySelector(selector);
+    if(!element) return;
+    if(on) element.setAttribute('inert','');
+    else element.removeAttribute('inert');
+  });
+}
+
+function trapTab(container,event){
+  if(event.key!=='Tab') return;
+  const focusable=[...container.querySelectorAll(
+    'button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'
+  )].filter(element=>
+    !element.disabled &&
+    element.offsetParent!==null &&
+    !element.hidden
+  );
+  if(!focusable.length) return;
+
+  const first=focusable[0];
+  const last=focusable[focusable.length-1];
+  if(event.shiftKey && document.activeElement===first){
+    event.preventDefault();
+    last.focus();
+  }else if(!event.shiftKey && document.activeElement===last){
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+function updateStatus(){
+  const visibleCards=cards.filter(card=>!card.hidden && card._work);
+  const loaded=visibleCards.filter(card=>card.classList.contains('is-loaded')).length;
+  const ready=visibleCards.length>0 && loaded===visibleCards.length;
+  const next=ready
+    ? `READY · ${visibleCards.length}`
+    : `已显示 ${loaded} / ${visibleCards.length}`;
+  statusContainer.classList.toggle('is-ready',ready);
+  if(status.textContent!==next){
+    status.textContent=next;
+    pulseStatus();
+  }
+}
+
+function revealCard(card){
+  if(
+    !card ||
+    !card._work ||
+    card.classList.contains('is-loaded') ||
+    (
+      !card.classList.contains('has-source-image') &&
+      !card.classList.contains('is-face-missing')
+    )
+  ) return;
+
+  card.classList.add('is-loaded');
+
+  const label=card.querySelector('.corner-label');
+  if(label) label.textContent=
+    card._work.cardLabel ||
+    card._work.tags?.[0] ||
+    card._work.role ||
+    '角色卡';
+
+  card.querySelectorAll('.detail-action,.download-action').forEach(btn=>{
+    btn.disabled=false;
+    btn.tabIndex=0;
+  });
+
+  updateStatus();
+}
+
+const nearObserver=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    entry.target.classList.toggle('is-near',entry.isIntersecting);
+  });
+  window.requestAnimationFrame(()=>syncCardIntrinsicHeight());
+},{rootMargin:'1200px 0px 1200px',threshold:0});
+
+let metricsRefreshRaf=0;
+let cardHeightMeasured=false;
+
+function currentGalleryColumns(){
+  const template=getComputedStyle(galleryEl).gridTemplateColumns;
+  const columns=template.split(/\s+/).filter(Boolean).length;
+  return columns || 1;
+}
+
+// 首屏大致装得下的卡片数：预铺占位卡、以及决定哪些卡面优先加载都按它来。
+function firstScreenCount(){
+  return Math.max(currentGalleryColumns()*2,6);
+}
+
+function syncCardIntrinsicHeight(force=false){
+  if(cardHeightMeasured && !force) return;
+  const probe=cards.find(card=>!card.hidden && card.classList.contains('is-near'))
+    || cards.find(card=>!card.hidden);
+  if(!probe) return;
+  const height=probe.getBoundingClientRect().height;
+  if(height>0){
+    galleryEl.style.setProperty('--card-ih',`${Math.round(height)}px`);
+    cardHeightMeasured=true;
+  }
+}
+
+function refreshCardMetrics(){
+  metricsRefreshRaf=0;
+  syncCardIntrinsicHeight(true);
+}
+
+function queueCardMetricsRefresh(){
+  if(metricsRefreshRaf) return;
+  metricsRefreshRaf=requestAnimationFrame(refreshCardMetrics);
+}
+
+const motionVisibilityObserver=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    entry.target.classList.toggle('is-motion-visible',entry.isIntersecting);
+  });
+},{rootMargin:'300px 0px 300px',threshold:0});
+
+function registerCard(card){
+  card._work=null;
+  card.querySelectorAll('.detail-action,.download-action').forEach(button=>{
+    button.disabled=true;
+    button.tabIndex=-1;
+  });
+  nearObserver.observe(card);
+  motionVisibilityObserver.observe(card);
+}
+
+function buildCard(index){
+  if(!cardTemplate?.content.firstElementChild){
+    throw new Error('角色卡模板不存在');
+  }
+  const card=cardTemplate.content.firstElementChild.cloneNode(true);
+  card.classList.add(`pattern-${(index%4)+1}`,`theme-${index%6}`);
+  card.querySelector('.corner-label').textContent=`ARCHIVE · ${String(index+1).padStart(2,'0')}`;
+  card.querySelector('.corner-index').textContent=String(index+1).padStart(2,'0');
+  return card;
+}
+
+function growCardPool(target){
+  if(target<=cards.length) return;
+  const start=cards.length;
+  const fragment=document.createDocumentFragment();
+  const added=[];
+
+  for(let index=start;index<target;index++){
+    const card=buildCard(index);
+    cards.push(card);
+    added.push(card);
+    fragment.appendChild(card);
+  }
+
+  archiveGallery.appendChild(fragment);
+  added.forEach(registerCard);
+  cardHeightMeasured=false;
+  queueCardMetricsRefresh();
+}
+
+refreshCardMetrics();
+window.addEventListener('resize',queueCardMetricsRefresh,{passive:true});
+
+function cardData(card){
+  const work=card?._work || null;
+  const index=Number(card?.dataset.workIndex || 0);
+
+  if(!work){
+    return {
+      work:null,
+      name:'角色档案',
+      created:'—',
+      identity:'角色身份',
+      index:String(index+1).padStart(2,'0')
+    };
+  }
+
+  return {
+    work,
+    name:work.name,
+    created:formatCreatedAt(work) || '—',
+    identity:work.cardLabel || work.tags?.[0] || '角色卡',
+    index:String(index+1).padStart(2,'0')
+  };
+}
+
+function formatPersonalityAndScenario(work){
+  const sections=[];
+  if(work?.personality) sections.push(`【性格设定】\n${work.personality}`);
+  if(work?.setting) sections.push(`【场景设定】\n${work.setting}`);
+  return sections.join('\n\n') || '该角色卡未提供人物设定。';
+}
+
+function detailCopyForWork(work){
+  return {
+    opening:work.opening || '该角色卡未提供开场白。',
+    setting:formatPersonalityAndScenario(work),
+    worldbook:work.worldbook || '该角色卡未附带世界书。',
+    preset:work.preset || '该角色卡未附带预设。'
+  };
+}
+
+const PENDING_COPY={
+  opening:'正在读取角色资料…',
+  setting:'正在读取角色资料…',
+  worldbook:'正在读取角色资料…',
+  preset:'正在读取角色资料…'
+};
+const FAILED_COPY={
+  opening:'角色资料读取失败。',
+  setting:'角色资料读取失败。',
+  worldbook:'角色资料读取失败。',
+  preset:'角色资料读取失败。'
+};
+
+const detailTabMeta={
+  opening:{index:'01 · CHARACTER DATA',title:'开场白',type:'OPENING'},
+  setting:{index:'02 · CHARACTER DATA',title:'人物设定',type:'SETTING'},
+  worldbook:{index:'03 · CHARACTER DATA',title:'世界书',type:'LOREBOOK'},
+  preset:{index:'04 · CHARACTER DATA',title:'预设',type:'PRESET'}
+};
+
+let currentDetailTab='opening';
+const detailTabOrder=['opening','setting','worldbook','preset'];
+const detailOptions=document.querySelector('.detail-options');
+const detailReadingPanel=document.querySelector('.detail-reading-panel');
+
+function renderDetailTabs(){
+  document.querySelectorAll('[data-detail-tab]').forEach(button=>{
+    button.hidden=false;
+    button.tabIndex=0;
+  });
+  detailOptions?.style.setProperty('--detail-count',String(detailTabOrder.length));
+  if(!detailTabOrder.includes(currentDetailTab)) currentDetailTab='opening';
+}
+
+function centerDetailTab(key,instant=false){
+  if(!detailOptions) return;
+  const button=detailOptions.querySelector(`[data-detail-tab="${key}"]`);
+  if(!button || detailOptions.scrollWidth<=detailOptions.clientWidth) return;
+  const target=button.offsetLeft+(button.offsetWidth/2)-(detailOptions.clientWidth/2);
+  const max=Math.max(0,detailOptions.scrollWidth-detailOptions.clientWidth);
+  detailOptions.scrollTo({
+    left:Math.max(0,Math.min(max,target)),
+    behavior:instant?'auto':'smooth'
+  });
+}
+
+function paintDetailContent(key){
+  const copy=archiveModal._detailCopy || {};
+  const meta=detailTabMeta[key] || detailTabMeta.opening;
+  document.getElementById('detailPanelIndex').textContent=meta.index;
+  document.getElementById('detailPanelTitle').textContent=meta.title;
+  document.getElementById('detailPanelType').textContent=meta.type;
+  document.getElementById('detailPanelBody').textContent=copy[key] || '暂无内容。';
+}
+
+function setDetailTab(key,options={}){
+  if(!detailTabMeta[key]) key='opening';
+  const instant=Boolean(options.instant) || prefersReducedMotion.matches;
+  const nextIndex=Math.max(0,detailTabOrder.indexOf(key));
+
+  if(detailOptions){
+    detailOptions.style.setProperty('--detail-index',String(nextIndex));
+    detailOptions.style.setProperty('--detail-shift',`calc(${nextIndex*100}% + ${nextIndex*6}px)`);
+  }
+
+  document.querySelectorAll('[data-detail-tab]').forEach(btn=>{
+    const active=btn.dataset.detailTab===key;
+    btn.classList.toggle('is-active',active);
+    btn.setAttribute('aria-selected',String(active));
+    if(active && !instant) restartClass(btn,'is-tab-hit',430);
+  });
+
+  paintDetailContent(key);
+  currentDetailTab=key;
+  centerDetailTab(key,instant);
+  if(detailReadingPanel){
+    detailReadingPanel.scrollTop=0;
+    detailReadingPanel.dataset.detailMode=key;
+    detailReadingPanel.classList.remove('is-reading-scrolled');
+  }
+}
+
+document.querySelectorAll('[data-detail-tab]').forEach(btn=>{
+  btn.addEventListener('click',()=>setDetailTab(btn.dataset.detailTab));
+});
+
+if(detailReadingPanel){
+  let detailScrollRaf=0;
+  detailReadingPanel.addEventListener('scroll',()=>{
+    if(detailScrollRaf) return;
+    detailScrollRaf=requestAnimationFrame(()=>{
+      detailScrollRaf=0;
+      detailReadingPanel.classList.toggle('is-reading-scrolled',detailReadingPanel.scrollTop>12);
+    });
+  },{passive:true});
+}
+
+async function openArchive(card){
+  const data=cardData(card);
+  const work=data.work;
+  if(!work) return;
+
+  activeCard=card;
+  catalogState.activeWork=work;
+  lastArchiveTrigger=document.activeElement;
+
+  const authorId=work._authorId || activeAuthorId;
+  const detailsReady=Boolean(catalogState.detailsReady?.[authorId]);
+  const detailImage=document.getElementById('detailImage');
+  const detailArt=detailImage.closest('.detail-art');
+
+  document.getElementById('detailName').textContent=work.name;
+  document.getElementById('detailIdentity').textContent=data.identity;
+  document.getElementById('detailIndex').textContent=`ARCHIVE · ${data.index}`;
+  document.getElementById('detailAlias').textContent=[
+    work.alias,
+    work.collectionLabel
+  ].filter(Boolean).join(' · ') || 'TAVO CHARACTER CARD';
+
+  renderDetailTabs();
+  archiveModal._detailCopy=detailsReady ? detailCopyForWork(work) : PENDING_COPY;
+  currentDetailTab='opening';
+  setDetailTab('opening',{instant:true});
+
+  detailImage.classList.remove('is-ready');
+  detailArt?.classList.remove('has-source');
+  detailImage.alt=`${work.name}角色卡卡面`;
+  applyPreviewPosition(detailImage,work);
+
+  detailImage.onload=()=>{
+    if(catalogState.activeWork!==work) return;
+    detailImage.classList.add('is-ready');
+    detailArt?.classList.add('has-source');
+  };
+  detailImage.onerror=()=>{
+    if(catalogState.activeWork!==work) return;
+    detailImage.classList.remove('is-ready');
+    detailArt?.classList.remove('has-source');
+  };
+  detailImage.src=DemoArchive.artUrl(work);
+
+  /* 弹窗从被点击的卡片位置展开。 */
+  const sourceRect=card.getBoundingClientRect();
+  const panel=document.querySelector('.archive-modal-panel');
+  const originX=Math.max(8,Math.min(92,(sourceRect.left+sourceRect.width/2)/window.innerWidth*100));
+  const originY=Math.max(8,Math.min(92,(sourceRect.top+sourceRect.height/2)/window.innerHeight*100));
+  panel?.style.setProperty('--archive-origin-x',`${originX}%`);
+  panel?.style.setProperty('--archive-origin-y',`${originY}%`);
+
+  archiveModal.classList.add('is-open');
+  archiveModal.setAttribute('aria-hidden','false');
+  archiveModal.removeAttribute('inert');
+  body.classList.add('has-overlay');
+  setShellInert(true);
+  body.style.overflow='hidden';
+  motionDelay(180,()=>archiveModalClose.focus({preventScroll:true}));
+
+  try{
+    await ensureWorkDetails(work);
+    if(catalogState.activeWork!==work || !archiveModal.classList.contains('is-open')) return;
+    renderDetailTabs();
+    archiveModal._detailCopy=detailCopyForWork(work);
+    setDetailTab(currentDetailTab,{instant:true});
+  }catch{
+    if(catalogState.activeWork===work && archiveModal.classList.contains('is-open')){
+      archiveModal._detailCopy=FAILED_COPY;
+      setDetailTab(currentDetailTab,{instant:true});
+    }
+  }
+}
+
+function closeArchive(){
+  if(!archiveModal.classList.contains('is-open')) return;
+  archiveModal.classList.remove('is-open');
+  archiveModal.setAttribute('aria-hidden','true');
+  archiveModal.setAttribute('inert','');
+  if(!saveSheet.classList.contains('is-open')) setShellInert(false);
+  motionDelay(430,()=>{
+    if(!saveSheet.classList.contains('is-open')) body.style.overflow='';
+    if(!archiveModal.classList.contains('is-open') && !saveSheet.classList.contains('is-open')) body.classList.remove('has-overlay');
+    if(lastArchiveTrigger && document.contains(lastArchiveTrigger)) lastArchiveTrigger.focus({preventScroll:true});
+  });
+}
+
+function safeFilename(name){
+  return String(name || 'character-card')
+    .replace(/[\\/:*?"<>|]/g,'-')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+/* 原站在这里依次尝试三个地址下载原始 PNG；示例版本在本地生成同样带角色卡数据的 PNG。 */
+async function fetchOriginalPng(work){
+  const [blob]=await Promise.all([
+    DemoArchive.renderPng(work),
+    wait(DEMO_LATENCY.png)
+  ]);
+  const signature=new Uint8Array(await blob.slice(0,8).arrayBuffer());
+  const expected=[137,80,78,71,13,10,26,10];
+  if(!blob.size || expected.some((byte,index)=>signature[index]!==byte)){
+    throw new Error('返回内容不是有效 PNG');
+  }
+  return blob;
+}
+
+let saveSheetObjectUrl=null;
+let saveSheetBuildToken=0;
+
+function openSaveSheet(card=activeCard){
+  const work=card?._work;
+  if(!work) return;
+
+  activeCard=card;
+  catalogState.activeWork=work;
+  lastSaveTrigger=document.activeElement;
+  const data=cardData(card);
+  const token=++saveSheetBuildToken;
+  const image=document.getElementById('saveSheetImage');
+  const link=document.getElementById('saveSheetLink');
+
+  document.getElementById('savePreviewName').textContent=work.name;
+  document.getElementById('savePreviewIdentity').textContent=data.identity;
+  link.removeAttribute('href');
+  link.download=`${safeFilename(work.name)}-character-card.png`;
+
+  saveSheetShareFile=null;
+  saveSheet.classList.add('is-preparing');
+  saveSheet.classList.remove('is-ready');
+  saveSheetPhoto.disabled=true;
+  saveSheetPhoto.querySelector('.save-choice-copy b').textContent='正在准备原始 PNG…';
+  saveSheetNote.textContent='正在读取原始角色卡 PNG，请稍候。';
+
+  saveSheet.classList.add('is-open');
+  saveSheet.setAttribute('aria-hidden','false');
+  saveSheet.removeAttribute('inert');
+  archiveModal.setAttribute('inert','');
+  setShellInert(true);
+  body.classList.add('has-overlay');
+  body.style.overflow='hidden';
+  motionDelay(170,()=>saveSheetClose.focus({preventScroll:true}));
+
+  image.src=DemoArchive.artUrl(work);
+  image.alt=`${work.name}角色卡预览`;
+  applyPreviewPosition(image,work);
+
+  fetchOriginalPng(work).then(blob=>{
+    if(token!==saveSheetBuildToken || !saveSheet.classList.contains('is-open')) return;
+
+    const oldUrl=saveSheetObjectUrl;
+    const nextUrl=URL.createObjectURL(blob);
+    saveSheetObjectUrl=nextUrl;
+
+    image.src=nextUrl;
+    image.alt=`${work.name}原始角色卡 PNG`;
+    link.href=nextUrl;
+    if(oldUrl) URL.revokeObjectURL(oldUrl);
+
+    const file=new File([blob],`${safeFilename(work.name)}-character-card.png`,{type:'image/png'});
+    saveSheetShareFile=file;
+    saveSheet.classList.remove('is-preparing');
+    saveSheet.classList.add('is-ready');
+    window.setTimeout(()=>saveSheet.classList.remove('is-ready'),650);
+
+    const canShare=
+      typeof navigator.share==='function' &&
+      (!navigator.canShare || navigator.canShare({files:[file]}));
+    const size=(blob.size/1024/1024).toFixed(1);
+
+    if(canShare){
+      saveSheetPhoto.disabled=false;
+      saveSheetPhoto.querySelector('.save-choice-copy b').textContent='保存到相册';
+      saveSheetNote.textContent=`原始 PNG 已准备完成，大小 ${size} MB。`;
+    }else{
+      saveSheetPhoto.disabled=true;
+      saveSheetPhoto.querySelector('.save-choice-copy b').textContent='当前浏览器不支持保存到相册';
+      saveSheetNote.textContent=`原始 PNG 已准备完成，大小 ${size} MB；请使用“以文件形式保存”。`;
+    }
+  }).catch(error=>{
+    if(token!==saveSheetBuildToken) return;
+    saveSheet.classList.remove('is-preparing','is-ready');
+    saveSheetPhoto.disabled=true;
+    saveSheetPhoto.querySelector('.save-choice-copy b').textContent='原始 PNG 准备失败';
+    saveSheetNote.textContent=error.message || '原始 PNG 暂时无法读取，请稍后重试。';
+  });
+}
+
+function closeSaveSheet(){
+  if(!saveSheet.classList.contains('is-open')) return;
+  ++saveSheetBuildToken;
+  saveSheetShareFile=null;
+  saveSheet.classList.remove('is-open','is-preparing','is-ready');
+  saveSheet.setAttribute('aria-hidden','true');
+  saveSheet.setAttribute('inert','');
+  if(archiveModal.classList.contains('is-open')) archiveModal.removeAttribute('inert');
+  else archiveModal.setAttribute('inert','');
+  setShellInert(archiveModal.classList.contains('is-open'));
+  motionDelay(430,()=>{
+    if(!archiveModal.classList.contains('is-open')) body.style.overflow='';
+    if(!archiveModal.classList.contains('is-open') && !saveSheet.classList.contains('is-open')) body.classList.remove('has-overlay');
+    if(lastSaveTrigger && document.contains(lastSaveTrigger)) lastSaveTrigger.focus({preventScroll:true});
+  });
+}
+
+archiveGallery.addEventListener('click',e=>{
+  const detailButton=e.target.closest('.detail-action');
+  if(detailButton && archiveGallery.contains(detailButton)){
+    if(!detailButton.disabled) openArchive(detailButton.closest('.archive-card'));
+    return;
+  }
+
+  const downloadButton=e.target.closest('.download-action');
+  if(downloadButton && archiveGallery.contains(downloadButton)){
+    e.stopPropagation();
+    if(!downloadButton.disabled) openSaveSheet(downloadButton.closest('.archive-card'));
+  }
+});
+
+archiveModalClose.addEventListener('click',closeArchive);
+document.querySelectorAll('[data-close-archive]').forEach(el=>el.addEventListener('click',closeArchive));
+saveSheetClose.addEventListener('click',closeSaveSheet);
+document.querySelectorAll('[data-close-save]').forEach(el=>el.addEventListener('click',closeSaveSheet));
+
+document.getElementById('detailSaveBtn').addEventListener('click',e=>{
+  markAction(e.currentTarget);
+  openSaveSheet(activeCard);
+});
+
+saveSheetPhoto.addEventListener('click',async()=>{
+  if(!saveSheetShareFile || saveSheetPhoto.disabled) return;
+  try{
+    saveSheetPhoto.disabled=true;
+    saveSheetPhoto.querySelector('.save-choice-copy b').textContent='正在打开系统菜单…';
+    await navigator.share({
+      files:[saveSheetShareFile],
+      title:'保存 TAVO 角色卡'
+    });
+    saveSheetNote.textContent='文件已交给系统菜单处理。是否进入相册由所选系统应用决定；用于 TAVO 导入时仍建议保留“PNG 原图”文件。';
+    markAction(saveSheetPhoto);
+    showToast('已交给系统处理','系统保存流程已完成返回；是否进入相册取决于你选择的系统应用。','✓');
+  }catch(err){
+    if(err && err.name==='AbortError'){
+      saveSheetNote.textContent='已取消系统保存菜单。你也可以直接使用“以文件形式保存”。';
+    }else{
+      saveSheetNote.textContent='系统保存菜单没有成功打开。请长按上方图片保存，或使用“以文件形式保存”。';
+    }
+  }finally{
+    if(saveSheet.classList.contains('is-open')){
+      saveSheetPhoto.disabled=false;
+      saveSheetPhoto.querySelector('.save-choice-copy b').textContent='保存到相册';
+    }
+  }
+});
+
+/* 浏览器不会告知文件何时写完，所以只确认下载已经开始。 */
+document.getElementById('saveSheetLink').addEventListener('click',e=>{
+  if(!e.currentTarget.getAttribute('href')) return;
+  markAction(e.currentTarget);
+  showToast('PNG 下载已开始','浏览器已接收原图下载任务。','↓');
+});
+
+document.querySelectorAll('.save-sheet-choice').forEach(el=>{
+  el.addEventListener('pointerdown',()=>markAction(el));
+});
+
+document.addEventListener('keydown',e=>{
+  if(saveSheet.classList.contains('is-open')){
+    trapTab(saveSheet,e);
+  }else if(archiveModal.classList.contains('is-open')){
+    trapTab(archiveModal,e);
+  }
+
+  if(e.key!=='Escape') return;
+  if(saveSheet.classList.contains('is-open')) closeSaveSheet();
+  else if(archiveModal.classList.contains('is-open')) closeArchive();
+});
+
+loadCatalog();
+
+function syncPageVisibilityMotion(){
+  body.classList.toggle('is-page-hidden',document.hidden);
+}
+document.addEventListener('visibilitychange',syncPageVisibilityMotion,{passive:true});
+syncPageVisibilityMotion();
+
+window.addEventListener('beforeunload',()=>{
+  if(saveSheetObjectUrl) URL.revokeObjectURL(saveSheetObjectUrl);
+});
+</script>
+<script>
+/* =========================================================
+   入场动效：只负责挂 data-motion 属性和 mo-* 类，
+   不接管数据加载、弹窗开关和 PNG 导出。
+   规则只有一条：屏幕上的元素永远不隐藏，mo-hide 只加在视口之外的元素上。
+   ========================================================= */
+(function(){
+  'use strict';
+
+  const SEL={
+    authorTabs:'.author-filter',
+    heroTitle:'#headerAuthorName',
+    heroStatus:'#status span',
+    card:'.archive-card',
+    cardGrid:'#archiveGallery',
+    section:'footer',
+    modal:'#archiveModal',
+    modalPanel:'#archiveModal .archive-modal-panel',
+    modalBackdrop:'#archiveModal .archive-modal-backdrop',
+    tabButtons:'#archiveModal .detail-option',
+    tabPanel:'#archiveModal .detail-reading-body'
+  };
+
+  const $=(s,r)=>(r||document).querySelector(s);
+  const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+  const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const MAX_DELAY=420;
+  const SKIP_ENTRANCE=performance.getEntriesByType('paint').length>0 || document.hidden;
+
+  function inView(el){
+    const box=el.getBoundingClientRect();
+    return box.bottom>0 && box.top<innerHeight;
+  }
+
+  function enter(el,animate){
+    if(el.dataset.moIn) return;
+    el.dataset.moIn='1';
+    el.classList.remove('mo-hide');
+    io.unobserve(el);
+    if(animate===false) return;
+    el.classList.add('is-in');
+    /* 入场只播一次：播完就摘掉 is-in，避免作者切换的发牌动画结束后又重放一遍入场。 */
+    const done=event=>{
+      if(event.target!==el || !event.animationName.startsWith('mo-')) return;
+      el.classList.remove('is-in');
+      el.removeEventListener('animationend',done);
+      el.removeEventListener('animationcancel',done);
+    };
+    el.addEventListener('animationend',done);
+    el.addEventListener('animationcancel',done);
+  }
+
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting) return;
+      const el=entry.target;
+      const delay=REDUCED?0:Number(el.dataset.moDelay)||0;
+      if(delay) setTimeout(()=>enter(el),delay);
+      else enter(el);
+    });
+  },{threshold:.15,rootMargin:'0px 0px -8% 0px'});
+
+  function mark(el,motion,opts={}){
+    if(!el || el.dataset.motion) return;
+    el.dataset.motion=motion;
+    if(opts.cls) el.classList.add(opts.cls);
+    if(inView(el)){enter(el,!SKIP_ENTRANCE);return;}
+    if(opts.delay && !REDUCED) el.dataset.moDelay=opts.delay;
+    el.classList.add('mo-hide');
+    io.observe(el);
+  }
+
+  /* IO 迟到或布局突变把屏幕外元素挪到屏幕上时，直接显示，不补动画。 */
+  function revealVisible(){
+    $$('[data-motion].mo-hide').forEach(el=>{
+      const box=el.getBoundingClientRect();
+      const shown=Math.min(box.bottom,innerHeight)-Math.max(box.top,0);
+      if(shown>Math.min(box.height,innerHeight)/2) enter(el,false);
+    });
+  }
+  let lastReveal=0;
+  ['scroll','resize','orientationchange'].forEach(type=>{
+    addEventListener(type,()=>{
+      const now=Date.now();
+      if(now-lastReveal<120) return;
+      lastReveal=now;
+      revealVisible();
+    },{passive:true});
+  });
+
+  function initHero(){
+    $$(SEL.authorTabs).forEach((el,i)=>mark(el,'sweep-down',{cls:'mo-tab',delay:i*40}));
+    mark($(SEL.heroTitle),'sweep-up',{cls:'mo-title'});
+    $$(SEL.heroStatus).forEach(el=>mark(el,'focus-in',{cls:'mo-status'}));
+    $$(SEL.section).forEach(el=>mark(el,'rise',{cls:'mo-section'}));
+  }
+
+  /* 卡片网格：奇偶列反向揭开 + 斜向波浪延迟 */
+  function layoutCards(grid){
+    const list=$$(SEL.card,grid).filter(card=>!card.dataset.motion && !card.hidden);
+    if(!list.length) return;
+    const rows=new Map();
+    list.forEach(card=>{
+      const key=Math.round(card.offsetTop/8)*8;
+      if(!rows.has(key)) rows.set(key,[]);
+      rows.get(key).push(card);
+    });
+    [...rows.keys()].sort((a,b)=>a-b).forEach((key,rowIndex)=>{
+      rows.get(key).forEach((card,col)=>{
+        card.classList.add('mo-card');
+        mark(card,col%2?'sweep-up':'sweep-down',{delay:Math.min((rowIndex*2+col)*60,MAX_DELAY)});
+      });
+    });
+  }
+
+  function initCards(){
+    const grid=$(SEL.cardGrid);
+    if(!grid) return;
+    layoutCards(grid);
+    let timer;
+    new MutationObserver(()=>{
+      clearTimeout(timer);
+      timer=setTimeout(()=>{layoutCards(grid);revealVisible();},80);
+    }).observe(grid,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
+  }
+
+  /* 详情弹窗：以被点击的卡片为展开原点 */
+  let lastRect=null;
+  document.addEventListener('click',e=>{
+    const card=e.target.closest && e.target.closest(SEL.card);
+    if(card) lastRect=card.getBoundingClientRect();
+  },true);
+
+  function replay(el,cls){
+    el.classList.remove(cls,'is-closing');
+    void el.offsetWidth;
+    el.classList.add(cls);
+  }
+
+  function initModal(){
+    const modal=$(SEL.modal);
+    const panel=$(SEL.modalPanel);
+    const backdrop=$(SEL.modalBackdrop);
+    if(!modal || !panel || !backdrop) return;
+    let open=modal.classList.contains('is-open');
+    new MutationObserver(()=>{
+      const now=modal.classList.contains('is-open');
+      if(now===open) return;
+      open=now;
+      if(open){
+        backdrop.classList.add('mo-backdrop');
+        replay(backdrop,'mo-backdrop');
+        panel.classList.add('mo-panel');
+        if(lastRect){
+          const box=panel.getBoundingClientRect();
+          panel.style.setProperty('--mo-ox',`${(lastRect.left+lastRect.width/2-box.left).toFixed(1)}px`);
+          panel.style.setProperty('--mo-oy',`${(lastRect.top+lastRect.height/2-box.top).toFixed(1)}px`);
+        }
+        replay(panel,'mo-panel');
+      }else{
+        replay(backdrop,'is-closing');
+        replay(panel,'is-closing');
+      }
+    }).observe(modal,{attributes:true,attributeFilter:['class']});
+  }
+
+  /* 弹窗内标签：每一栏一种语义动效 */
+  function initTabs(){
+    const panel=$(SEL.tabPanel);
+    if(!panel) return;
+    const classes=['is-enter-opening','is-enter-setting','is-enter-worldbook','is-enter-preset'];
+    $$(SEL.tabButtons).forEach(tab=>{
+      tab.addEventListener('click',()=>{
+        const cls=`is-enter-${tab.dataset.detailTab}`;
+        if(!classes.includes(cls)) return;
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{
+          panel.classList.add('mo-tabpanel');
+          panel.classList.remove(...classes);
+          void panel.offsetWidth;
+          panel.classList.add(cls);
+        }));
+      });
+    });
+  }
+
+  function boot(){
+    initHero();
+    initCards();
+    initModal();
+    initTabs();
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
+  else boot();
+})();
+</script>
+</body>
+</html>
