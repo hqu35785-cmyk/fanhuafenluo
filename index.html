@@ -3740,30 +3740,7 @@ function rememberPng(path,blob){
   while(pngCache.size>PNG_CACHE_LIMIT) pngCache.delete(pngCache.keys().next().value);
 }
 
-async function readBlobWithProgress(response,onProgress){
-  if(!onProgress || !response.body) return response.blob();
-  const type=response.headers.get('content-type') || 'image/png';
-  const total=Number(response.headers.get('content-length')) || 0;
-  const reader=response.body.getReader();
-  // 读到的数据块每攒一些就并进 Blob 交给浏览器保管，不在脚本里攒一整份再复制一遍。
-  let blob=new Blob([],{type});
-  let pending=[];
-  let received=0;
-  for(;;){
-    const {done,value}=await reader.read();
-    if(done) break;
-    pending.push(value);
-    received+=value.byteLength;
-    if(pending.length>=32){
-      blob=new Blob([blob,...pending],{type});
-      pending=[];
-    }
-    onProgress(received,total);
-  }
-  return new Blob([blob,...pending],{type});
-}
-
-async function fetchOriginalPng(path,{signal,onProgress}={}){
+async function fetchOriginalPng(path,{signal}={}){
   const cached=pngCache.get(path);
   if(cached){
     rememberPng(path,cached);
@@ -3795,7 +3772,7 @@ async function fetchOriginalPng(path,{signal,onProgress}={}){
         throw new Error(`PNG 加载失败（${response.status}）`);
       }
 
-      const blob=await readBlobWithProgress(response,onProgress);
+      const blob=await response.blob();
       const signature=new Uint8Array(await blob.slice(0,8).arrayBuffer());
       if(!blob.size || PNG_SIGNATURE.some((byte,index)=>signature[index]!==byte)){
         throw new Error('返回内容不是有效 PNG');
@@ -3828,11 +3805,8 @@ function downloadOriginalPng(path){
   if(pngDownload?.path===path) return pngDownload;
   pngDownload?.controller.abort();
   const controller=new AbortController();
-  const entry={path,controller,onProgress:null};
-  entry.promise=fetchOriginalPng(path,{
-    signal:controller.signal,
-    onProgress:(received,total)=>entry.onProgress?.(received,total)
-  }).finally(()=>{
+  const entry={path,controller};
+  entry.promise=fetchOriginalPng(path,{signal:controller.signal}).finally(()=>{
     if(pngDownload===entry) pngDownload=null;
   });
   pngDownload=entry;
@@ -3886,15 +3860,7 @@ function openSaveSheet(card=activeCard){
   image.style.opacity=previewReady?'':'0';
   applyPreviewPosition(image,work);
 
-  const download=downloadOriginalPng(work.image);
-  download.onProgress=(received,total)=>{
-    if(token!==saveSheetBuildToken) return;
-    saveSheetNote.textContent=total
-      ? `正在读取原始角色卡 PNG… ${Math.min(99,Math.floor(received/total*100))}%（${formatMb(received)} / ${formatMb(total)} MB）`
-      : `正在读取原始角色卡 PNG… 已读取 ${formatMb(received)} MB`;
-  };
-
-  download.promise.then(blob=>{
+  downloadOriginalPng(work.image).promise.then(blob=>{
     if(
       token!==saveSheetBuildToken ||
       !saveSheet.classList.contains('is-open')
