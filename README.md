@@ -1,50 +1,38 @@
 # 繁花·纷落｜TAVO 角色卡档案
 
-两个作者分区、103 张角色卡、完整的角色资料与原始 PNG。你可以在自适应的档案页面里浏览每张卡的 AI 导览简介、开场白、人物设定、世界书和预设，也可以保存角色卡原始 PNG。
+两个作者分区、源仓库 103 张角色卡（另加发卡工具发布的新卡）、完整的角色资料与原始 PNG。你可以在自适应的档案页面里浏览每张卡的开场白、人物设定、世界书和预设，也可以保存角色卡原始 PNG。
 
 ## 在线浏览
 
-默认推荐使用无卡片滚动惯性的版本：
+[打开档案页](https://hqu35785-cmyk.github.io/fanhuafenluo/)
 
-[打开无惯性版](https://hqu35785-cmyk.github.io/fanhuafenluo/)
-
-如果想查看当前旧版的卡片滚动惯性效果：
-
-[打开有惯性版](https://hqu35785-cmyk.github.io/fanhuafenluo/index-inertia.html)
-
-`103 张卡`　`繁花·纷落 72 / 公开 31`　`响应式浏览`　`原始 PNG`　`五栏真实资料`
+`源仓库 103 张卡`　`繁花·纷落 72 / 公开 31`　`发卡工具新卡并入繁花·纷落`　`响应式浏览`　`原始 PNG`　`四栏真实资料`
 
 站点只保留“繁花·纷落”和“公开”两个可切换条目。“顾清瑶”和“清若寒”都属于“繁花·纷落”；“公开”的前三张固定为“调月莉音 / 认知修改·后宫性生活 / 星野”，随后接入原鲨鱼分区 14 张与原咓分区 14 张；卡片仍保留各自原始 `creator`、别名和素材路径，但不再提供“鲨鱼”或“咓”的独立作者条目。
 
-两个展示页中的“公开”数据必须按 `publicWorks → legacySharkWorks → legacyWaWorks` 顺序合并。`legacySharkWorks` 与 `legacyWaWorks` 只是保留旧素材路径与详情 key 的历史数据桶，不是可切换作者分区。
+展示页中的“公开”数据必须按 `publicWorks → legacySharkWorks → legacyWaWorks` 顺序合并。`legacySharkWorks` 与 `legacyWaWorks` 只是保留旧素材路径与详情 key 的历史数据桶，不是可切换作者分区。
 
-## 两个页面版本
+## 页面与资源
 
-展示仓库保留三个主要条目；`assets/` 目录中的两个文件是默认页面必需的动效支持资源，不是第三个页面：
+展示仓库只有一个页面 `index.html`（无卡片滚动惯性），它是 GitHub Pages 根地址的入口。有惯性版已经停用并删除。
 
 ```text
-index.html          默认无惯性版
-index-inertia.html  当前有惯性版的完整保留副本
+index.html          档案页面（无惯性）
 README.md           访客说明与 AI 维护契约
 ```
 
-默认无惯性版使用以下固定资源，路径和文件名不能改动：
+页面样式写在 `index.html` 的 `<style>` 里（首次打开不用多等一个样式文件）。页面另外使用以下资源，路径和文件名不能改动：
 
 ```text
-assets/css/motion.css
-assets/js/motion.js
+assets/css/motion.css    入场、弹窗、标签和保存面板动效
+assets/js/motion.js      同上
+assets/publisher/**      发卡工具（FanHua Publisher）发布的卡片数据、PNG 与预览图
 ```
 
-两个 HTML 页面必须拥有相同的角色数据、卡片、作者切换、详情资料、预览图片、原始 PNG 下载、响应式布局和主要视觉结构。当前默认页额外接入 `assets/css/motion.css` 与 `assets/js/motion.js` 作为新的入场、弹窗、标签和保存面板动效；`index-inertia.html` 保持原有的完整滚动物理，不得用 `index.html` 整文件覆盖，但共同界面的局部修改必须同步。两个版本的滚动行为差异是：
-
-- `index.html`：页面滚动时卡片不产生位移、倾斜、拉伸、图片反向位移、压力高光或弹簧回弹；正常浏览器滚动保持不变。
-- `index-inertia.html`：保留当前卡片随页面滚动产生的位移、倾斜、轻微拉伸、压力高光和回弹效果。
-
-无惯性版是 GitHub Pages 根地址的默认入口；有惯性版通过 `index-inertia.html` 独立访问。`index.html` 必须与上述两个动效资源一起部署；`index-inertia.html` 继续保持单文件独立运行。
+页面滚动时卡片不产生位移、倾斜、拉伸、图片反向位移、压力高光或弹簧回弹；正常浏览器滚动保持不变。
 
 ## 你可以看到什么
 
-- 由 AI 阅读每张卡全部原始资料后写成的 120–180 字简介：既概括角色，也保留真实存在的冲突、关系和互动悬念。
 - PNG 内嵌的真实开场白，不用人工占位文本代替。
 - PNG 内嵌的性格与场景设定，按原文分段显示。
 - 完整世界书：包含原始名称、条目顺序、启用状态、位置、关键词和内容。
@@ -55,19 +43,19 @@ assets/js/motion.js
 
 ## 仓库边界
 
-这个展示仓库公开的主要页面与说明文件只能有以下三个：
+这个展示仓库公开的主要页面与说明文件只有以下两个：
 
 ```text
 index.html
-index-inertia.html
 README.md
 ```
 
-除上述三个主要条目外，只允许存在默认 `index.html` 必需的两个动效支持文件：
+除上述两个主要条目外，只允许存在以下登记的支持文件：
 
 ```text
-assets/css/motion.css
-assets/js/motion.js
+assets/css/motion.css    页面动效
+assets/js/motion.js      页面动效
+assets/publisher/**      发卡工具（FanHua Publisher）生成的卡片数据、PNG 与预览图
 ```
 
 角色卡源仓库是 [hqu35785-cmyk/fanhuafenluo-pages](https://github.com/hqu35785-cmyk/fanhuafenluo-pages)：
@@ -86,18 +74,45 @@ assets/**/*.webp
 
 ## 给未来 AI 的唯一维护契约
 
-任何 AI 在新增角色卡、修改角色卡、修改详情映射、修改共同视觉或重新部署前，必须先完整阅读本 README，再检查仓库中实际存在的三个主要条目和两个动效支持文件。禁止根据聊天记录重写页面，禁止把当前页面改成另一套卡片、标题栏、弹窗或保存面板。
+任何 AI 在新增角色卡、修改角色卡、修改详情映射、修改共同视觉或重新部署前，必须先完整阅读本 README，再检查仓库中实际存在的主要条目和登记的支持文件。禁止根据聊天记录重写页面，禁止把当前页面改成另一套卡片、标题栏、弹窗或保存面板。
 
-修改展示页时必须同时检查 `index.html` 和 `index-inertia.html`：
+修改展示页时：
 
-1. 角色数据、缓存版本、图片备用链、五栏详情、下载逻辑和共同 CSS 修改必须同步到两个 HTML。
-2. 只有滚动物理相关代码可以有版本差异。
-3. 不得把滚动物理重新加回默认 `index.html`。
-4. 不得从 `index-inertia.html` 删除滚动物理，除非用户明确要求同时取消有惯性版本。
-5. 不得只改其中一个页面后直接提交。
-6. 不得增加第四个主要页面/说明文件、未登记的共享脚本、未登记的样式文件或临时数据文件；`assets/css/motion.css` 与 `assets/js/motion.js` 是当前唯一登记的展示动效支持资源。
-7. 详情弹窗不得重新加入 `CHARACTER PROFILE / CREATE TIME` 信息行或角色名下方的标签胶囊；详情正文阅读区必须保持 `overflow-x:hidden` 与 `touch-action:pan-y`，只允许纵向浏览。
-8. 不得把 `sensitive` 元数据重新做成卡面遮罩、模糊层、解锁标记或点击确认流程；列表、详情与保存面板继续直接显示对应卡面。
+1. 页面样式只写在 `index.html` 的 `<style>` 里；修改 `assets/css/motion.css` 或 `assets/js/motion.js` 后，同步更新 `index.html` 里它们的 `?v=` 版本号（预加载和正式引用两处）。
+2. 不得把卡片滚动物理（有惯性效果）重新加回 `index.html`，也不得恢复 `index-inertia.html`，除非用户明确要求。
+3. 不得增加第三个主要页面/说明文件、未登记的共享脚本、未登记的样式文件或临时数据文件；登记的支持文件只有 `assets/css/motion.css`、`assets/js/motion.js` 和 `assets/publisher/**`。
+4. 详情弹窗不得重新加入 `CHARACTER PROFILE / CREATE TIME` 信息行或角色名下方的标签胶囊；详情正文阅读区必须保持 `overflow-x:hidden` 与 `touch-action:pan-y`，只允许纵向浏览。
+5. 不得把 `sensitive` 元数据重新做成卡面遮罩、模糊层、解锁标记或点击确认流程；列表、详情与保存面板继续直接显示对应卡面。
+6. `assets/publisher/` 由发卡工具维护，不要手动修改。发卡工具每次发布只改写 `index.html` 里 `<script data-fanhua-publisher="cards" …>` 标签的 `cards.js?v=` 哈希，但发布前会逐字检查 `index.html`，任何一项对不上就拒绝发布（“旧站页面结构不受支持”）。以下内容必须逐字保留，见下方「发卡工具的页面检查」。
+
+### 发卡工具的页面检查
+
+发卡工具（桌面上的“快捷发布卡片 / 发布到繁花·纷落 / 发布到公开”，检查代码在工具目录的 `tools/card-publisher/legacy-template.mjs`）发布前对 `index.html` 做逐字计数检查。修改 `index.html` 后必须仍然满足：
+
+各出现恰好 1 次：
+
+```text
+function sourceUrl(path){ …整个函数体逐字不变… }
+const SOURCE_BASE='https://hqu35785-cmyk.github.io/fanhuafenluo-pages/';
+works:'src/data/works.js?v=
+async function buildCatalog(){
+async function loadAuthorDetails(authorId){
+function previewFallbackCandidates(work){
+function applyAuthorCardContent(authorId,meta){
+async function openArchive(card){
+function originalPngCandidates(path){
+loadCatalog();
+<script src="assets/js/motion.js?
+```
+
+另外：
+
+- 10 个 `/* fanhua-publisher:…:start|end */` 标记各 1 次，标记之间的代码块（含 `let rawCatalog={…}` 目录块、`let details=…` 详情块前后各一行）逐字不变。
+- `publisherCardImageUrl(work)` 恰好 3 次：解析器里 1 次，卡面和详情顶图的 `image.src=` 各 1 次；`sourceUrl(work.preview || work.image)` 为 0 次。
+- `<script data-fanhua-publisher="cards" src="assets/publisher/cards.js?v=…"></script>` 恰好 1 个，并且紧接着下一行是 `<script>`、再下一行是 `const body=document.body;`。
+- 整个文件不能混用 CRLF 与 LF 行尾。
+
+改名、加参数、多写一次 `loadCatalog();` 或 `publisherCardImageUrl(work)` 都会让发卡工具停止发布。
 
 ### 新增角色卡时必须改源仓库
 
@@ -215,22 +230,20 @@ PNG 签名、chunk 边界和 chara 元数据全部有效
 
 同样的 PNG 输入必须得到逐字节相同的详情文件。连续运行两次 `--write`，第二次 Git diff 必须为空。
 
-### 展示页的五栏契约
+### 展示页的四栏契约
 
-展示页的两个版本都必须保留以下顺序：
+详情阅读区已经去掉「简介」一栏（数据里的 `intro` 仍然保留）。展示页必须保留以下顺序：
 
 ```text
-01 简介
-02 开场白
-03 人物设定
-04 世界书
-05 预设
+01 开场白
+02 人物设定
+03 世界书
+04 预设
 ```
 
 字段映射固定为：
 
 ```text
-简介     work.intro
 开场白   work.opening
 人物设定 work.personality + work.setting
 世界书   work.worldbook
@@ -240,7 +253,6 @@ PNG 签名、chunk 边界和 chara 元数据全部有效
 没有世界书或预设时，标签不能隐藏，阅读区显示固定缺省文案：
 
 ```text
-该角色卡暂未提供简介。
 该角色卡未提供开场白。
 该角色卡未提供人物设定。
 该角色卡未附带世界书。
@@ -249,9 +261,9 @@ PNG 签名、chunk 边界和 chara 元数据全部有效
 
 角色资料必须使用 `textContent` 写入，不能用 `innerHTML` 执行卡片原文中的标签或脚本。
 
-### 滚动惯性版本的维护边界
+### 无惯性的维护边界
 
-无惯性版只允许删除以下卡片滚动物理行为：
+页面不包含以下卡片滚动物理行为：
 
 ```text
 卡片滚动位移
@@ -262,7 +274,7 @@ PNG 签名、chunk 边界和 chara 元数据全部有效
 滚动停止后的弹簧回弹
 ```
 
-以下功能不属于滚动惯性，两个版本都必须保留：
+以下功能不属于滚动惯性，必须保留：
 
 ```text
 浏览器正常页面滚动
@@ -277,11 +289,11 @@ PNG 签名、chunk 边界和 chara 元数据全部有效
 prefers-reduced-motion 支持
 ```
 
-无惯性版不得通过 `wheel`、`touchmove` 或 `pointermove` 阻止正常浏览器滚动，也不得新增全局 `overflow:hidden`、`touch-action:none` 或 `overscroll-behavior:none` 来伪造“无惯性”。
+页面不得通过 `wheel`、`touchmove` 或 `pointermove` 阻止正常浏览器滚动，也不得新增全局 `overflow:hidden`、`touch-action:none` 或 `overscroll-behavior:none` 来伪造“无惯性”。
 
 ## 发布前检查
 
-源仓库发布后，先记录源仓库合并后的完整 SHA，再把两个展示页三个 `SOURCE_URLS` 的 `?v=` 更新为该 SHA 前 12 位：
+源仓库发布后，先记录源仓库合并后的完整 SHA，再把 `index.html` 主脚本开头 `SOURCE_URLS` 的三个 `?v=` 更新为该 SHA 前 12 位：
 
 ```text
 works.js
@@ -291,20 +303,20 @@ details-public.js
 
 展示仓库提交前必须检查：
 
-- 主要条目恰好为 `index.html`、`index-inertia.html`、`README.md`，并且只有 `assets/css/motion.css`、`assets/js/motion.js` 两个登记的动效支持文件。
-- `index-inertia.html` 仍保留完整滚动物理，并且与 `index.html` 同步本次共同详情界面修改。
-- 两个页面的卡片数量均为“繁花·纷落 72 / 公开 31”，总计 103；“顾清瑶”和“清若寒”必须在“繁花·纷落”中，“公开”前三张必须是调月莉音、认知修改·后宫性生活、星野。
+- 主要条目恰好为 `index.html`、`README.md`，支持文件只有上面登记的几项。
+- 源仓库卡片数量为“繁花·纷落 72 / 公开 31”，总计 103（页面上的“繁花·纷落”还会加上发卡工具发布的新卡）；“顾清瑶”和“清若寒”必须在“繁花·纷落”中，“公开”前三张必须是调月莉音、认知修改·后宫性生活、星野。
 - 眼睛和头部在列表卡面、详情顶图、保存面板中都没有被裁掉。
 - 预览链保持源站 WebP → jsDelivr → GitHub Raw。
 - 下载链保持源站 PNG → jsDelivr → GitHub Raw。
-- 五个标签在桌面端等宽，在手机端可横向滚动。
-- 第五个“预设”能够完整滚入并点击。
+- 四个标签在桌面端等宽，在手机端可横向滚动。
+- 第四个“预设”能够完整滚入并点击。
 - 详情内容只在阅读区纵向滚动，阅读区不能左右拖动，页面没有横向溢出。
-- 两个页面的作者切换、详情弹窗、原始 PNG 下载和保存面板一致。
-- 无惯性版滚动时没有卡片物理变形；有惯性版仍保留原行为。
+- 作者切换、详情弹窗、原始 PNG 下载和保存面板正常。
+- 发卡工具发布的卡片能显示预览、打开详情并下载原始 PNG。
+- 滚动时没有卡片物理变形。
 - `Escape`、焦点恢复、`prefers-reduced-motion` 都正常。
 - 控制台没有 404、错误、警告或未处理 Promise rejection。
-- 两个页面的 `@keyframes` 数量仍为 68；无惯性版的 transition 数量只允许因删除专用滚动物理 CSS 而变化。
+- 修改过 `assets/css/motion.css` 或 `assets/js/motion.js` 时，`index.html` 里对应的 `?v=` 已经同步更新。
 
 ## 禁止事项
 
@@ -315,8 +327,7 @@ details-public.js
 - 不要把简介回退到 `role + personality`。
 - 不要把 `work.lorebook` 当作世界书别名。
 - 不要把“资料整理中”作为正式数据提交。
-- 不要删除第五个预设标签。
-- 不要把无惯性版的修改复制回有惯性版，或把有惯性代码重新加回默认版。
-- 不要把 `index-inertia.html` 重命名、删除或覆盖成其他版本。
+- 不要删除第四个预设标签。
+- 不要把有惯性代码重新加回 `index.html`。
 - 不要上传 `original-index.html`、聊天附件、临时资料包或测试截图。
-- 展示仓库不得增加第四个主要页面/说明文件或任何未登记的公开文件。
+- 展示仓库不得增加第三个主要页面/说明文件或任何未登记的公开文件。

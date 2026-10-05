@@ -75,9 +75,13 @@
     io.unobserve(el);
     if (animate === false) return;
     el.classList.add('is-in');
-    el.addEventListener('animationend', function () {
-      el.style.willChange = '';
-    }, { once: true });
+    // 入场只播一次：播完就摘掉 is-in。否则作者切换的发牌动画结束后，
+    // 卡片会因为 is-in 的动画名重新生效而把入场再放一遍。
+    el.addEventListener('animationend', function done(e) {
+      if (e.target !== el) return;
+      el.classList.remove('is-in');
+      el.removeEventListener('animationend', done);
+    });
   }
 
   const io = new IntersectionObserver(function (entries) {
@@ -260,13 +264,12 @@
     });
   }
 
-  /* ====================== ⑦ 弹窗内 tab：五栏各自的语义动效 ====================== */
+  /* ====================== ⑦ 弹窗内 tab：四栏各自的语义动效 ====================== */
   function initTabs() {
     const tabs = $$(SEL.tabButtons);
     if (tabs.length < 2) return;
 
     const motionClasses = [
-      'is-enter-intro',
       'is-enter-opening',
       'is-enter-setting',
       'is-enter-worldbook',
@@ -295,14 +298,10 @@
   }
 
   /* ====================== ⑧ 保存 PNG：底部上滑 ====================== */
+  /* 开关仍由站点自己加减 is-open，这里只挂上滑动效需要的类。 */
   function initSheet() {
     const sheet = $(SEL.sheet);
-    if (!sheet) return;
-    sheet.classList.add('mo-sheet');
-    watchOpen(sheet,
-      function () { requestAnimationFrame(function () { sheet.classList.add('is-open'); }); },
-      function () { sheet.classList.remove('is-open'); }
-    );
+    if (sheet) sheet.classList.add('mo-sheet');
   }
 
   /* ====================== ⑨ 启动 ====================== */
