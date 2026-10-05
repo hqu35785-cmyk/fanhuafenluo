@@ -2759,11 +2759,9 @@ function parseDetailsData(source,authorId){
   return details;
 }
 
-async function fetchText(path,{priority='auto',signal}={}){
+async function fetchText(path){
   const response=await fetch(sourceUrl(path),{
-    credentials:'omit',
-    priority,
-    signal
+    credentials:'omit'
   });
 
   if(!response.ok){
@@ -2818,28 +2816,15 @@ async function buildCatalog(){
 }
 
 async function loadAuthorDetails(authorId){
-  const isIdlePrefetch=nextDetailsLoadIsIdle;
-  nextDetailsLoadIsIdle=false;
-
   if(catalogState.detailPromises[authorId]){
-    if(isIdlePrefetch || !idleDetailLoads[authorId]){
-      return catalogState.detailPromises[authorId];
-    }
-    // 有人在等资料，而手上只有一个排在卡面图片后面的低优先级预取：
-    // 放弃它，按正常优先级重新读取。
-    idleDetailLoads[authorId].abort();
-    delete idleDetailLoads[authorId];
+    return catalogState.detailPromises[authorId];
   }
 
   const path=SOURCE_URLS.details[authorId];
   if(!path) throw new Error(`未找到 ${authorId} 的详情数据源`);
 
-  const idle=isIdlePrefetch?new AbortController():null;
-  if(idle) idleDetailLoads[authorId]=idle;
-
   const promise=(async()=>{
-    const source=await fetchText(path,idle?{priority:'low',signal:idle.signal}:{});
-    if(idleDetailLoads[authorId]===idle) delete idleDetailLoads[authorId];
+    const source=await fetchText(path);
     let details=parseDetailsData(source,authorId);
     /* fanhua-publisher:details:start */
     if(window.__FANHUA_PUBLISHER__?.mergeDetails){
@@ -2865,41 +2850,13 @@ async function loadAuthorDetails(authorId){
   try{
     return await promise;
   }catch(error){
-    if(catalogState.detailPromises[authorId]===promise) delete catalogState.detailPromises[authorId];
-    if(idle && idleDetailLoads[authorId]===idle) delete idleDetailLoads[authorId];
+    delete catalogState.detailPromises[authorId];
     throw error;
   }
 }
 
 function ensureWorkDetails(work){
   return loadAuthorDetails(work?._authorId || activeAuthorId);
-}
-
-/* 角色资料每个分区有几百 KB。首屏卡面加载完（window load）后，浏览器空闲时以低优先级
-   预取当前分区，不和卡面抢带宽；鼠标移到「查看档案」或手指按下时按正常优先级读取。
-   用户在预取读完之前就打开档案，会放弃预取、按正常优先级重新读取，
-   所以打开档案不会比不预取更慢。 */
-const idleDetailLoads=Object.create(null);
-let nextDetailsLoadIsIdle=false;
-
-function prefetchAuthorDetails(authorId){
-  if(!catalogState.catalog?.[authorId] || catalogState.detailPromises[authorId]) return;
-  nextDetailsLoadIsIdle=true;
-  loadAuthorDetails(authorId).catch(()=>{});
-}
-
-function scheduleDetailsPrefetch(authorId){
-  const connection=navigator.connection;
-  if(connection?.saveData || /2g$/.test(connection?.effectiveType || '')) return;
-  const run=()=>{
-    if(authorId===activeAuthorId) prefetchAuthorDetails(authorId);
-  };
-  const whenIdle=()=>{
-    if('requestIdleCallback' in window) window.requestIdleCallback(run,{timeout:4000});
-    else window.setTimeout(run,2500);
-  };
-  if(document.readyState==='complete') whenIdle();
-  else window.addEventListener('load',whenIdle,{once:true});
 }
 
 let authorSwitchLocked=false;
@@ -3179,7 +3136,6 @@ async function loadCatalog(){
     applyAuthorCardContent(activeAuthorId);
     setAuthorControlsDisabled(false);
     updateStatus();
-    scheduleDetailsPrefetch(activeAuthorId);
   }catch(error){
     console.error(error);
 
@@ -3272,7 +3228,6 @@ function setAuthor(authorId){
     paintAuthorHeader(authorId);
     applyAuthorCardContent(authorId);
     updateStatus();
-    scheduleDetailsPrefetch(authorId);
 
     siteHeader.classList.remove('author-switch-out');
     archiveGallery.classList.remove('author-switch-out');
@@ -4030,14 +3985,6 @@ function closeSaveSheet(){
     if(lastSaveTrigger && document.contains(lastSaveTrigger)) lastSaveTrigger.focus({preventScroll:true});
   });
 }
-
-function prefetchFromIntent(event){
-  const button=event.target.closest?.('.detail-action');
-  const authorId=button && !button.disabled && button.closest('.archive-card')?._work?._authorId;
-  if(authorId && catalogState.catalog?.[authorId]) loadAuthorDetails(authorId).catch(()=>{});
-}
-archiveGallery.addEventListener('pointerover',prefetchFromIntent,{passive:true});
-archiveGallery.addEventListener('focusin',prefetchFromIntent);
 
 archiveGallery.addEventListener('click',e=>{
   const detailButton=e.target.closest('.detail-action');
