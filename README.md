@@ -21,10 +21,9 @@ index.html          档案页面（无惯性）
 README.md           访客说明与 AI 维护契约
 ```
 
-页面使用以下资源，路径和文件名不能改动：
+页面样式写在 `index.html` 的 `<style>` 里（首次打开不用多等一个样式文件）。页面另外使用以下资源，路径和文件名不能改动：
 
 ```text
-assets/css/archive.css   页面样式（页头、卡片、详情弹窗、保存面板等）
 assets/css/motion.css    入场、弹窗、标签和保存面板动效
 assets/js/motion.js      同上
 assets/publisher/**      发卡工具（FanHua Publisher）发布的卡片数据、PNG 与预览图
@@ -54,7 +53,6 @@ README.md
 除上述两个主要条目外，只允许存在以下登记的支持文件：
 
 ```text
-assets/css/archive.css   页面样式
 assets/css/motion.css    页面动效
 assets/js/motion.js      页面动效
 assets/publisher/**      发卡工具（FanHua Publisher）生成的卡片数据、PNG 与预览图
@@ -80,9 +78,9 @@ assets/**/*.webp
 
 修改展示页时：
 
-1. 样式只改 `assets/css/archive.css`，改完后同步更新 `index.html` 里 `archive.css?v=` 的版本号。
+1. 页面样式只写在 `index.html` 的 `<style>` 里；修改 `assets/css/motion.css` 或 `assets/js/motion.js` 后，同步更新 `index.html` 里它们的 `?v=` 版本号（预加载和正式引用两处）。
 2. 不得把卡片滚动物理（有惯性效果）重新加回 `index.html`，也不得恢复 `index-inertia.html`，除非用户明确要求。
-3. 不得增加第三个主要页面/说明文件、未登记的共享脚本、未登记的样式文件或临时数据文件；登记的支持文件只有 `assets/css/archive.css`、`assets/css/motion.css`、`assets/js/motion.js` 和 `assets/publisher/**`。
+3. 不得增加第三个主要页面/说明文件、未登记的共享脚本、未登记的样式文件或临时数据文件；登记的支持文件只有 `assets/css/motion.css`、`assets/js/motion.js` 和 `assets/publisher/**`。
 4. 详情弹窗不得重新加入 `CHARACTER PROFILE / CREATE TIME` 信息行或角色名下方的标签胶囊；详情正文阅读区必须保持 `overflow-x:hidden` 与 `touch-action:pan-y`，只允许纵向浏览。
 5. 不得把 `sensitive` 元数据重新做成卡面遮罩、模糊层、解锁标记或点击确认流程；列表、详情与保存面板继续直接显示对应卡面。
 6. `assets/publisher/` 由发卡工具维护，不要手动修改。发卡工具每次发布只改写 `index.html` 里 `<script data-fanhua-publisher="cards" …>` 标签的 `cards.js?v=` 哈希，但发布前会逐字检查 `index.html`，任何一项对不上就拒绝发布（“旧站页面结构不受支持”）。以下内容必须逐字保留，见下方「发卡工具的页面检查」。
@@ -295,7 +293,7 @@ prefers-reduced-motion 支持
 
 ## 发布前检查
 
-源仓库发布后，先记录源仓库合并后的完整 SHA，再把 `index.html` 页头脚本里 `SOURCE_URLS` 的三个 `?v=` 更新为该 SHA 前 12 位：
+源仓库发布后，先记录源仓库合并后的完整 SHA，再把 `index.html` 主脚本开头 `SOURCE_URLS` 的三个 `?v=` 更新为该 SHA 前 12 位：
 
 ```text
 works.js
@@ -318,7 +316,7 @@ details-public.js
 - 滚动时没有卡片物理变形。
 - `Escape`、焦点恢复、`prefers-reduced-motion` 都正常。
 - 控制台没有 404、错误、警告或未处理 Promise rejection。
-- 修改过 `assets/css/archive.css` 时，`index.html` 里的 `archive.css?v=` 已经同步更新。
+- 修改过 `assets/css/motion.css` 或 `assets/js/motion.js` 时，`index.html` 里对应的 `?v=` 已经同步更新。
 
 ## 禁止事项
 
