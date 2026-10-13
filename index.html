@@ -3730,37 +3730,74 @@ function originalPngCandidates(path){
 
 const PNG_SIGNATURE=[137,80,78,71,13,10,26,10];
 
+/* 只在连续这么久收不到任何数据时才放弃当前地址。
+   慢速网络下几十 MB 的原图要读很久，但只要还在传就不能中断。 */
+const PNG_STALL_TIMEOUT=20000;
+
 /* 最近准备好的那张原始 PNG 留在内存里，重新打开同一张卡的保存面板时不用再读一遍。 */
 const PNG_CACHE_LIMIT=1;
 const pngCache=new Map();
 
-function rememberPng(path,blob){
+function rememberPng(path,png){
   pngCache.delete(path);
-  pngCache.set(path,blob);
+  pngCache.set(path,png);
   while(pngCache.size>PNG_CACHE_LIMIT) pngCache.delete(pngCache.keys().next().value);
 }
 
-async function fetchOriginalPng(path,{signal}={}){
+function isSameOriginUrl(url){
+  try{
+    return new URL(url,window.location.href).origin===window.location.origin;
+  }catch{
+    return false;
+  }
+}
+
+async function readPngBody(response,{onProgress,keepAlive}){
+  const reader=response.body?.getReader?.();
+  if(!reader) return response.blob();
+
+  const total=Number(response.headers.get('content-length')) || 0;
+  const chunks=[];
+  let loaded=0;
+
+  for(;;){
+    const {done,value}=await reader.read();
+    if(done) break;
+    chunks.push(value);
+    loaded+=value.byteLength;
+    keepAlive();
+    onProgress?.(loaded,total);
+  }
+
+  return new Blob(chunks,{type:'image/png'});
+}
+
+async function fetchOriginalPng(path,{signal,onProgress}={}){
   const cached=pngCache.get(path);
   if(cached){
     rememberPng(path,cached);
     return cached;
   }
 
-  let lastError=null;
+  let stalled=false;
 
   for(const url of originalPngCandidates(path)){
     if(signal?.aborted) break;
     const controller=new AbortController();
     const abort=()=>controller.abort();
     signal?.addEventListener('abort',abort,{once:true});
-    let timedOut=false;
-    const timeout=window.setTimeout(()=>{
-      timedOut=true;
-      abort();
-    },30000);
+    let urlStalled=false;
+    let stallTimer=0;
+    const keepAlive=()=>{
+      window.clearTimeout(stallTimer);
+      stallTimer=window.setTimeout(()=>{
+        urlStalled=true;
+        abort();
+      },PNG_STALL_TIMEOUT);
+    };
 
     try{
+      keepAlive();
       const response=await fetch(url,{
         credentials:'omit',
         mode:'cors',
@@ -3772,24 +3809,30 @@ async function fetchOriginalPng(path,{signal}={}){
         throw new Error(`PNG 加载失败（${response.status}）`);
       }
 
-      const blob=await response.blob();
+      keepAlive();
+      const blob=await readPngBody(response,{onProgress,keepAlive});
       const signature=new Uint8Array(await blob.slice(0,8).arrayBuffer());
       if(!blob.size || PNG_SIGNATURE.some((byte,index)=>signature[index]!==byte)){
         throw new Error('返回内容不是有效 PNG');
       }
 
-      rememberPng(path,blob);
-      return blob;
-    }catch(error){
-      lastError=timedOut?new Error('原始 PNG 下载超时，请稍后重试。'):error;
+      const png={blob,url};
+      rememberPng(path,png);
+      return png;
+    }catch{
+      if(urlStalled) stalled=true;
     }finally{
-      window.clearTimeout(timeout);
+      window.clearTimeout(stallTimer);
       signal?.removeEventListener('abort',abort);
     }
   }
 
   if(signal?.aborted) throw new DOMException('保存面板已关闭','AbortError');
-  throw lastError || new Error('原始 PNG 暂时不可用');
+  throw new Error(
+    stalled
+      ?'原始 PNG 下载长时间没有进展，请检查网络后重新打开保存面板。'
+      :'原始 PNG 暂时无法下载，请检查网络后重新打开保存面板。'
+  );
 }
 
 const formatMb=bytes=>(bytes/1024/1024).toFixed(1);
@@ -3805,8 +3848,11 @@ function downloadOriginalPng(path){
   if(pngDownload?.path===path) return pngDownload;
   pngDownload?.controller.abort();
   const controller=new AbortController();
-  const entry={path,controller};
-  entry.promise=fetchOriginalPng(path,{signal:controller.signal}).finally(()=>{
+  const entry={path,controller,onProgress:null};
+  entry.promise=fetchOriginalPng(path,{
+    signal:controller.signal,
+    onProgress:(loaded,total)=>entry.onProgress?.(loaded,total)
+  }).finally(()=>{
     if(pngDownload===entry) pngDownload=null;
   });
   pngDownload=entry;
@@ -3860,7 +3906,18 @@ function openSaveSheet(card=activeCard){
   image.style.opacity=previewReady?'':'0';
   applyPreviewPosition(image,work);
 
-  downloadOriginalPng(work.image).promise.then(blob=>{
+  const download=downloadOriginalPng(work.image);
+  download.onProgress=(loaded,total)=>{
+    if(
+      token!==saveSheetBuildToken ||
+      !saveSheet.classList.contains('is-open')
+    ) return;
+    saveSheetNote.textContent=total && loaded<=total
+      ?`正在读取原始角色卡 PNG… ${Math.floor(loaded/total*100)}%（${formatMb(loaded)} / ${formatMb(total)} MB）`
+      :`正在读取原始角色卡 PNG… 已读取 ${formatMb(loaded)} MB`;
+  };
+
+  download.promise.then(({blob,url})=>{
     if(
       token!==saveSheetBuildToken ||
       !saveSheet.classList.contains('is-open')
@@ -3873,7 +3930,9 @@ function openSaveSheet(card=activeCard){
     image.src=nextUrl;
     image.alt=`${work.name}原始角色卡 PNG`;
     image.style.opacity='';
-    link.href=nextUrl;
+    // 不少国产手机浏览器的下载器读不了页面里的 blob: 地址，会直接提示“下载失败”。
+    // 原图在本站同源地址上时，直接把真实地址交给下载器；跨源的备用地址仍用 blob:，否则 download 文件名不生效。
+    link.href=isSameOriginUrl(url)?url:nextUrl;
 
     if(oldUrl){
       URL.revokeObjectURL(oldUrl);
