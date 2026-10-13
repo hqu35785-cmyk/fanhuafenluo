@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<link rel="preload" as="style" href="assets/css/motion.css?v=motion-visible-first-v5">
-<link rel="preload" as="script" href="assets/js/motion.js?v=motion-visible-first-v5">
+<link rel="preload" as="style" href="assets/css/motion.css?v=motion-visible-first-v6">
+<link rel="preload" as="script" href="assets/js/motion.js?v=motion-visible-first-v6">
 <title>繁花·纷落｜角色卡档案</title>
 <meta name="description" content="繁花·纷落与公开两个分区的 TAVO 角色卡档案，共 103 张，可在线浏览设定并保存原始 PNG。">
 <meta name="theme-color" content="#08090d">
@@ -681,7 +681,7 @@ button:not(:disabled):active{
   font-weight:600;
   letter-spacing:.06em;
   line-height:1.15;
-  /* 名字和右侧下载按钮排成一行：与按钮垂直居中，右边给按钮留位置，长名字换行而不是钻到按钮底下。 */
+  /* 名字和右侧下载按钮排成一行：名字最后一行与按钮垂直居中，右边给按钮留位置；长名字向上换行，不会钻到按钮底下。 */
   margin-bottom:5px;
   padding-right:38px;
   text-wrap:balance;
@@ -794,11 +794,8 @@ button:not(:disabled):active{
 .archive-card.is-face-missing .loaded-art{
   opacity:0!important;
 }
+/* 卡面图片加载失败时仍显示角色名，否则这张卡上没有任何能认出是谁的文字。 */
 .archive-card.is-face-missing .state-label-loading{
-  opacity:1!important;
-  transform:none!important;
-}
-.archive-card.is-face-missing .state-label-ready{
   opacity:0!important;
 }
 .archive-card.is-face-missing .card-face::after{
@@ -1718,8 +1715,6 @@ body.has-overlay .archive-card .detail-action::after{
   }
 }
 
-/* ---------- 保存面板 ---------- */
-
 /* ---------- 操作提示 ---------- */
 .motion-toast{
   position:fixed;
@@ -1893,7 +1888,7 @@ body.is-page-hidden *::after{
   animation-play-state:paused!important;
 }
 </style>
-<link rel="stylesheet" href="assets/css/motion.css?v=motion-visible-first-v5">
+<link rel="stylesheet" href="assets/css/motion.css?v=motion-visible-first-v6">
 </head>
 <body class="motion-rich">
     <header class="site-header">
@@ -2404,8 +2399,6 @@ function fallbackPreview(image,work,card){
   image.onerror=null;
   card?.classList.remove('is-image-loading');
   card?.classList.add('image-error','is-face-missing');
-  const sub=card?.querySelector('.state-label-loading .loading-sub');
-  if(sub) sub.textContent='CARD FACE UNAVAILABLE';
   revealCard(card);
 }
 
@@ -2724,6 +2717,7 @@ const archiveModalClose=document.getElementById('archiveModalClose');
 let activeCard=null;
 let lastArchiveTrigger=null;
 let toastTimer=null;
+let toastOwner=null;
 const prefersReducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
 const siteHeader=document.querySelector('.site-header');
 
@@ -2761,16 +2755,23 @@ function ensureToast(){
   return toast;
 }
 
-function showToast(title,message,mark='✓',duration=2600){
+/* duration 为 0 时提示条一直留着，直到下一条消息替换它；owner 标记这条消息属于哪张卡的下载。 */
+function showToast(title,message,mark='✓',duration=2600,owner=null){
   const toast=ensureToast();
+  toastOwner=owner;
   toast.querySelector('.motion-toast-mark').textContent=mark;
   toast.querySelector('.motion-toast-copy b').textContent=title;
   toast.querySelector('.motion-toast-copy small').textContent=message;
-  toast.classList.remove('is-show');
-  void toast.offsetWidth;
-  toast.classList.add('is-show');
+  // 已经显示时只换文字，不重播入场，免得同一次下载的几条消息连着闪。
+  if(!toast.classList.contains('is-show')){
+    void toast.offsetWidth;
+    toast.classList.add('is-show');
+  }
   window.clearTimeout(toastTimer);
-  if(duration) toastTimer=window.setTimeout(()=>toast.classList.remove('is-show'),duration);
+  if(duration) toastTimer=window.setTimeout(()=>{
+    toast.classList.remove('is-show');
+    toastOwner=null;
+  },duration);
 }
 
 function setShellInert(on){
@@ -3126,8 +3127,10 @@ function closeArchive(){
   archiveModal.setAttribute('inert','');
   setShellInert(false);
   motionDelay(430,()=>{
-    body.style.overflow='';
-    if(!archiveModal.classList.contains('is-open')) body.classList.remove('has-overlay');
+    if(!archiveModal.classList.contains('is-open')){
+      body.style.overflow='';
+      body.classList.remove('has-overlay');
+    }
     if(lastArchiveTrigger && document.contains(lastArchiveTrigger)) lastArchiveTrigger.focus({preventScroll:true});
   });
 }
@@ -3164,7 +3167,7 @@ const PNG_SIGNATURE=[137,80,78,71,13,10,26,10];
    慢速网络下几十 MB 的原图要读很久，但只要还在传就不能中断。 */
 const PNG_STALL_TIMEOUT=20000;
 
-/* 最近准备好的那张原始 PNG 留在内存里，重新打开同一张卡的保存面板时不用再读一遍。 */
+/* 最近从备用地址读进内存的那张原始 PNG 留着，再点同一张卡时不用再读一遍。 */
 const PNG_CACHE_LIMIT=1;
 const pngCache=new Map();
 
@@ -3202,7 +3205,7 @@ async function readPngBody(response,{onProgress,keepAlive}){
   return new Blob(chunks,{type:'image/png'});
 }
 
-async function fetchOriginalPng(path,{candidates=originalPngCandidates(path),signal,onProgress}={}){
+async function fetchOriginalPng(path,{candidates=originalPngCandidates(path),onProgress}={}){
   const cached=pngCache.get(path);
   if(cached){
     rememberPng(path,cached);
@@ -3212,17 +3215,14 @@ async function fetchOriginalPng(path,{candidates=originalPngCandidates(path),sig
   let stalled=false;
 
   for(const url of candidates){
-    if(signal?.aborted) break;
     const controller=new AbortController();
-    const abort=()=>controller.abort();
-    signal?.addEventListener('abort',abort,{once:true});
     let urlStalled=false;
     let stallTimer=0;
     const keepAlive=()=>{
       window.clearTimeout(stallTimer);
       stallTimer=window.setTimeout(()=>{
         urlStalled=true;
-        abort();
+        controller.abort();
       },PNG_STALL_TIMEOUT);
     };
 
@@ -3253,11 +3253,9 @@ async function fetchOriginalPng(path,{candidates=originalPngCandidates(path),sig
       if(urlStalled) stalled=true;
     }finally{
       window.clearTimeout(stallTimer);
-      signal?.removeEventListener('abort',abort);
     }
   }
 
-  if(signal?.aborted) throw new DOMException('保存面板已关闭','AbortError');
   throw new Error(
     stalled
       ?'原始 PNG 下载长时间没有进展，请检查网络后重试。'
@@ -3267,26 +3265,8 @@ async function fetchOriginalPng(path,{candidates=originalPngCandidates(path),sig
 
 const formatMb=bytes=>(bytes/1024/1024).toFixed(1);
 
-/* 换成另一张卡时才取消上一张的后台读取，把带宽让给新的。 */
-let pngDownload=null;
-let savedPngObjectUrl=null;
+/* 同一张卡还在处理时，再点不会重复下载。 */
 const savingPngPaths=new Set();
-
-function downloadOriginalPng(path,candidates){
-  if(pngDownload?.path===path) return pngDownload;
-  pngDownload?.controller.abort();
-  const controller=new AbortController();
-  const entry={path,controller,onProgress:null};
-  entry.promise=fetchOriginalPng(path,{
-    candidates,
-    signal:controller.signal,
-    onProgress:(loaded,total)=>entry.onProgress?.(loaded,total)
-  }).finally(()=>{
-    if(pngDownload===entry) pngDownload=null;
-  });
-  pngDownload=entry;
-  return entry;
-}
 
 function triggerFileDownload(href,filename){
   const link=document.createElement('a');
@@ -3298,15 +3278,13 @@ function triggerFileDownload(href,filename){
   link.remove();
 }
 
-/* 只确认文件在不在，不读内容。网络慢到超时也按“在”处理，交给浏览器下载器慢慢下；
-   明确 404 或根本连不上，才改走备用地址。 */
+/* 只确认文件在不在，不读内容。只有服务器明确回答“没有”（如 404）才改走备用地址；
+   超时或网络出错都照样把真实地址交给浏览器下载器：页面本身就是从这个站点打开的，
+   一次抖动不代表连不上，而 jsDelivr / GitHub Raw 在大陆网络下往往更糟。
+   超时定在 4 秒，让随后的下载仍落在这次点击的用户激活时间内。 */
 async function sameOriginPngAvailable(url){
   const controller=new AbortController();
-  let timedOut=false;
-  const timer=window.setTimeout(()=>{
-    timedOut=true;
-    controller.abort();
-  },8000);
+  const timer=window.setTimeout(()=>controller.abort(),4000);
   try{
     const response=await fetch(url,{
       method:'HEAD',
@@ -3316,7 +3294,7 @@ async function sameOriginPngAvailable(url){
     });
     return response.ok;
   }catch{
-    return timedOut;
+    return true;
   }finally{
     window.clearTimeout(timer);
   }
@@ -3330,6 +3308,7 @@ async function saveOriginalPng(card){
   if(!work || savingPngPaths.has(work.image)) return;
   savingPngPaths.add(work.image);
   const filename=`${safeFilename(work.name)}-character-card.png`;
+  showToast('正在开始下载',`正在确认 ${work.name} 的原始 PNG…`,'↓',0,work.image);
 
   try{
     const candidates=originalPngCandidates(work.image);
@@ -3343,22 +3322,24 @@ async function saveOriginalPng(card){
     const fallbacks=candidates.filter(url=>url!==local);
     if(!fallbacks.length) throw new Error('原始 PNG 暂时无法下载，请检查网络后重试。');
 
-    showToast('正在准备下载','本站暂时没有这张原图，正在从备用地址读取…','↓',0);
-    const download=downloadOriginalPng(work.image,fallbacks);
-    download.onProgress=(loaded,total)=>{
-      ensureToast().querySelector('.motion-toast-copy small').textContent=total && loaded<=total
-        ?`已读取 ${Math.floor(loaded/total*100)}%（${formatMb(loaded)} / ${formatMb(total)} MB）`
-        :`已读取 ${formatMb(loaded)} MB`;
-    };
+    showToast('正在准备下载',`本站暂时没有 ${work.name} 的原图，正在从备用地址读取…`,'↓',0,work.image);
+    const {blob}=await fetchOriginalPng(work.image,{
+      candidates:fallbacks,
+      onProgress:(loaded,total)=>{
+        // 提示条已经换成别的卡的消息时，不去覆盖它。
+        if(toastOwner!==work.image) return;
+        ensureToast().querySelector('.motion-toast-copy small').textContent=total && loaded<=total
+          ?`${work.name}：已读取 ${Math.floor(loaded/total*100)}%（${formatMb(loaded)} / ${formatMb(total)} MB）`
+          :`${work.name}：已读取 ${formatMb(loaded)} MB`;
+      }
+    });
 
-    const {blob}=await download.promise;
-    if(savedPngObjectUrl) URL.revokeObjectURL(savedPngObjectUrl);
-    savedPngObjectUrl=URL.createObjectURL(blob);
-    triggerFileDownload(savedPngObjectUrl,filename);
+    const objectUrl=URL.createObjectURL(blob);
+    triggerFileDownload(objectUrl,filename);
+    // 浏览器可能先弹确认框再读这个 blob:，留足时间再释放。
+    window.setTimeout(()=>URL.revokeObjectURL(objectUrl),300000);
     showToast('开始下载',`${work.name} 的原始 PNG 已交给浏览器下载。`,'↓');
   }catch(error){
-    // 换了别的卡，上一张的读取被取消，不用提示。
-    if(error?.name==='AbortError') return;
     console.error(error);
     showToast('下载失败',error.message || '原始 PNG 暂时无法下载，请检查网络后重试。','!');
   }finally{
@@ -3404,6 +3385,6 @@ document.addEventListener('visibilitychange',syncPageVisibilityMotion,{passive:t
 syncPageVisibilityMotion();
 
 </script>
-<script src="assets/js/motion.js?v=motion-visible-first-v5" defer></script>
+<script src="assets/js/motion.js?v=motion-visible-first-v6" defer></script>
 </body>
 </html>

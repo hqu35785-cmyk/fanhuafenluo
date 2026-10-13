@@ -160,16 +160,7 @@
 .mo-tabpanel.is-enter-worldbook { animation: mo-sweep-down var(--dur-lg) var(--ease-expo) both; }
 .mo-tabpanel.is-enter-preset    { animation: mo-sweep-up   var(--dur-lg) var(--ease-expo) both; }
 
-/* ---------- 9. 保存 PNG：底部上滑 ---------- */
-.mo-sheet {
-  transform: translateY(100%);
-  opacity: 0;
-  transition: transform var(--dur-md) var(--ease-expo),
-              opacity var(--dur-sm) linear;
-}
-.mo-sheet.is-open { transform: translateY(0); opacity: 1; }
-
-/* ---------- 10. 降级与清理 ---------- */
+/* ---------- 9. 降级与清理 ---------- */
 @media (prefers-reduced-motion: reduce) {
   [data-motion].is-in,
   .mo-backdrop,
@@ -184,5 +175,4 @@
   .mo-backdrop.is-closing,
   .mo-panel.is-closing { animation-name: mo-fade-in !important; animation-direction: reverse !important; }
   .mo-card::after { transition-duration: 1ms !important; }
-  .mo-sheet { transition-duration: 120ms !important; }
 }

@@ -22,8 +22,7 @@
     modalBackdrop: '#archiveModal',
     modalPanel:    '#archiveModal .archive-modal-panel',
     tabButtons:    '#archiveModal .detail-option',
-    tabPanels:     '#archiveModal .detail-reading-body',
-    sheet:         '#saveSheet'
+    tabPanels:     '#archiveModal .detail-reading-body'
   };
 
   /* ====================== ② 工具 ====================== */
@@ -297,20 +296,12 @@
     });
   }
 
-  /* ====================== ⑧ 保存 PNG：底部上滑 ====================== */
-  /* 开关仍由站点自己加减 is-open，这里只挂上滑动效需要的类。 */
-  function initSheet() {
-    const sheet = $(SEL.sheet);
-    if (sheet) sheet.classList.add('mo-sheet');
-  }
-
-  /* ====================== ⑨ 启动 ====================== */
+  /* ====================== ⑧ 启动 ====================== */
   function boot() {
     initHero();
     initCards();
     initModal();
     initTabs();
-    initSheet();
   }
 
   if (document.readyState === 'loading') {
