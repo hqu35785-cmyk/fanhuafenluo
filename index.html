@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<link rel="preload" as="style" href="assets/css/motion.css?v=motion-visible-first-v5">
-<link rel="preload" as="script" href="assets/js/motion.js?v=motion-visible-first-v5">
+<link rel="preload" as="style" href="assets/css/motion.css?v=motion-visible-first-v6">
+<link rel="preload" as="script" href="assets/js/motion.js?v=motion-visible-first-v6">
 <title>繁花·纷落｜角色卡档案</title>
 <meta name="description" content="繁花·纷落与公开两个分区的 TAVO 角色卡档案，共 103 张，可在线浏览设定并保存原始 PNG。">
 <meta name="theme-color" content="#08090d">
@@ -104,14 +104,12 @@ html{
   scrollbar-gutter:stable;
 }
 button,
-a.save-sheet-choice,
 .detail-option,
 .author-filter{
   -webkit-tap-highlight-color:transparent;
   transform-origin:center;
 }
-button:not(:disabled),
-a.save-sheet-choice{
+button:not(:disabled){
   transition:transform var(--motion-fast) var(--ease-out),
     opacity var(--motion-fast) ease,
     border-color var(--motion-ui) ease,
@@ -119,8 +117,7 @@ a.save-sheet-choice{
     box-shadow var(--motion-ui) ease,
     color var(--motion-ui) ease;
 }
-button:not(:disabled):active,
-a.save-sheet-choice:active{
+button:not(:disabled):active{
   transform:scale(.972);
   transition-duration:90ms;
 }
@@ -433,8 +430,7 @@ a.save-sheet-choice:active{
 }
 @media(hover:hover) and (pointer:fine){
   .author-filter:hover,
-  .detail-option:hover,
-  .save-sheet-choice:hover{
+  .detail-option:hover{
     transform:translateY(-1px);
   }
 }
@@ -608,47 +604,6 @@ a.save-sheet-choice:active{
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent);
   transition:opacity .36s ease;
 }
-.corner-code{
-  position:absolute;
-  z-index:10;
-  top:10px;
-  left:10px;
-  max-width:calc(100% - 52px);
-  height:25px;
-  display:flex;
-  align-items:center;
-  gap:6px;
-  padding:0 8px;
-  border:1px solid rgba(255,255,255,.085);
-  border-radius:999px;
-  color:rgba(247,243,246,.52);
-  background:rgba(7,8,12,.28);
-  font-size:6.5px;
-  font-weight:650;
-  letter-spacing:.08em;
-}
-.corner-dot{
-  width:4px;
-  height:4px;
-  border-radius:50%;
-  background:rgba(232,182,199,.64);
-  box-shadow:0 0 8px rgba(232,182,199,.22);
-}
-.corner-label{
-  min-width:0;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-.corner-index{
-  position:absolute;
-  z-index:10;
-  top:15px;
-  right:12px;
-  color:rgba(247,243,246,.22);
-  font-size:6.5px;
-  letter-spacing:.12em;
-}
 .loading-title{
   font-size:6px;
   font-weight:650;
@@ -683,19 +638,6 @@ a.save-sheet-choice:active{
 .archive-card.is-loaded .ghost-frame::before,
 .archive-card.is-loaded .ghost-frame::after{
   opacity:.32;
-}
-.archive-card.is-loaded .corner-code{
-  color:#f7d9e4;
-  border-color:rgba(245,210,226,.42);
-  background:linear-gradient(135deg,
-      rgba(232,182,199,.20) 0%,
-      rgba(200,185,223,.16) 52%,
-      rgba(169,187,217,.13) 100%),
-    rgba(7,8,12,.52);
-  text-shadow:0 1px 3px rgba(4,5,9,.6);
-}
-.archive-card.is-loaded .corner-index{
-  color:rgba(247,243,246,.46);
 }
 .archive-card.is-loaded .state-label-loading{
   opacity:0;
@@ -739,14 +681,10 @@ a.save-sheet-choice:active{
   font-weight:600;
   letter-spacing:.06em;
   line-height:1.15;
-}
-.state-label-ready .ready-meta{
-  color:rgba(206,199,209,.43);
-  font-family:var(--sans);
-  font-size:9px;
-  font-weight:650;
-  letter-spacing:.10em;
-  font-variant-numeric:tabular-nums;
+  /* 名字和右侧下载按钮排成一行：名字最后一行与按钮垂直居中，右边给按钮留位置；长名字向上换行，不会钻到按钮底下。 */
+  margin-bottom:5px;
+  padding-right:38px;
+  text-wrap:balance;
 }
 .archive-card.is-loaded .loading-core::before{
   content:"";
@@ -767,24 +705,6 @@ a.save-sheet-choice:active{
   color:#f7d9e4;
   text-shadow:0 1px 3px rgba(4,5,9,.65);
 }
-.archive-card.is-loaded .state-label-ready .loading-line{
-  width:30%;
-  height:2px;
-  border-radius:2px;
-  background:linear-gradient(90deg,
-    var(--pink),
-    var(--violet) 55%,
-    transparent);
-  box-shadow:0 0 6px rgba(232,182,199,.28);
-}
-.archive-card.is-loaded .state-label-ready .ready-meta{
-  color:rgba(169,187,217,.92);
-  text-shadow:0 1px 3px rgba(4,5,9,.6);
-}
-.state-label-ready.no-created .loading-line,
-.state-label-ready.no-created .ready-meta{
-  display:none;
-}
 .archive-card.is-loaded .card-face{
   border-color:rgba(255,255,255,.095);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 15px 34px rgba(0,0,0,.19);
@@ -802,7 +722,6 @@ a.save-sheet-choice:active{
   animation:authorCardDealIn 520ms var(--ease-out) both;
   animation-delay:var(--author-delay,0ms);
 }
-.archive-card .corner-code,
 .archive-card .bottom-frame,
 .archive-card .detail-action,
 .archive-card .download-action{
@@ -875,11 +794,8 @@ a.save-sheet-choice:active{
 .archive-card.is-face-missing .loaded-art{
   opacity:0!important;
 }
+/* 卡面图片加载失败时仍显示角色名，否则这张卡上没有任何能认出是谁的文字。 */
 .archive-card.is-face-missing .state-label-loading{
-  opacity:1!important;
-  transform:none!important;
-}
-.archive-card.is-face-missing .state-label-ready{
   opacity:0!important;
 }
 .archive-card.is-face-missing .card-face::after{
@@ -923,9 +839,7 @@ a.save-sheet-choice:active{
 @media(max-width:620px){
   .state-label-ready .ready-name{
     font-size:13px;
-  }
-  .state-label-ready .ready-meta{
-    font-size:8px;
+    margin-bottom:12px;
   }
   .card-face{
     border-radius:14px;
@@ -933,18 +847,6 @@ a.save-sheet-choice:active{
   .ghost-frame{
     inset:8px;
     border-radius:10px;
-  }
-  .corner-code{
-    top:8px;
-    left:8px;
-    height:23px;
-    padding:0 7px;
-    font-size:5.8px;
-  }
-  .corner-index{
-    top:13px;
-    right:9px;
-    font-size:5.8px;
   }
   .loading-core{
     left:10px;
@@ -1110,8 +1012,6 @@ a.save-sheet-choice:active{
 .archive-card:not(.is-loaded) .detail-action::after{
   display:none;
 }
-.save-choice-mark,
-.save-sheet-choice i,
 .action-arrow,
 .download-icon{
   transition:transform 240ms var(--ease-out),border-color 240ms ease,color 240ms ease,background 240ms ease;
@@ -1232,8 +1132,6 @@ body.has-overlay .archive-card .detail-action::after{
   transform:scale(.987)!important;
 }
 @media(hover:hover){
-  .save-sheet-choice:hover .save-choice-mark,
-  .save-sheet-choice:hover i,
   .detail-action:hover .action-arrow{
     transform:translateX(2px);
   }
@@ -1270,8 +1168,7 @@ body.has-overlay .archive-card .detail-action::after{
 }
 
 /* ---------- 详情弹窗 ---------- */
-.archive-modal,
-.save-sheet{
+.archive-modal{
   position:fixed;
   inset:0;
   z-index:1000;
@@ -1320,29 +1217,6 @@ body.has-overlay .archive-card .detail-action::after{
   background:radial-gradient(circle at 42% 26%,rgba(232,182,199,.14),transparent 22%),
     radial-gradient(circle at 62% 67%,rgba(169,187,217,.12),transparent 28%),
     linear-gradient(150deg,#1a171e,#10131b 56%,#090a0f);
-}
-.detail-visual-top{
-  position:absolute;
-  left:16px;
-  right:16px;
-  top:16px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-}
-.detail-visual-top span,
-.detail-visual-top small{
-  padding:8px 10px;
-  border:1px solid rgba(255,255,255,.09);
-  border-radius:999px;
-  background:rgba(7,8,12,.38);
-  color:rgba(255,255,255,.76);
-  font-size:8px;
-  letter-spacing:.09em;
-}
-.detail-visual-top small{
-  color:rgba(255,255,255,.42);
 }
 .detail-visual-bottom{
   position:absolute;
@@ -1400,15 +1274,13 @@ body.has-overlay .archive-card .detail-action::after{
   font-size:7px;
   letter-spacing:.14em;
 }
-.archive-modal.is-open,
-.save-sheet.is-open{
+.archive-modal.is-open{
   visibility:visible;
   opacity:1;
   pointer-events:auto;
   transition-delay:0s;
 }
-.archive-modal-backdrop,
-.save-sheet-backdrop{
+.archive-modal-backdrop{
   position:absolute;
   inset:0;
   background:rgba(4,5,8,.76);
@@ -1417,15 +1289,12 @@ body.has-overlay .archive-card .detail-action::after{
   opacity:0;
   transition:opacity var(--motion-panel) ease,backdrop-filter var(--motion-panel) ease;
 }
-.archive-modal.is-open .archive-modal-backdrop,
-.save-sheet.is-open .save-sheet-backdrop{
+.archive-modal.is-open .archive-modal-backdrop{
   opacity:1;
 }
-.archive-modal-close,
-.save-sheet-close{
+.archive-modal-close{
   transition:transform 260ms var(--ease-out),background 220ms ease,border-color 220ms ease!important;
 }
-.save-sheet-choice.is-activating,
 .detail-save-btn.is-activating{
   animation:motionActionConfirm 440ms var(--ease-out) both;
 }
@@ -1444,15 +1313,8 @@ body.has-overlay .archive-card .detail-action::after{
 .detail-save-btn.is-activating{
   animation:detailSaveDrop 460ms cubic-bezier(.2,.82,.2,1) both;
 }
-.archive-modal-close:active,
-.save-sheet-close:active{
+.archive-modal-close:active{
   transform:rotate(-11deg) scale(.9)!important;
-}
-.archive-modal.is-open .detail-visual-top span{
-  animation:detailBadgeFromLeft 470ms 130ms cubic-bezier(.2,.82,.2,1) both;
-}
-.archive-modal.is-open .detail-visual-top small{
-  animation:detailBadgeFromRight 470ms 170ms cubic-bezier(.2,.82,.2,1) both;
 }
 .archive-modal.is-open .detail-visual-bottom{
   animation:detailVisualFooterIn 560ms 200ms cubic-bezier(.2,.82,.2,1) both;
@@ -1460,12 +1322,10 @@ body.has-overlay .archive-card .detail-action::after{
 .archive-modal.is-open .detail-save-btn{
   animation:detailSaveButtonResolve 500ms 260ms cubic-bezier(.2,.82,.2,1) both;
 }
-.archive-modal.is-open .archive-modal-panel,
-.save-sheet.is-open .save-sheet-panel{
+.archive-modal.is-open .archive-modal-panel{
   will-change:transform,opacity!important;
 }
-.archive-modal-panel,
-.save-sheet-panel{
+.archive-modal-panel{
   filter:none!important;
 }
 .detail-save-btn{
@@ -1528,8 +1388,7 @@ body.has-overlay .archive-card .detail-action::after{
   opacity:0;
 }
 @media(hover:hover){
-  .archive-modal-close:hover,
-  .save-sheet-close:hover{
+  .archive-modal-close:hover{
     transform:rotate(8deg) scale(1.04);
   }
 }
@@ -1569,9 +1428,6 @@ body.has-overlay .archive-card .detail-action::after{
   }
   .detail-heading h2{
     font-size:28px;
-  }
-  .detail-visual-top{
-    right:56px;
   }
 }
 
@@ -1859,316 +1715,6 @@ body.has-overlay .archive-card .detail-action::after{
   }
 }
 
-/* ---------- 保存面板 ---------- */
-.save-sheet{
-  z-index:1200;
-}
-.save-sheet-panel{
-  position:absolute;
-  left:50%;
-  top:50%;
-  width:min(430px,calc(100% - 30px));
-  transform:translate(-50%,-50%);
-  padding:18px;
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:20px;
-  background:radial-gradient(340px 180px at 0 0,rgba(232,182,199,.08),transparent 70%),
-    linear-gradient(160deg,#12131a,#090a0f 72%);
-  box-shadow:0 28px 80px rgba(0,0,0,.56);
-  max-height:calc(100vh - 24px);
-  overflow-y:auto;
-}
-.save-sheet-head{
-  display:flex;
-  justify-content:space-between;
-  gap:16px;
-  align-items:flex-start;
-}
-.save-sheet-head small{
-  color:rgba(206,199,209,.34);
-  font-size:6px;
-  letter-spacing:.15em;
-}
-.save-sheet-head h3{
-  margin:6px 0 0;
-  font-family:var(--serif);
-  font-size:20px;
-  font-weight:600;
-  letter-spacing:.07em;
-}
-.save-sheet-head p{
-  margin:7px 0 0;
-  color:rgba(206,199,209,.46);
-  font-size:9px;
-  line-height:1.5;
-}
-.save-sheet-close{
-  width:32px;
-  height:32px;
-  flex:0 0 auto;
-  border:1px solid rgba(255,255,255,.09);
-  border-radius:50%;
-  color:rgba(255,255,255,.68);
-  background:rgba(255,255,255,.025);
-  font-size:16px;
-  cursor:pointer;
-}
-.save-sheet-preview{
-  position:relative;
-  margin-top:16px;
-  overflow:hidden;
-  aspect-ratio:.72;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:14px;
-  background:#0c0e13;
-}
-.save-preview-meta{
-  position:absolute;
-  left:10px;
-  right:10px;
-  bottom:10px;
-  padding:10px 11px;
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:10px;
-  background:rgba(7,8,12,.58);
-  -webkit-backdrop-filter:blur(7px);
-  backdrop-filter:blur(7px);
-}
-.save-preview-meta b{
-  font-family:var(--serif);
-  font-size:10px;
-  font-weight:600;
-}
-.save-preview-meta span{
-  color:rgba(206,199,209,.45);
-  font-size:7px;
-  letter-spacing:.08em;
-}
-.save-sheet-photo,
-.save-sheet-file{
-  position:relative;
-  overflow:hidden;
-  isolation:isolate;
-}
-.save-sheet-photo>*,
-.save-sheet-file>*{
-  position:relative;
-  z-index:3;
-}
-.save-sheet-photo::before{
-  content:"";
-  position:absolute;
-  z-index:1;
-  inset:-75% -45%;
-  pointer-events:none;
-  opacity:0;
-  transform:translate3d(-32%,0,0) rotate(-9deg);
-  background:linear-gradient(
-    108deg,
-    transparent 17%,
-    rgba(255,91,165,.20) 28%,
-    rgba(156,112,255,.18) 37%,
-    rgba(84,220,255,.24) 46%,
-    rgba(116,255,207,.16) 54%,
-    rgba(255,226,105,.22) 63%,
-    rgba(255,138,209,.20) 72%,
-    transparent 83%
-  );
-  mix-blend-mode:screen;
-  will-change:transform,opacity;
-}
-.save-sheet-photo::after{
-  content:"";
-  position:absolute;
-  z-index:2;
-  top:-38%;
-  bottom:-38%;
-  left:-42%;
-  width:34%;
-  pointer-events:none;
-  opacity:0;
-  transform:translate3d(-120%,0,0) skewX(-18deg);
-  background:linear-gradient(
-    90deg,
-    transparent,
-    rgba(117,224,255,.18) 28%,
-    rgba(255,255,255,.48) 48%,
-    rgba(255,178,225,.31) 61%,
-    rgba(255,232,128,.16) 74%,
-    transparent
-  );
-  mix-blend-mode:screen;
-  will-change:transform,opacity;
-}
-.save-sheet.is-open .save-sheet-photo::before{
-  opacity:1;
-  animation:savePhotoHoloFilm 3.05s linear infinite;
-}
-.save-sheet.is-open .save-sheet-photo::after{
-  opacity:1;
-  animation:savePhotoHoloRibbon 1.85s cubic-bezier(.43,.05,.46,.95) infinite;
-}
-.save-sheet-file::before,
-.save-sheet-file::after{
-  content:none;
-  animation:none;
-}
-.save-sheet-actions{
-  margin-top:12px;
-  display:grid;
-  gap:8px;
-}
-.save-sheet-choice{
-  width:100%;
-  min-height:54px;
-  padding:8px 10px;
-  display:grid;
-  grid-template-columns:28px minmax(0,1fr) 28px;
-  align-items:center;
-  gap:10px;
-  border:1px solid rgba(255,255,255,.075);
-  border-radius:12px;
-  color:rgba(255,255,255,.84);
-  background:rgba(255,255,255,.022);
-  text-decoration:none;
-  cursor:pointer;
-  text-align:left;
-}
-.save-sheet-choice:hover{
-  border-color:rgba(232,182,199,.16);
-  background:rgba(232,182,199,.035);
-}
-.save-sheet-photo{
-  border-color:rgba(232,182,199,.14);
-  background:linear-gradient(135deg,rgba(232,182,199,.085),rgba(169,187,217,.03)),
-    rgba(255,255,255,.018);
-}
-.save-sheet-file{
-  box-shadow:none;
-  color:rgba(255,255,255,.70);
-  border-color:rgba(255,255,255,.065);
-}
-.save-choice-mark{
-  width:27px;
-  height:27px;
-  display:grid;
-  place-items:center;
-  border:1px solid rgba(255,255,255,.075);
-  border-radius:8px;
-  color:rgba(255,255,255,.58);
-  background:rgba(255,255,255,.025);
-  font-size:10px;
-}
-.save-choice-copy{
-  min-width:0;
-  display:grid;
-  gap:4px;
-}
-.save-choice-copy b{
-  font-family:var(--serif);
-  font-size:10.5px;
-  font-weight:600;
-  letter-spacing:.055em;
-}
-.save-choice-copy small{
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  color:rgba(206,199,209,.37);
-  font-size:5.8px;
-  letter-spacing:.11em;
-}
-.save-sheet-choice i{
-  width:27px;
-  height:27px;
-  display:grid;
-  place-items:center;
-  border:1px solid rgba(255,255,255,.065);
-  border-radius:50%;
-  color:rgba(255,255,255,.51);
-  font-style:normal;
-  font-size:8px;
-}
-.save-sheet-choice[disabled]{
-  opacity:.46;
-  cursor:not-allowed;
-}
-.save-sheet-note{
-  margin:2px 2px 0;
-  color:rgba(206,199,209,.35);
-  font-size:7.7px;
-  line-height:1.65;
-}
-.save-sheet-preview img{
-  width:100%;
-  height:100%;
-  display:block;
-  object-fit:cover;
-  object-position:var(--role-media-focus-x) var(--role-media-focus-y);
-  transition:opacity 280ms ease,transform 520ms var(--ease-out),filter 340ms ease;
-}
-.save-sheet-photo.is-activating .save-choice-mark{
-  animation:savePhotoPulse 470ms cubic-bezier(.2,.82,.2,1) both;
-}
-.save-sheet-file.is-activating i{
-  animation:saveFileDrop 480ms cubic-bezier(.2,.82,.2,1) both;
-}
-.save-sheet.is-ready .save-sheet-note{
-  animation:saveNoteResolve 440ms 80ms ease both;
-}
-.save-sheet.is-preparing .save-sheet-preview img{
-  opacity:.42;
-  transform:scale(1.018);
-  filter:none;
-}
-.save-sheet.is-open .save-sheet-photo[disabled]{
-  opacity:.88!important;
-}
-.save-sheet.is-open .save-sheet-photo{
-  border-color:rgba(171,226,255,.24);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 0 14px rgba(142,218,255,.045);
-  background:linear-gradient(135deg,rgba(255,108,180,.10),rgba(102,222,255,.075) 46%,rgba(255,222,112,.065)),
-    rgba(255,255,255,.022);
-}
-.save-sheet.is-open .save-sheet-file,
-.save-sheet.is-open .save-sheet-file::before,
-.save-sheet.is-open .save-sheet-file::after{
-  animation:none!important;
-}
-.save-sheet.is-preparing #saveSheetLink{
-  pointer-events:none;
-  opacity:.55!important;
-}
-@media(min-width:721px){
-  .save-sheet-preview{
-    width:auto;
-    height:min(52vh,620px);
-    max-height:none;
-    aspect-ratio:.72;
-    margin-left:auto;
-    margin-right:auto;
-  }
-}
-@media(max-width:720px){
-  .save-sheet-panel{
-    top:auto;
-    bottom:0;
-    width:100%;
-    transform:translateX(-50%);
-    border-radius:20px 20px 0 0;
-    padding:16px 14px calc(16px + env(safe-area-inset-bottom));
-  }
-  .save-sheet-preview{
-    max-height:54vh;
-  }
-  .save-sheet-choice{
-    min-height:52px;
-  }
-}
-
 /* ---------- 操作提示 ---------- */
 .motion-toast{
   position:fixed;
@@ -2244,8 +1790,6 @@ footer{
 }
 
 /* ---------- 动效关键帧 ---------- */
-@keyframes savePhotoHoloFilm{0%{transform:translate3d(-34%,0,0) rotate(-9deg)} 50%{transform:translate3d(5%,0,0) rotate(-9deg)} 100%{transform:translate3d(36%,0,0) rotate(-9deg)}}
-@keyframes savePhotoHoloRibbon{0%{transform:translate3d(-150%,0,0) skewX(-18deg)} 100%{transform:translate3d(510%,0,0) skewX(-18deg)}}
 @keyframes holoActionDrift{0%   { background-position:center, 0% 50%; } 50%  { background-position:center, 100% 50%; } 100% { background-position:center, 0% 50%; }}
 @keyframes holoRibbonDetail{0%   { transform:skewX(-17deg) translateX(-55%); } 100% { transform:skewX(-17deg) translateX(430%); }}
 @keyframes motionUnderline{from{opacity:0;transform:scaleX(.15)}to{opacity:1;transform:scaleX(1)}}
@@ -2270,28 +1814,15 @@ footer{
 @keyframes detailLabelSettle{0%{transform:translateY(0)}42%{transform:translateY(2px);opacity:.62}100%{transform:none;opacity:1}}
 @keyframes detailButtonSheen{0%{opacity:0;transform:translateX(-75%) skewX(-18deg)}30%{opacity:.8}100%{opacity:0;transform:translateX(80%) skewX(-18deg)}}
 @keyframes detailSaveDrop{0%{transform:translateY(0)}38%{transform:translateY(4px) scale(.9)}72%{transform:translateY(-1px) scale(1.04)}100%{transform:none}}
-@keyframes detailBadgeFromLeft{from{opacity:0;transform:translateX(-9px) scale(.96)}to{opacity:1;transform:none}}
-@keyframes detailBadgeFromRight{from{opacity:0;transform:translateX(9px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes detailVisualFooterIn{0%{opacity:0;transform:translateY(12px) scale(.98);filter:blur(3px)}100%{opacity:1;transform:none;filter:none}}
 @keyframes detailSaveButtonResolve{0%{opacity:0;transform:translateX(8px)}70%{opacity:1;transform:translateX(-1px)}100%{opacity:1;transform:none}}
 @keyframes detailMiniDownload{0%{transform:none}44%{transform:translateY(4px) scale(.86)}100%{transform:none}}
-@keyframes savePhotoPulse{0%{transform:scale(1)}42%{transform:scale(.8)}70%{transform:scale(1.1)}100%{transform:none}}
-@keyframes saveFileDrop{0%{transform:none}38%{transform:translateY(5px) scale(.9)}76%{transform:translateY(-1px)}100%{transform:none}}
-@keyframes saveNoteResolve{from{opacity:.3;transform:translateY(3px)}to{opacity:1;transform:none}}
 @keyframes holoFilmDriftLite{0%,100%{transform:translate3d(-5%,0,0) rotate(-8deg) scale(1.03)} 50%{transform:translate3d(5%,0,0) rotate(-8deg) scale(1.03)}}
 
 /* ---------- 减少动态效果（prefers-reduced-motion） ---------- */
 @media(prefers-reduced-motion:reduce){
   *{
     transition:none!important;
-  }
-  .save-sheet.is-open .save-sheet-photo::before{
-    animation:none!important;
-    opacity:.26!important;
-    transform:translate3d(0,0,0) rotate(-9deg)!important;
-  }
-  .save-sheet.is-open .save-sheet-photo::after{
-    display:none;
   }
   .detail-action::before,
   .detail-action::after{
@@ -2308,9 +1839,6 @@ footer{
   .archive-modal,
   .archive-modal-panel,
   .archive-modal-backdrop,
-  .save-sheet,
-  .save-sheet-panel,
-  .save-sheet-backdrop,
   .motion-toast,
   .gallery,
   .author-avatar-img,
@@ -2360,7 +1888,7 @@ body.is-page-hidden *::after{
   animation-play-state:paused!important;
 }
 </style>
-<link rel="stylesheet" href="assets/css/motion.css?v=motion-visible-first-v5">
+<link rel="stylesheet" href="assets/css/motion.css?v=motion-visible-first-v6">
 </head>
 <body class="motion-rich">
     <header class="site-header">
@@ -2419,8 +1947,6 @@ body.is-page-hidden *::after{
         <div class="stripe-field" aria-hidden="true"></div>
         <div class="ghost-frame" aria-hidden="true"></div>
 
-        <div class="corner-code"><span class="corner-dot"></span><span class="corner-label"></span></div>
-        <div class="corner-index"></div>
 
         <div class="loading-core" aria-hidden="true">
           <div class="state-label state-label-loading">
@@ -2430,8 +1956,6 @@ body.is-page-hidden *::after{
           </div>
           <div class="state-label state-label-ready">
             <div class="loading-title ready-name"></div>
-            <div class="loading-line"></div>
-            <div class="loading-sub ready-meta"></div>
           </div>
         </div>
 
@@ -2482,10 +2006,6 @@ body.is-page-hidden *::after{
           decoding="async"
         >
       </div>
-      <div class="detail-visual-top">
-        <span id="detailIdentity">角色身份</span>
-        <small id="detailIndex">ARCHIVE · 01</small>
-      </div>
       <div class="detail-visual-bottom">
         <span>TAVO CHARACTER CARD</span>
         <button class="detail-save-btn" id="detailSaveBtn" type="button">保存角色卡 PNG</button>
@@ -2530,52 +2050,6 @@ body.is-page-hidden *::after{
         </section>
       </div>
 
-    </div>
-  </section>
-</div>
-
-<div class="save-sheet" id="saveSheet" aria-hidden="true" inert>
-  <div class="save-sheet-backdrop" data-close-save></div>
-  <section class="save-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="saveSheetTitle">
-    <div class="save-sheet-head">
-      <div>
-        <small>CHARACTER CARD EXPORT</small>
-        <h3 id="saveSheetTitle">保存角色卡</h3>
-        <p>PNG 卡片可用于 TAVO 的图片角色卡导入。</p>
-      </div>
-      <button class="save-sheet-close" id="saveSheetClose" type="button" aria-label="关闭保存面板">×</button>
-    </div>
-
-    <div class="save-sheet-preview">
-      <img id="saveSheetImage" alt="角色卡 PNG 预览">
-      <div class="save-preview-meta">
-        <b id="savePreviewName">角色名</b>
-        <span id="savePreviewIdentity">角色身份</span>
-      </div>
-    </div>
-
-    <div class="save-sheet-actions">
-      <button class="save-sheet-choice save-sheet-photo" id="saveSheetPhoto" type="button">
-        <span class="save-choice-mark">▣</span>
-        <span class="save-choice-copy">
-          <b>保存到相册</b>
-          <small>PHOTO LIBRARY · SYSTEM MENU</small>
-        </span>
-        <i>↗</i>
-      </button>
-
-      <a class="save-sheet-choice save-sheet-file" id="saveSheetLink" download="character-card.png">
-        <span class="save-choice-mark">↓</span>
-        <span class="save-choice-copy">
-          <b>以文件形式保存</b>
-          <small>PNG FILE · KEEP CHARACTER CARD DATA</small>
-        </span>
-        <i>⇩</i>
-      </a>
-
-      <p class="save-sheet-note" id="saveSheetNote">
-        保存到相册由系统菜单处理；部分相册可能重新处理图片。需要保留角色卡数据用于导入时，请使用“以文件形式保存”。
-      </p>
     </div>
   </section>
 </div>
@@ -2925,8 +2399,6 @@ function fallbackPreview(image,work,card){
   image.onerror=null;
   card?.classList.remove('is-image-loading');
   card?.classList.add('image-error','is-face-missing');
-  const sub=card?.querySelector('.state-label-loading .loading-sub');
-  if(sub) sub.textContent='CARD FACE UNAVAILABLE';
   revealCard(card);
 }
 
@@ -2942,15 +2414,6 @@ function ensureCardPreview(card){
   }
 
   return image;
-}
-
-function formatCreatedAt(work){
-  const raw=String(work?.createdAt || work?.created || '').trim();
-  const match=raw.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
-  if(!match) return '';
-  return match[1]+'.'+
-    match[2].padStart(2,'0')+'.'+
-    match[3].padStart(2,'0');
 }
 
 // 发卡工具发布前会逐字查找这一行函数头（含没用到的 meta 参数），不要改动。
@@ -3000,19 +2463,8 @@ function applyAuthorCardContent(authorId,meta){
       `${work.name} · ${work.cardLabel || work.tags?.[0] || '角色卡'}`
     );
 
-    const number=String(index+1).padStart(2,'0');
     const name=card.querySelector('.ready-name');
-    const metaText=card.querySelector('.ready-meta');
-    const label=card.querySelector('.corner-label');
-    const cornerIndex=card.querySelector('.corner-index');
-
     if(name) name.textContent=work.name;
-    const created=formatCreatedAt(work);
-    const readyLabel=card.querySelector('.state-label-ready');
-    if(metaText) metaText.textContent=created;
-    readyLabel?.classList.toggle('no-created',!created);
-    if(label) label.textContent=`ARCHIVE · ${number}`;
-    if(cornerIndex) cornerIndex.textContent=number;
 
     card.querySelector('.detail-action')?.setAttribute(
       'aria-label',
@@ -3261,16 +2713,11 @@ authorFilterButtons.forEach(btn=>{
 
 const archiveModal=document.getElementById('archiveModal');
 const archiveModalClose=document.getElementById('archiveModalClose');
-const saveSheet=document.getElementById('saveSheet');
-const saveSheetClose=document.getElementById('saveSheetClose');
-const saveSheetPhoto=document.getElementById('saveSheetPhoto');
-const saveSheetNote=document.getElementById('saveSheetNote');
-let saveSheetShareFile=null;
 
 let activeCard=null;
 let lastArchiveTrigger=null;
-let lastSaveTrigger=null;
 let toastTimer=null;
+let toastOwner=null;
 const prefersReducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
 const siteHeader=document.querySelector('.site-header');
 
@@ -3308,16 +2755,23 @@ function ensureToast(){
   return toast;
 }
 
-function showToast(title,message,mark='✓'){
+/* duration 为 0 时提示条一直留着，直到下一条消息替换它；owner 标记这条消息属于哪张卡的下载。 */
+function showToast(title,message,mark='✓',duration=2600,owner=null){
   const toast=ensureToast();
+  toastOwner=owner;
   toast.querySelector('.motion-toast-mark').textContent=mark;
   toast.querySelector('.motion-toast-copy b').textContent=title;
   toast.querySelector('.motion-toast-copy small').textContent=message;
-  toast.classList.remove('is-show');
-  void toast.offsetWidth;
-  toast.classList.add('is-show');
+  // 已经显示时只换文字，不重播入场，免得同一次下载的几条消息连着闪。
+  if(!toast.classList.contains('is-show')){
+    void toast.offsetWidth;
+    toast.classList.add('is-show');
+  }
   window.clearTimeout(toastTimer);
-  toastTimer=window.setTimeout(()=>toast.classList.remove('is-show'),2600);
+  if(duration) toastTimer=window.setTimeout(()=>{
+    toast.classList.remove('is-show');
+    toastOwner=null;
+  },duration);
 }
 
 function setShellInert(on){
@@ -3376,13 +2830,6 @@ function revealCard(card){
   ) return;
 
   card.classList.add('is-loaded');
-
-  const label=card.querySelector('.corner-label');
-  if(label) label.textContent=
-    card._work.cardLabel ||
-    card._work.tags?.[0] ||
-    card._work.role ||
-    '角色卡';
 
   card.querySelectorAll('.detail-action,.download-action').forEach(btn=>{
     btn.disabled=false;
@@ -3461,8 +2908,6 @@ function buildCard(index){
   }
   const card=cardTemplate.content.firstElementChild.cloneNode(true);
   card.classList.add(`pattern-${(index%4)+1}`,`theme-${index%6}`);
-  card.querySelector('.corner-label').textContent=
-    `ARCHIVE · ${String(index+1).padStart(2,'0')}`;
   return card;
 }
 
@@ -3486,17 +2931,6 @@ function growCardPool(target){
 }
 
 window.addEventListener('resize',queueCardMetricsRefresh,{passive:true});
-
-function cardData(card){
-  const work=card?._work || null;
-  const index=Number(card?.dataset.workIndex || 0);
-
-  return {
-    work,
-    identity:work?.cardLabel || work?.tags?.[0] || (work?'角色卡':'角色身份'),
-    index:String(index+1).padStart(2,'0')
-  };
-}
 
 function formatPersonalityAndScenario(work){
   const sections=[];
@@ -3592,8 +3026,7 @@ detailReadingPanel.addEventListener('scroll',()=>{
 },{passive:true});
 
 async function openArchive(card){
-  const data=cardData(card);
-  const work=data.work;
+  const work=card?._work || null;
 
   if(!work) return;
 
@@ -3607,8 +3040,6 @@ async function openArchive(card){
   const detailArt=detailImage.closest('.detail-art');
 
   document.getElementById('detailName').textContent=work.name;
-  document.getElementById('detailIdentity').textContent=data.identity;
-  document.getElementById('detailIndex').textContent=`ARCHIVE · ${data.index}`;
   document.getElementById('detailAlias').textContent=[
     work.alias,
     work.collectionLabel
@@ -3694,10 +3125,12 @@ function closeArchive(){
   archiveModal.classList.remove('is-open');
   archiveModal.setAttribute('aria-hidden','true');
   archiveModal.setAttribute('inert','');
-  if(!saveSheet.classList.contains('is-open')) setShellInert(false);
+  setShellInert(false);
   motionDelay(430,()=>{
-    if(!saveSheet.classList.contains('is-open')) body.style.overflow='';
-    if(!archiveModal.classList.contains('is-open') && !saveSheet.classList.contains('is-open')) body.classList.remove('has-overlay');
+    if(!archiveModal.classList.contains('is-open')){
+      body.style.overflow='';
+      body.classList.remove('has-overlay');
+    }
     if(lastArchiveTrigger && document.contains(lastArchiveTrigger)) lastArchiveTrigger.focus({preventScroll:true});
   });
 }
@@ -3730,37 +3163,71 @@ function originalPngCandidates(path){
 
 const PNG_SIGNATURE=[137,80,78,71,13,10,26,10];
 
-/* 最近准备好的那张原始 PNG 留在内存里，重新打开同一张卡的保存面板时不用再读一遍。 */
+/* 只在连续这么久收不到任何数据时才放弃当前地址。
+   慢速网络下几十 MB 的原图要读很久，但只要还在传就不能中断。 */
+const PNG_STALL_TIMEOUT=20000;
+
+/* 最近从备用地址读进内存的那张原始 PNG 留着，再点同一张卡时不用再读一遍。 */
 const PNG_CACHE_LIMIT=1;
 const pngCache=new Map();
 
-function rememberPng(path,blob){
+function rememberPng(path,png){
   pngCache.delete(path);
-  pngCache.set(path,blob);
+  pngCache.set(path,png);
   while(pngCache.size>PNG_CACHE_LIMIT) pngCache.delete(pngCache.keys().next().value);
 }
 
-async function fetchOriginalPng(path,{signal}={}){
+function isSameOriginUrl(url){
+  try{
+    return new URL(url,window.location.href).origin===window.location.origin;
+  }catch{
+    return false;
+  }
+}
+
+async function readPngBody(response,{onProgress,keepAlive}){
+  const reader=response.body?.getReader?.();
+  if(!reader) return response.blob();
+
+  const total=Number(response.headers.get('content-length')) || 0;
+  const chunks=[];
+  let loaded=0;
+
+  for(;;){
+    const {done,value}=await reader.read();
+    if(done) break;
+    chunks.push(value);
+    loaded+=value.byteLength;
+    keepAlive();
+    onProgress?.(loaded,total);
+  }
+
+  return new Blob(chunks,{type:'image/png'});
+}
+
+async function fetchOriginalPng(path,{candidates=originalPngCandidates(path),onProgress}={}){
   const cached=pngCache.get(path);
   if(cached){
     rememberPng(path,cached);
     return cached;
   }
 
-  let lastError=null;
+  let stalled=false;
 
-  for(const url of originalPngCandidates(path)){
-    if(signal?.aborted) break;
+  for(const url of candidates){
     const controller=new AbortController();
-    const abort=()=>controller.abort();
-    signal?.addEventListener('abort',abort,{once:true});
-    let timedOut=false;
-    const timeout=window.setTimeout(()=>{
-      timedOut=true;
-      abort();
-    },30000);
+    let urlStalled=false;
+    let stallTimer=0;
+    const keepAlive=()=>{
+      window.clearTimeout(stallTimer);
+      stallTimer=window.setTimeout(()=>{
+        urlStalled=true;
+        controller.abort();
+      },PNG_STALL_TIMEOUT);
+    };
 
     try{
+      keepAlive();
       const response=await fetch(url,{
         credentials:'omit',
         mode:'cors',
@@ -3772,184 +3239,112 @@ async function fetchOriginalPng(path,{signal}={}){
         throw new Error(`PNG 加载失败（${response.status}）`);
       }
 
-      const blob=await response.blob();
+      keepAlive();
+      const blob=await readPngBody(response,{onProgress,keepAlive});
       const signature=new Uint8Array(await blob.slice(0,8).arrayBuffer());
       if(!blob.size || PNG_SIGNATURE.some((byte,index)=>signature[index]!==byte)){
         throw new Error('返回内容不是有效 PNG');
       }
 
-      rememberPng(path,blob);
-      return blob;
-    }catch(error){
-      lastError=timedOut?new Error('原始 PNG 下载超时，请稍后重试。'):error;
+      const png={blob,url};
+      rememberPng(path,png);
+      return png;
+    }catch{
+      if(urlStalled) stalled=true;
     }finally{
-      window.clearTimeout(timeout);
-      signal?.removeEventListener('abort',abort);
+      window.clearTimeout(stallTimer);
     }
   }
 
-  if(signal?.aborted) throw new DOMException('保存面板已关闭','AbortError');
-  throw lastError || new Error('原始 PNG 暂时不可用');
+  throw new Error(
+    stalled
+      ?'原始 PNG 下载长时间没有进展，请检查网络后重试。'
+      :'原始 PNG 暂时无法下载，请检查网络后重试。'
+  );
 }
 
 const formatMb=bytes=>(bytes/1024/1024).toFixed(1);
 
-let saveSheetObjectUrl=null;
-let saveSheetBuildToken=0;
+/* 同一张卡还在处理时，再点不会重复下载。 */
+const savingPngPaths=new Set();
 
-/* 关掉保存面板不会中断正在下载的原图：再打开同一张卡时接着用。
-   只有换成另一张卡时才取消上一张，把带宽让给新的。 */
-let pngDownload=null;
+function triggerFileDownload(href,filename){
+  const link=document.createElement('a');
+  link.href=href;
+  link.download=filename;
+  link.hidden=true;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
 
-function downloadOriginalPng(path){
-  if(pngDownload?.path===path) return pngDownload;
-  pngDownload?.controller.abort();
+/* 只确认文件在不在，不读内容。只有服务器明确回答“没有”（如 404）才改走备用地址；
+   超时或网络出错都照样把真实地址交给浏览器下载器：页面本身就是从这个站点打开的，
+   一次抖动不代表连不上，而 jsDelivr / GitHub Raw 在大陆网络下往往更糟。
+   超时定在 4 秒，让随后的下载仍落在这次点击的用户激活时间内。 */
+async function sameOriginPngAvailable(url){
   const controller=new AbortController();
-  const entry={path,controller};
-  entry.promise=fetchOriginalPng(path,{signal:controller.signal}).finally(()=>{
-    if(pngDownload===entry) pngDownload=null;
-  });
-  pngDownload=entry;
-  return entry;
-}
-
-function openSaveSheet(card=activeCard){
-  const work=card?._work;
-
-  if(!work) return;
-
-  activeCard=card;
-  catalogState.activeWork=work;
-  lastSaveTrigger=document.activeElement;
-  const data=cardData(card);
-  const token=++saveSheetBuildToken;
-  const image=document.getElementById('saveSheetImage');
-  const link=document.getElementById('saveSheetLink');
-
-  document.getElementById('savePreviewName').textContent=work.name;
-  document.getElementById('savePreviewIdentity').textContent=data.identity;
-  link.removeAttribute('href');
-  link.download=`${safeFilename(work.name)}-character-card.png`;
-
-  saveSheetShareFile=null;
-  saveSheet.classList.add('is-preparing');
-  saveSheet.classList.remove('is-ready');
-  saveSheetPhoto.disabled=true;
-  saveSheetPhoto
-    .querySelector('.save-choice-copy b')
-    .textContent='正在准备原始 PNG…';
-  saveSheetNote.textContent=
-    '正在读取原始角色卡 PNG，请稍候。';
-
-  saveSheet.classList.add('is-open');
-  saveSheet.setAttribute('aria-hidden','false');
-  saveSheet.removeAttribute('inert');
-  archiveModal.setAttribute('inert','');
-  setShellInert(true);
-  body.classList.add('has-overlay');
-  body.style.overflow='hidden';
-  motionDelay(170,()=>saveSheetClose.focus({preventScroll:true}));
-
-  // 卡面预览已经加载好就先放上，原始 PNG 准备好后再换成原图；没加载好就先留空。
-  const cardPreview=card.querySelector('.loaded-card-image');
-  const previewReady=Boolean(cardPreview?.complete && cardPreview.naturalWidth);
-  if(previewReady){
-    image.src=cardPreview.currentSrc || cardPreview.src;
-    image.alt=`${work.name}角色卡预览`;
+  const timer=window.setTimeout(()=>controller.abort(),4000);
+  try{
+    const response=await fetch(url,{
+      method:'HEAD',
+      credentials:'omit',
+      cache:'no-cache',
+      signal:controller.signal
+    });
+    return response.ok;
+  }catch{
+    return true;
+  }finally{
+    window.clearTimeout(timer);
   }
-  image.style.opacity=previewReady?'':'0';
-  applyPreviewPosition(image,work);
-
-  downloadOriginalPng(work.image).promise.then(blob=>{
-    if(
-      token!==saveSheetBuildToken ||
-      !saveSheet.classList.contains('is-open')
-    ) return;
-
-    const oldUrl=saveSheetObjectUrl;
-    const nextUrl=URL.createObjectURL(blob);
-    saveSheetObjectUrl=nextUrl;
-
-    image.src=nextUrl;
-    image.alt=`${work.name}原始角色卡 PNG`;
-    image.style.opacity='';
-    link.href=nextUrl;
-
-    if(oldUrl){
-      URL.revokeObjectURL(oldUrl);
-    }
-
-    const file=new File(
-      [blob],
-      `${safeFilename(work.name)}-character-card.png`,
-      {type:'image/png'}
-    );
-
-    saveSheetShareFile=file;
-    saveSheet.classList.remove('is-preparing');
-    saveSheet.classList.add('is-ready');
-    window.setTimeout(
-      ()=>saveSheet.classList.remove('is-ready'),
-      650
-    );
-
-    const canShare=
-      typeof navigator.share==='function' &&
-      (
-        !navigator.canShare ||
-        navigator.canShare({files:[file]})
-      );
-
-    if(canShare){
-      saveSheetPhoto.disabled=false;
-      saveSheetPhoto
-        .querySelector('.save-choice-copy b')
-        .textContent='保存到相册';
-      saveSheetNote.textContent=
-        `原始 PNG 已准备完成，大小 ${formatMb(blob.size)} MB。`;
-    }else{
-      saveSheetPhoto.disabled=true;
-      saveSheetPhoto
-        .querySelector('.save-choice-copy b')
-        .textContent='当前浏览器不支持保存到相册';
-      saveSheetNote.textContent=
-        `原始 PNG 已准备完成，大小 ${formatMb(blob.size)} MB；请使用“以文件形式保存”。`;
-    }
-  }).catch(error=>{
-    // 换了别的卡（旧下载被取消）时 token 已经变了，这里直接返回。
-    if(token!==saveSheetBuildToken) return;
-    console.error(error);
-
-    image.style.opacity='';
-    saveSheet.classList.remove(
-      'is-preparing',
-      'is-ready'
-    );
-    saveSheetPhoto.disabled=true;
-    saveSheetPhoto
-      .querySelector('.save-choice-copy b')
-      .textContent='原始 PNG 准备失败';
-    saveSheetNote.textContent=
-      error.message ||
-      '原始 PNG 暂时无法读取，请稍后重试。';
-  });
 }
 
-function closeSaveSheet(){
-  if(!saveSheet.classList.contains('is-open')) return;
-  ++saveSheetBuildToken;
-  saveSheetShareFile=null;
-  saveSheet.classList.remove('is-open','is-preparing','is-ready');
-  saveSheet.setAttribute('aria-hidden','true');
-  saveSheet.setAttribute('inert','');
-  if(archiveModal.classList.contains('is-open')) archiveModal.removeAttribute('inert');
-  else archiveModal.setAttribute('inert','');
-  setShellInert(archiveModal.classList.contains('is-open'));
-  motionDelay(430,()=>{
-    if(!archiveModal.classList.contains('is-open')) body.style.overflow='';
-    if(!archiveModal.classList.contains('is-open') && !saveSheet.classList.contains('is-open')) body.classList.remove('has-overlay');
-    if(lastSaveTrigger && document.contains(lastSaveTrigger)) lastSaveTrigger.focus({preventScroll:true});
-  });
+/* 点一下就保存。原图在本站同源地址上时，直接把真实地址交给浏览器下载器：
+   不用先把整张图读进页面，也不用 blob: 地址（不少国产手机浏览器的下载器读不了 blob:，会提示“下载失败”）。
+   本站没有这张图时，才从 jsDelivr / GitHub Raw 读进内存，读完自动用 blob: 保存。 */
+async function saveOriginalPng(card){
+  const work=card?._work;
+  if(!work || savingPngPaths.has(work.image)) return;
+  savingPngPaths.add(work.image);
+  const filename=`${safeFilename(work.name)}-character-card.png`;
+  showToast('正在开始下载',`正在确认 ${work.name} 的原始 PNG…`,'↓',0,work.image);
+
+  try{
+    const candidates=originalPngCandidates(work.image);
+    const local=candidates.find(isSameOriginUrl);
+    if(local && await sameOriginPngAvailable(local)){
+      triggerFileDownload(local,filename);
+      showToast('开始下载',`${work.name} 的原始 PNG 已交给浏览器下载。`,'↓');
+      return;
+    }
+
+    const fallbacks=candidates.filter(url=>url!==local);
+    if(!fallbacks.length) throw new Error('原始 PNG 暂时无法下载，请检查网络后重试。');
+
+    showToast('正在准备下载',`本站暂时没有 ${work.name} 的原图，正在从备用地址读取…`,'↓',0,work.image);
+    const {blob}=await fetchOriginalPng(work.image,{
+      candidates:fallbacks,
+      onProgress:(loaded,total)=>{
+        // 提示条已经换成别的卡的消息时，不去覆盖它。
+        if(toastOwner!==work.image) return;
+        ensureToast().querySelector('.motion-toast-copy small').textContent=total && loaded<=total
+          ?`${work.name}：已读取 ${Math.floor(loaded/total*100)}%（${formatMb(loaded)} / ${formatMb(total)} MB）`
+          :`${work.name}：已读取 ${formatMb(loaded)} MB`;
+      }
+    });
+
+    const objectUrl=URL.createObjectURL(blob);
+    triggerFileDownload(objectUrl,filename);
+    // 浏览器可能先弹确认框再读这个 blob:，留足时间再释放。
+    window.setTimeout(()=>URL.revokeObjectURL(objectUrl),300000);
+    showToast('开始下载',`${work.name} 的原始 PNG 已交给浏览器下载。`,'↓');
+  }catch(error){
+    console.error(error);
+    showToast('下载失败',error.message || '原始 PNG 暂时无法下载，请检查网络后重试。','!');
+  }finally{
+    savingPngPaths.delete(work.image);
+  }
 }
 
 archiveGallery.addEventListener('click',e=>{
@@ -3962,66 +3357,22 @@ archiveGallery.addEventListener('click',e=>{
   const downloadButton=e.target.closest('.download-action');
   if(downloadButton && archiveGallery.contains(downloadButton)){
     e.stopPropagation();
-    if(!downloadButton.disabled) openSaveSheet(downloadButton.closest('.archive-card'));
+    if(!downloadButton.disabled) saveOriginalPng(downloadButton.closest('.archive-card'));
   }
 });
 
 archiveModalClose.addEventListener('click',closeArchive);
 document.querySelectorAll('[data-close-archive]').forEach(el=>el.addEventListener('click',closeArchive));
-saveSheetClose.addEventListener('click',closeSaveSheet);
-document.querySelectorAll('[data-close-save]').forEach(el=>el.addEventListener('click',closeSaveSheet));
 
-document.getElementById('detailSaveBtn').addEventListener('click',e=>{ markAction(e.currentTarget); openSaveSheet(activeCard); });
-
-
-saveSheetPhoto.addEventListener('click',async()=>{
-  if(!saveSheetShareFile || saveSheetPhoto.disabled) return;
-  try{
-    saveSheetPhoto.disabled=true;
-    saveSheetPhoto.querySelector('.save-choice-copy b').textContent='正在打开系统菜单…';
-    await navigator.share({
-      files:[saveSheetShareFile],
-      title:'保存 TAVO 角色卡'
-    });
-    saveSheetNote.textContent='文件已交给系统菜单处理。是否进入相册由所选系统应用决定；用于 TAVO 导入时仍建议保留“PNG 原图”文件。';
-    markAction(saveSheetPhoto);
-    showToast('已交给系统处理','系统保存流程已完成返回；是否进入相册取决于你选择的系统应用。','✓');
-  }catch(err){
-    if(err && err.name==='AbortError'){
-      saveSheetNote.textContent='已取消系统保存菜单。你也可以直接使用“以文件形式保存”。';
-    }else{
-      saveSheetNote.textContent='系统保存菜单没有成功打开。请长按上方图片保存，或使用“以文件形式保存”。';
-    }
-  }finally{
-    if(saveSheet.classList.contains('is-open')){
-      saveSheetPhoto.disabled=false;
-      saveSheetPhoto.querySelector('.save-choice-copy b').textContent='保存到相册';
-    }
-  }
-});
-
-
-/* Download link: the browser does not expose disk-write completion, so acknowledge the initiated download accurately. */
-document.getElementById('saveSheetLink').addEventListener('click',e=>{
-  markAction(e.currentTarget);
-  showToast('PNG 下载已开始','浏览器已接收原图下载任务。','↓');
-});
-
-/* Small tactile acknowledgement for all save-sheet choices. */
-document.querySelectorAll('.save-sheet-choice').forEach(el=>{
-  el.addEventListener('pointerdown',()=>markAction(el));
-});
+document.getElementById('detailSaveBtn').addEventListener('click',e=>{ markAction(e.currentTarget); saveOriginalPng(activeCard); });
 
 document.addEventListener('keydown',e=>{
-  if(saveSheet.classList.contains('is-open')){
-    trapTab(saveSheet,e);
-  }else if(archiveModal.classList.contains('is-open')){
+  if(archiveModal.classList.contains('is-open')){
     trapTab(archiveModal,e);
   }
 
   if(e.key!=='Escape') return;
-  if(saveSheet.classList.contains('is-open')) closeSaveSheet();
-  else if(archiveModal.classList.contains('is-open')) closeArchive();
+  if(archiveModal.classList.contains('is-open')) closeArchive();
 });
 
 loadCatalog();
@@ -4034,6 +3385,6 @@ document.addEventListener('visibilitychange',syncPageVisibilityMotion,{passive:t
 syncPageVisibilityMotion();
 
 </script>
-<script src="assets/js/motion.js?v=motion-visible-first-v5" defer></script>
+<script src="assets/js/motion.js?v=motion-visible-first-v6" defer></script>
 </body>
 </html>
